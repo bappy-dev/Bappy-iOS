@@ -16,11 +16,15 @@
 		A769CCFC282A8EF30086182C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFB282A8EF30086182C /* SnapKit */; };
 		A769CCFF282A8F100086182C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFE282A8F100086182C /* Kingfisher */; };
 		A769CD1D282A947B0086182C /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CD1C282A947B0086182C /* Extension.swift */; };
+		A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F42F7283067B9008BC89A /* RegisterViewModel.swift */; };
+		A77F42FB28306801008BC89A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FA28306801008BC89A /* RxCocoa */; };
+		A77F42FD28306801008BC89A /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FC28306801008BC89A /* RxRelay */; };
+		A77F42FF28306801008BC89A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FE28306801008BC89A /* RxSwift */; };
+		A77F430128306869008BC89A /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F430028306869008BC89A /* ViewModelType.swift */; };
 		A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC0282AC8070046921B /* RegisterNameView.swift */; };
 		A77F4BC4282AD1010046921B /* RegisterGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC3282AD1010046921B /* RegisterGenderView.swift */; };
 		A77F4BC6282B8C9D0046921B /* BottomButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC5282B8C9D0046921B /* BottomButtonView.swift */; };
 		A77F4BC8282B93090046921B /* SelectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC7282B93090046921B /* SelectionButton.swift */; };
-		A77F4BCA282BC4D70046921B /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC9282BC4D70046921B /* RegisterViewModel.swift */; };
 		A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BCB282BC4F10046921B /* RegisterNameViewModel.swift */; };
 		A77F4BCE282BC5040046921B /* RegisterGenderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BCD282BC5040046921B /* RegisterGenderViewModel.swift */; };
 		A77F4BD2282BC5910046921B /* RegisterBirthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BD1282BC5910046921B /* RegisterBirthView.swift */; };
@@ -54,11 +58,12 @@
 		A769CCE9282A8C310086182C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A769CCEB282A8C310086182C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A769CD1C282A947B0086182C /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		A77F42F7283067B9008BC89A /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
+		A77F430028306869008BC89A /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
 		A77F4BC0282AC8070046921B /* RegisterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterNameView.swift; sourceTree = "<group>"; };
 		A77F4BC3282AD1010046921B /* RegisterGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterGenderView.swift; sourceTree = "<group>"; };
 		A77F4BC5282B8C9D0046921B /* BottomButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonView.swift; sourceTree = "<group>"; };
 		A77F4BC7282B93090046921B /* SelectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionButton.swift; sourceTree = "<group>"; };
-		A77F4BC9282BC4D70046921B /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		A77F4BCB282BC4F10046921B /* RegisterNameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterNameViewModel.swift; sourceTree = "<group>"; };
 		A77F4BCD282BC5040046921B /* RegisterGenderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterGenderViewModel.swift; sourceTree = "<group>"; };
 		A77F4BD1282BC5910046921B /* RegisterBirthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterBirthView.swift; sourceTree = "<group>"; };
@@ -87,7 +92,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A77F42FB28306801008BC89A /* RxCocoa in Frameworks */,
 				A769CCFF282A8F100086182C /* Kingfisher in Frameworks */,
+				A77F42FF28306801008BC89A /* RxSwift in Frameworks */,
+				A77F42FD28306801008BC89A /* RxRelay in Frameworks */,
 				A769CCFC282A8EF30086182C /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,7 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				A7EB783A282AC3CD00E3E965 /* RegisterViewController.swift */,
-				A77F4BC9282BC4D70046921B /* RegisterViewModel.swift */,
+				A77F42F7283067B9008BC89A /* RegisterViewModel.swift */,
 				A77F4BC2282AC8100046921B /* ChildViews */,
 				A7EB7800282A9BB700E3E965 /* Components */,
 			);
@@ -174,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				A769CD1C282A947B0086182C /* Extension.swift */,
+				A77F430028306869008BC89A /* ViewModelType.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -299,6 +308,9 @@
 			packageProductDependencies = (
 				A769CCFB282A8EF30086182C /* SnapKit */,
 				A769CCFE282A8F100086182C /* Kingfisher */,
+				A77F42FA28306801008BC89A /* RxCocoa */,
+				A77F42FC28306801008BC89A /* RxRelay */,
+				A77F42FE28306801008BC89A /* RxSwift */,
 			);
 			productName = Bappy;
 			productReference = A769CCDA282A8C300086182C /* Bappy.app */;
@@ -331,6 +343,7 @@
 			packageReferences = (
 				A769CCFA282A8EF30086182C /* XCRemoteSwiftPackageReference "SnapKit" */,
 				A769CCFD282A8F100086182C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				A77F42F928306801008BC89A /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = A769CCDB282A8C300086182C /* Products */;
 			projectDirPath = "";
@@ -365,12 +378,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A77F4BD2282BC5910046921B /* RegisterBirthView.swift in Sources */,
+				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
 				A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */,
 				A77F4BE0282BC6230046921B /* RegisterPersonalityView.swift in Sources */,
 				A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */,
 				A77F4BD8282BC5BE0046921B /* RegisterNationalityViewModel.swift in Sources */,
+				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
-				A77F4BCA282BC4D70046921B /* RegisterViewModel.swift in Sources */,
 				A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */,
 				A7598C7C282EA90D00F96E39 /* Country.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
@@ -616,6 +630,14 @@
 				kind = branch;
 			};
 		};
+		A77F42F928306801008BC89A /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -628,6 +650,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A769CCFD282A8F100086182C /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		A77F42FA28306801008BC89A /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A77F42F928306801008BC89A /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		A77F42FC28306801008BC89A /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A77F42F928306801008BC89A /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		A77F42FE28306801008BC89A /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A77F42F928306801008BC89A /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -11,24 +11,10 @@ import SnapKit
 final class RegisterViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: RegisterViewModel
     private var page: Int = 0 {
         didSet { print("DEBUG: page \(page)") }
     }
-    
-//    private let backButton: UIButton = {
-//        let button = UIButton(type: .system)
-//        let configuration = UIImage.SymbolConfiguration(pointSize: 11.0, weight: .regular)
-//        let image = UIImage(systemName: "chevron.backward", withConfiguration: configuration)
-//        button.setImage(image, for: .normal)
-//        button.tintColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
-//        button.setAttributedTitle(
-//            NSAttributedString(
-//                string: " Back",
-//                attributes: [.font: UIFont.roboto(size: 12.0)
-//                ]),
-//            for: .normal)
-//        return button
-//    }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -46,6 +32,16 @@ final class RegisterViewController: UIViewController {
     private let bottomButtonView = BottomButtonView()
     
     // MARK: Lifecycle
+    init(viewModel: RegisterViewModel) {
+        self.viewModel = viewModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -126,12 +122,6 @@ final class RegisterViewController: UIViewController {
     }
     
     private func layout() {
-//        view.addSubview(backButton)
-//        backButton.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
-//            $0.leading.equalToSuperview().inset(23.0)
-//        }
-        
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)

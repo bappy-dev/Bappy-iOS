@@ -18,7 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.backgroundColor = .white
         window?.tintColor = UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
         
-        let rootViewController = RegisterViewController()
+        let viewModel = RegisterViewModel()
+        let rootViewController = RegisterViewController(viewModel: viewModel)
         window?.rootViewController = rootViewController
         window?.makeKeyAndVisible()
     }
