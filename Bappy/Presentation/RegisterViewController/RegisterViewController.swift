@@ -15,20 +15,20 @@ final class RegisterViewController: UIViewController {
         didSet { print("DEBUG: page \(page)") }
     }
     
-    private let backButton: UIButton = {
-        let button = UIButton(type: .system)
-        let configuration = UIImage.SymbolConfiguration(pointSize: 11.0, weight: .regular)
-        let image = UIImage(systemName: "chevron.backward", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.tintColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: " Back",
-                attributes: [.font: UIFont.roboto(size: 12.0)
-                ]),
-            for: .normal)
-        return button
-    }()
+//    private let backButton: UIButton = {
+//        let button = UIButton(type: .system)
+//        let configuration = UIImage.SymbolConfiguration(pointSize: 11.0, weight: .regular)
+//        let image = UIImage(systemName: "chevron.backward", withConfiguration: configuration)
+//        button.setImage(image, for: .normal)
+//        button.tintColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+//        button.setAttributedTitle(
+//            NSAttributedString(
+//                string: " Back",
+//                attributes: [.font: UIFont.roboto(size: 12.0)
+//                ]),
+//            for: .normal)
+//        return button
+//    }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -81,6 +81,7 @@ final class RegisterViewController: UIViewController {
         let progression = CGFloat(page + 1) / 7.0
         scrollView.setContentOffset(CGPoint(x: offset, y: 0), animated: true)
         progressBarView.updateProgression(progression)
+        view.endEditing(true)
     }
     
     private func nextButtonHandler() {
@@ -90,6 +91,7 @@ final class RegisterViewController: UIViewController {
         let progression = CGFloat(page + 1) / 7.0
         scrollView.setContentOffset(CGPoint(x: offset, y: 0), animated: true)
         progressBarView.updateProgression(progression)
+        view.endEditing(true)
     }
     
     @objc
@@ -124,15 +126,15 @@ final class RegisterViewController: UIViewController {
     }
     
     private func layout() {
-        view.addSubview(backButton)
-        backButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
-            $0.leading.equalToSuperview().inset(23.0)
-        }
+//        view.addSubview(backButton)
+//        backButton.snp.makeConstraints {
+//            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
+//            $0.leading.equalToSuperview().inset(23.0)
+//        }
         
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(backButton.snp.bottom).offset(30.0)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
             $0.centerX.equalToSuperview()
         }
         

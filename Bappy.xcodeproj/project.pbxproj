@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A74640DA282EA1BC0022322E /* CountryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74640D9282EA1BC0022322E /* CountryListView.swift */; };
+		A7598C7C282EA90D00F96E39 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7598C7B282EA90D00F96E39 /* Country.swift */; };
 		A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDD282A8C300086182C /* AppDelegate.swift */; };
 		A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDF282A8C300086182C /* SceneDelegate.swift */; };
 		A769CCE7282A8C310086182C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A769CCE6282A8C310086182C /* Assets.xcassets */; };
@@ -43,6 +45,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A74640D9282EA1BC0022322E /* CountryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryListView.swift; sourceTree = "<group>"; };
+		A7598C7B282EA90D00F96E39 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		A769CCDA282A8C300086182C /* Bappy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bappy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A769CCDD282A8C300086182C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A769CCDF282A8C300086182C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -91,6 +95,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A7598C7A282EA8F600F96E39 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				A7598C7B282EA90D00F96E39 /* Country.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
 		A769CCD1282A8C300086182C = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +125,7 @@
 				A769CCEB282A8C310086182C /* Info.plist */,
 				A769CCF1282A8CB40086182C /* AppDelegate */,
 				A769CCF2282A8D0F0086182C /* Resource */,
+				A7598C7A282EA8F600F96E39 /* Entity */,
 				A769CCF3282A8D3F0086182C /* Presentation */,
 				A769CD1E282A94800086182C /* Util */,
 			);
@@ -249,6 +262,7 @@
 				A77F4BC5282B8C9D0046921B /* BottomButtonView.swift */,
 				A77F4BC7282B93090046921B /* SelectionButton.swift */,
 				A77F4BEA282CA3150046921B /* BirthPickerView.swift */,
+				A74640D9282EA1BC0022322E /* CountryListView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -358,9 +372,11 @@
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
 				A77F4BCA282BC4D70046921B /* RegisterViewModel.swift in Sources */,
 				A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */,
+				A7598C7C282EA90D00F96E39 /* Country.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
 				A7EB783B282AC3CD00E3E965 /* RegisterViewController.swift in Sources */,
 				A77F4BE2282BC6280046921B /* RegisterPersonalityViewModel.swift in Sources */,
+				A74640DA282EA1BC0022322E /* CountryListView.swift in Sources */,
 				A77F4BDE282BC6030046921B /* RegisterLanguageViewModel.swift in Sources */,
 				A77F4BD4282BC5990046921B /* RegisterBirthViewModel.swift in Sources */,
 				A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */,

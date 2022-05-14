@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class RegisterNationalityView: UIView {
     
@@ -35,18 +36,25 @@ final class RegisterNationalityView: UIView {
     
     private let nationalityTextField: UITextField = {
         let textField = UITextField()
+        let configuration = UIImage.SymbolConfiguration(pointSize: 13.0)
+        let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
         textField.font = .roboto(size: 14.0)
         textField.textColor = .black
         textField.attributedPlaceholder = NSAttributedString(
             string: "Choose your nationality",
             attributes: [.foregroundColor: UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)])
+        textField.rightView = imageView
+        textField.rightViewMode = .always
         return textField
     }()
+    
+    private lazy var countryListView = CountryListView()
     
     // MARK: Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         layout()
     }
     
@@ -79,6 +87,12 @@ final class RegisterNationalityView: UIView {
         nationalityTextField.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10.0)
             $0.centerY.equalToSuperview()
+        }
+        
+        self.addSubview(countryListView)
+        countryListView.snp.makeConstraints {
+            $0.top.equalTo(answerBackgroundView.snp.bottom).offset(8.0)
+            $0.leading.trailing.equalTo(answerBackgroundView)
         }
     }
 }

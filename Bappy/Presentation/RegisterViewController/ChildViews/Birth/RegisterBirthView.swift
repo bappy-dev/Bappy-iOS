@@ -33,14 +33,22 @@ final class RegisterBirthView: UIView {
         return backgroundView
     }()
     
-    private let birthTextField: UITextField = {
+    private lazy var birthTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 14.0)
         textField.textColor = .black
         textField.attributedPlaceholder = NSAttributedString(
             string: "Select your birth date",
             attributes: [.foregroundColor: UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)])
+        textField.addTarget(self, action: #selector(showBirthPicker), for: .editingDidBegin)
         return textField
+    }()
+    
+    private lazy var birthPickerView: BirthPickerView = {
+        let birthPickerView = BirthPickerView()
+        birthPickerView.isHidden = true
+        birthPickerView.delegate = self
+        return birthPickerView
     }()
     
     // MARK: Lifecycle
@@ -52,6 +60,17 @@ final class RegisterBirthView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Actions
+    @objc
+    private func showBirthPicker() {
+        self.endEditing(false)
+        UIView.transition(with: birthPickerView,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve) {
+            self.birthPickerView.isHidden = false
+        }
     }
     
     // MARK: Helpers
@@ -74,11 +93,26 @@ final class RegisterBirthView: UIView {
             $0.leading.trailing.equalToSuperview().inset(23.0)
             $0.height.equalTo(39.0)
         }
-
+        
         answerBackgroundView.addSubview(birthTextField)
         birthTextField.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10.0)
             $0.centerY.equalToSuperview()
         }
+        
+        self.addSubview(birthPickerView)
+        birthPickerView.snp.makeConstraints {
+            $0.top.equalTo(birthQuestionLabel.snp.bottom).offset(20.0)
+            $0.leading.equalToSuperview().inset(27.0)
+            $0.trailing.equalToSuperview().inset(23.0)
+            $0.height.equalTo(308.0)
+        }
+    }
+}
+
+// BirthPickerViewDelegate
+extension RegisterBirthView: BirthPickerViewDelegate {
+    func birthPickerViewDidSelect(birthDate: String) {
+        birthTextField.text = birthDate
     }
 }
