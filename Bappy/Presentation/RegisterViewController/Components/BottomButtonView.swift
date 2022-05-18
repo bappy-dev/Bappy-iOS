@@ -7,18 +7,16 @@
 
 import UIKit
 import SnapKit
-
-protocol BottomButtonViewDelegate: AnyObject {
-    func didTapPreviousButton()
-    func didTapNextButton()
-}
+import RxSwift
+import RxCocoa
 
 final class BottomButtonView: UIView {
     
     // MARK: Properties
-    weak var delegate: BottomButtonViewDelegate?
+    private let viewModel: BottomButtonViewModel
+    private let disposeBag = DisposeBag()
     
-    private lazy var previousButton: UIButton = {
+    private let previousButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 10.0, weight: .medium)
         let image = UIImage(systemName: "chevron.backward")
@@ -31,11 +29,10 @@ final class BottomButtonView: UIView {
                 attributes: [.font: UIFont.roboto(size: 12.0, family: .Medium)
                 ]),
             for: .normal)
-        button.addTarget(self, action: #selector(didTapPreviousButton), for: .touchUpInside)
         return button
     }()
     
-    private lazy var nextButton: UIButton = {
+    private let nextButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 10.0, weight: .medium)
         let image = UIImage(systemName: "chevron.backward")
@@ -49,33 +46,33 @@ final class BottomButtonView: UIView {
                 attributes: [.font: UIFont.roboto(size: 12.0, family: .Medium)
                 ]),
             for: .normal)
-        button.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         return button
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: BottomButtonViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
+        bind()
         layout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: Actions
-    @objc
-    private func didTapPreviousButton() {
-        delegate?.didTapPreviousButton()
-    }
-    
-    @objc
-    private func didTapNextButton() {
-        delegate?.didTapNextButton()
-    }
-    
+
     // MARK: Helpers
+    private func bind() {
+        previousButton.rx.tap
+            .bind(to: viewModel.input.didTapPreviousButton)
+            .disposed(by: disposeBag)
+        
+        nextButton.rx.tap
+            .bind(to: viewModel.input.didTapNextButton)
+            .disposed(by: disposeBag)
+    }
+    
     private func layout() {
         self.addSubview(previousButton)
         previousButton.snp.makeConstraints {
@@ -96,3 +93,20 @@ final class BottomButtonView: UIView {
         }
     }
 }
+
+// MARK: Binder
+//extension Reactive where Base: BottomButtonView {
+//    var isNextButtonActivated: Binder<Bool> {
+//        return Binder(self.base) { progressBarView, progression in
+//            progressBarView.updateProgression(progression)
+//        }
+//    }
+//}
+
+//// MARK: Binder
+//extension Reactive where Base: BottomButtonView {
+//    var nextButtonTap: ControlEvent<Void> {
+//        return ControlEvent
+//    }
+//}
+

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import RxSwift
 
 final class ProgressBarView: UIView {
     
@@ -53,6 +54,10 @@ final class ProgressBarView: UIView {
     }
     
     // MARK: Methods
+    func initializeProgression() {
+        updateProgression(1.0/7.0)
+    }
+    
     func updateProgression(_ progression: CGFloat) {
         yellowView.snp.removeConstraints()
         UIView.animate(withDuration: 0.3) {
@@ -62,6 +67,15 @@ final class ProgressBarView: UIView {
                 $0.width.equalTo(self.snp.width).multipliedBy(progression)
             }
             self.layoutIfNeeded()
+        }
+    }
+}
+
+// MARK: Binder
+extension Reactive where Base: ProgressBarView {
+    var setProgression: Binder<CGFloat> {
+        return Binder(self.base) { progressBarView, progression in
+            progressBarView.updateProgression(progression)
         }
     }
 }

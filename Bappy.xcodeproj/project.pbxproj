@@ -21,6 +21,7 @@
 		A77F42FD28306801008BC89A /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FC28306801008BC89A /* RxRelay */; };
 		A77F42FF28306801008BC89A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FE28306801008BC89A /* RxSwift */; };
 		A77F430128306869008BC89A /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F430028306869008BC89A /* ViewModelType.swift */; };
+		A77F43052833EA8E008BC89A /* BottomButtonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F43042833EA8E008BC89A /* BottomButtonViewModel.swift */; };
 		A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC0282AC8070046921B /* RegisterNameView.swift */; };
 		A77F4BC4282AD1010046921B /* RegisterGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC3282AD1010046921B /* RegisterGenderView.swift */; };
 		A77F4BC6282B8C9D0046921B /* BottomButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BC5282B8C9D0046921B /* BottomButtonView.swift */; };
@@ -60,6 +61,7 @@
 		A769CD1C282A947B0086182C /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		A77F42F7283067B9008BC89A /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		A77F430028306869008BC89A /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
+		A77F43042833EA8E008BC89A /* BottomButtonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonViewModel.swift; sourceTree = "<group>"; };
 		A77F4BC0282AC8070046921B /* RegisterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterNameView.swift; sourceTree = "<group>"; };
 		A77F4BC3282AD1010046921B /* RegisterGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterGenderView.swift; sourceTree = "<group>"; };
 		A77F4BC5282B8C9D0046921B /* BottomButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonView.swift; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 			children = (
 				A7EB77FE282A9BB400E3E965 /* ProgressBarView.swift */,
 				A77F4BC5282B8C9D0046921B /* BottomButtonView.swift */,
+				A77F43042833EA8E008BC89A /* BottomButtonViewModel.swift */,
 				A77F4BC7282B93090046921B /* SelectionButton.swift */,
 				A77F4BEA282CA3150046921B /* BirthPickerView.swift */,
 				A74640D9282EA1BC0022322E /* CountryListView.swift */,
@@ -381,6 +384,7 @@
 				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
 				A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */,
 				A77F4BE0282BC6230046921B /* RegisterPersonalityView.swift in Sources */,
+				A77F43052833EA8E008BC89A /* BottomButtonViewModel.swift in Sources */,
 				A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */,
 				A77F4BD8282BC5BE0046921B /* RegisterNationalityViewModel.swift in Sources */,
 				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,

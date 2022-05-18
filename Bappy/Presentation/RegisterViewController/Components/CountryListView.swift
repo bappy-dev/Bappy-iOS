@@ -20,7 +20,6 @@ final class CountryListView: UIView {
         tableView.register(countryCell.self, forCellReuseIdentifier: "CountryCell")
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10.0, bottom: 0, right: 15.0)
         tableView.separatorColor = UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
-//        tableView.bounces = true
         return tableView
     }()
     
@@ -38,7 +37,6 @@ final class CountryListView: UIView {
         
         configure()
         layout()
-        print(countries)
     }
     
     required init?(coder: NSCoder) {

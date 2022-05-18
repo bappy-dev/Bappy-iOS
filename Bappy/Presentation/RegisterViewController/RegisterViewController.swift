@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class RegisterViewController: UIViewController {
     
@@ -29,32 +31,31 @@ final class RegisterViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    private let bottomButtonView = BottomButtonView()
+    private let bottomButtonView: BottomButtonView
+    
+    private let disposeBag = DisposeBag()
     
     // MARK: Lifecycle
-    init(viewModel: RegisterViewModel) {
+    init(viewModel: RegisterViewModel = RegisterViewModel()) {
         self.viewModel = viewModel
-        
+        self.bottomButtonView = BottomButtonView(viewModel: viewModel.subViewModels.bottomButtonViewModel)
         super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
+        bind()
         configure()
         layout()
         addKeyboardObserver()
         addTapGestureOnScrollView()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        progressBarView.updateProgression(1.0/7.0)
+        progressBarView.initializeProgression()
     }
     
     // MARK: Events
@@ -70,26 +71,6 @@ final class RegisterViewController: UIViewController {
     }
     
     // MARK: Actions
-    private func previousButtonHandler() {
-        guard page > 0 else { return }
-        page -= 1
-        let offset = view.frame.width * CGFloat(page)
-        let progression = CGFloat(page + 1) / 7.0
-        scrollView.setContentOffset(CGPoint(x: offset, y: 0), animated: true)
-        progressBarView.updateProgression(progression)
-        view.endEditing(true)
-    }
-    
-    private func nextButtonHandler() {
-        guard page < 6 else { return }
-        page += 1
-        let offset = view.frame.width * CGFloat(page)
-        let progression = CGFloat(page + 1) / 7.0
-        scrollView.setContentOffset(CGPoint(x: offset, y: 0), animated: true)
-        progressBarView.updateProgression(progression)
-        view.endEditing(true)
-    }
-    
     @objc
     private func keyboardHeightObserver(_ notification: NSNotification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
@@ -104,6 +85,24 @@ final class RegisterViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func bind() {
+        contentView.rx.numOfSubviews
+            .bind(to: viewModel.input.numOfPage)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.pageContentOffset
+            .drive(scrollView.rx.setContentOffset)
+            .disposed(by: disposeBag)
+        
+//        viewModel.output.pageContentOffset
+//            .drive(view.rx.endEditing)
+//            .disposed(by: disposeBag)
+        
+        viewModel.output.progression
+            .drive(progressBarView.rx.setProgression)
+            .disposed(by: disposeBag)
+    }
+    
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
@@ -118,7 +117,7 @@ final class RegisterViewController: UIViewController {
         view.backgroundColor = .white
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        bottomButtonView.delegate = self
+
     }
     
     private func layout() {
@@ -210,13 +209,21 @@ final class RegisterViewController: UIViewController {
     }
 }
 
-// MARK: BottomButtonViewDelegate
-extension RegisterViewController: BottomButtonViewDelegate {
-    func didTapPreviousButton() {
-        previousButtonHandler()
+// MARK: Binder
+// MainScheduler에서 수행, Observer only -> 값을 주입할 수 있지만, 값을 관찰할 수 없음
+extension Reactive where Base: UIScrollView {
+    var setContentOffset: Binder<CGPoint> {
+        return Binder(self.base) { scrollView, offset in
+            scrollView.setContentOffset(offset, animated: true)
+        }
     }
-    
-    func didTapNextButton() {
-        nextButtonHandler()
+}
+
+// MARK: ControlEvent
+// MainScheduler에서 수행, Observable only -> 값을 관찰할 수 있지만, 값을 주입할 수 없음
+extension Reactive where Base: UIView {
+    var numOfSubviews: ControlEvent<Int> {
+        let source = self.methodInvoked(#selector(Base.didAddSubview)).map { _ in base.subviews.count }
+        return ControlEvent(events: source)
     }
 }
