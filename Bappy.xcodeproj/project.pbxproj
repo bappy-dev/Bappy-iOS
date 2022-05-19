@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A717323128355ED90073E702 /* HomeListTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717323028355ED90073E702 /* HomeListTopView.swift */; };
+		A7173234283564620073E702 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7173233283564620073E702 /* Constant.swift */; };
+		A71732362836171A0073E702 /* bappy.png in Resources */ = {isa = PBXBuildFile; fileRef = A71732352836171A0073E702 /* bappy.png */; };
+		A71732382836171F0073E702 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = A71732372836171F0073E702 /* logo.png */; };
+		A717323C28361F580073E702 /* TitleTopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717323B28361F580073E702 /* TitleTopView.swift */; };
+		A717323F283631860073E702 /* BappyNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717323E283631860073E702 /* BappyNavigationViewController.swift */; };
+		A717324128363D1F0073E702 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717324028363D1F0073E702 /* ProfileView.swift */; };
+		A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEB283553890052C60A /* BappyTabBarController.swift */; };
+		A71EBAEE2835558D0052C60A /* MyListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAED2835558D0052C60A /* MyListViewController.swift */; };
+		A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEF283555B90052C60A /* HomeListViewController.swift */; };
+		A71EBAF2283555D30052C60A /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAF1283555D30052C60A /* ProfileViewController.swift */; };
 		A74640DA282EA1BC0022322E /* CountryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74640D9282EA1BC0022322E /* CountryListView.swift */; };
 		A7598C7C282EA90D00F96E39 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7598C7B282EA90D00F96E39 /* Country.swift */; };
 		A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDD282A8C300086182C /* AppDelegate.swift */; };
@@ -50,6 +61,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A717323028355ED90073E702 /* HomeListTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListTopView.swift; sourceTree = "<group>"; };
+		A7173233283564620073E702 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
+		A71732352836171A0073E702 /* bappy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bappy.png; sourceTree = "<group>"; };
+		A71732372836171F0073E702 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
+		A717323B28361F580073E702 /* TitleTopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleTopView.swift; sourceTree = "<group>"; };
+		A717323E283631860073E702 /* BappyNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyNavigationViewController.swift; sourceTree = "<group>"; };
+		A717324028363D1F0073E702 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		A71EBAEB283553890052C60A /* BappyTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTabBarController.swift; sourceTree = "<group>"; };
+		A71EBAED2835558D0052C60A /* MyListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListViewController.swift; sourceTree = "<group>"; };
+		A71EBAEF283555B90052C60A /* HomeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListViewController.swift; sourceTree = "<group>"; };
+		A71EBAF1283555D30052C60A /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		A74640D9282EA1BC0022322E /* CountryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryListView.swift; sourceTree = "<group>"; };
 		A7598C7B282EA90D00F96E39 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		A769CCDA282A8C300086182C /* Bappy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bappy.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +127,65 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A717323228355EDC0073E702 /* SubComponents */ = {
+			isa = PBXGroup;
+			children = (
+				A717323028355ED90073E702 /* HomeListTopView.swift */,
+			);
+			path = SubComponents;
+			sourceTree = "<group>";
+		};
+		A717323D28361F5F0073E702 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A717323E283631860073E702 /* BappyNavigationViewController.swift */,
+				A717323B28361F580073E702 /* TitleTopView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A71732422836494A0073E702 /* SubComponents */ = {
+			isa = PBXGroup;
+			children = (
+				A717324028363D1F0073E702 /* ProfileView.swift */,
+			);
+			name = SubComponents;
+			sourceTree = "<group>";
+		};
+		A71EBAF328355BFA0052C60A /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				A71EBAEB283553890052C60A /* BappyTabBarController.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
+		A71EBAF528355C1B0052C60A /* My */ = {
+			isa = PBXGroup;
+			children = (
+				A71EBAED2835558D0052C60A /* MyListViewController.swift */,
+			);
+			path = My;
+			sourceTree = "<group>";
+		};
+		A71EBAF628355C230052C60A /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				A71EBAEF283555B90052C60A /* HomeListViewController.swift */,
+				A717323228355EDC0073E702 /* SubComponents */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		A71EBAF728355C2A0052C60A /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				A71EBAF1283555D30052C60A /* ProfileViewController.swift */,
+				A71732422836494A0073E702 /* SubComponents */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		A7598C7A282EA8F600F96E39 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +237,8 @@
 			children = (
 				A7EB7837282AB83800E3E965 /* Font */,
 				A769CCE6282A8C310086182C /* Assets.xcassets */,
+				A71732352836171A0073E702 /* bappy.png */,
+				A71732372836171F0073E702 /* logo.png */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -164,32 +247,38 @@
 			isa = PBXGroup;
 			children = (
 				A769CCE8282A8C310086182C /* LaunchScreen.storyboard */,
-				A769CD02282A8F7A0086182C /* RegisterViewController */,
+				A717323D28361F5F0073E702 /* Components */,
+				A71EBAF328355BFA0052C60A /* TabBar */,
+				A71EBAF528355C1B0052C60A /* My */,
+				A71EBAF628355C230052C60A /* Home */,
+				A71EBAF728355C2A0052C60A /* Profile */,
+				A769CD02282A8F7A0086182C /* Register */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
 		};
-		A769CD02282A8F7A0086182C /* RegisterViewController */ = {
+		A769CD02282A8F7A0086182C /* Register */ = {
 			isa = PBXGroup;
 			children = (
 				A7EB783A282AC3CD00E3E965 /* RegisterViewController.swift */,
 				A77F42F7283067B9008BC89A /* RegisterViewModel.swift */,
-				A77F4BC2282AC8100046921B /* ChildViews */,
-				A7EB7800282A9BB700E3E965 /* Components */,
+				A77F4BC2282AC8100046921B /* SubViews */,
+				A7EB7800282A9BB700E3E965 /* SubComponents */,
 			);
-			path = RegisterViewController;
+			path = Register;
 			sourceTree = "<group>";
 		};
 		A769CD1E282A94800086182C /* Util */ = {
 			isa = PBXGroup;
 			children = (
 				A769CD1C282A947B0086182C /* Extension.swift */,
+				A7173233283564620073E702 /* Constant.swift */,
 				A77F430028306869008BC89A /* ViewModelType.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
 		};
-		A77F4BC2282AC8100046921B /* ChildViews */ = {
+		A77F4BC2282AC8100046921B /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
 				A77F4BCF282BC5730046921B /* Name */,
@@ -200,7 +289,7 @@
 				A77F4BE8282BC6530046921B /* Personality */,
 				A77F4BE9282BC65E0046921B /* Hobby */,
 			);
-			path = ChildViews;
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		A77F4BCF282BC5730046921B /* Name */ = {
@@ -266,7 +355,7 @@
 			path = Hobby;
 			sourceTree = "<group>";
 		};
-		A7EB7800282A9BB700E3E965 /* Components */ = {
+		A7EB7800282A9BB700E3E965 /* SubComponents */ = {
 			isa = PBXGroup;
 			children = (
 				A7EB77FE282A9BB400E3E965 /* ProgressBarView.swift */,
@@ -276,7 +365,7 @@
 				A77F4BEA282CA3150046921B /* BirthPickerView.swift */,
 				A74640D9282EA1BC0022322E /* CountryListView.swift */,
 			);
-			path = Components;
+			path = SubComponents;
 			sourceTree = "<group>";
 		};
 		A7EB7837282AB83800E3E965 /* Font */ = {
@@ -362,11 +451,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A71732362836171A0073E702 /* bappy.png in Resources */,
 				A7EB7836282AB7B100E3E965 /* Roboto-Thin.ttf in Resources */,
 				A7EB7808282AB51C00E3E965 /* Roboto-Medium.ttf in Resources */,
 				A7EB7834282AB7A900E3E965 /* Roboto-Regular.ttf in Resources */,
 				A769CCEA282A8C310086182C /* LaunchScreen.storyboard in Resources */,
 				A7EB7832282AB79B00E3E965 /* Roboto-Bold.ttf in Resources */,
+				A71732382836171F0073E702 /* logo.png in Resources */,
 				A7EB7830282AB79200E3E965 /* Roboto-Black.ttf in Resources */,
 				A769CCE7282A8C310086182C /* Assets.xcassets in Resources */,
 				A7EB7806282AB48500E3E965 /* Roboto-Light.ttf in Resources */,
@@ -383,13 +474,20 @@
 				A77F4BD2282BC5910046921B /* RegisterBirthView.swift in Sources */,
 				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
 				A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */,
+				A717323128355ED90073E702 /* HomeListTopView.swift in Sources */,
 				A77F4BE0282BC6230046921B /* RegisterPersonalityView.swift in Sources */,
 				A77F43052833EA8E008BC89A /* BottomButtonViewModel.swift in Sources */,
+				A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */,
+				A71EBAEE2835558D0052C60A /* MyListViewController.swift in Sources */,
+				A7173234283564620073E702 /* Constant.swift in Sources */,
+				A717324128363D1F0073E702 /* ProfileView.swift in Sources */,
+				A717323C28361F580073E702 /* TitleTopView.swift in Sources */,
 				A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */,
 				A77F4BD8282BC5BE0046921B /* RegisterNationalityViewModel.swift in Sources */,
 				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
 				A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */,
+				A71EBAF2283555D30052C60A /* ProfileViewController.swift in Sources */,
 				A7598C7C282EA90D00F96E39 /* Country.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
 				A7EB783B282AC3CD00E3E965 /* RegisterViewController.swift in Sources */,
@@ -402,6 +500,8 @@
 				A769CD1D282A947B0086182C /* Extension.swift in Sources */,
 				A77F4BC8282B93090046921B /* SelectionButton.swift in Sources */,
 				A77F4BDC282BC5FC0046921B /* RegisterLanguageView.swift in Sources */,
+				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
+				A717323F283631860073E702 /* BappyNavigationViewController.swift in Sources */,
 				A77F4BC6282B8C9D0046921B /* BottomButtonView.swift in Sources */,
 				A77F4BE4282BC63D0046921B /* RegisterHobbyView.swift in Sources */,
 				A7EB77FF282A9BB400E3E965 /* ProgressBarView.swift in Sources */,
@@ -474,7 +574,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -528,7 +628,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -550,8 +650,10 @@
 				INFOPLIST_FILE = Bappy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -578,8 +680,10 @@
 				INFOPLIST_FILE = Bappy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
