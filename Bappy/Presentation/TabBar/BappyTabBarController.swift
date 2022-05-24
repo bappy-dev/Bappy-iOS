@@ -9,6 +9,9 @@ import UIKit
 
 final class BappyTabBarController: UITabBarController {
     
+    // MARK: Properties
+    private var isLayoutSet: Bool = false
+    
     // MARK: Lifecycle
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -23,9 +26,8 @@ final class BappyTabBarController: UITabBarController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        print("DEBUG: \(tabBar.safeAreaInsets.bottom)")
-//        tabBar.frame.origin.y = view.frame.height - 89.0
+        
+        guard !isLayoutSet else { return }
         let offset = (-tabBar.safeAreaInsets.bottom) * 29.0 / 34.0 + 25
         let top = tabBar.safeAreaInsets.bottom * 6.0 / 17.0 - 12.0
         let bottom = -6.0 - top
@@ -33,6 +35,7 @@ final class BappyTabBarController: UITabBarController {
             item.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -1 * offset)
             item.imageInsets = UIEdgeInsets(top: top, left: -3.0, bottom: bottom, right: -3.0)
         }
+        isLayoutSet = true
     }
     
     // MARK: Helpers
@@ -70,8 +73,6 @@ final class BappyTabBarController: UITabBarController {
         navigationController.tabBarItem.image = unselectedImage?.withRenderingMode(.alwaysOriginal)
         navigationController.tabBarItem.selectedImage = selectedImage?.withRenderingMode(.alwaysOriginal)
         navigationController.navigationBar.isHidden = true
-        print("DEBUG: dfdf \(tabBar)")
-//        navigationController.tabBarItem.imageInsets = UIEdgeInsets(top: 0, left: -3, bottom: -6, right: -3)
         navigationController.tabBarItem.setTitleTextAttributes([
             .foregroundColor: UIColor(named: "bappy_brown")!,
             .font: UIFont.roboto(size: 7.0)

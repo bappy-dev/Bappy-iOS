@@ -30,6 +30,8 @@
 		A75B11BB283C8A4000C49597 /* ReportWritingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11BA283C8A4000C49597 /* ReportWritingSectionView.swift */; };
 		A75B11BD283C993C00C49597 /* ReportImageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11BC283C993C00C49597 /* ReportImageSectionView.swift */; };
 		A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11BF283C9BF700C49597 /* ReportPhotoCell.swift */; };
+		A75B11C3283CB14B00C49597 /* ReportTypeDropdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11C2283CB14B00C49597 /* ReportTypeDropdownView.swift */; };
+		A75B11C5283CBC1F00C49597 /* ReportTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11C4283CBC1F00C49597 /* ReportTypeCell.swift */; };
 		A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDD282A8C300086182C /* AppDelegate.swift */; };
 		A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDF282A8C300086182C /* SceneDelegate.swift */; };
 		A769CCE7282A8C310086182C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A769CCE6282A8C310086182C /* Assets.xcassets */; };
@@ -101,6 +103,8 @@
 		A75B11BA283C8A4000C49597 /* ReportWritingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportWritingSectionView.swift; sourceTree = "<group>"; };
 		A75B11BC283C993C00C49597 /* ReportImageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportImageSectionView.swift; sourceTree = "<group>"; };
 		A75B11BF283C9BF700C49597 /* ReportPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPhotoCell.swift; sourceTree = "<group>"; };
+		A75B11C2283CB14B00C49597 /* ReportTypeDropdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportTypeDropdownView.swift; sourceTree = "<group>"; };
+		A75B11C4283CBC1F00C49597 /* ReportTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportTypeCell.swift; sourceTree = "<group>"; };
 		A769CCDA282A8C300086182C /* Bappy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bappy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A769CCDD282A8C300086182C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A769CCDF282A8C300086182C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -257,6 +261,7 @@
 			children = (
 				A75B11BA283C8A4000C49597 /* ReportWritingSectionView.swift */,
 				A75B11BC283C993C00C49597 /* ReportImageSectionView.swift */,
+				A75B11C2283CB14B00C49597 /* ReportTypeDropdownView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -265,6 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				A75B11BF283C9BF700C49597 /* ReportPhotoCell.swift */,
+				A75B11C4283CBC1F00C49597 /* ReportTypeCell.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -580,6 +586,7 @@
 				A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */,
 				A78C535E283B719800CC41F5 /* HangoutImageSectionView.swift in Sources */,
 				A72C06C6283666820068897C /* HangoutCell.swift in Sources */,
+				A75B11C5283CBC1F00C49597 /* ReportTypeCell.swift in Sources */,
 				A71EBAEE2835558D0052C60A /* MyListViewController.swift in Sources */,
 				A7173234283564620073E702 /* Constant.swift in Sources */,
 				A717324128363D1F0073E702 /* ProfileView.swift in Sources */,
@@ -605,6 +612,7 @@
 				A77F4BD4282BC5990046921B /* RegisterBirthViewModel.swift in Sources */,
 				A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */,
 				A72C06CC283733E50068897C /* ParticipantImageCell.swift in Sources */,
+				A75B11C3283CB14B00C49597 /* ReportTypeDropdownView.swift in Sources */,
 				A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */,
 				A769CD1D282A947B0086182C /* Extension.swift in Sources */,
 				A77F4BC8282B93090046921B /* SelectionButton.swift in Sources */,

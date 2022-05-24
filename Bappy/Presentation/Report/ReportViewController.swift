@@ -63,6 +63,7 @@ final class ReportViewController: UIViewController {
         configure()
         layout()
         addKeyboardObserver()
+        addTapGestureOnScrollView()
     }
 
     required init?(coder: NSCoder) {
@@ -93,11 +94,24 @@ final class ReportViewController: UIViewController {
         let keyboardHeight = view.frame.height - keyboardFrame.minY
         self.scrollView.contentInset.bottom = keyboardHeight
     }
+    
+    @objc
+    private func didTapScrollView() {
+        view.endEditing(true)
+    }
 
     // MARK: Helpers
     private func addKeyboardObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func addTapGestureOnScrollView() {
+        let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapScrollView))
+        singleTapGestureRecognizer.numberOfTapsRequired = 1
+        singleTapGestureRecognizer.isEnabled = true
+        singleTapGestureRecognizer.cancelsTouchesInView = false
+        scrollView.addGestureRecognizer(singleTapGestureRecognizer)
     }
 
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
@@ -107,7 +121,7 @@ final class ReportViewController: UIViewController {
 
     private func configure() {
         view.backgroundColor = .white
-        scrollView.keyboardDismissMode = .interactive
+//        scrollView.keyboardDismissMode = .interactive
         imageSectionView.delegate = self
     }
 
@@ -122,19 +136,19 @@ final class ReportViewController: UIViewController {
             $0.edges.equalToSuperview()
             $0.width.equalTo(view.frame.width)
         }
-
-        contentView.addSubview(writingSectionView)
-        writingSectionView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-        }
         
         contentView.addSubview(imageSectionView)
         imageSectionView.snp.makeConstraints {
-            $0.top.equalTo(writingSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(150.0)
         }
 
+        contentView.addSubview(writingSectionView)
+        writingSectionView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(imageSectionView.snp.top)
+        }
+        
         contentView.addSubview(reportButton)
         reportButton.snp.makeConstraints {
             $0.top.equalTo(imageSectionView.snp.bottom).offset(74.0)

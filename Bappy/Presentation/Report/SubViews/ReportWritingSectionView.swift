@@ -34,7 +34,7 @@ final class ReportWritingSectionView: UIView {
         return backgroundView
     }()
     
-    private let reportingTypeTextField: UITextField = {
+    private lazy var reportingTypeTextField: UITextField = {
         let textField = UITextField()
         let configuration = UIImage.SymbolConfiguration(pointSize: 13.0, weight: .medium)
         let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
@@ -47,6 +47,7 @@ final class ReportWritingSectionView: UIView {
             attributes: [.foregroundColor: UIColor(red: 169.0/255.0, green: 162.0/255.0, blue: 139.0/255.0, alpha: 1.0)])
         textField.rightView = imageView
         textField.rightViewMode = .always
+        textField.addTarget(self, action: #selector(didTapReportingType), for: .editingDidBegin)
         return textField
     }()
     
@@ -72,7 +73,6 @@ final class ReportWritingSectionView: UIView {
         textView.font = .roboto(size: 12.0)
         textView.textColor = .black
         textView.textAlignment = .left
-//        textView.isScrollEnabled = false
         return textView
     }()
     
@@ -84,6 +84,8 @@ final class ReportWritingSectionView: UIView {
         label.numberOfLines = 0
         return label
     }()
+    
+    private let dropdownView = ReportTypeDropdownView()
     
     // MARK: Lifecycle
     override init(frame: CGRect) {
@@ -99,14 +101,42 @@ final class ReportWritingSectionView: UIView {
     
     // MARK: Actions
     @objc
+    private func didTapReportingType(_ textField: UITextField) {
+        textField.endEditing(true)
+        openDropdown()
+    }
+    
+    @objc
     private func didTextChange() {
         reportingDetailPlaceholderLabel.isHidden = !reportingDetailTextView.text.isEmpty
+    }
+    
+    private func openDropdown() {
+        UIView.animate(withDuration: 0.3) {
+            self.dropdownView.isHidden = false
+            self.dropdownView.snp.updateConstraints {
+                $0.height.equalTo(175.0)
+            }
+            self.layoutIfNeeded()
+        }
+    }
+    
+    func closeDropdown() {
+        UIView.animate(withDuration: 0.3) {
+            self.dropdownView.snp.updateConstraints {
+                $0.height.equalTo(0)
+            }
+            self.layoutIfNeeded()
+        } completion: { _ in
+//            self.dropdownView.isHidden = true
+        }
     }
     
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
         NotificationCenter.default.addObserver(self, selector: #selector(didTextChange), name: UITextView.textDidChangeNotification, object: nil)
+        dropdownView.delegate = self
     }
     
     private func layout() {
@@ -164,5 +194,21 @@ final class ReportWritingSectionView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalToSuperview().inset(8.0)
         }
+        
+        self.addSubview(dropdownView)
+        dropdownView.snp.makeConstraints {
+            $0.top.equalTo(reportingTypeBackgroundView.snp.bottom).offset(5.0)
+            $0.leading.equalToSuperview().inset(26.0)
+            $0.trailing.equalToSuperview().inset(44.0)
+            $0.height.equalTo(0)
+        }
+    }
+}
+
+// MARK: ReportTypeDropdownViewDelegate
+extension ReportWritingSectionView: ReportTypeDropdownViewDelegate {
+    func didSelectText(_ text: String) {
+        reportingTypeTextField.text = text
+        closeDropdown()
     }
 }

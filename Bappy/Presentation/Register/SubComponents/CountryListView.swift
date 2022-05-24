@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 
+private let reuseIdentifier = "CountryCell"
 final class CountryListView: UIView {
     
     // MARK: Properties
@@ -17,7 +18,7 @@ final class CountryListView: UIView {
         let tableView = UITableView()
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(countryCell.self, forCellReuseIdentifier: "CountryCell")
+        tableView.register(countryCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10.0, bottom: 0, right: 15.0)
         tableView.separatorColor = UIColor(named: "bappy_gray")
         return tableView
@@ -69,7 +70,7 @@ extension CountryListView: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CountryCell", for: indexPath) as! countryCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! countryCell
         cell.country = countries[indexPath.row]
         return cell
     }
