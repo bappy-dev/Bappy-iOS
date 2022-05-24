@@ -37,6 +37,7 @@ final class RegisterViewModel: ViewModelType {
 //        var isFirstPage: Driver<Bool>
 //        var isLastPage: Driver<Bool>
 //        var shouldKeyboardShow: Driver<Bool>
+        var showSuccessView: Signal<Void>
     }
     
     let dependency: Dependency
@@ -66,6 +67,11 @@ final class RegisterViewModel: ViewModelType {
         let progression$ = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
                                                 resultSelector: getProgression)
             .asDriver(onErrorJustReturn: .zero)
+        let showSuccessView$ = goNextPage$
+            .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
+            .filter { $0.0 + 1 == $0.1 }
+            .map { _ in }
+            .asSignal(onErrorJustReturn: Void())
 //        let shouldKeyboardShow$ = page$.map { false }
             
         
@@ -75,7 +81,8 @@ final class RegisterViewModel: ViewModelType {
                            goNextPage: goNextPage$.asObserver(),
                            goPreviousPage: goPreviousPage$.asObserver())
         self.output = Output(pageContentOffset: pageContentOffset$,
-                             progression: progression$)
+                             progression: progression$,
+                             showSuccessView: showSuccessView$)
 //                             isContentValid: <#T##Driver<Bool>#>,
 //                             isFirstPage: <#T##Driver<Bool>#>,
 //                             isLastPage: <#T##Driver<Bool>#>)

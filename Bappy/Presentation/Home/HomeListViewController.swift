@@ -29,6 +29,17 @@ final class HomeListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // 임시
+        let viewModel = RegisterViewModel()
+        let viewController = RegisterViewController(viewModel: viewModel)
+        let rootViewController = UINavigationController(rootViewController: viewController)
+        rootViewController.navigationBar.isHidden = true
+        rootViewController.modalPresentationStyle = .fullScreen
+        self.present(rootViewController, animated: false)
+    }
+    
     // MARK: Helpers
     private func configureTableView() {
         tableView.dataSource = self

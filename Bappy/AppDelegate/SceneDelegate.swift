@@ -19,7 +19,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // 회원가입
 //        let viewModel = RegisterViewModel()
-//        let rootViewController = RegisterViewController(viewModel: viewModel)
+//        let viewController = RegisterViewController(viewModel: viewModel)
+//        let rootViewController = UINavigationController(rootViewController: viewController)
+//        rootViewController.navigationBar.isHidden = true
+        
+        // 회원가입 성공
+//        let rootViewController = RegisterSuccessViewController()
         
         // 메인탭
         let rootViewController = BappyTabBarController()

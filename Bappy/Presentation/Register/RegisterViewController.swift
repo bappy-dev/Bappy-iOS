@@ -27,10 +27,8 @@ final class RegisterViewController: UIViewController {
     }()
     
     private let progressBarView = ProgressBarView()
-    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    
     private let bottomButtonView: BottomButtonView
     
     private let disposeBag = DisposeBag()
@@ -100,6 +98,16 @@ final class RegisterViewController: UIViewController {
         
         viewModel.output.progression
             .drive(progressBarView.rx.setProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSuccessView
+            .emit { [weak self] _ in
+                guard let self = self else { return }
+                print("DEBUG: ..")
+                let viewController = RegisterSuccessViewController()
+                self.navigationController?.pushViewController(viewController, animated: true)
+//                self.present(viewController, animated: true)
+            }
             .disposed(by: disposeBag)
     }
     
