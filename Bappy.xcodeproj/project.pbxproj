@@ -18,8 +18,14 @@
 		A71EBAEE2835558D0052C60A /* MyListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAED2835558D0052C60A /* MyListViewController.swift */; };
 		A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEF283555B90052C60A /* HomeListViewController.swift */; };
 		A71EBAF2283555D30052C60A /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAF1283555D30052C60A /* ProfileViewController.swift */; };
+		A72C06C6283666820068897C /* HangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06C5283666820068897C /* HangoutCell.swift */; };
+		A72C06C8283694110068897C /* example_post.png in Resources */ = {isa = PBXBuildFile; fileRef = A72C06C7283694110068897C /* example_post.png */; };
+		A72C06CA283732690068897C /* ParticipantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06C9283732690068897C /* ParticipantsView.swift */; };
+		A72C06CC283733E50068897C /* ParticipantImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06CB283733E50068897C /* ParticipantImageCell.swift */; };
+		A72C06CE28373A360068897C /* HangoutDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06CD28373A360068897C /* HangoutDetailViewController.swift */; };
 		A74640DA282EA1BC0022322E /* CountryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74640D9282EA1BC0022322E /* CountryListView.swift */; };
 		A7598C7C282EA90D00F96E39 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7598C7B282EA90D00F96E39 /* Country.swift */; };
+		A75B11B4283BE66200C49597 /* BappyTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11B3283BE66200C49597 /* BappyTabBar.swift */; };
 		A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDD282A8C300086182C /* AppDelegate.swift */; };
 		A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDF282A8C300086182C /* SceneDelegate.swift */; };
 		A769CCE7282A8C310086182C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A769CCE6282A8C310086182C /* Assets.xcassets */; };
@@ -27,6 +33,7 @@
 		A769CCFC282A8EF30086182C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFB282A8EF30086182C /* SnapKit */; };
 		A769CCFF282A8F100086182C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFE282A8F100086182C /* Kingfisher */; };
 		A769CD1D282A947B0086182C /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CD1C282A947B0086182C /* Extension.swift */; };
+		A77309A728376288007E73F4 /* SortingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77309A628376288007E73F4 /* SortingHeaderView.swift */; };
 		A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F42F7283067B9008BC89A /* RegisterViewModel.swift */; };
 		A77F42FB28306801008BC89A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FA28306801008BC89A /* RxCocoa */; };
 		A77F42FD28306801008BC89A /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FC28306801008BC89A /* RxRelay */; };
@@ -50,6 +57,12 @@
 		A77F4BE4282BC63D0046921B /* RegisterHobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BE3282BC63D0046921B /* RegisterHobbyView.swift */; };
 		A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BE5282BC6400046921B /* RegisterHobbyViewModel.swift */; };
 		A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BEA282CA3150046921B /* BirthPickerView.swift */; };
+		A78C535E283B719800CC41F5 /* HangoutImageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */; };
+		A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535F283B741700CC41F5 /* HangoutImageCell.swift */; };
+		A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */; };
+		A78C5366283BB16500CC41F5 /* HangoutMapSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5365283BB16500CC41F5 /* HangoutMapSectionView.swift */; };
+		A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5367283BB3F100CC41F5 /* HangoutPlanSectionView.swift */; };
+		A78C536A283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5369283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift */; };
 		A7EB77FF282A9BB400E3E965 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EB77FE282A9BB400E3E965 /* ProgressBarView.swift */; };
 		A7EB7806282AB48500E3E965 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A7EB7805282AB48500E3E965 /* Roboto-Light.ttf */; };
 		A7EB7808282AB51C00E3E965 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A7EB7807282AB51C00E3E965 /* Roboto-Medium.ttf */; };
@@ -72,8 +85,14 @@
 		A71EBAED2835558D0052C60A /* MyListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListViewController.swift; sourceTree = "<group>"; };
 		A71EBAEF283555B90052C60A /* HomeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListViewController.swift; sourceTree = "<group>"; };
 		A71EBAF1283555D30052C60A /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		A72C06C5283666820068897C /* HangoutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutCell.swift; sourceTree = "<group>"; };
+		A72C06C7283694110068897C /* example_post.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = example_post.png; sourceTree = "<group>"; };
+		A72C06C9283732690068897C /* ParticipantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsView.swift; sourceTree = "<group>"; };
+		A72C06CB283733E50068897C /* ParticipantImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantImageCell.swift; sourceTree = "<group>"; };
+		A72C06CD28373A360068897C /* HangoutDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutDetailViewController.swift; sourceTree = "<group>"; };
 		A74640D9282EA1BC0022322E /* CountryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryListView.swift; sourceTree = "<group>"; };
 		A7598C7B282EA90D00F96E39 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
+		A75B11B3283BE66200C49597 /* BappyTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTabBar.swift; sourceTree = "<group>"; };
 		A769CCDA282A8C300086182C /* Bappy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bappy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A769CCDD282A8C300086182C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A769CCDF282A8C300086182C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +100,7 @@
 		A769CCE9282A8C310086182C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A769CCEB282A8C310086182C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A769CD1C282A947B0086182C /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		A77309A628376288007E73F4 /* SortingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingHeaderView.swift; sourceTree = "<group>"; };
 		A77F42F7283067B9008BC89A /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		A77F430028306869008BC89A /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
 		A77F43042833EA8E008BC89A /* BottomButtonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonViewModel.swift; sourceTree = "<group>"; };
@@ -101,6 +121,12 @@
 		A77F4BE3282BC63D0046921B /* RegisterHobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterHobbyView.swift; sourceTree = "<group>"; };
 		A77F4BE5282BC6400046921B /* RegisterHobbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterHobbyViewModel.swift; sourceTree = "<group>"; };
 		A77F4BEA282CA3150046921B /* BirthPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthPickerView.swift; sourceTree = "<group>"; };
+		A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageSectionView.swift; sourceTree = "<group>"; };
+		A78C535F283B741700CC41F5 /* HangoutImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageCell.swift; sourceTree = "<group>"; };
+		A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMainSectionView.swift; sourceTree = "<group>"; };
+		A78C5365283BB16500CC41F5 /* HangoutMapSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMapSectionView.swift; sourceTree = "<group>"; };
+		A78C5367283BB3F100CC41F5 /* HangoutPlanSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutPlanSectionView.swift; sourceTree = "<group>"; };
+		A78C5369283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutParticipantsSectionView.swift; sourceTree = "<group>"; };
 		A7EB77FE282A9BB400E3E965 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 		A7EB7805282AB48500E3E965 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
 		A7EB7807282AB51C00E3E965 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
@@ -131,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				A717323028355ED90073E702 /* HomeListTopView.swift */,
+				A77309A628376288007E73F4 /* SortingHeaderView.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -140,6 +167,8 @@
 			children = (
 				A717323E283631860073E702 /* BappyNavigationViewController.swift */,
 				A717323B28361F580073E702 /* TitleTopView.swift */,
+				A72C06C9283732690068897C /* ParticipantsView.swift */,
+				A72C06CB283733E50068897C /* ParticipantImageCell.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -156,6 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				A71EBAEB283553890052C60A /* BappyTabBarController.swift */,
+				A75B11B3283BE66200C49597 /* BappyTabBar.swift */,
 			);
 			path = TabBar;
 			sourceTree = "<group>";
@@ -184,6 +214,16 @@
 				A71732422836494A0073E702 /* SubComponents */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		A72C06CF28373A3B0068897C /* Hangout */ = {
+			isa = PBXGroup;
+			children = (
+				A72C06CD28373A360068897C /* HangoutDetailViewController.swift */,
+				A78C5361283B79AF00CC41F5 /* SubViews */,
+				A78C5362283B79C900CC41F5 /* SubComponents */,
+			);
+			path = Hangout;
 			sourceTree = "<group>";
 		};
 		A7598C7A282EA8F600F96E39 /* Entity */ = {
@@ -239,6 +279,7 @@
 				A769CCE6282A8C310086182C /* Assets.xcassets */,
 				A71732352836171A0073E702 /* bappy.png */,
 				A71732372836171F0073E702 /* logo.png */,
+				A72C06C7283694110068897C /* example_post.png */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -249,6 +290,7 @@
 				A769CCE8282A8C310086182C /* LaunchScreen.storyboard */,
 				A717323D28361F5F0073E702 /* Components */,
 				A71EBAF328355BFA0052C60A /* TabBar */,
+				A72C06CF28373A3B0068897C /* Hangout */,
 				A71EBAF528355C1B0052C60A /* My */,
 				A71EBAF628355C230052C60A /* Home */,
 				A71EBAF728355C2A0052C60A /* Profile */,
@@ -355,6 +397,27 @@
 			path = Hobby;
 			sourceTree = "<group>";
 		};
+		A78C5361283B79AF00CC41F5 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */,
+				A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */,
+				A78C5365283BB16500CC41F5 /* HangoutMapSectionView.swift */,
+				A78C5367283BB3F100CC41F5 /* HangoutPlanSectionView.swift */,
+				A78C5369283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		A78C5362283B79C900CC41F5 /* SubComponents */ = {
+			isa = PBXGroup;
+			children = (
+				A72C06C5283666820068897C /* HangoutCell.swift */,
+				A78C535F283B741700CC41F5 /* HangoutImageCell.swift */,
+			);
+			path = SubComponents;
+			sourceTree = "<group>";
+		};
 		A7EB7800282A9BB700E3E965 /* SubComponents */ = {
 			isa = PBXGroup;
 			children = (
@@ -456,6 +519,7 @@
 				A7EB7808282AB51C00E3E965 /* Roboto-Medium.ttf in Resources */,
 				A7EB7834282AB7A900E3E965 /* Roboto-Regular.ttf in Resources */,
 				A769CCEA282A8C310086182C /* LaunchScreen.storyboard in Resources */,
+				A72C06C8283694110068897C /* example_post.png in Resources */,
 				A7EB7832282AB79B00E3E965 /* Roboto-Bold.ttf in Resources */,
 				A71732382836171F0073E702 /* logo.png in Resources */,
 				A7EB7830282AB79200E3E965 /* Roboto-Black.ttf in Resources */,
@@ -478,6 +542,8 @@
 				A77F4BE0282BC6230046921B /* RegisterPersonalityView.swift in Sources */,
 				A77F43052833EA8E008BC89A /* BottomButtonViewModel.swift in Sources */,
 				A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */,
+				A78C535E283B719800CC41F5 /* HangoutImageSectionView.swift in Sources */,
+				A72C06C6283666820068897C /* HangoutCell.swift in Sources */,
 				A71EBAEE2835558D0052C60A /* MyListViewController.swift in Sources */,
 				A7173234283564620073E702 /* Constant.swift in Sources */,
 				A717324128363D1F0073E702 /* ProfileView.swift in Sources */,
@@ -485,9 +551,13 @@
 				A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */,
 				A77F4BD8282BC5BE0046921B /* RegisterNationalityViewModel.swift in Sources */,
 				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,
+				A78C536A283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift in Sources */,
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
 				A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */,
+				A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */,
+				A75B11B4283BE66200C49597 /* BappyTabBar.swift in Sources */,
 				A71EBAF2283555D30052C60A /* ProfileViewController.swift in Sources */,
+				A72C06CA283732690068897C /* ParticipantsView.swift in Sources */,
 				A7598C7C282EA90D00F96E39 /* Country.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
 				A7EB783B282AC3CD00E3E965 /* RegisterViewController.swift in Sources */,
@@ -496,14 +566,20 @@
 				A77F4BDE282BC6030046921B /* RegisterLanguageViewModel.swift in Sources */,
 				A77F4BD4282BC5990046921B /* RegisterBirthViewModel.swift in Sources */,
 				A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */,
+				A72C06CC283733E50068897C /* ParticipantImageCell.swift in Sources */,
 				A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */,
 				A769CD1D282A947B0086182C /* Extension.swift in Sources */,
 				A77F4BC8282B93090046921B /* SelectionButton.swift in Sources */,
 				A77F4BDC282BC5FC0046921B /* RegisterLanguageView.swift in Sources */,
 				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
+				A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */,
 				A717323F283631860073E702 /* BappyNavigationViewController.swift in Sources */,
 				A77F4BC6282B8C9D0046921B /* BottomButtonView.swift in Sources */,
 				A77F4BE4282BC63D0046921B /* RegisterHobbyView.swift in Sources */,
+				A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */,
+				A72C06CE28373A360068897C /* HangoutDetailViewController.swift in Sources */,
+				A78C5366283BB16500CC41F5 /* HangoutMapSectionView.swift in Sources */,
+				A77309A728376288007E73F4 /* SortingHeaderView.swift in Sources */,
 				A7EB77FF282A9BB400E3E965 /* ProgressBarView.swift in Sources */,
 				A77F4BCE282BC5040046921B /* RegisterGenderViewModel.swift in Sources */,
 				A77F4BC4282AD1010046921B /* RegisterGenderView.swift in Sources */,

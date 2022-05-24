@@ -20,13 +20,18 @@ final class ProfileViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         configure()
-//        layout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setStatusBarStyle(statusBarStyle: .lightContent)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        setStatusBarStyle(statusBarStyle: .darkContent)
     }
     
     override func viewDidLayoutSubviews() {
@@ -52,8 +57,7 @@ final class ProfileViewController: UIViewController {
     private func layout() {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
         scrollView.addSubview(contentView)
@@ -64,11 +68,9 @@ final class ProfileViewController: UIViewController {
         
         view.addSubview(titleTopView)
         titleTopView.snp.makeConstraints {
-//            let height = 141.0 + view.safeAreaInsets.top
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(scrollView.snp.top)
             $0.height.equalTo(141.0)
-//            print("DEBUG: \(height)")
         }
     }
 }

@@ -13,7 +13,7 @@ final class ProfileView: UIView {
     // MARK: Properties
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "no_profile")
+        imageView.image = UIImage(named: "no_profile_l")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 45.5
         return imageView
@@ -86,7 +86,7 @@ final class ProfileView: UIView {
         button.setImage(UIImage(named: "switch_selected"), for: .selected)
         button.setImage(UIImage(named: "switch_unselected"), for: .normal)
         button.addTarget(self, action: #selector(toggleSwitch), for: .touchUpInside)
-        button.isSelected = true
+//        button.isSelected = true
         return button
     }()
     
@@ -114,7 +114,7 @@ final class ProfileView: UIView {
         button.setImage(UIImage(named: "switch_selected"), for: .selected)
         button.setImage(UIImage(named: "switch_unselected"), for: .normal)
         button.addTarget(self, action: #selector(toggleSwitch), for: .touchUpInside)
-        button.isSelected = true
+//        button.isSelected = true
         return button
     }()
     

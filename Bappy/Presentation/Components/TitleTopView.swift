@@ -54,12 +54,7 @@ final class TitleTopView: UIView {
         
         titleView.backgroundColor = .white
         titleView.layer.cornerRadius = 15.0
-        titleView.clipsToBounds = false
-        titleView.layer.shadowColor = UIColor.black.cgColor
-        titleView.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-        titleView.layer.shadowOpacity = 0.25
-        titleView.layer.shadowRadius = 1.0
-        
+
         titleLabel.text = self.title
         subTitleLabel.text = self.subTitle
     }
