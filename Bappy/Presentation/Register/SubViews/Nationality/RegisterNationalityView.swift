@@ -15,7 +15,7 @@ final class RegisterNationalityView: UIView {
         let label = UILabel()
         label.text = "Where are you from?"
         label.font = .roboto(size: 16.0)
-        label.textColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+        label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
     
@@ -29,22 +29,22 @@ final class RegisterNationalityView: UIView {
     
     private let answerBackgroundView: UIView = {
         let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
         backgroundView.layer.cornerRadius = 19.5
         return backgroundView
     }()
     
     private let nationalityTextField: UITextField = {
         let textField = UITextField()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 13.0)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 13.0, weight: .medium)
         let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
         let imageView = UIImageView(image: image)
-        imageView.tintColor = UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
+        imageView.tintColor = UIColor(named: "bappy_gray")
         textField.font = .roboto(size: 14.0)
         textField.textColor = .black
         textField.attributedPlaceholder = NSAttributedString(
             string: "Choose your nationality",
-            attributes: [.foregroundColor: UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)])
+            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
         textField.rightView = imageView
         textField.rightViewMode = .always
         return textField

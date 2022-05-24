@@ -19,7 +19,7 @@ final class CountryListView: UIView {
         tableView.delegate = self
         tableView.register(countryCell.self, forCellReuseIdentifier: "CountryCell")
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10.0, bottom: 0, right: 15.0)
-        tableView.separatorColor = UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
+        tableView.separatorColor = UIColor(named: "bappy_gray")
         return tableView
     }()
     
@@ -45,9 +45,9 @@ final class CountryListView: UIView {
     
     // MARK: Helpers
     private func configure() {
-        self.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+        self.backgroundColor = UIColor(named: "bappy_lightgray")
         self.layer.cornerRadius = 14.0
-        tableView.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+        tableView.backgroundColor = UIColor(named: "bappy_lightgray")
     }
     
     private func layout() {
@@ -95,7 +95,7 @@ final class countryCell: UITableViewCell {
     private let countryLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 15.0)
-        label.textColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+        label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
     
@@ -128,7 +128,7 @@ final class countryCell: UITableViewCell {
     }
     
     private func configure() {
-        contentView.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+        contentView.backgroundColor = UIColor(named: "bappy_lightgray")
     }
     
     private func layout() {

@@ -26,6 +26,10 @@
 		A74640DA282EA1BC0022322E /* CountryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74640D9282EA1BC0022322E /* CountryListView.swift */; };
 		A7598C7C282EA90D00F96E39 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7598C7B282EA90D00F96E39 /* Country.swift */; };
 		A75B11B4283BE66200C49597 /* BappyTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11B3283BE66200C49597 /* BappyTabBar.swift */; };
+		A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11B7283C75C100C49597 /* ReportViewController.swift */; };
+		A75B11BB283C8A4000C49597 /* ReportWritingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11BA283C8A4000C49597 /* ReportWritingSectionView.swift */; };
+		A75B11BD283C993C00C49597 /* ReportImageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11BC283C993C00C49597 /* ReportImageSectionView.swift */; };
+		A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75B11BF283C9BF700C49597 /* ReportPhotoCell.swift */; };
 		A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDD282A8C300086182C /* AppDelegate.swift */; };
 		A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CCDF282A8C300086182C /* SceneDelegate.swift */; };
 		A769CCE7282A8C310086182C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A769CCE6282A8C310086182C /* Assets.xcassets */; };
@@ -93,6 +97,10 @@
 		A74640D9282EA1BC0022322E /* CountryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryListView.swift; sourceTree = "<group>"; };
 		A7598C7B282EA90D00F96E39 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		A75B11B3283BE66200C49597 /* BappyTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTabBar.swift; sourceTree = "<group>"; };
+		A75B11B7283C75C100C49597 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
+		A75B11BA283C8A4000C49597 /* ReportWritingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportWritingSectionView.swift; sourceTree = "<group>"; };
+		A75B11BC283C993C00C49597 /* ReportImageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportImageSectionView.swift; sourceTree = "<group>"; };
+		A75B11BF283C9BF700C49597 /* ReportPhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPhotoCell.swift; sourceTree = "<group>"; };
 		A769CCDA282A8C300086182C /* Bappy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bappy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A769CCDD282A8C300086182C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A769CCDF282A8C300086182C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -234,6 +242,33 @@
 			path = Entity;
 			sourceTree = "<group>";
 		};
+		A75B11B9283C75C500C49597 /* Report */ = {
+			isa = PBXGroup;
+			children = (
+				A75B11B7283C75C100C49597 /* ReportViewController.swift */,
+				A75B11BE283C9BDD00C49597 /* SubViews */,
+				A75B11C1283C9C0000C49597 /* SubComponents */,
+			);
+			path = Report;
+			sourceTree = "<group>";
+		};
+		A75B11BE283C9BDD00C49597 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				A75B11BA283C8A4000C49597 /* ReportWritingSectionView.swift */,
+				A75B11BC283C993C00C49597 /* ReportImageSectionView.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		A75B11C1283C9C0000C49597 /* SubComponents */ = {
+			isa = PBXGroup;
+			children = (
+				A75B11BF283C9BF700C49597 /* ReportPhotoCell.swift */,
+			);
+			path = SubComponents;
+			sourceTree = "<group>";
+		};
 		A769CCD1282A8C300086182C = {
 			isa = PBXGroup;
 			children = (
@@ -295,6 +330,7 @@
 				A71EBAF628355C230052C60A /* Home */,
 				A71EBAF728355C2A0052C60A /* Profile */,
 				A769CD02282A8F7A0086182C /* Register */,
+				A75B11B9283C75C500C49597 /* Report */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -553,8 +589,10 @@
 				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,
 				A78C536A283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift in Sources */,
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
+				A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */,
 				A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */,
 				A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */,
+				A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */,
 				A75B11B4283BE66200C49597 /* BappyTabBar.swift in Sources */,
 				A71EBAF2283555D30052C60A /* ProfileViewController.swift in Sources */,
 				A72C06CA283732690068897C /* ParticipantsView.swift in Sources */,
@@ -574,6 +612,8 @@
 				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
 				A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */,
 				A717323F283631860073E702 /* BappyNavigationViewController.swift in Sources */,
+				A75B11BD283C993C00C49597 /* ReportImageSectionView.swift in Sources */,
+				A75B11BB283C8A4000C49597 /* ReportWritingSectionView.swift in Sources */,
 				A77F4BC6282B8C9D0046921B /* BottomButtonView.swift in Sources */,
 				A77F4BE4282BC63D0046921B /* RegisterHobbyView.swift in Sources */,
 				A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */,
@@ -730,7 +770,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -760,7 +800,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

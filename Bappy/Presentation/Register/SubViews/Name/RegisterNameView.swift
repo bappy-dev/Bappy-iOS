@@ -15,7 +15,7 @@ final class RegisterNameView: UIView {
         let label = UILabel()
         label.text = "What's your name?"
         label.font = .roboto(size: 16.0)
-        label.textColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+        label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
     
@@ -29,7 +29,7 @@ final class RegisterNameView: UIView {
     
     private let answerBackgroundView: UIView = {
         let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
         backgroundView.layer.cornerRadius = 19.5
         return backgroundView
     }()
@@ -40,7 +40,7 @@ final class RegisterNameView: UIView {
         textField.textColor = .black
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter your name",
-            attributes: [.foregroundColor: UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)])
+            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
         return textField
     }()
     

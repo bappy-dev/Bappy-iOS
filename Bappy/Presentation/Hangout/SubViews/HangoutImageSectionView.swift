@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import MapKit
 
 private let reuseIdentifier = "HangoutImageCell"
 final class HangoutImageSectionView: UIView {

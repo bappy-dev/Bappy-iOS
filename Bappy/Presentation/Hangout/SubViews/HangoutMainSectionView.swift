@@ -7,11 +7,16 @@
 
 import UIKit
 import SnapKit
-import SwiftUI
 
+protocol HangoutMainSectionViewDelegate: AnyObject {
+    func didTapReportButton()
+}
+ 
 final class HangoutMainSectionView: UIView {
     
     // MARK: Properties
+    weak var delegate: HangoutMainSectionViewDelegate?
+    
     private let hostCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0, family: .Medium)
@@ -37,10 +42,11 @@ final class HangoutMainSectionView: UIView {
         return label
     }()
     
-    private let reportButton: UIButton = {
+    private lazy var reportButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "report"), for: .normal)
         button.imageEdgeInsets = .init(top: 15.0, left: 15.0, bottom: 15.0, right: 15.0)
+        button.addTarget(self, action: #selector(didTapReportButton), for: .touchUpInside)
         return button
     }()
     
@@ -81,7 +87,6 @@ final class HangoutMainSectionView: UIView {
         textField.font = .roboto(size: 12.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.text = "#Korean #Restaurant #PNU #Yummy "
-//        textField.textAlignment = .left
         return textField
     }()
 
@@ -110,8 +115,6 @@ final class HangoutMainSectionView: UIView {
         return textField
     }()
     
-    
-    
     // MARK: Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -122,6 +125,12 @@ final class HangoutMainSectionView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Actions
+    @objc
+    private func didTapReportButton() {
+        delegate?.didTapReportButton()
     }
     
     // MARK: Helpers

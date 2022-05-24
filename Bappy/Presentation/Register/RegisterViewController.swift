@@ -22,7 +22,7 @@ final class RegisterViewController: UIViewController {
         let label = UILabel()
         label.font = .roboto(size: 18.0, family: .Medium)
         label.text = "CREATE AN ACCOUNT"
-        label.textColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+        label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
     

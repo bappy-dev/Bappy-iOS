@@ -45,10 +45,10 @@ final class SelectionButton: UIButton {
                     string: title,
                     attributes: [
                         .font: UIFont.roboto(size: 14.0),
-                        .foregroundColor: UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+                        .foregroundColor: UIColor(named: "bappy_brown")!
                     ]),
                 for: .normal)
-            self.backgroundColor = UIColor(red: 245.0/255.0, green: 213.0/255.0, blue: 84.0/255.0, alpha: 1.0)
+            self.backgroundColor = UIColor(named: "bappy_yellow")
             self.clipsToBounds = false
         } else {
             self.setAttributedTitle(
@@ -56,10 +56,10 @@ final class SelectionButton: UIButton {
                     string: title,
                     attributes: [
                         .font: UIFont.roboto(size: 14.0),
-                        .foregroundColor: UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
+                        .foregroundColor: UIColor(named: "bappy_gray")!
                     ]),
                 for: .normal)
-            self.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+            self.backgroundColor = UIColor(named: "bappy_lightgray")
             self.clipsToBounds = true
         }
     }

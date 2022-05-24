@@ -54,7 +54,7 @@ final class BirthPickerView: UIView {
                 string: "Done",
                 attributes: [
                     .font: UIFont.roboto(size: 18.0, family: .Bold),
-                    .foregroundColor: UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+                    .foregroundColor: UIColor(named: "bappy_brown")!
                 ]),
             for: .normal)
         button.addTarget(self, action: #selector(doneButtonHandler), for: .touchUpInside)
@@ -173,7 +173,7 @@ extension BirthPickerView: UIPickerViewDataSource, UIPickerViewDelegate {
             label.textAlignment = .center
             label.text = titleList[row]
             label.font = .roboto(size: 22.0, family: .Medium)
-            label.textColor = UIColor(red: 86.0/255.0, green: 69.0/255.0, blue: 8.0/255.0, alpha: 1.0)
+            label.textColor = UIColor(named: "bappy_brown")
             return label
         }()
         return titleLabel

@@ -14,7 +14,7 @@ final class ProgressBarView: UIView {
     // MARK: Properties
     private let yellowView: UIView = {
         let yellowView = UIView()
-        yellowView.backgroundColor = UIColor(red: 245.0/255.0, green: 213.0/255.0, blue: 84.0/255.0, alpha: 1.0)
+        yellowView.backgroundColor = UIColor(named: "bappy_yellow")
         yellowView.layer.cornerRadius = 3.5
         yellowView.clipsToBounds = false
         yellowView.layer.shadowColor = UIColor.black.cgColor
@@ -40,7 +40,7 @@ final class ProgressBarView: UIView {
     private func configure() {
         self.clipsToBounds = false
         self.layer.cornerRadius = 4.5
-        self.backgroundColor = UIColor(red: 244.0/255.0, green: 244.0/255.0, blue: 239.0/255.0, alpha: 1.0)
+        self.backgroundColor = UIColor(named: "bappy_lightgray")
     }
     
     private func layout() {

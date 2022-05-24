@@ -15,12 +15,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .white
-        window?.tintColor = UIColor(red: 134.0/255.0, green: 134.0/255.0, blue: 134.0/255.0, alpha: 1.0)
+        window?.tintColor = UIColor(named: "bappy_gray")
         
+        // 회원가입
 //        let viewModel = RegisterViewModel()
 //        let rootViewController = RegisterViewController(viewModel: viewModel)
-//        let rootViewController = RegisterViewController()
+        
+        // 메인탭
         let rootViewController = BappyTabBarController()
+        
         window?.rootViewController = rootViewController
         window?.makeKeyAndVisible()
     }
