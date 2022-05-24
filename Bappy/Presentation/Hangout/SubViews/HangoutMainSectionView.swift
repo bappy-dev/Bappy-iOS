@@ -81,6 +81,7 @@ final class HangoutMainSectionView: UIView {
         textField.font = .roboto(size: 12.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.text = "#Korean #Restaurant #PNU #Yummy "
+//        textField.textAlignment = .left
         return textField
     }()
 
@@ -166,18 +167,21 @@ final class HangoutMainSectionView: UIView {
         titleCaptionLabel.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(33.0)
             $0.leading.equalTo(profileImageView)
+            $0.width.equalTo(62.0)
         }
         
         self.addSubview(timeCaptionLabel)
         timeCaptionLabel.snp.makeConstraints {
             $0.top.equalTo(titleCaptionLabel.snp.bottom).offset(26.0)
             $0.leading.equalTo(profileImageView)
+            $0.width.equalTo(62.0)
         }
         
         self.addSubview(placeCaptionLabel)
         placeCaptionLabel.snp.makeConstraints {
             $0.top.equalTo(timeCaptionLabel.snp.bottom).offset(26.0)
             $0.leading.equalTo(profileImageView)
+            $0.width.equalTo(62.0)
         }
         
         self.addSubview(languageCaptionLabel)
@@ -185,6 +189,7 @@ final class HangoutMainSectionView: UIView {
             $0.top.equalTo(placeCaptionLabel.snp.bottom).offset(26.0)
             $0.leading.equalTo(profileImageView)
             $0.bottom.equalToSuperview().inset(16.0)
+            $0.width.equalTo(62.0)
         }
         
         self.addSubview(dividingView1)
@@ -192,7 +197,7 @@ final class HangoutMainSectionView: UIView {
             $0.width.equalTo(0.5)
             $0.height.equalTo(15.5)
             $0.centerY.equalTo(titleCaptionLabel)
-            $0.leading.equalTo(titleCaptionLabel.snp.trailing).offset(46.8)
+            $0.leading.equalTo(titleCaptionLabel.snp.trailing).offset(12.8)
         }
         
         self.addSubview(dividingView2)
@@ -223,28 +228,28 @@ final class HangoutMainSectionView: UIView {
         titleTextField.snp.makeConstraints {
             $0.centerY.equalTo(titleCaptionLabel)
             $0.leading.equalTo(dividingView1.snp.trailing).offset(22.8)
-            $0.trailing.lessThanOrEqualToSuperview().inset(14.0)
+            $0.trailing.equalToSuperview().inset(14.0)
         }
-        
+
         self.addSubview(timeTextField)
         timeTextField.snp.makeConstraints {
             $0.centerY.equalTo(timeCaptionLabel)
             $0.leading.equalTo(dividingView2.snp.trailing).offset(22.8)
-            $0.trailing.lessThanOrEqualToSuperview().inset(14.0)
+            $0.trailing.equalToSuperview().inset(14.0)
         }
         
         self.addSubview(placeTextField)
         placeTextField.snp.makeConstraints {
             $0.centerY.equalTo(placeCaptionLabel)
             $0.leading.equalTo(dividingView3.snp.trailing).offset(22.8)
-            $0.trailing.lessThanOrEqualToSuperview().inset(14.0)
+            $0.trailing.equalToSuperview().inset(14.0)
         }
         
         self.addSubview(languageTextField)
         languageTextField.snp.makeConstraints {
             $0.centerY.equalTo(languageCaptionLabel)
             $0.leading.equalTo(dividingView4.snp.trailing).offset(22.8)
-            $0.trailing.lessThanOrEqualToSuperview().inset(14.0)
+            $0.trailing.equalToSuperview().inset(14.0)
         }
     }
 }

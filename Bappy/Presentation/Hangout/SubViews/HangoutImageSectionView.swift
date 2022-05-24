@@ -37,6 +37,7 @@ final class HangoutImageSectionView: UIView {
         collectionView.delegate = self
         collectionView.register(HangoutImageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.isPagingEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
     
@@ -86,8 +87,10 @@ final class HangoutImageSectionView: UIView {
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.top.equalTo(stackView.snp.bottom).offset(7.0)
-            $0.leading.equalToSuperview().inset(85.0)
-            $0.trailing.equalToSuperview().inset(84.0)
+//            $0.leading.equalToSuperview().inset(85.0)
+//            $0.trailing.equalToSuperview().inset(84.0)
+            $0.leading.equalToSuperview().inset(80.0)
+            $0.trailing.equalToSuperview().inset(79.0)
             $0.height.equalTo(collectionView.snp.width).multipliedBy(117.0/221.0)
         }
         
@@ -115,7 +118,7 @@ extension HangoutImageSectionView: UICollectionViewDataSource {
 // MARK: UICollectionViewDelegateFlowLayout
 extension HangoutImageSectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        return 10
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -125,6 +128,6 @@ extension HangoutImageSectionView: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .zero
+        return UIEdgeInsets(top: 0, left: 5.0, bottom: 0, right: 5.0)
     }
 }

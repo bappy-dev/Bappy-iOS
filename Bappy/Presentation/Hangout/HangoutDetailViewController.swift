@@ -11,7 +11,6 @@ import SnapKit
 final class HangoutDetailViewController: UIViewController {
     
     // MARK: Properties
-    private var isKeyboardShowing: Bool = false
     private let titleTopView = TitleTopView(title: "Hangout", subTitle: "Detail page")
     
     private let scrollView = UIScrollView()
@@ -102,20 +101,7 @@ final class HangoutDetailViewController: UIViewController {
     private func keyboardHeightObserver(_ notification: NSNotification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardHeight = view.frame.height - keyboardFrame.minY
-        guard isKeyboardShowing == (keyboardHeight == 0) else { return }
-        isKeyboardShowing = !isKeyboardShowing
-
-        print("DEBUG: height -> \(keyboardHeight)")
-        
-        if isKeyboardShowing {
-            UIView.animate(withDuration: 0.25) {
-                self.scrollView.contentOffset.y += keyboardHeight
-                self.scrollView.contentInset.bottom += keyboardHeight
-                self.view.layoutIfNeeded()
-            }
-        } else {
-            self.scrollView.contentInset.bottom = 0
-        }
+        self.scrollView.contentInset.bottom = keyboardHeight
     }
     
     // MARK: Helpers
