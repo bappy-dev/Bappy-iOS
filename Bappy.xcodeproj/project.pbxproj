@@ -42,6 +42,7 @@
 		A769CCFC282A8EF30086182C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFB282A8EF30086182C /* SnapKit */; };
 		A769CCFF282A8F100086182C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFE282A8F100086182C /* Kingfisher */; };
 		A769CD1D282A947B0086182C /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CD1C282A947B0086182C /* Extension.swift */; };
+		A76C211E2843885F00044A34 /* BappyLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76C211D2843885F00044A34 /* BappyLoginViewController.swift */; };
 		A77309A728376288007E73F4 /* SortingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77309A628376288007E73F4 /* SortingHeaderView.swift */; };
 		A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F42F7283067B9008BC89A /* RegisterViewModel.swift */; };
 		A77F42FB28306801008BC89A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = A77F42FA28306801008BC89A /* RxCocoa */; };
@@ -120,6 +121,7 @@
 		A769CCE9282A8C310086182C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A769CCEB282A8C310086182C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A769CD1C282A947B0086182C /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		A76C211D2843885F00044A34 /* BappyLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyLoginViewController.swift; sourceTree = "<group>"; };
 		A77309A628376288007E73F4 /* SortingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingHeaderView.swift; sourceTree = "<group>"; };
 		A77F42F7283067B9008BC89A /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		A77F430028306869008BC89A /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 			isa = PBXGroup;
 			children = (
 				A769CCE8282A8C310086182C /* LaunchScreen.storyboard */,
+				A76C211D2843885F00044A34 /* BappyLoginViewController.swift */,
 				A717323D28361F5F0073E702 /* Components */,
 				A71EBAF328355BFA0052C60A /* TabBar */,
 				A72C06CF28373A3B0068897C /* Hangout */,
@@ -701,6 +704,7 @@
 				A72C06CC283733E50068897C /* ParticipantImageCell.swift in Sources */,
 				A75B11C3283CB14B00C49597 /* ReportTypeDropdownView.swift in Sources */,
 				A769CCE0282A8C300086182C /* SceneDelegate.swift in Sources */,
+				A76C211E2843885F00044A34 /* BappyLoginViewController.swift in Sources */,
 				A769CD1D282A947B0086182C /* Extension.swift in Sources */,
 				A77F4BC8282B93090046921B /* SelectionButton.swift in Sources */,
 				A77F4BDC282BC5FC0046921B /* RegisterLanguageView.swift in Sources */,
