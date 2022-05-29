@@ -91,12 +91,13 @@ final class BirthPickerView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        self.clipsToBounds = false
         self.layer.cornerRadius = 5.0
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowOffset = CGSize(width: 0, height: 3.5)
-        self.layer.shadowOpacity = 0.25
-        self.layer.shadowRadius = 1.0
+        self.addBappyShadow(shadowOffsetHeight: 3.5)
+//        self.clipsToBounds = false
+//        self.layer.shadowColor = UIColor.black.cgColor
+//        self.layer.shadowOffset = CGSize(width: 0, height: 3.5)
+//        self.layer.shadowOpacity = 0.25
+//        self.layer.shadowRadius = 1.0
         
         yearPickerView.selectRow(30, inComponent: 0, animated: false)
         monthPickerView.selectRow(5, inComponent: 0, animated: false)

@@ -27,7 +27,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let rootViewController = RegisterSuccessViewController()
         
         // 메인탭
-        let rootViewController = BappyTabBarController()
+//        let rootViewController = BappyTabBarController()
+        
+        // 행아웃 만들기
+        let viewController = HangoutMakeViewController()
+        let rootViewController = UINavigationController(rootViewController: viewController)
         
         window?.rootViewController = rootViewController
         window?.makeKeyAndVisible()

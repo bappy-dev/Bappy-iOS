@@ -15,12 +15,13 @@ final class ProgressBarView: UIView {
     private let yellowView: UIView = {
         let yellowView = UIView()
         yellowView.backgroundColor = UIColor(named: "bappy_yellow")
-        yellowView.layer.cornerRadius = 3.5
-        yellowView.clipsToBounds = false
-        yellowView.layer.shadowColor = UIColor.black.cgColor
-        yellowView.layer.shadowOffset = CGSize(width: 0, height: 1.0)
-        yellowView.layer.shadowOpacity = 0.5
-        yellowView.layer.shadowRadius = 1.0
+        yellowView.layer.cornerRadius = 4.5
+        yellowView.addBappyShadow(shadowOffsetHeight: 1.0)
+//        yellowView.clipsToBounds = false
+//        yellowView.layer.shadowColor = UIColor.black.cgColor
+//        yellowView.layer.shadowOffset = CGSize(width: 0, height: 1.0)
+//        yellowView.layer.shadowOpacity = 0.5
+//        yellowView.layer.shadowRadius = 1.0
         return yellowView
     }()
     
@@ -47,7 +48,7 @@ final class ProgressBarView: UIView {
         self.snp.makeConstraints { $0.height.equalTo(9.0) }
         self.addSubview(yellowView)
         yellowView.snp.makeConstraints {
-            $0.height.equalTo(7.0)
+            $0.height.equalTo(9.0)
             $0.leading.bottom.equalToSuperview()
             $0.width.equalTo(0)
         }
@@ -62,7 +63,7 @@ final class ProgressBarView: UIView {
         yellowView.snp.removeConstraints()
         UIView.animate(withDuration: 0.3) {
             self.yellowView.snp.makeConstraints {
-                $0.height.equalTo(7.0)
+                $0.height.equalTo(9.0)
                 $0.leading.bottom.equalToSuperview()
                 $0.width.equalTo(self.snp.width).multipliedBy(progression)
             }

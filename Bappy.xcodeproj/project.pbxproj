@@ -66,6 +66,9 @@
 		A77F4BE4282BC63D0046921B /* RegisterHobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BE3282BC63D0046921B /* RegisterHobbyView.swift */; };
 		A77F4BE6282BC6400046921B /* RegisterHobbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BE5282BC6400046921B /* RegisterHobbyViewModel.swift */; };
 		A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77F4BEA282CA3150046921B /* BirthPickerView.swift */; };
+		A788CC662840682500490B0F /* HangoutMakeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC652840682400490B0F /* HangoutMakeViewController.swift */; };
+		A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */; };
+		A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */; };
 		A78C535E283B719800CC41F5 /* HangoutImageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */; };
 		A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535F283B741700CC41F5 /* HangoutImageCell.swift */; };
 		A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */; };
@@ -138,6 +141,9 @@
 		A77F4BE3282BC63D0046921B /* RegisterHobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterHobbyView.swift; sourceTree = "<group>"; };
 		A77F4BE5282BC6400046921B /* RegisterHobbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterHobbyViewModel.swift; sourceTree = "<group>"; };
 		A77F4BEA282CA3150046921B /* BirthPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthPickerView.swift; sourceTree = "<group>"; };
+		A788CC652840682400490B0F /* HangoutMakeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeViewController.swift; sourceTree = "<group>"; };
+		A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeTitleView.swift; sourceTree = "<group>"; };
+		A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeTimeView.swift; sourceTree = "<group>"; };
 		A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageSectionView.swift; sourceTree = "<group>"; };
 		A78C535F283B741700CC41F5 /* HangoutImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageCell.swift; sourceTree = "<group>"; };
 		A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMainSectionView.swift; sourceTree = "<group>"; };
@@ -237,9 +243,8 @@
 		A72C06CF28373A3B0068897C /* Hangout */ = {
 			isa = PBXGroup;
 			children = (
-				A72C06CD28373A360068897C /* HangoutDetailViewController.swift */,
-				A78C5361283B79AF00CC41F5 /* SubViews */,
-				A78C5362283B79C900CC41F5 /* SubComponents */,
+				A788CC63284067FF00490B0F /* Detail */,
+				A788CC642840680700490B0F /* Make */,
 			);
 			path = Hangout;
 			sourceTree = "<group>";
@@ -340,9 +345,8 @@
 			children = (
 				A7EB7837282AB83800E3E965 /* Font */,
 				A75B11D0283CF7A700C49597 /* Lottie */,
+				A788CC6B28406E0200490B0F /* Splash */,
 				A769CCE6282A8C310086182C /* Assets.xcassets */,
-				A71732352836171A0073E702 /* bappy.png */,
-				A71732372836171F0073E702 /* logo.png */,
 				A72C06C7283694110068897C /* example_post.png */,
 			);
 			path = Resource;
@@ -461,6 +465,59 @@
 				A77F4BE5282BC6400046921B /* RegisterHobbyViewModel.swift */,
 			);
 			path = Hobby;
+			sourceTree = "<group>";
+		};
+		A788CC63284067FF00490B0F /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				A72C06CD28373A360068897C /* HangoutDetailViewController.swift */,
+				A78C5361283B79AF00CC41F5 /* SubViews */,
+				A78C5362283B79C900CC41F5 /* SubComponents */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		A788CC642840680700490B0F /* Make */ = {
+			isa = PBXGroup;
+			children = (
+				A788CC652840682400490B0F /* HangoutMakeViewController.swift */,
+				A788CC6928406C0000490B0F /* SubViews */,
+			);
+			path = Make;
+			sourceTree = "<group>";
+		};
+		A788CC6928406C0000490B0F /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				A788CC6A28406C0A00490B0F /* Title */,
+				A788CC6E2840743800490B0F /* Time */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		A788CC6A28406C0A00490B0F /* Title */ = {
+			isa = PBXGroup;
+			children = (
+				A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */,
+			);
+			path = Title;
+			sourceTree = "<group>";
+		};
+		A788CC6B28406E0200490B0F /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				A71732352836171A0073E702 /* bappy.png */,
+				A71732372836171F0073E702 /* logo.png */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		A788CC6E2840743800490B0F /* Time */ = {
+			isa = PBXGroup;
+			children = (
+				A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */,
+			);
+			path = Time;
 			sourceTree = "<group>";
 		};
 		A78C5361283B79AF00CC41F5 /* SubViews */ = {
@@ -606,6 +663,7 @@
 			files = (
 				A77F4BD2282BC5910046921B /* RegisterBirthView.swift in Sources */,
 				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
+				A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */,
 				A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */,
 				A717323128355ED90073E702 /* HomeListTopView.swift in Sources */,
 				A77F4BE0282BC6230046921B /* RegisterPersonalityView.swift in Sources */,
@@ -617,6 +675,7 @@
 				A71EBAEE2835558D0052C60A /* MyListViewController.swift in Sources */,
 				A7173234283564620073E702 /* Constant.swift in Sources */,
 				A717324128363D1F0073E702 /* ProfileView.swift in Sources */,
+				A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */,
 				A717323C28361F580073E702 /* TitleTopView.swift in Sources */,
 				A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */,
 				A77F4BD8282BC5BE0046921B /* RegisterNationalityViewModel.swift in Sources */,
@@ -633,6 +692,7 @@
 				A7598C7C282EA90D00F96E39 /* Country.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
 				A7EB783B282AC3CD00E3E965 /* RegisterViewController.swift in Sources */,
+				A788CC662840682500490B0F /* HangoutMakeViewController.swift in Sources */,
 				A77F4BE2282BC6280046921B /* RegisterPersonalityViewModel.swift in Sources */,
 				A74640DA282EA1BC0022322E /* CountryListView.swift in Sources */,
 				A77F4BDE282BC6030046921B /* RegisterLanguageViewModel.swift in Sources */,

@@ -22,7 +22,7 @@ final class RegisterPersonalityView: UIView {
         let label = UILabel()
         label.text = "*"
         label.font = .roboto(size: 18.0, family: .Medium)
-        label.textColor = UIColor(red: 255.0/255.0, green: 204.0/255.0, blue: 0, alpha: 1.0)
+        label.textColor = UIColor(named: "bappy_yellow")
         return label
     }()
     

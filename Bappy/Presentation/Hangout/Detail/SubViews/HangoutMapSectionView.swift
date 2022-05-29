@@ -28,7 +28,7 @@ final class HangoutMapSectionView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        mapView.backgroundColor = UIColor(named: "bappy_yellow")
+        mapView.backgroundColor = UIColor(named: "bappy_yellow")?.withAlphaComponent(0.3)
         mapView.layer.cornerRadius = 16.0
     }
     
@@ -42,8 +42,8 @@ final class HangoutMapSectionView: UIView {
         }
         
         let label = UILabel()
-        label.font = .roboto(size: 30.0, family: .Bold)
-        label.text = "카카오맵??"
+        label.font = .roboto(size: 20.0, family: .Regular)
+        label.text = "Google Map"
         label.textColor = UIColor(named: "bappy_brown")
         mapView.addSubview(label)
         label.snp.makeConstraints {
