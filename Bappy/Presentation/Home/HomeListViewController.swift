@@ -33,12 +33,11 @@ final class HomeListViewController: UIViewController {
         super.viewDidLayoutSubviews()
         // 임시
         let rootViewController = BappyLoginViewController()
-        rootViewController.modalPresentationStyle = .fullScreen
 //        let viewModel = RegisterViewModel()
 //        let viewController = RegisterViewController(viewModel: viewModel)
 //        let rootViewController = UINavigationController(rootViewController: viewController)
 //        rootViewController.navigationBar.isHidden = true
-//        rootViewController.modalPresentationStyle = .fullScreen
+        rootViewController.modalPresentationStyle = .fullScreen
         self.present(rootViewController, animated: false)
     }
     
