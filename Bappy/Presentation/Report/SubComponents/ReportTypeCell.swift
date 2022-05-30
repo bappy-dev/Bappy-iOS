@@ -36,11 +36,6 @@ final class ReportTypeCell: UITableViewCell {
         tintedView.backgroundColor = UIColor(named: "bappy_yellow")
         tintedView.layer.cornerRadius = 7.0
         tintedView.addBappyShadow(shadowOffsetHeight: 1.0)
-//        tintedView.clipsToBounds = false
-//        tintedView.layer.shadowColor = UIColor.black.cgColor
-//        tintedView.layer.shadowOffset = CGSize(width: 0, height: 1.0)
-//        tintedView.layer.shadowOpacity = 0.25
-//        tintedView.layer.shadowRadius = 1.0
 
         backgroundView.addSubview(tintedView)
         tintedView.snp.makeConstraints {

@@ -17,11 +17,6 @@ final class ProgressBarView: UIView {
         yellowView.backgroundColor = UIColor(named: "bappy_yellow")
         yellowView.layer.cornerRadius = 4.5
         yellowView.addBappyShadow(shadowOffsetHeight: 1.0)
-//        yellowView.clipsToBounds = false
-//        yellowView.layer.shadowColor = UIColor.black.cgColor
-//        yellowView.layer.shadowOffset = CGSize(width: 0, height: 1.0)
-//        yellowView.layer.shadowOpacity = 0.5
-//        yellowView.layer.shadowRadius = 1.0
         return yellowView
     }()
     

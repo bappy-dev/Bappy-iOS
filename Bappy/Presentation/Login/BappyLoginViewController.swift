@@ -43,7 +43,7 @@ final class BappyLoginViewController: UIViewController {
         return button
     }()
     
-    private let kakaoLoginButton: UIButton = {
+    private let facebookLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 9.0
         button.layer.borderWidth = 2.0
@@ -51,7 +51,7 @@ final class BappyLoginViewController: UIViewController {
         button.setImage(UIImage(named: "login_kakao"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
-                string: "Sign-in with Kakaotalk",
+                string: "Sign-in with facebook",
                 attributes: [
                     .font: UIFont.roboto(size: 12.0),
                     .foregroundColor: UIColor(named: "bappy_gray")!
@@ -125,7 +125,7 @@ final class BappyLoginViewController: UIViewController {
     
     // MARK: Helpers
     private func setButtonImageInset() {
-        for button in [googleLoginButton, kakaoLoginButton, appleLoginButton] {
+        for button in [googleLoginButton, facebookLoginButton, appleLoginButton] {
             guard let titleWidth = button.titleLabel?.frame.width else { return }
             let inset = (button.frame.width - titleWidth) / 2 - 30.0
             button.imageEdgeInsets = .init(top: 0, left: -inset, bottom: 0, right: inset)
@@ -138,7 +138,7 @@ final class BappyLoginViewController: UIViewController {
     
     private func layout() {
         let vStackView = UIStackView(arrangedSubviews: [
-            googleLoginButton, kakaoLoginButton, appleLoginButton
+            googleLoginButton, facebookLoginButton, appleLoginButton
         ])
         vStackView.axis = .vertical
         vStackView.spacing = 18.0

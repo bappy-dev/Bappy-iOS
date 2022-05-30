@@ -72,11 +72,6 @@ final class HomeListTopView: UIView {
         self.clipsToBounds = true
         contentView.backgroundColor = .white
         contentView.addBappyShadow(shadowOffsetHeight: 1.0)
-//        contentView.clipsToBounds = false
-//        contentView.layer.shadowColor = UIColor.black.cgColor
-//        contentView.layer.shadowOffset = CGSize(width: 0, height: 1.0)
-//        contentView.layer.shadowOpacity = 0.25
-//        contentView.layer.shadowRadius = 1.0
     }
     
     private func layout() {

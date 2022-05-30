@@ -121,11 +121,6 @@ final class HangoutCell: UITableViewCell {
         contentView.backgroundColor = UIColor(named: "bappy_lightgray")
         postView.backgroundColor = .white
         postView.addBappyShadow()
-//        postView.clipsToBounds = false
-//        postView.layer.shadowColor = UIColor.black.cgColor
-//        postView.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-//        postView.layer.shadowOpacity = 0.25
-//        postView.layer.shadowRadius = 1.0
     }
     
     private func layout() {

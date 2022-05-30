@@ -58,11 +58,6 @@ final class HangoutDetailViewController: UIViewController {
             for: .normal)
         button.layer.cornerRadius = 11.5
         button.addBappyShadow()
-//        button.clipsToBounds = false
-//        button.layer.shadowColor = UIColor.black.cgColor
-//        button.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-//        button.layer.shadowOpacity = 0.25
-//        button.layer.shadowRadius = 1.0
         return button
     }()
     

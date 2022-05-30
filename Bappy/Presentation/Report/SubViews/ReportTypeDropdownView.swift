@@ -57,11 +57,6 @@ final class ReportTypeDropdownView: UIView {
         self.backgroundColor = UIColor(named: "bappy_lightgray")
         self.layer.cornerRadius = 23.0
         self.addBappyShadow()
-//        self.clipsToBounds = false
-//        self.layer.shadowColor = UIColor.black.cgColor
-//        self.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-//        self.layer.shadowOpacity = 0.25
-//        self.layer.shadowRadius = 1.0
         self.isHidden = true
     }
     

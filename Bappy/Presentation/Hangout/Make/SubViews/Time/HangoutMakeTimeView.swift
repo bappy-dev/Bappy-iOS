@@ -76,6 +76,9 @@ final class HangoutMakeTimeView: UIView {
         button.setImage(image, for: .normal)
         return button
     }()
+    
+    private let calendarView = BappyCalendarView()
+    private let timeView = BappyTimeView()
 
     // MARK: Lifecycle
     override init(frame: CGRect) {
@@ -145,17 +148,23 @@ final class HangoutMakeTimeView: UIView {
             $0.trailing.equalToSuperview().inset(34.0)
         }
         
+        contentView.addSubview(calendarView)
+        calendarView.snp.makeConstraints {
+            $0.top.equalTo(dateImageView.snp.bottom).offset(14.5)
+        }
+        
         contentView.addSubview(dividingView)
         dividingView.snp.makeConstraints {
-            $0.top.equalTo(dateImageView.snp.bottom).offset(14.5)
+            $0.top.equalTo(calendarView.snp.bottom)
             $0.leading.equalToSuperview().inset(42.0)
             $0.trailing.equalToSuperview().inset(41.0)
+            $0.leading.trailing.equalTo(calendarView)
             $0.height.equalTo(1.0)
         }
         
         contentView.addSubview(timeImageView)
         timeImageView.snp.makeConstraints {
-            $0.top.equalTo(dividingView.snp.bottom).offset(13.5)
+            $0.top.equalTo(calendarView.snp.bottom).offset(13.5)
             $0.width.height.equalTo(17.0)
             $0.centerX.equalTo(dateImageView)
         }
@@ -172,6 +181,12 @@ final class HangoutMakeTimeView: UIView {
             $0.width.height.equalTo(44.0)
             $0.leading.equalTo(timeLabel.snp.trailing).offset(10.0)
             $0.trailing.equalToSuperview().inset(34.0)
+        }
+        
+        contentView.addSubview(timeView)
+        timeView.snp.makeConstraints {
+            $0.top.equalTo(timeImageView.snp.bottom).offset(10.0)
+            $0.leading.trailing.equalTo(dividingView)
         }
     }
 }
