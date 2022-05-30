@@ -119,11 +119,14 @@ final class HangoutMakeViewController: UIViewController {
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalToSuperview()
-            $0.width.equalTo(1000) // 임시
+            $0.width.equalTo(2000.0) // 임시
         }
         
         let titleView = HangoutMakeTitleView()
         let timeView = HangoutMakeTimeView()
+        let placeView = HangoutPlaceView()
+        
+        placeView.delegate = self
         
         
         contentView.addSubview(titleView)
@@ -139,10 +142,27 @@ final class HangoutMakeViewController: UIViewController {
             $0.leading.equalTo(titleView.snp.trailing)
         }
         
+        contentView.addSubview(placeView)
+        placeView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(timeView.snp.trailing)
+        }
+        
         view.addSubview(bottomButtonView)
         bottomButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+    }
+}
+
+// MARK: - HangoutPlaceViewDelegate
+extension HangoutMakeViewController: HangoutPlaceViewDelegate {
+    func showSearchPlaceView() {
+        view.endEditing(true) // 임시
+        let viewController = SearchPlaceViewController()
+        viewController.modalPresentationStyle = .overCurrentContext
+        present(viewController, animated: false, completion: nil)
     }
 }

@@ -1,19 +1,25 @@
 //
-//  HangoutMakeTitleView.swift
+//  HangoutPlaceView.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/05/27.
+//  Created by 정동천 on 2022/05/30.
 //
 
 import UIKit
 import SnapKit
 
-final class HangoutMakeTitleView: UIView {
+protocol HangoutPlaceViewDelegate: AnyObject {
+    func showSearchPlaceView()
+}
+
+final class HangoutPlaceView: UIView {
     
     // MARK: Properties
-    private let titleCaptionLabel: UILabel = {
+    weak var delegate: HangoutPlaceViewDelegate?
+    
+    private let placeCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Please write the title of Hangout!"
+        label.text = "Where do you wanna meet up?"
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textColor = UIColor(named: "bappy_brown")
         return label
@@ -27,13 +33,20 @@ final class HangoutMakeTitleView: UIView {
         return label
     }()
     
-    private let titleTextField: UITextField = {
+    private lazy var placeTextField: UITextField = {
         let textField = UITextField()
+        let imageView = UIImageView(image: UIImage(named: "place"))
+        let containerView = UIView()
         textField.font = .roboto(size: 14.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Enter the hangout title",
+            string: "Enter the place",
             attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+        containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 18.0)
+        containerView.addSubview(imageView)
+        textField.leftView = containerView
+        textField.leftViewMode = .always
+        textField.addTarget(self, action: #selector(placeTextFieldHandler), for: .editingDidBegin)
         return textField
     }()
     
@@ -56,6 +69,12 @@ final class HangoutMakeTitleView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Actions
+    @objc
+    private func placeTextFieldHandler(_ textField: UITextField) {
+        delegate?.showSearchPlaceView()
+    }
+    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
@@ -64,7 +83,7 @@ final class HangoutMakeTitleView: UIView {
     private func layout() {
         let vStackView = UIStackView(arrangedSubviews: [asteriskLabel])
         vStackView.alignment = .top
-        let hStackView = UIStackView(arrangedSubviews: [titleCaptionLabel, vStackView])
+        let hStackView = UIStackView(arrangedSubviews: [placeCaptionLabel, vStackView])
         hStackView.spacing = 3.0
         hStackView.alignment = .fill
         hStackView.axis = .horizontal
@@ -76,17 +95,17 @@ final class HangoutMakeTitleView: UIView {
             $0.height.equalTo(30.0)
         }
         
-        self.addSubview(titleTextField)
-        titleTextField.snp.makeConstraints {
-            $0.top.equalTo(titleCaptionLabel.snp.bottom).offset(27.0)
-            $0.leading.trailing.equalToSuperview().inset(47.0)
+        self.addSubview(placeTextField)
+        placeTextField.snp.makeConstraints {
+            $0.top.equalTo(placeCaptionLabel.snp.bottom).offset(27.0)
+            $0.leading.trailing.equalToSuperview().inset(50.0)
         }
         
         self.addSubview(underlinedView)
         underlinedView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(44.0)
             $0.height.equalTo(2.0)
-            $0.centerY.equalTo(titleTextField.snp.bottom)
+            $0.top.equalTo(placeTextField.snp.bottom).offset(5.0)
         }
     }
 }
