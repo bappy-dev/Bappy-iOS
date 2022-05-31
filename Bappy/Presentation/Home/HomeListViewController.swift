@@ -100,7 +100,9 @@ extension HomeListViewController: UITableViewDelegate {
 // MARK: - HomeListTopViewDelegate
 extension HomeListViewController: HomeListTopViewDelegate {
     func showDateFilterView() {
-        
+        let popupView = CalendarPopupViewController()
+        popupView.modalPresentationStyle = .overCurrentContext
+        present(popupView, animated: false)
     }
     
     func showWriteView() {

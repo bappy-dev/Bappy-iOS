@@ -140,7 +140,6 @@ final class SigninPopupViewController: UIViewController {
         containerView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(36.0)
-//            $0.height.equalTo(401.0)
         }
         
         containerView.addSubview(titleLabel)
