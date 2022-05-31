@@ -183,7 +183,7 @@ final class ReportWritingSectionView: UIView {
         
         reportingDetailBackgroundView.addSubview(reportingDetailTextView)
         reportingDetailTextView.snp.makeConstraints {
-            $0.top.trailing.equalToSuperview().inset(6.0)
+            $0.top.bottom.equalToSuperview().inset(6.0)
             $0.leading.trailing.equalToSuperview().inset(6.0)
             $0.height.equalTo(83.0)
         }

@@ -41,6 +41,10 @@ final class HangoutMakeViewController: UIViewController {
     private let timeView = HangoutMakeTimeView()
     private let placeView = HangoutPlaceView()
     private let pictureView = HangoutPictureView()
+    private let planView = HangoutPlanView()
+    private let languageView = HangoutLanguageView()
+    private let openchatView = HangoutOpenchatView()
+    private let participantsLimitView = HangoutParticipantsLimitView()
 
     // MARK: Lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -134,7 +138,7 @@ final class HangoutMakeViewController: UIViewController {
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalToSuperview()
-            $0.width.equalTo(2000.0) // 임시
+//            $0.width.equalTo(2000.0) // 임시
         }
         
         contentView.addSubview(titleView)
@@ -162,6 +166,34 @@ final class HangoutMakeViewController: UIViewController {
             $0.top.bottom.equalToSuperview()
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(placeView.snp.trailing)
+        }
+        
+        contentView.addSubview(planView)
+        planView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(pictureView.snp.trailing)
+        }
+        
+        contentView.addSubview(languageView)
+        languageView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(planView.snp.trailing)
+        }
+        
+        contentView.addSubview(openchatView)
+        openchatView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(languageView.snp.trailing)
+        }
+        
+        contentView.addSubview(participantsLimitView)
+        participantsLimitView.snp.makeConstraints {
+            $0.top.bottom.trailing.equalToSuperview()
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(openchatView.snp.trailing)
         }
         
         view.addSubview(bottomButtonView)
