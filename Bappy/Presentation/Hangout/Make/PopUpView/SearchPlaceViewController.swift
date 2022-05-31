@@ -18,7 +18,7 @@ final class SearchPlaceViewController: UIViewController {
     // MARK: Properties
     weak var delegate: SearchPlaceViewControllerDelegate?
     
-    private let maxDimmedAlpha: CGFloat = 0.6
+    private let maxDimmedAlpha: CGFloat = 0.3
     private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
     
     private lazy var containerView: UIView = {

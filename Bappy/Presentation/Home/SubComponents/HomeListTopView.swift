@@ -8,9 +8,16 @@
 import UIKit
 import SnapKit
 
+protocol HomeListTopViewDelegate: AnyObject {
+    func showDateFilterView()
+    func showWriteView()
+}
+
 final class HomeListTopView: UIView {
     
     // MARK: Properties
+    weak var delegate: HomeListTopViewDelegate?
+    
     private let localeSelctionButton: UIButton = {
         let button = UIButton()
         button.setAttributedTitle(
@@ -31,17 +38,19 @@ final class HomeListTopView: UIView {
         return button
     }()
     
-    private let dateButton: UIButton = {
+    private lazy var dateButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "home_date"), for: .normal)
         button.imageEdgeInsets = .init(top: 7.5, left: 7.5, bottom: 7.5, right: 7.5)
+        button.addTarget(self, action: #selector(dateButtonHandler), for: .touchUpInside)
         return button
     }()
     
-    private let writeButton: UIButton = {
+    private lazy var writeButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "home_write"), for: .normal)
         button.imageEdgeInsets = .init(top: 7.5, left: 7.5, bottom: 7.5, right: 7.5)
+        button.addTarget(self, action: #selector(writeButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -64,6 +73,17 @@ final class HomeListTopView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Actions
+    @objc
+    private func dateButtonHandler() {
+        delegate?.showDateFilterView()
+    }
+    
+    @objc
+    private func writeButtonHandler() {
+        delegate?.showWriteView()
     }
     
     // MARK: Helpers

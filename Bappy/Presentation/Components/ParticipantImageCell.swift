@@ -37,15 +37,7 @@ final class ParticipantImageCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-//    override func layoutSubviews() {
-//        super.layoutSubviews()
-//        
-//        
-////        print("DEBUG: ParticipantCell layoutSubviews..")
-//    }
 
-    
     // MARK: Helpers
     private func configure() {
         participantImageView.layer.cornerRadius = size == .small ? 9.0 : 20.5

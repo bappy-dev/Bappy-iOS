@@ -22,7 +22,7 @@ final class SelectLanguageViewController: UIViewController {
         "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"
     ]
     
-    private let maxDimmedAlpha: CGFloat = 0.6
+    private let maxDimmedAlpha: CGFloat = 0.3
     private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
     
     private lazy var containerView: UIView = {

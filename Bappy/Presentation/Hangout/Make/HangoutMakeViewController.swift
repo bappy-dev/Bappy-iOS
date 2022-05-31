@@ -81,15 +81,15 @@ final class HangoutMakeViewController: UIViewController {
     // MARK: Actions
     @objc
     private func keyboardHeightObserver(_ notification: NSNotification) {
-//        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-//        let keyboardHeight = view.frame.height - keyboardFrame.minY
-//
-//        UIView.animate(withDuration: 0.3) {
-//            self.bottomButtonView.snp.updateConstraints {
-//                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-1 * keyboardHeight)
-//            }
-//            self.view.layoutIfNeeded()
-//        }
+        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+        let keyboardHeight = view.frame.height - keyboardFrame.minY
+
+        UIView.animate(withDuration: 0.4) {
+            self.bottomButtonView.snp.updateConstraints {
+                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-1 * keyboardHeight)
+            }
+            self.view.layoutIfNeeded()
+        }
     }
 
     // MARK: Helpers
@@ -105,7 +105,6 @@ final class HangoutMakeViewController: UIViewController {
 
     private func configure() {
         view.backgroundColor = .white
-        scrollView.backgroundColor = .systemGray6
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isPagingEnabled = true // 임시
 //        scrollView.isScrollEnabled = false
@@ -133,7 +132,7 @@ final class HangoutMakeViewController: UIViewController {
         scrollView.snp.makeConstraints {
             $0.top.equalTo(progressBarView.snp.bottom).offset(25.0)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
 
         scrollView.addSubview(contentView)
@@ -199,6 +198,7 @@ final class HangoutMakeViewController: UIViewController {
         
         view.addSubview(bottomButtonView)
         bottomButtonView.snp.makeConstraints {
+            $0.top.equalTo(scrollView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }

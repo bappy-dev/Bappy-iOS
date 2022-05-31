@@ -45,7 +45,7 @@ final class HangoutDetailViewController: UIViewController {
         return button
     }()
     
-    private let joinButton: UIButton = {
+    private lazy var joinButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = UIColor(named: "bappy_yellow")
         button.setAttributedTitle(
@@ -58,6 +58,7 @@ final class HangoutDetailViewController: UIViewController {
             for: .normal)
         button.layer.cornerRadius = 11.5
         button.addBappyShadow()
+        button.addTarget(self, action: #selector(joinButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -91,6 +92,13 @@ final class HangoutDetailViewController: UIViewController {
     @objc
     private func backButtonHandler() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc
+    private func joinButtonHandler() {
+        let popupView = SigninPopupViewController()
+        popupView.modalPresentationStyle = .overCurrentContext
+        present(popupView, animated: false)
     }
     
     @objc
@@ -190,6 +198,7 @@ final class HangoutDetailViewController: UIViewController {
     }
 }
 
+// MARK: - HangoutMainSectionViewDelegate
 extension HangoutDetailViewController: HangoutMainSectionViewDelegate {
     func didTapReportButton() {
         let viewController = ReportViewController()

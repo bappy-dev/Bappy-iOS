@@ -103,7 +103,7 @@ final class HangoutMakeTimeView: UIView {
     @objc
     private func dateButtonHandler() {
         UIView.animate(withDuration: 0.4) {
-            if self.dateButton.isSelected {
+            if !self.dateButton.isSelected {
                 self.calendarView.snp.removeConstraints()
                 self.calendarView.snp.makeConstraints {
                     $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
@@ -126,7 +126,7 @@ final class HangoutMakeTimeView: UIView {
     @objc
     private func timeButtonHandler() {
         UIView.animate(withDuration: 0.4) {
-            if self.timeButton.isSelected {
+            if !self.timeButton.isSelected {
                 self.timeView.snp.removeConstraints()
                 self.timeView.snp.makeConstraints {
                     $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
@@ -203,8 +203,9 @@ final class HangoutMakeTimeView: UIView {
         contentView.addSubview(calendarView)
         calendarView.snp.makeConstraints {
             $0.top.equalTo(dateImageView.snp.bottom).offset(14.5)
-            $0.height.equalTo(calendarView.snp.width)
-                .multipliedBy(295.0/292.0)
+            $0.height.equalTo(0)
+//            $0.height.equalTo(calendarView.snp.width)
+//                .multipliedBy(295.0/292.0)
         }
         
         contentView.addSubview(dividingView)
@@ -241,8 +242,10 @@ final class HangoutMakeTimeView: UIView {
         timeView.snp.makeConstraints {
             $0.top.equalTo(timeImageView.snp.bottom).offset(10.0)
             $0.leading.trailing.equalTo(dividingView)
-            $0.height.equalTo(timeView.snp.width)
-                .multipliedBy(216.0/292.0).offset(20.0)
+            $0.height.equalTo(0)
+//            $0.height.equalTo(timeView.snp.width)
+//                .multipliedBy(216.0/292.0).offset(20.0)
+            
         }
     }
 }
