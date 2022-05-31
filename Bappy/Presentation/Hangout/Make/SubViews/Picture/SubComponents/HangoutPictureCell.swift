@@ -53,6 +53,8 @@ final class HangoutPictureCell: UICollectionViewCell {
         button.addTarget(self, action: #selector(didTapRemoveImageButton), for: .touchUpInside)
         return button
     }()
+    
+    private let containerView = UIView()
 
     // MARK: Lifecycle
     override init(frame: CGRect) {
@@ -80,28 +82,34 @@ final class HangoutPictureCell: UICollectionViewCell {
     }
     
     private func configure() {
-        contentView.backgroundColor = UIColor(named: "bappy_lightgray")
-        contentView.layer.cornerRadius = 12.0
-        contentView.clipsToBounds = false
+        contentView.backgroundColor = .white
+        containerView.backgroundColor = UIColor(named: "bappy_lightgray")
+        containerView.layer.cornerRadius = 12.0
+        containerView.clipsToBounds = false
     }
 
     private func layout() {
-        contentView.addSubview(pictureImageView)
+        contentView.addSubview(containerView)
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(12.5)
+        }
+        
+        containerView.addSubview(pictureImageView)
         pictureImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
-        contentView.addSubview(addPictureImageView)
+        containerView.addSubview(addPictureImageView)
         addPictureImageView.snp.makeConstraints {
-            $0.centerY.equalTo(contentView.snp.top).offset(3.0)
-            $0.centerX.equalTo(contentView.snp.trailing)
+            $0.centerY.equalTo(containerView.snp.top).offset(3.0)
+            $0.centerX.equalTo(containerView.snp.trailing)
             $0.width.height.equalTo(23.0)
         }
         
-        contentView.addSubview(removePictureButton)
+        containerView.addSubview(removePictureButton)
         removePictureButton.snp.makeConstraints {
-            $0.centerY.equalTo(contentView.snp.top).offset(3.0)
-            $0.centerX.equalTo(contentView.snp.trailing)
+            $0.centerY.equalTo(containerView.snp.top).offset(3.0)
+            $0.centerX.equalTo(containerView.snp.trailing)
             $0.width.height.equalTo(44.0)
         }
     }

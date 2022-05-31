@@ -53,7 +53,6 @@ final class HangoutPictureView: UIView {
         collectionView.delegate = self
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.clipsToBounds = false
         return collectionView
     }()
     
@@ -91,7 +90,7 @@ final class HangoutPictureView: UIView {
         
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            let height: CGFloat = (UIScreen.main.bounds.width - 140.0) * 138.0 / 255.0
+            let height: CGFloat = (UIScreen.main.bounds.width - 140.0) * 138.0 / 255.0 + 25.0
             $0.top.equalTo(hStackView.snp.bottom).offset(29.0)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(height)
@@ -130,12 +129,12 @@ extension HangoutPictureView: UICollectionViewDelegate {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension HangoutPictureView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 25.0
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = UIScreen.main.bounds.width - 140.0
-        let height: CGFloat = width / 250.0 * 138.0
+        let width: CGFloat = UIScreen.main.bounds.width - 115.0
+        let height: CGFloat = (width - 25.0) / 250.0 * 138.0 + 25.0
         return CGSize(width: width, height: height)
     }
     
