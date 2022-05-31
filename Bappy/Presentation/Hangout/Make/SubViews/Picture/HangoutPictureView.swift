@@ -1,24 +1,23 @@
 //
-//  ReportImageSectionView.swift
+//  HangoutPictureView.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/05/24.
+//  Created by 정동천 on 2022/05/31.
 //
 
 import UIKit
 import SnapKit
 
-private let reuseIdentifier = "ReportPhotoCell"
-
-protocol ReportImageSectionViewDelegate: AnyObject {
+protocol HangoutPictureViewDelegate: AnyObject {
     func addPhoto()
     func removePhoto(indexPath: IndexPath)
 }
 
-final class ReportImageSectionView: UIView {
+private let reuseIdentifier = "HangoutPictureCell"
+final class HangoutPictureView: UIView {
     
     // MARK: Properties
-    weak var delegate: ReportImageSectionViewDelegate?
+    weak var delegate: HangoutPictureViewDelegate?
     
     var selectedImages = [UIImage]() {
         didSet {
@@ -29,11 +28,19 @@ final class ReportImageSectionView: UIView {
         }
     }
     
-    private let photoCaptionLabel: UILabel = {
+    private let pictureCaptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
+        label.text = "Please add a picture of the place!"
+        label.font = .roboto(size: 18.0, family: .Medium)
         label.textColor = UIColor(named: "bappy_brown")
-        label.text = "Photo"
+        return label
+    }()
+    
+    private let asteriskLabel: UILabel = {
+        let label = UILabel()
+        label.text = "*"
+        label.font = .roboto(size: 18.0)
+        label.textColor = UIColor(named: "bappy_yellow")
         return label
     }()
     
@@ -41,10 +48,12 @@ final class ReportImageSectionView: UIView {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.register(ReportPhotoCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(HangoutPictureCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.clipsToBounds = false
         return collectionView
     }()
     
@@ -66,30 +75,38 @@ final class ReportImageSectionView: UIView {
     }
     
     private func layout() {
-        self.addSubview(photoCaptionLabel)
-        photoCaptionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(19.0)
-            $0.leading.equalToSuperview().inset(33.0)
+        let vStackView = UIStackView(arrangedSubviews: [asteriskLabel])
+        vStackView.alignment = .top
+        let hStackView = UIStackView(arrangedSubviews: [pictureCaptionLabel, vStackView])
+        hStackView.spacing = 3.0
+        hStackView.alignment = .fill
+        hStackView.axis = .horizontal
+        
+        self.addSubview(hStackView)
+        hStackView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(39.0)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(30.0)
         }
         
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(photoCaptionLabel.snp.bottom).offset(10.0)
+            let height: CGFloat = (UIScreen.main.bounds.width - 140.0) * 138.0 / 255.0
+            $0.top.equalTo(hStackView.snp.bottom).offset(29.0)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(95.0)
-            $0.bottom.equalToSuperview().inset(16.0)
+            $0.height.equalTo(height)
         }
     }
 }
 
 // MARK: - UICollectionViewDataSource
-extension ReportImageSectionView: UICollectionViewDataSource {
+extension HangoutPictureView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return selectedImages.count + 1
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ReportPhotoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! HangoutPictureCell
         if indexPath.item == 0 {
             cell.isFirstCell = true
         } else {
@@ -102,30 +119,33 @@ extension ReportImageSectionView: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegate
-extension ReportImageSectionView: UICollectionViewDelegate {
+extension HangoutPictureView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("DEBUG: ....")
         guard indexPath.item == 0 else { return }
         delegate?.addPhoto()
     }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension ReportImageSectionView: UICollectionViewDelegateFlowLayout {
+extension HangoutPictureView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10.0
+        return 25.0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 105.0, height: 95.0)
+        let width: CGFloat = UIScreen.main.bounds.width - 140.0
+        let height: CGFloat = width / 250.0 * 138.0
+        return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 31.0, bottom: 0, right: 31.0)
+        return UIEdgeInsets(top: 0, left: 70.0, bottom: 0, right: 70.0)
     }
 }
 
 // MARK: - ReportPhotoCellDelegate
-extension ReportImageSectionView: ReportPhotoCellDelegate {
+extension HangoutPictureView: HangoutPictureCellDelegate {
     func removePhoto(indexPath: IndexPath) {
         delegate?.removePhoto(indexPath: indexPath)
     }

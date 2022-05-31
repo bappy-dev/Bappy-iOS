@@ -71,7 +71,7 @@ final class HangoutMakeTitleView: UIView {
         
         self.addSubview(hStackView)
         hStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(61.0)
+            $0.top.equalToSuperview().inset(39.0)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(30.0)
         }
@@ -86,7 +86,7 @@ final class HangoutMakeTitleView: UIView {
         underlinedView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(44.0)
             $0.height.equalTo(2.0)
-            $0.centerY.equalTo(titleTextField.snp.bottom)
+            $0.top.equalTo(titleTextField.snp.bottom).offset(5.0)
         }
     }
 }

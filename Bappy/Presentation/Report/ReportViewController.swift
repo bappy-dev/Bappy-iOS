@@ -170,7 +170,7 @@ final class ReportViewController: UIViewController {
     }
 }
 
-// MARK: PHPickerViewControllerDelegate
+// MARK: - PHPickerViewControllerDelegate
 extension ReportViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
@@ -185,7 +185,7 @@ extension ReportViewController: PHPickerViewControllerDelegate {
     }
 }
 
-// MARK: ReportImageSectionViewDelegate
+// MARK: - ReportImageSectionViewDelegate
 extension ReportViewController: ReportImageSectionViewDelegate {
     func addPhoto() {
         guard numberOfImages < 9 else {

@@ -7,10 +7,19 @@
 
 import UIKit
 import SnapKit
+import PhotosUI
 
 final class HangoutMakeViewController: UIViewController {
     
     // MARK: Properties
+    private var selectedImages = [UIImage]() {
+        didSet {
+            pictureView.selectedImages = self.selectedImages
+        }
+    }
+    
+    private var numberOfImages = 0
+    
     private var page: Int = 0 {
         didSet { print("DEBUG: page \(page)") }
     }
@@ -27,7 +36,11 @@ final class HangoutMakeViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     private let bottomButtonView = BottomButtonView(viewModel: BottomButtonViewModel())
-
+    
+    private let titleView = HangoutMakeTitleView()
+    private let timeView = HangoutMakeTimeView()
+    private let placeView = HangoutPlaceView()
+    private let pictureView = HangoutPictureView()
 
     // MARK: Lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -94,6 +107,8 @@ final class HangoutMakeViewController: UIViewController {
 //        scrollView.isScrollEnabled = false
         scrollView.isScrollEnabled = true
         titleLabel.addBappyShadow(shadowOffsetHeight: 1.0)
+        placeView.delegate = self
+        pictureView.delegate = self
     }
 
     private func layout() {
@@ -122,13 +137,6 @@ final class HangoutMakeViewController: UIViewController {
             $0.width.equalTo(2000.0) // 임시
         }
         
-        let titleView = HangoutMakeTitleView()
-        let timeView = HangoutMakeTimeView()
-        let placeView = HangoutPlaceView()
-        
-        placeView.delegate = self
-        
-        
         contentView.addSubview(titleView)
         titleView.snp.makeConstraints {
             $0.top.leading.bottom.equalToSuperview()
@@ -149,6 +157,13 @@ final class HangoutMakeViewController: UIViewController {
             $0.leading.equalTo(timeView.snp.trailing)
         }
         
+        contentView.addSubview(pictureView)
+        pictureView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(placeView.snp.trailing)
+        }
+        
         view.addSubview(bottomButtonView)
         bottomButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
@@ -164,5 +179,45 @@ extension HangoutMakeViewController: HangoutPlaceViewDelegate {
         let viewController = SearchPlaceViewController()
         viewController.modalPresentationStyle = .overCurrentContext
         present(viewController, animated: false, completion: nil)
+    }
+}
+
+// MARK: - HangoutPictureViewDelegate
+extension HangoutMakeViewController: HangoutPictureViewDelegate {
+    func addPhoto() {
+        guard numberOfImages < 9 else {
+//            let popUpContents = "사진은 최대 9장까지 첨부할 수 있습니다."
+//            let popUpViewController = PopUpViewController(buttonType: .cancel, contents: popUpContents)
+//            popUpViewController.modalPresentationStyle = .overCurrentContext
+//            present(popUpViewController, animated: false)
+            return
+        }
+        
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 9 - numberOfImages
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    func removePhoto(indexPath: IndexPath) {
+        selectedImages.remove(at: indexPath.item - 1)
+        numberOfImages -= 1
+    }
+}
+
+// MARK: - PHPickerViewControllerDelegate
+extension HangoutMakeViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
+        self.numberOfImages += results.count
+        for result in results {
+            result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
+                guard let self = self, let image = object as? UIImage else { return }
+                self.selectedImages.append(image.downSize(newWidth: 300))
+            }
+        }
     }
 }
