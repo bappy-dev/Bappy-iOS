@@ -36,9 +36,17 @@ final class BappyCalendarView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        print("DEBUG: datePickerWidth \(datePicker.frame.width)")
+        print("DEBUG: datePickerHeight \(datePicker.frame.height)")
+    }
+    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
+        self.clipsToBounds = true
     }
     
     private func layout() {
@@ -47,7 +55,7 @@ final class BappyCalendarView: UIView {
         
         self.addSubview(dividingView)
         dividingView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10.0)
+            $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1.0)
         }
@@ -56,7 +64,8 @@ final class BappyCalendarView: UIView {
         datePicker.snp.makeConstraints {
             $0.top.equalTo(dividingView.snp.bottom).offset(5.5)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(10.0)
+            $0.height.equalTo(datePicker.snp.width).multipliedBy(295.0/292.0)
+//            $0.height.equalTo(datePicker.snp.width).multipliedBy(295.0/292.0).offset(-20.0)
         }
     }
 }

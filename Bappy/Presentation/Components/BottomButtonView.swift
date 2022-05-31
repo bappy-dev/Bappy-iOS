@@ -55,6 +55,7 @@ final class BottomButtonView: UIView {
         super.init(frame: .zero)
         
         bind()
+        configure()
         layout()
     }
     
@@ -71,6 +72,10 @@ final class BottomButtonView: UIView {
         nextButton.rx.tap
             .bind(to: viewModel.input.didTapNextButton)
             .disposed(by: disposeBag)
+    }
+    
+    private func configure() {
+        self.backgroundColor = .white
     }
     
     private func layout() {

@@ -37,11 +37,18 @@ final class BappyTimeView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        print("DEBUG: datePickerWidth \(datePicker.frame.width)")
+        print("DEBUG: datePickerHeight \(datePicker.frame.height)")
+    }
 
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        
+        self.clipsToBounds = true
     }
 
     private func layout() {
@@ -61,7 +68,7 @@ final class BappyTimeView: UIView {
             $0.top.equalToSuperview().inset(10.0)
             $0.centerY.equalTo(selectView)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(10.0)
+            $0.height.equalTo(datePicker.snp.width).multipliedBy(216.0/292.0)
         }
     }
 }

@@ -131,7 +131,8 @@ final class HangoutMakeViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(progressBarView.snp.bottom).offset(25.0)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
 
         scrollView.addSubview(contentView)
