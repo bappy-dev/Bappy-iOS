@@ -113,6 +113,7 @@ final class HangoutMakeViewController: UIViewController {
         titleLabel.addBappyShadow(shadowOffsetHeight: 1.0)
         placeView.delegate = self
         pictureView.delegate = self
+        languageView.delegate = self
     }
 
     private func layout() {
@@ -139,7 +140,6 @@ final class HangoutMakeViewController: UIViewController {
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalToSuperview()
-//            $0.width.equalTo(2000.0) // 임시
         }
         
         contentView.addSubview(titleView)
@@ -237,6 +237,16 @@ extension HangoutMakeViewController: HangoutPictureViewDelegate {
     func removePhoto(indexPath: IndexPath) {
         selectedImages.remove(at: indexPath.item - 1)
         numberOfImages -= 1
+    }
+}
+
+// MARK: - Hangout
+extension HangoutMakeViewController: HangoutLanguageViewDelegate {
+    func showSelectLanguageView() {
+        view.endEditing(true) // 임시
+        let viewController = SelectLanguageViewController()
+        viewController.modalPresentationStyle = .overCurrentContext
+        present(viewController, animated: false, completion: nil)
     }
 }
 
