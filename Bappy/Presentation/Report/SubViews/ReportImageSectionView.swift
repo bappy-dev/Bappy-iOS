@@ -25,6 +25,7 @@ final class ReportImageSectionView: UIView {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.collectionView.reloadData()
+                self.numOfImageLabel.text = "\(self.selectedImages.count)/5"
             }
         }
     }
@@ -46,6 +47,14 @@ final class ReportImageSectionView: UIView {
         collectionView.delegate = self
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
+    }()
+    
+    private let numOfImageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "0/5"
+        label.textColor = UIColor(named: "bappy_brown")
+        label.font = .roboto(size: 12.0)
+        return label
     }()
     
     // MARK: Lifecycle
@@ -74,10 +83,16 @@ final class ReportImageSectionView: UIView {
         
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(photoCaptionLabel.snp.bottom).offset(10.0)
+            $0.top.equalTo(photoCaptionLabel.snp.bottom).offset(13.0)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(95.0)
+            $0.height.equalTo(138.0)
             $0.bottom.equalToSuperview().inset(16.0)
+        }
+        
+        self.addSubview(numOfImageLabel)
+        numOfImageLabel.snp.makeConstraints {
+            $0.centerY.equalTo(photoCaptionLabel.snp.bottom)
+            $0.trailing.equalToSuperview().inset(43.0)
         }
     }
 }
@@ -93,6 +108,7 @@ extension ReportImageSectionView: UICollectionViewDataSource {
         if indexPath.item == 0 {
             cell.isFirstCell = true
         } else {
+            cell.isFirstCell = false
             cell.image = selectedImages[indexPath.item - 1]
             cell.delegate = self
             cell.indexPath = indexPath
@@ -112,15 +128,15 @@ extension ReportImageSectionView: UICollectionViewDelegate {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension ReportImageSectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10.0
+        return 12.0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 105.0, height: 95.0)
+        return CGSize(width: 105.0, height: 138.0)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 31.0, bottom: 0, right: 31.0)
+        return UIEdgeInsets(top: 0, left: 31.0, bottom: 0, right: 26.0)
     }
 }
 

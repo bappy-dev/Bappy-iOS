@@ -136,7 +136,7 @@ final class ReportViewController: UIViewController {
         contentView.addSubview(imageSectionView)
         imageSectionView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(150.0)
+//            $0.height.equalTo(150.0)
         }
 
         contentView.addSubview(writingSectionView)
@@ -147,7 +147,7 @@ final class ReportViewController: UIViewController {
         
         contentView.addSubview(reportButton)
         reportButton.snp.makeConstraints {
-            $0.top.equalTo(imageSectionView.snp.bottom).offset(74.0)
+            $0.top.equalTo(imageSectionView.snp.bottom).offset(28.0)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(157.0)
             $0.height.equalTo(43.0)
@@ -188,7 +188,7 @@ extension ReportViewController: PHPickerViewControllerDelegate {
 // MARK: - ReportImageSectionViewDelegate
 extension ReportViewController: ReportImageSectionViewDelegate {
     func addPhoto() {
-        guard numberOfImages < 9 else {
+        guard numberOfImages < 5 else {
 //            let popUpContents = "사진은 최대 9장까지 첨부할 수 있습니다."
 //            let popUpViewController = PopUpViewController(buttonType: .cancel, contents: popUpContents)
 //            popUpViewController.modalPresentationStyle = .overCurrentContext
@@ -197,7 +197,7 @@ extension ReportViewController: ReportImageSectionViewDelegate {
         }
         
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 9 - numberOfImages
+        configuration.selectionLimit = 5 - numberOfImages
         configuration.filter = .images
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
