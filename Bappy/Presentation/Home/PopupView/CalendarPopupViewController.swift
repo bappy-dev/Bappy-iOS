@@ -109,7 +109,7 @@ final class CalendarPopupViewController: UIViewController {
         view.addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(36.0)
+            $0.leading.trailing.equalToSuperview().inset(24.0)
         }
         
         containerView.addSubview(datePicker)
