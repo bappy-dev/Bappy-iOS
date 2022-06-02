@@ -20,6 +20,7 @@ final class MyListViewController: UIViewController {
         tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .none
         tableView.rowHeight = 180.0 + view.frame.width * 9.0 / 16.0
+        tableView.backgroundColor = UIColor(named: "bappy_lightgray")
         return tableView
     }()
 

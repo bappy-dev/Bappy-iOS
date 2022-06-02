@@ -7,6 +7,9 @@
 
 import UIKit
 import SnapKit
+import Firebase
+import GoogleSignIn
+//import FirebaseAuth
 
 final class BappyLoginViewController: UIViewController {
     
@@ -25,7 +28,7 @@ final class BappyLoginViewController: UIViewController {
         return imageView
     }()
     
-    private let googleLoginButton: UIButton = {
+    private lazy var googleLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 9.0
         button.layer.borderWidth = 2.0
@@ -40,6 +43,7 @@ final class BappyLoginViewController: UIViewController {
                 ]),
             for: .normal)
         button.adjustsImageWhenHighlighted = false
+        button.addTarget(self, action: #selector(googleButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -121,6 +125,48 @@ final class BappyLoginViewController: UIViewController {
     @objc
     private func skipButtonHandler() {
         self.dismiss(animated: true)
+    }
+    
+    @objc
+    private func googleButtonHandler() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+
+        // 1. Google Sign In
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { [weak self] user, error in
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
+            }
+
+            guard let authentication = user?.authentication,
+                  let idToken = authentication.idToken else { return }
+            print("DEUBG: authentication \(authentication)")
+            print("DEUBG: idToken \(idToken)")
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                             accessToken: authentication.accessToken)
+            
+            // 2. Firbase Sign In
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return
+                }
+                guard let authResult = authResult else { return }
+//                authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+//                    if let error = error {
+//                        print("ERROR: \(error.localizedDescription)")
+//                        return
+//                    }
+//                    print("DEBUG: idToken \(idToken!)")
+//                }
+                print("DEBUG: uid \(authResult.user.uid)")
+                
+                self?.dismiss(animated: true)
+            }
+        }
     }
     
     // MARK: Helpers
