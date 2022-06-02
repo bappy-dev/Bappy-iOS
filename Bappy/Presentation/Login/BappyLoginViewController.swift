@@ -10,7 +10,7 @@ import SnapKit
 import Firebase
 import FirebaseAuth
 import GoogleSignIn
-//import FirebaseAuth
+import FacebookLogin
 
 final class BappyLoginViewController: UIViewController {
     
@@ -63,6 +63,7 @@ final class BappyLoginViewController: UIViewController {
                 ]),
             for: .normal)
         button.adjustsImageWhenHighlighted = false
+        button.addTarget(self, action: #selector(facebookLoginButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -123,45 +124,61 @@ final class BappyLoginViewController: UIViewController {
     }
     
     // MARK: API
-    private func signIn(completion: @escaping(String) -> Void) {
-//        let scheme = (myPostType == .post) ? "mypost" : "mycomment"
-//        let urlComponents = URLComponents(string: "\(SERVER_URL)/profile/\(scheme)")
+    private func signIn(name: String, password: String ,completion: @escaping(String) -> Void) {
+        var components = URLComponents()
+        components.scheme = "http"
+        components.host = "172.30.1.26:8080"
+        components.path = "/account"
+        components.queryItems = [
+            URLQueryItem(name: "name", value: name),
+            URLQueryItem(name: "password", value: password)
+        ]
+        guard let url = components.url else { return }
+        
+//        var urlComponents = URLComponents(string: "http://172.30.1.26:8080/account")
+//        let paramQuery1 = URLQueryItem(name: "name", value: name)
+//        let paramQuery2 = URLQueryItem(name: "password", value: password)
+//        urlComponents?.queryItems?.append(paramQuery1)
+//        urlComponents?.queryItems?.append(paramQuery2)
 //        guard let url = urlComponents?.url else { return }
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "GET"
-//        let dataTask = URLSession.shared.dataTask(with: request) {data, response, error in
-//            guard error == nil,
-//                  let response = response as? HTTPURLResponse,
-//                  let data = data,
-//                  let myPosts = try? JSONDecoder().decode([MyPost].self, from: data) else {
-//                      print("ERROR: URLSession data task \(error?.localizedDescription ?? "")")
-//                      return
-//                  }
-//
-//            switch response.statusCode {
-//            case (200...299):
-//                print("DEBUG: Network succeded")
-//                completion(myPosts)
-//            case (400...499):
-//                print("""
-//                    ERROR: Client ERROR \(response.statusCode)
-//                    Response: \(response)
-//                """)
-//            case (500...599):
-//                print("""
-//                    ERROR: Server ERROR \(response.statusCode)
-//                    Response: \(response)
-//                """)
-//            default:
-//                print("""
-//                    ERROR: \(response.statusCode)
-//                    Response: \(response)
-//                """)
-//            }
-//        }
-//
-//        dataTask.resume()
+        
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let dataTask = URLSession.shared.dataTask(with: request) {data, response, error in
+            guard error == nil,
+                  let response = response as? HTTPURLResponse,
+                  let data = data,
+                  let returnValue = String(data: data, encoding: .utf8)  else {
+                      print("ERROR: URLSession data task \(error?.localizedDescription ?? "")")
+                      return
+                  }
+
+            switch response.statusCode {
+            case (200...299):
+                print("DEBUG: Network succeded")
+                completion(returnValue)
+            case (400...499):
+                print("""
+                    ERROR: Client ERROR \(response.statusCode)
+                    Response: \(response)
+                """)
+            case (500...599):
+                print("""
+                    ERROR: Server ERROR \(response.statusCode)
+                    Response: \(response)
+                """)
+            default:
+                print("""
+                    ERROR: \(response.statusCode)
+                    Response: \(response)
+                """)
+            }
+        }
+
+        dataTask.resume()
     }
     
     // MARK: Actions
@@ -207,6 +224,46 @@ final class BappyLoginViewController: UIViewController {
 //                }
                 print("DEBUG: uid \(authResult.user.uid)")
                 
+//                self?.signIn(name: idToken, password: idToken, completion: { returnValue in
+//                    print("DEBUG: returnValue \(returnValue)")
+//
+//                    self?.dismiss(animated: true)
+//                })
+                self?.dismiss(animated: true)
+            }
+        }
+    }
+    
+    @objc
+    private func facebookLoginButtonHandler() {
+        let loginManager = LoginManager()
+        loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
+            }
+            guard let result = result, !result.isCancelled else {
+                print("DEBUG: Cancelled")
+                return
+            }
+            print("DEBUG: \(result.token!)")
+            guard let token = AccessToken.current?.tokenString else { return }
+            let credential = FacebookAuthProvider.credential(withAccessToken: token)
+            
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return
+                }
+                guard let authResult = authResult else { return }
+                authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+                    if let error = error {
+                        print("ERROR: \(error.localizedDescription)")
+                        return
+                    }
+                    print("DEBUG: idToken \(idToken!)")
+                }
+                print("DEBUG: uid \(authResult.user.uid)")
                 self?.dismiss(animated: true)
             }
         }
