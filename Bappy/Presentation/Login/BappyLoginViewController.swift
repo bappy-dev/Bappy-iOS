@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Firebase
+import FirebaseAuth
 import GoogleSignIn
 //import FirebaseAuth
 
@@ -47,7 +48,7 @@ final class BappyLoginViewController: UIViewController {
         return button
     }()
     
-    private let facebookLoginButton: UIButton = {
+    private lazy var facebookLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 9.0
         button.layer.borderWidth = 2.0
@@ -119,6 +120,48 @@ final class BappyLoginViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: API
+    private func signIn(completion: @escaping(String) -> Void) {
+//        let scheme = (myPostType == .post) ? "mypost" : "mycomment"
+//        let urlComponents = URLComponents(string: "\(SERVER_URL)/profile/\(scheme)")
+//        guard let url = urlComponents?.url else { return }
+//
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "GET"
+//        let dataTask = URLSession.shared.dataTask(with: request) {data, response, error in
+//            guard error == nil,
+//                  let response = response as? HTTPURLResponse,
+//                  let data = data,
+//                  let myPosts = try? JSONDecoder().decode([MyPost].self, from: data) else {
+//                      print("ERROR: URLSession data task \(error?.localizedDescription ?? "")")
+//                      return
+//                  }
+//
+//            switch response.statusCode {
+//            case (200...299):
+//                print("DEBUG: Network succeded")
+//                completion(myPosts)
+//            case (400...499):
+//                print("""
+//                    ERROR: Client ERROR \(response.statusCode)
+//                    Response: \(response)
+//                """)
+//            case (500...599):
+//                print("""
+//                    ERROR: Server ERROR \(response.statusCode)
+//                    Response: \(response)
+//                """)
+//            default:
+//                print("""
+//                    ERROR: \(response.statusCode)
+//                    Response: \(response)
+//                """)
+//            }
+//        }
+//
+//        dataTask.resume()
     }
     
     // MARK: Actions
