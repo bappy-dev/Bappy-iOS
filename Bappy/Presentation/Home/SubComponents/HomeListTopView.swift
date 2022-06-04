@@ -24,16 +24,22 @@ final class HomeListTopView: UIView {
             NSAttributedString(
                 string: "Busan",
                 attributes: [
-                    .font: UIFont.roboto(size: 24.0, family: .Medium),
+                    .font: UIFont.roboto(size: 32.0, family: .Medium),
                     .foregroundColor: UIColor(named: "bappy_brown")!
-                ]),
-            for: .normal)
+                ]), for: .normal)
         return button
     }()
     
     private let languageButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "home_language"), for: .normal)
+        button.imageEdgeInsets = .init(top: 7.5, left: 7.5, bottom: 7.5, right: 7.5)
+        return button
+    }()
+    
+    private let searchButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "home_search"), for: .normal)
         button.imageEdgeInsets = .init(top: 7.5, left: 7.5, bottom: 7.5, right: 7.5)
         return button
     }()
@@ -53,15 +59,6 @@ final class HomeListTopView: UIView {
         button.addTarget(self, action: #selector(writeButtonHandler), for: .touchUpInside)
         return button
     }()
-    
-    private let searchButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "home_search"), for: .normal)
-        button.imageEdgeInsets = .init(top: 7.5, left: 7.5, bottom: 7.5, right: 7.5)
-        return button
-    }()
-    
-    private let contentView = UIView()
     
     // MARK: Lifecycle
     init() {
@@ -89,49 +86,44 @@ final class HomeListTopView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        self.clipsToBounds = true
-        contentView.backgroundColor = .white
-        contentView.addBappyShadow(shadowOffsetHeight: 1.0)
     }
     
     private func layout() {
-        self.addSubview(contentView)
-        contentView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(2.0)
-        }
-        
         let buttonStackView = UIStackView(arrangedSubviews: [
-            languageButton, dateButton, writeButton, searchButton
+            searchButton, dateButton, writeButton
         ])
         buttonStackView.axis = .horizontal
         buttonStackView.distribution = .fillEqually
         buttonStackView.alignment = .fill
-        
-        contentView.addSubview(localeSelctionButton)
-        localeSelctionButton.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(12.0)
-            $0.height.equalTo(44.0)
-            $0.leading.equalToSuperview().inset(33.0)
-            $0.bottom.equalToSuperview().inset(10.0)
-        }
-        
-        contentView.addSubview(buttonStackView)
-        buttonStackView.snp.makeConstraints {
-            $0.width.equalTo(140.0)
-            $0.height.equalTo(35.0)
-            $0.centerY.equalTo(localeSelctionButton)
-            $0.trailing.equalToSuperview().inset(9.5)
-        }
+        buttonStackView.spacing = 1.5
         
         let localeButtonImage = UIImage(systemName: "arrowtriangle.down.fill")
         let localeButtonImageView = UIImageView(image: localeButtonImage)
-        localeButtonImageView.tintColor = UIColor(named: "bappy_brown")
+        localeButtonImageView.tintColor = UIColor(named: "bappy_yellow")
+        localeButtonImageView.contentMode = .scaleToFill
+        
+        self.addSubview(localeSelctionButton)
+        localeSelctionButton.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(12.0)
+            $0.height.equalTo(44.0)
+            $0.leading.equalToSuperview().inset(19.0)
+            $0.bottom.equalToSuperview().inset(12.0)
+        }
+        
         localeSelctionButton.addSubview(localeButtonImageView)
         localeButtonImageView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(12.0)
-            $0.width.height.equalTo(12.0)
-            $0.trailing.equalToSuperview().inset(-16.0)
+            $0.bottom.equalToSuperview().inset(8.5)
+            $0.width.equalTo(16.0)
+            $0.height.equalTo(13.0)
+            $0.trailing.equalToSuperview().inset(-30.0)
+        }
+        
+        self.addSubview(buttonStackView)
+        buttonStackView.snp.makeConstraints {
+            $0.width.equalTo(123.0)
+            $0.height.equalTo(40.0)
+            $0.centerY.equalTo(localeSelctionButton)
+            $0.trailing.equalToSuperview().inset(20.5)
         }
     }
 }

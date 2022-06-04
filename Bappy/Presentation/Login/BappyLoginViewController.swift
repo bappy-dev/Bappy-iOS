@@ -119,6 +119,21 @@ final class BappyLoginViewController: UIViewController {
         setButtonImageInset()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let user = Auth.auth().currentUser {
+            print("DEBUG: currentUser.uid \(user.uid)")
+            user.providerData.forEach { data in
+//                print("DEBUG: provider name \(data.displayName)")
+//                print("DEBUG: provider email \(data.email)")
+//                print("DEBUG: provider photoURL \(data.photoURL)")
+//                print("DEBUG: provider phoneNumber \(data.phoneNumber)")
+//                print("DEBUG: provider displayName \(data.displayName)")
+            }
+        }
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -127,7 +142,7 @@ final class BappyLoginViewController: UIViewController {
     private func signIn(name: String, password: String ,completion: @escaping(String) -> Void) {
         var components = URLComponents()
         components.scheme = "http"
-        components.host = "172.30.1.26:8080"
+        components.host = "172.30.1.39:8080"
         components.path = "/account"
         components.queryItems = [
             URLQueryItem(name: "name", value: name),
@@ -204,9 +219,10 @@ final class BappyLoginViewController: UIViewController {
             guard let authentication = user?.authentication,
                   let idToken = authentication.idToken else { return }
             print("DEUBG: authentication \(authentication)")
-            print("DEUBG: idToken \(idToken)")
+//            print("DEUBG: idToken \(idToken)")
             let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                              accessToken: authentication.accessToken)
+            print("DEBUG: accessToken \(authentication.accessToken)")
             
             // 2. Firbase Sign In
             Auth.auth().signIn(with: credential) { authResult, error in
@@ -215,13 +231,14 @@ final class BappyLoginViewController: UIViewController {
                     return
                 }
                 guard let authResult = authResult else { return }
-//                authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
-//                    if let error = error {
-//                        print("ERROR: \(error.localizedDescription)")
-//                        return
-//                    }
-//                    print("DEBUG: idToken \(idToken!)")
-//                }
+//                authResult.user.getIDToken(
+                authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+                    if let error = error {
+                        print("ERROR: \(error.localizedDescription)")
+                        return
+                    }
+                    print("DEBUG: idToken \(idToken!)")
+                }
                 print("DEBUG: uid \(authResult.user.uid)")
                 
 //                self?.signIn(name: idToken, password: idToken, completion: { returnValue in
@@ -236,6 +253,8 @@ final class BappyLoginViewController: UIViewController {
     
     @objc
     private func facebookLoginButtonHandler() {
+        
+        // 1. Facebook Sign In
         let loginManager = LoginManager()
         loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
             if let error = error {
@@ -247,9 +266,11 @@ final class BappyLoginViewController: UIViewController {
                 return
             }
             print("DEBUG: \(result.token!)")
-            guard let token = AccessToken.current?.tokenString else { return }
-            let credential = FacebookAuthProvider.credential(withAccessToken: token)
-            
+            guard let accessToken = AccessToken.current?.tokenString else { return }
+            let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+            print("DEBUG: AccessToken \(accessToken)")
+
+            // 2. Firebase Sign In
             Auth.auth().signIn(with: credential) { authResult, error in
                 if let error = error {
                     print("ERROR: \(error.localizedDescription)")
