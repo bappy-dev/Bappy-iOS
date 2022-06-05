@@ -16,7 +16,6 @@ final class HomeListViewController: UIViewController {
     
     private let topView = HomeListTopView()
     private let topSubView = HomeListTopSubView()
-//    private let headerView = SortingHeaderView()
     private let tableView = UITableView()
     
     // MARK: Lifecycle
@@ -48,9 +47,7 @@ final class HomeListViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .none
-        tableView.rowHeight = 344.0
-//        tableView.tableHeaderView = headerView
-//        headerView.frame.size.height = 30.0
+        tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
     }
     
     private func configure() {
@@ -114,7 +111,7 @@ extension HomeListViewController: HomeListTopViewDelegate {
     func showDateFilterView() {
         let popupView = CalendarPopupViewController()
         popupView.modalPresentationStyle = .overCurrentContext
-        present(popupView, animated: false)
+        tabBarController?.present(popupView, animated: false)
     }
     
     func showWriteView() {
@@ -125,4 +122,3 @@ extension HomeListViewController: HomeListTopViewDelegate {
         present(viewController, animated: true)
     }
 }
-
