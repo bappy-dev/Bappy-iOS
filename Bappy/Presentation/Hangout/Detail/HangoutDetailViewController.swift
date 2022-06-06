@@ -122,8 +122,9 @@ final class HangoutDetailViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .white
         scrollView.keyboardDismissMode = .interactive
-        mainSectionView.delegate = self
         scrollView.contentInsetAdjustmentBehavior = .never
+        mainSectionView.delegate = self
+        mapSectionView.delegate = self
     }
     
     private func layout() {
@@ -204,5 +205,14 @@ extension HangoutDetailViewController: HangoutMainSectionViewDelegate {
     func didTapReportButton() {
         let viewController = ReportViewController()
         self.navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+// MARK: - HangoutMapSectionViewDelegate
+extension HangoutDetailViewController: HangoutMapSectionViewDelegate {
+    func showOpenURLView() {
+        let popupView = OpenURLPopupViewController()
+        popupView.modalPresentationStyle = .overCurrentContext
+        present(popupView, animated: false)
     }
 }

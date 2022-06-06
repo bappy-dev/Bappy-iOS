@@ -1,21 +1,21 @@
 //
-//  SigninPopupViewController.swift
+//  OpenURLPopupViewController.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/05/31.
+//  Created by 정동천 on 2022/06/06.
 //
 
 import UIKit
 import SnapKit
 
-protocol SigninPopupViewControllerDelegate: AnyObject {
+protocol OpenURLPopupViewControllerDelegate: AnyObject {
     
 }
 
-final class SigninPopupViewController: UIViewController {
+final class OpenURLPopupViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: SigninPopupViewControllerDelegate?
+    weak var delegate: OpenURLPopupViewControllerDelegate?
     
     private let maxDimmedAlpha: CGFloat = 0.3
     
@@ -35,43 +35,25 @@ final class SigninPopupViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Please sign in to join!"
+        label.text = "Open map app"
         label.textColor = UIColor(named: "bappy_brown")
-        label.font = .roboto(size: 24.0, family: .Medium)
+        label.font = .roboto(size: 30.0, family: .Medium)
         label.textAlignment = .center
         return label
     }()
     
-    private let bappyImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "bappy_happy")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let signinButton: UIButton = {
+    private lazy var googleMapButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Go to sign-in!",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 20.0, family: .Bold)
-                ]),
-            for: .normal)
-        button.backgroundColor = UIColor(named: "bappy_yellow")
-        button.layer.cornerRadius = 21.0
+        button.setImage(UIImage(named: "googlemap_icon"), for: .normal)
+        button.addTarget(self, action: #selector(openGoogleMapURL), for: .touchUpInside)
         return button
     }()
     
-    private let forwardImageView: UIImageView = {
-        let imageView = UIImageView()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 14.0, weight: .medium)
-        let image = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
-        imageView.image = image
-        imageView.contentMode = .center
-        imageView.tintColor = UIColor(named: "bappy_brown")
-        return imageView
+    private lazy var kakaoMapButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "kakaomap_icon"), for: .normal)
+        button.addTarget(self, action: #selector(openKakaoMapURL), for: .touchUpInside)
+        return button
     }()
     
     // MARK: Lifecycle
@@ -123,6 +105,21 @@ final class SigninPopupViewController: UIViewController {
         }
     }
     
+    // MARK: Actions
+    @objc
+    private func openGoogleMapURL() {
+        if let url = URL(string: "https://www.google.com/maps/dir/?api=1&destination=PNU+maingate&destination_place_id=ChIJddvJ8eqTaDURk21no4Umdvo") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
+    @objc
+    private func openKakaoMapURL() {
+        if let url = URL(string: "https://map.kakao.com/link/to/abcdefu,37.402056,127.108212") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .clear
@@ -130,6 +127,11 @@ final class SigninPopupViewController: UIViewController {
     }
     
     private func layout() {
+        let hStackView = UIStackView(arrangedSubviews: [googleMapButton, kakaoMapButton])
+        hStackView.axis = .horizontal
+        hStackView.spacing = 52.0
+        hStackView.distribution = .fillEqually
+        
         view.addSubview(dimmedView)
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -138,35 +140,21 @@ final class SigninPopupViewController: UIViewController {
         view.addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(36.0)
+            $0.leading.trailing.equalToSuperview().inset(21.0)
         }
         
         containerView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(39.0)
-            $0.leading.trailing.equalToSuperview().inset(41.0)
-        }
-        
-        containerView.addSubview(bappyImageView)
-        bappyImageView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(20.0)
+            $0.top.equalToSuperview().inset(22.0)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(195.0)
-            $0.height.equalTo(184.0)
         }
         
-        containerView.addSubview(signinButton)
-        signinButton.snp.makeConstraints {
-            $0.top.equalTo(bappyImageView.snp.bottom).offset(25.0)
-            $0.leading.trailing.equalToSuperview().inset(29.0)
-            $0.height.equalTo(42.0)
-            $0.bottom.equalToSuperview().inset(35.0)
-        }
-        
-        signinButton.addSubview(forwardImageView)
-        forwardImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(18.0)
+        containerView.addSubview(hStackView)
+        hStackView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(31.0)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(117.0)
+            $0.bottom.equalToSuperview().inset(27.0)
         }
     }
 }

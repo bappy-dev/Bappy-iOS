@@ -9,9 +9,15 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+protocol HangoutMapSectionViewDelegate: AnyObject {
+    func showOpenURLView()
+}
+
 final class HangoutMapSectionView: UIView {
     
     // MARK: Properties
+    weak var delegate: HangoutMapSectionViewDelegate?
+    
     private lazy var mapButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 14.0
@@ -54,15 +60,7 @@ final class HangoutMapSectionView: UIView {
     // MARK: Actions
     @objc
     private func openMapURL(_ button: UIButton) {
-//        if let url = URL(string: "https://map.kakao.com/link/to/abcdefu,37.402056,127.108212") {
-//            print("DEBUG: vaild URL")
-//            UIApplication.shared.open(url, options: [:])
-//        }
-
-        if let url = URL(string: "https://www.google.com/maps/dir/?api=1&destination=PNU+maingate&destination_place_id=ChIJddvJ8eqTaDURk21no4Umdvo") {
-            print("DEBUG: vaild URL")
-            UIApplication.shared.open(url, options: [:])
-        }
+        delegate?.showOpenURLView()
     }
     
     // MARK: Helpers
