@@ -21,21 +21,26 @@ final class HangoutMakeViewController: UIViewController {
     private var numberOfImages = 0
     
     private var page: Int = 0 {
-        didSet { print("DEBUG: page \(page)") }
+        didSet {
+            let x: CGFloat = UIScreen.main.bounds.width * CGFloat(page)
+            let offset = CGPoint(x: x, y: 0)
+            scrollView.setContentOffset(offset, animated: true)
+            progressBarView.updateProgression(CGFloat(page + 1) / 8.0)
+        }
     }
-   
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 24.0, family: .Medium)
-        label.text = "Make Hangout"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
+    
+    private lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "chevron_back"), for: .normal)
+        button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
+        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
+        return button
     }()
 
     private let progressBarView = ProgressBarView()
+    private let continueButtonView = ContinueButtonView()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let bottomButtonView = BottomButtonView(viewModel: BottomButtonViewModel())
     
     private let titleView = HangoutMakeTitleView()
     private let timeView = HangoutMakeTimeView()
@@ -45,6 +50,7 @@ final class HangoutMakeViewController: UIViewController {
     private let languageView = HangoutLanguageView()
     private let openchatView = HangoutOpenchatView()
     private let participantsLimitView = HangoutParticipantsLimitView()
+    
 
     // MARK: Lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -63,7 +69,7 @@ final class HangoutMakeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        progressBarView.initializeProgression()
+        progressBarView.initializeProgression(1.0/8.0)
     }
 
     // MARK: Events
@@ -83,13 +89,26 @@ final class HangoutMakeViewController: UIViewController {
     private func keyboardHeightObserver(_ notification: NSNotification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardHeight = view.frame.height - keyboardFrame.minY
+        print("DEBUG: keyboardHeight \(keyboardHeight)")
+        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : 0
 
         UIView.animate(withDuration: 0.4) {
-            self.bottomButtonView.snp.updateConstraints {
-                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-1 * keyboardHeight)
+            self.continueButtonView.snp.updateConstraints {
+                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
             }
             self.view.layoutIfNeeded()
         }
+    }
+    
+    @objc
+    private func backButtonHandler() {
+        view.endEditing(true)
+        guard page > 0 else {
+            self.dismiss(animated: true)
+            return
+        }
+        page -= 1
+        continueButtonView.isEnabled = true
     }
 
     // MARK: Helpers
@@ -106,33 +125,33 @@ final class HangoutMakeViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .white
         scrollView.showsHorizontalScrollIndicator = false
-        scrollView.isPagingEnabled = true // 임시
-//        scrollView.isScrollEnabled = false
-        scrollView.isScrollEnabled = true
-        titleLabel.addBappyShadow(shadowOffsetHeight: 1.0)
+        scrollView.isScrollEnabled = false
+        titleView.delegate = self
         placeView.delegate = self
         pictureView.delegate = self
         languageView.delegate = self
+        continueButtonView.delegate = self
     }
 
     private func layout() {
-        view.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
-            $0.centerX.equalToSuperview()
-        }
-
         view.addSubview(progressBarView)
         progressBarView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(28.0)
-            $0.leading.trailing.equalToSuperview().inset(23.0)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        view.addSubview(backButton)
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(progressBarView.snp.bottom).offset(15.0)
+            $0.leading.equalToSuperview().inset(5.5)
+            $0.width.height.equalTo(44.0)
         }
 
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(progressBarView.snp.bottom).offset(25.0)
+            $0.top.equalTo(backButton.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
 
         scrollView.addSubview(contentView)
@@ -196,14 +215,21 @@ final class HangoutMakeViewController: UIViewController {
             $0.leading.equalTo(openchatView.snp.trailing)
         }
         
-        view.addSubview(bottomButtonView)
-        bottomButtonView.snp.makeConstraints {
-            $0.top.equalTo(scrollView.snp.bottom)
+        view.addSubview(continueButtonView)
+        continueButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
 }
+
+// MARK: - HangoutMakeTitleViewDelegate
+extension HangoutMakeViewController: HangoutMakeTitleViewDelegate {
+    func isTitleValid(_ valid: Bool) {
+        continueButtonView.isEnabled = valid
+    }
+}
+
 
 // MARK: - HangoutPlaceViewDelegate
 extension HangoutMakeViewController: HangoutPlaceViewDelegate {
@@ -240,13 +266,22 @@ extension HangoutMakeViewController: HangoutPictureViewDelegate {
     }
 }
 
-// MARK: - Hangout
+// MARK: - HangoutLanguageViewDelegate
 extension HangoutMakeViewController: HangoutLanguageViewDelegate {
     func showSelectLanguageView() {
         view.endEditing(true) // 임시
         let viewController = SelectLanguageViewController()
         viewController.modalPresentationStyle = .overCurrentContext
         present(viewController, animated: false, completion: nil)
+    }
+}
+
+// MARK: - ContinueButtonViewDelegate
+extension HangoutMakeViewController: ContinueButtonViewDelegate {
+    func continueButtonTapped() {
+        view.endEditing(true)
+        page += 1
+        continueButtonView.isEnabled = false
     }
 }
 
@@ -264,3 +299,5 @@ extension HangoutMakeViewController: PHPickerViewControllerDelegate {
         }
     }
 }
+
+

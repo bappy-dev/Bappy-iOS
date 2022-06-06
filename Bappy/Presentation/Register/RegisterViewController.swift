@@ -53,7 +53,7 @@ final class RegisterViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        progressBarView.initializeProgression()
+        progressBarView.initializeProgression(1.0/7.0)
     }
     
     // MARK: Events
