@@ -56,7 +56,7 @@ final class HangoutDetailViewController: UIViewController {
                     .font: UIFont.roboto(size: 18.0, family: .Medium)
                 ]),
             for: .normal)
-        button.layer.cornerRadius = 11.5
+        button.layer.cornerRadius = 29.5
         button.addBappyShadow()
         button.addTarget(self, action: #selector(joinButtonHandler), for: .touchUpInside)
         return button
@@ -123,6 +123,7 @@ final class HangoutDetailViewController: UIViewController {
         view.backgroundColor = .white
         scrollView.keyboardDismissMode = .interactive
         mainSectionView.delegate = self
+        scrollView.contentInsetAdjustmentBehavior = .never
     }
     
     private func layout() {
@@ -168,11 +169,11 @@ final class HangoutDetailViewController: UIViewController {
         
         contentView.addSubview(joinButton)
         joinButton.snp.makeConstraints {
-            $0.top.equalTo(participantsSectionView.snp.bottom).offset(24.0)
+            $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(157.0)
-            $0.height.equalTo(43.0)
-            $0.bottom.equalToSuperview().inset(42.0)
+            $0.width.equalTo(215.0)
+            $0.height.equalTo(59.0)
+            $0.bottom.equalToSuperview().inset(61.0)
         }
         
         view.addSubview(titleTopView)

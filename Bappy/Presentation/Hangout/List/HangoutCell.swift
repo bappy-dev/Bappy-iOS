@@ -22,7 +22,7 @@ final class HangoutCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "example_post.png")
+        imageView.image = UIImage(named: "example_post2.png")
         return imageView
     }()
     
@@ -119,7 +119,6 @@ final class HangoutCell: UITableViewCell {
     }
     
     @objc func moreButtonHandler(_ button: UIButton) {
-        print("DEBUG: dfdfsfasdf")
         guard let indexPath = indexPath else { return }
         delegate?.showDetailView(indexPath)
     }

@@ -14,7 +14,7 @@ final class HangoutParticipantsSectionView: UIView {
     // MARK: Properties
     private let joinCaptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
+        label.font = .roboto(size: 20.0, family: .Medium)
         label.text = "Who Join?"
         label.textColor = UIColor(named: "bappy_brown")
         return label
@@ -22,8 +22,8 @@ final class HangoutParticipantsSectionView: UIView {
     
     private let numOfParticipantsLabel: UILabel = {
         let label = UILabel()
-        label.font = .roboto(size: 10.0)
-        label.text = "3/5"
+        label.font = .roboto(size: 16.0)
+        label.text = "1 in 5"
         label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
@@ -41,8 +41,8 @@ final class HangoutParticipantsSectionView: UIView {
     
     private let reportButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "report"), for: .normal)
-        button.imageEdgeInsets = .init(top: 15.5, left: 15.5, bottom: 15.5, right: 15.5)
+        button.setImage(UIImage(named: "detail_report"), for: .normal)
+        button.imageEdgeInsets = .init(top: 12.5, left: 13.0, bottom: 12.5, right: 13.0)
         return button
     }()
     
@@ -66,29 +66,29 @@ final class HangoutParticipantsSectionView: UIView {
     private func layout() {
         self.addSubview(joinCaptionLabel)
         joinCaptionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(5.0)
+            $0.top.equalToSuperview().inset(8.0)
             $0.leading.equalToSuperview().inset(27.0)
+        }
+        
+        self.addSubview(reportButton)
+        reportButton.snp.makeConstraints {
+            $0.leading.equalTo(joinCaptionLabel.snp.trailing).offset(-3.0)
+            $0.centerY.equalTo(joinCaptionLabel)
+            $0.width.height.equalTo(44.0)
         }
         
         self.addSubview(numOfParticipantsLabel)
         numOfParticipantsLabel.snp.makeConstraints {
             $0.bottom.equalTo(joinCaptionLabel)
-            $0.leading.equalTo(joinCaptionLabel.snp.trailing).offset(10.0)
+            $0.trailing.equalToSuperview().inset(23.0)
         }
         
         self.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(joinCaptionLabel.snp.bottom).offset(22.0)
+            $0.top.equalTo(joinCaptionLabel.snp.bottom).offset(15.0)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(41.0)
+            $0.height.equalTo(48.0)
             $0.bottom.equalToSuperview().inset(16.0)
-        }
-        
-        self.addSubview(reportButton)
-        reportButton.snp.makeConstraints {
-            $0.centerY.equalTo(joinCaptionLabel.snp.bottom)
-            $0.trailing.equalToSuperview().inset(19.5)
-            $0.width.height.equalTo(44.0)
         }
     }
 }
@@ -109,11 +109,11 @@ extension HangoutParticipantsSectionView: UICollectionViewDataSource {
 // MARK: UICollectionViewDelegateFlowLayout
 extension HangoutParticipantsSectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 30.0
+        return 22.0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 41.0, height: 41.0)
+        return CGSize(width: 48.0, height: 48.0)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
