@@ -58,7 +58,7 @@ final class HangoutImageSectionView: UIView {
     private func layout() {
         self.addSubview(postImageView)
         postImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(postImageView.snp.width).multipliedBy(239.0/390.0)
         }
         
@@ -67,6 +67,15 @@ final class HangoutImageSectionView: UIView {
             $0.width.height.equalTo(44.0)
             $0.bottom.equalToSuperview().inset(5.8)
             $0.trailing.equalToSuperview().inset(9.8)
+        }
+    }
+}
+
+extension HangoutImageSectionView {
+    func updateImageHeight(_ hegiht: CGFloat) {
+        postImageView.snp.remakeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(hegiht)
         }
     }
 }

@@ -123,6 +123,7 @@ final class HangoutDetailViewController: UIViewController {
         view.backgroundColor = .white
         scrollView.keyboardDismissMode = .interactive
         scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.delegate = self
         mainSectionView.delegate = self
         mapSectionView.delegate = self
     }
@@ -142,6 +143,7 @@ final class HangoutDetailViewController: UIViewController {
         contentView.addSubview(imageSectionView)
         imageSectionView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(imageSectionView.snp.width).multipliedBy(239.0/390.0)
         }
         
         contentView.addSubview(mainSectionView)
@@ -214,5 +216,15 @@ extension HangoutDetailViewController: HangoutMapSectionViewDelegate {
         let popupView = OpenURLPopupViewController()
         popupView.modalPresentationStyle = .overCurrentContext
         present(popupView, animated: false)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension HangoutDetailViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scrolledOffset = scrollView.contentOffset.y
+        guard scrolledOffset <= 0 else { return }
+        let imageHeight: CGFloat = imageSectionView.frame.height
+        imageSectionView.updateImageHeight(imageHeight - scrolledOffset)
     }
 }
