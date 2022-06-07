@@ -135,7 +135,7 @@ final class HangoutMakeViewController: UIViewController {
         languageView.delegate = self
         continueButtonView.delegate = self
     }
-
+    
     private func layout() {
         view.addSubview(progressBarView)
         progressBarView.snp.makeConstraints {
@@ -163,57 +163,57 @@ final class HangoutMakeViewController: UIViewController {
             $0.height.equalToSuperview()
         }
         
-        contentView.addSubview(titleView)
+        view.addSubview(titleView)
         titleView.snp.makeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
+            $0.top.leading.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
         }
 
-        contentView.addSubview(timeView)
+        view.addSubview(timeView)
         timeView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(titleView.snp.trailing)
         }
         
-        contentView.addSubview(placeView)
+        view.addSubview(placeView)
         placeView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(timeView.snp.trailing)
         }
         
-        contentView.addSubview(pictureView)
+        view.addSubview(pictureView)
         pictureView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(placeView.snp.trailing)
         }
         
-        contentView.addSubview(planView)
+        view.addSubview(planView)
         planView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(pictureView.snp.trailing)
         }
         
-        contentView.addSubview(languageView)
+        view.addSubview(languageView)
         languageView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(planView.snp.trailing)
         }
         
-        contentView.addSubview(openchatView)
+        view.addSubview(openchatView)
         openchatView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(languageView.snp.trailing)
         }
         
-        contentView.addSubview(participantsLimitView)
+        view.addSubview(participantsLimitView)
         participantsLimitView.snp.makeConstraints {
-            $0.top.bottom.trailing.equalToSuperview()
+            $0.top.bottom.trailing.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(openchatView.snp.trailing)
         }

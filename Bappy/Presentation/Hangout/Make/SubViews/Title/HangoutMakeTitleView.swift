@@ -37,6 +37,7 @@ final class HangoutMakeTitleView: UIView {
             string: "Enter the hangout title",
             attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
         textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
+        textField.delegate = self
         return textField
     }()
     
@@ -89,7 +90,7 @@ final class HangoutMakeTitleView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        ruleDescriptionLabel.text = "Enter at least 14 characters"
+        ruleDescriptionLabel.text = "Enter 10-20 characters long"
         scrollView.isScrollEnabled = false
     }
     
@@ -131,5 +132,14 @@ final class HangoutMakeTitleView: UIView {
             $0.top.equalTo(underlinedView.snp.bottom).offset(10.0)
             $0.leading.equalTo(underlinedView).offset(5.0)
         }
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension HangoutMakeTitleView: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let maxLength: Int = 20
+        guard let text = textField.text, text.count + string.count <= maxLength else { return false }
+        return true
     }
 }

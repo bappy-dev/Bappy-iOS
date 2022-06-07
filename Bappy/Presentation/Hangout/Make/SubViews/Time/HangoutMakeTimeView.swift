@@ -10,7 +10,7 @@ import SnapKit
 import MapKit
 
 protocol HangoutMakeTimeViewDelegate: AnyObject {
-    
+    func isTimeValid(_ valid: Bool)
 }
 
 final class HangoutMakeTimeView: UIView {
@@ -149,6 +149,7 @@ final class HangoutMakeTimeView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
+        scrollView.isScrollEnabled = false
     }
     
     private func layout() {
@@ -171,71 +172,68 @@ final class HangoutMakeTimeView: UIView {
             $0.height.equalTo(1000.0)
         }
         
-        contentView.addSubview(dateImageView)
+        self.addSubview(dateImageView)
         dateImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(92.0)
+            $0.top.equalTo(contentView).offset(92.0)
             $0.width.height.equalTo(15.0)
-            $0.leading.equalToSuperview().inset(51.0)
+            $0.leading.equalTo(contentView).offset(51.0)
         }
         
-        contentView.addSubview(dateLabel)
+        self.addSubview(dateLabel)
         dateLabel.snp.makeConstraints {
             $0.centerY.equalTo(dateImageView)
             $0.leading.equalTo(dateImageView.snp.trailing).offset(10.0)
         }
         
-        contentView.addSubview(dateButton)
+        self.addSubview(dateButton)
         dateButton.snp.makeConstraints {
             $0.centerY.equalTo(dateImageView)
             $0.width.height.equalTo(44.0)
             $0.leading.equalTo(dateLabel.snp.trailing).offset(10.0)
-            $0.trailing.equalToSuperview().inset(34.0)
+            $0.trailing.equalTo(contentView).offset(-34.0)
         }
         
-        contentView.addSubview(calendarView)
+        self.addSubview(calendarView)
         calendarView.snp.makeConstraints {
             $0.top.equalTo(dateImageView.snp.bottom).offset(14.5)
             $0.height.equalTo(0)
         }
         
-        contentView.addSubview(dividingView)
+        self.addSubview(dividingView)
         dividingView.snp.makeConstraints {
             $0.top.equalTo(calendarView.snp.bottom)
-            $0.leading.equalToSuperview().inset(42.0)
-            $0.trailing.equalToSuperview().inset(41.0)
+            $0.leading.equalTo(contentView).offset(42.0)
+            $0.trailing.equalTo(contentView).offset(-41.0)
             $0.leading.trailing.equalTo(calendarView)
             $0.height.equalTo(1.0)
         }
         
-        contentView.addSubview(timeImageView)
+        self.addSubview(timeImageView)
         timeImageView.snp.makeConstraints {
             $0.top.equalTo(calendarView.snp.bottom).offset(13.5)
             $0.width.height.equalTo(17.0)
             $0.centerX.equalTo(dateImageView)
         }
         
-        contentView.addSubview(timeLabel)
+        self.addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
             $0.centerY.equalTo(timeImageView)
             $0.leading.equalTo(timeImageView.snp.trailing).offset(10.0)
         }
         
-        contentView.addSubview(timeButton)
+        self.addSubview(timeButton)
         timeButton.snp.makeConstraints {
             $0.centerY.equalTo(timeImageView)
             $0.width.height.equalTo(44.0)
             $0.leading.equalTo(timeLabel.snp.trailing).offset(10.0)
-            $0.trailing.equalToSuperview().inset(34.0)
+            $0.trailing.equalTo(contentView).offset(-34.0)
         }
         
-        contentView.addSubview(timeView)
+        self.addSubview(timeView)
         timeView.snp.makeConstraints {
             $0.top.equalTo(timeImageView.snp.bottom).offset(10.0)
             $0.leading.trailing.equalTo(dividingView)
             $0.height.equalTo(0)
-//            $0.height.equalTo(timeView.snp.width)
-//                .multipliedBy(216.0/292.0).offset(20.0)
-            
         }
     }
 }
