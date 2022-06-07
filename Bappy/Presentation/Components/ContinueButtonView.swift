@@ -58,17 +58,17 @@ final class ContinueButtonView: UIView {
     
     // MARK: Helpers
     private func configure() {
-        self.backgroundColor = .clear
+        self.backgroundColor = .white
         isEnabled = false
     }
     
     private func layout() {
         self.addSubview(continueButton)
         continueButton.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(20.0)
+            $0.top.equalToSuperview().inset(20.0)
             $0.leading.equalToSuperview().inset(48.0)
             $0.trailing.equalToSuperview().inset(47.0)
-//            $0.bottom.equalToSuperview().inset(28.0)
+            $0.bottom.equalToSuperview().inset(28.0)
             $0.height.equalTo(47.0)
         }
     }

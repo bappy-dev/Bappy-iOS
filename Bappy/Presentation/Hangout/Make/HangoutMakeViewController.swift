@@ -90,7 +90,7 @@ final class HangoutMakeViewController: UIViewController {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardHeight = view.frame.height - keyboardFrame.minY
         print("DEBUG: keyboardHeight \(keyboardHeight)")
-        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : 0
+        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
         UIView.animate(withDuration: 0.4) {
             self.continueButtonView.snp.updateConstraints {
@@ -98,6 +98,9 @@ final class HangoutMakeViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
+        
+        let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
+        titleView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
     }
     
     @objc
@@ -218,7 +221,7 @@ final class HangoutMakeViewController: UIViewController {
         view.addSubview(continueButtonView)
         continueButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
         }
     }
 }

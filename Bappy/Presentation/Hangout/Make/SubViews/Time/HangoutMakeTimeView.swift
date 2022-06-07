@@ -9,25 +9,24 @@ import UIKit
 import SnapKit
 import MapKit
 
+protocol HangoutMakeTimeViewDelegate: AnyObject {
+    
+}
+
 final class HangoutMakeTimeView: UIView {
     
     // MARK: Properties
+    weak var delegate: HangoutMakeTimeViewDelegate?
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
     private let timeCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "When do you wanna meet up?"
-        label.font = .roboto(size: 18.0, family: .Medium)
+        label.text = "Choose a time\nto meet"
+        label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-
-    private let asteriskLabel: UILabel = {
-        let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.numberOfLines = 2
         return label
     }()
 
@@ -153,16 +152,16 @@ final class HangoutMakeTimeView: UIView {
     }
     
     private func layout() {
-        let vStackView = UIStackView(arrangedSubviews: [asteriskLabel])
-        vStackView.alignment = .top
-        let hStackView = UIStackView(arrangedSubviews: [timeCaptionLabel, vStackView])
-        hStackView.spacing = 3.0
-        hStackView.alignment = .fill
-        hStackView.axis = .horizontal
-
+        self.addSubview(timeCaptionLabel)
+        timeCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
+        }
+        
         self.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(timeCaptionLabel.snp.bottom).offset(5.0)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
 
         scrollView.addSubview(contentView)
@@ -171,17 +170,10 @@ final class HangoutMakeTimeView: UIView {
             $0.width.equalToSuperview()
             $0.height.equalTo(1000.0)
         }
-
-        contentView.addSubview(hStackView)
-        hStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(39.0)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(30.0)
-        }
         
         contentView.addSubview(dateImageView)
         dateImageView.snp.makeConstraints {
-            $0.top.equalTo(hStackView.snp.bottom).offset(37.0)
+            $0.top.equalToSuperview().inset(92.0)
             $0.width.height.equalTo(15.0)
             $0.leading.equalToSuperview().inset(51.0)
         }
@@ -204,8 +196,6 @@ final class HangoutMakeTimeView: UIView {
         calendarView.snp.makeConstraints {
             $0.top.equalTo(dateImageView.snp.bottom).offset(14.5)
             $0.height.equalTo(0)
-//            $0.height.equalTo(calendarView.snp.width)
-//                .multipliedBy(295.0/292.0)
         }
         
         contentView.addSubview(dividingView)
