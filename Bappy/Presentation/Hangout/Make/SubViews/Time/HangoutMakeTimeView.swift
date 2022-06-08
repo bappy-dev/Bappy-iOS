@@ -18,6 +18,21 @@ final class HangoutMakeTimeView: UIView {
     // MARK: Properties
     weak var delegate: HangoutMakeTimeViewDelegate?
     
+    private var shouldShowDateView: Bool = false {
+        didSet {
+            dateDoneButton.isHidden = !shouldShowDateView
+            if shouldShowDateView { showDateView() }
+            else { hideDateView() }
+        }
+    }
+    private var shouldShowTimeView: Bool = false {
+        didSet {
+            timeDoneButton.isHidden = !shouldShowTimeView
+            if shouldShowTimeView { showTimeView() }
+            else { hideTimeView() }
+        }
+    }
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
@@ -37,20 +52,26 @@ final class HangoutMakeTimeView: UIView {
         return imageView
     }()
     
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "5.25 (Wed)"
-        label.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
-        label.font = .roboto(size: 14.0)
-        return label
+    private lazy var dateTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = .roboto(size: 16.0)
+        textField.textColor = UIColor(named: "bappy_brown")
+        textField.addTarget(self, action: #selector(dateTextFieldDidBeginEditing), for: .editingDidBegin)
+        return textField
     }()
     
-    private lazy var dateButton: UIButton = {
+    private lazy var dateDoneButton: UIButton = {
         let button = UIButton()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 10.0, weight: .medium)
-        let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.addTarget(self, action: #selector(dateButtonHandler), for: .touchUpInside)
+        button.setAttributedTitle(
+            NSAttributedString(
+                string: "Done",
+                attributes: [
+                    .foregroundColor: UIColor(named: "bappy_yellow")!,
+                    .font: UIFont.roboto(size: 14.0, family: .Medium)
+                ]), for: .normal)
+        button.addTarget(self, action: #selector(dateDoneButtonHandler), for: .touchUpInside)
+        button.isHidden = true
+        button.backgroundColor = .white
         return button
     }()
     
@@ -61,31 +82,33 @@ final class HangoutMakeTimeView: UIView {
         return imageView
     }()
     
-    private let timeLabel: UILabel = {
-        let label = UILabel()
-        label.text = "P.M. 6:00"
-        label.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
-        label.font = .roboto(size: 14.0)
-        return label
+    private lazy var timeTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = .roboto(size: 16.0)
+        textField.textColor = UIColor(named: "bappy_brown")
+        textField.addTarget(self, action: #selector(timeTextFieldDidBeginEditing), for: .editingDidBegin)
+        return textField
     }()
     
-    private lazy var timeButton: UIButton = {
+    private lazy var timeDoneButton: UIButton = {
         let button = UIButton()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 10.0, weight: .medium)
-        let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.addTarget(self, action: #selector(timeButtonHandler), for: .touchUpInside)
+        button.setAttributedTitle(
+            NSAttributedString(
+                string: "Done",
+                attributes: [
+                    .foregroundColor: UIColor(named: "bappy_yellow")!,
+                    .font: UIFont.roboto(size: 14.0, family: .Medium)
+                ]), for: .normal)
+        button.addTarget(self, action: #selector(timeDoneButtonHandler), for: .touchUpInside)
+        button.isHidden = true
+        button.backgroundColor = .white
         return button
     }()
     
     private let calendarView = BappyCalendarView()
     private let timeView = BappyTimeView()
-    private let dividingView: UIView = {
-        let dividingView = UIView()
-        dividingView.backgroundColor = UIColor(named: "bappy_yellow")
-        return dividingView
-    }()
-
+    private let dividingView = UIView()
+    
     // MARK: Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -100,59 +123,144 @@ final class HangoutMakeTimeView: UIView {
     
     // MARK: Actions
     @objc
-    private func dateButtonHandler() {
-        UIView.animate(withDuration: 0.4) {
-            if !self.dateButton.isSelected {
-                self.calendarView.snp.removeConstraints()
-                self.calendarView.snp.makeConstraints {
-                    $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
-                    $0.height.equalTo(self.calendarView.snp.width)
-                        .multipliedBy(295.0/292.0)
-                }
-            } else {
-                self.calendarView.snp.removeConstraints()
-                self.calendarView.snp.makeConstraints {
-                    $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
-                    $0.height.equalTo(0)
-                }
-            }
-            self.layoutIfNeeded()
+    private func dateTextFieldDidBeginEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
+        guard !shouldShowDateView else { return }
+        shouldShowDateView = true
+        if shouldShowTimeView {
+            shouldShowTimeView = false
         }
-        
-        dateButton.isSelected = !dateButton.isSelected
+        timeTextField.text = ""
+        timeImageView.image = UIImage(named: "make_time_off")
+        delegate?.isTimeValid(false)
     }
     
     @objc
-    private func timeButtonHandler() {
-        UIView.animate(withDuration: 0.4) {
-            if !self.timeButton.isSelected {
-                self.timeView.snp.removeConstraints()
-                self.timeView.snp.makeConstraints {
-                    $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
-                    $0.leading.trailing.equalTo(self.dividingView)
-                    $0.height.equalTo(self.timeView.snp.width).multipliedBy(216.0/292.0).offset(20.0)
-                }
-            } else {
-                self.timeView.snp.removeConstraints()
-                self.timeView.snp.makeConstraints {
-                    $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
-                    $0.leading.trailing.equalTo(self.dividingView)
-                    $0.height.equalTo(0)
-                }
-            }
-            self.layoutIfNeeded()
+    private func timeTextFieldDidBeginEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
+        guard !shouldShowTimeView, let text = dateTextField.text, !text.isEmpty else { return }
+        shouldShowTimeView = true
+        if shouldShowDateView {
+            shouldShowDateView = false
         }
-        
-        timeButton.isSelected = !timeButton.isSelected
+    }
+    
+    @objc
+    private func dateDoneButtonHandler() {
+        guard shouldShowDateView else { return }
+        shouldShowDateView = false
+        shouldShowTimeView = true
+        if let text = dateTextField.text, text.isEmpty {
+            dateImageView.image = UIImage(named: "make_date_on")
+        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.dateFormat = "M.d (E)"
+        dateTextField.text = dateFormatter.string(from: calendarView.date)
+        timeView.date = calendarView.date
+    }
+    
+    @objc
+    private func timeDoneButtonHandler() {
+        guard shouldShowTimeView else { return }
+        shouldShowTimeView = false
+        if let text = timeTextField.text, text.isEmpty {
+            timeImageView.image = UIImage(named: "make_time_on")
+            delegate?.isTimeValid(true)
+        }
+        timeTextField.text = timeView.selectedTime
     }
 
     // MARK: Helpers
+    private func showDateView() {
+        let topOffset: CGFloat = (scrollView.frame.height + bottomPadding - (dividingView.frame.width * 295.0 / 292.0) - 95.0 - 60.0) / 2.0
+        UIView.animate(withDuration: 0.4) {
+            self.dateImageView.snp.remakeConstraints {
+                $0.top.equalTo(self.contentView).offset(topOffset)
+                $0.width.height.equalTo(15.0)
+                $0.leading.equalTo(self.contentView).offset(51.0)
+            }
+            
+            self.calendarView.snp.remakeConstraints {
+                $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
+                $0.height.equalTo(self.calendarView.snp.width)
+                    .multipliedBy(295.0/292.0)
+            }
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func hideDateView() {
+        UIView.animate(withDuration: 0.4) {
+            self.dateImageView.snp.remakeConstraints {
+                $0.top.equalTo(self.contentView).offset(92.0)
+                $0.width.height.equalTo(15.0)
+                $0.leading.equalTo(self.contentView).offset(51.0)
+            }
+            
+            self.calendarView.snp.remakeConstraints {
+                $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
+                $0.height.equalTo(0)
+            }
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func showTimeView() {
+        let topOffset: CGFloat = (scrollView.frame.height + bottomPadding - (dividingView.frame.width * 216.0 / 292.0) - 95.0 - 60.0) / 2.0
+        UIView.animate(withDuration: 0.4) {
+            self.dateImageView.snp.remakeConstraints {
+                $0.top.equalTo(self.contentView).offset(topOffset)
+                $0.width.height.equalTo(15.0)
+                $0.leading.equalTo(self.contentView).offset(51.0)
+            }
+            
+            self.timeView.snp.remakeConstraints {
+                $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
+                $0.leading.trailing.equalTo(self.dividingView)
+                $0.height.equalTo(self.timeView.snp.width).multipliedBy(216.0/292.0).offset(20.0)
+            }
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func hideTimeView() {
+        UIView.animate(withDuration: 0.4) {
+            self.dateImageView.snp.remakeConstraints {
+                $0.top.equalTo(self.contentView).offset(92.0)
+                $0.width.height.equalTo(15.0)
+                $0.leading.equalTo(self.contentView).offset(51.0)
+            }
+            
+            self.timeView.snp.remakeConstraints {
+                $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
+                $0.leading.trailing.equalTo(self.dividingView)
+                $0.height.equalTo(0)
+            }
+            self.layoutIfNeeded()
+        }
+    }
+    
     private func configure() {
         self.backgroundColor = .white
+        dividingView.backgroundColor = UIColor(named: "bappy_yellow")
         scrollView.isScrollEnabled = false
+        dateTextField.attributedPlaceholder = NSAttributedString(
+            string: "6.8 (Wed)",
+            attributes: [
+                .foregroundColor: UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0),
+                .font: UIFont.roboto(size: 16.0)])
+        timeTextField.attributedPlaceholder = NSAttributedString(
+            string: "P.M. 9:00",
+            attributes: [
+                .foregroundColor: UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0),
+                .font: UIFont.roboto(size: 16.0)])
     }
     
     private func layout() {
+        let dateTextFieldRightView = UIImageView(image: UIImage(named: "make_chevron_down"))
+        let timeTextFieldRightView = UIImageView(image: UIImage(named: "make_chevron_down"))
+        
         self.addSubview(timeCaptionLabel)
         timeCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
@@ -179,20 +287,24 @@ final class HangoutMakeTimeView: UIView {
             $0.leading.equalTo(contentView).offset(51.0)
         }
         
-        self.addSubview(dateLabel)
-        dateLabel.snp.makeConstraints {
+        self.addSubview(dateTextField)
+        dateTextField.snp.makeConstraints {
             $0.centerY.equalTo(dateImageView)
             $0.leading.equalTo(dateImageView.snp.trailing).offset(10.0)
+            $0.trailing.equalTo(contentView).offset(-49.0)
         }
         
-        self.addSubview(dateButton)
-        dateButton.snp.makeConstraints {
-            $0.centerY.equalTo(dateImageView)
-            $0.width.height.equalTo(44.0)
-            $0.leading.equalTo(dateLabel.snp.trailing).offset(10.0)
-            $0.trailing.equalTo(contentView).offset(-34.0)
+        dateTextField.addSubview(dateTextFieldRightView)
+        dateTextFieldRightView.snp.makeConstraints {
+            $0.centerY.trailing.equalToSuperview()
         }
         
+        self.addSubview(dateDoneButton)
+        dateDoneButton.snp.makeConstraints {
+            $0.centerY.trailing.equalTo(dateTextField)
+            $0.height.equalTo(36.0)
+        }
+
         self.addSubview(calendarView)
         calendarView.snp.makeConstraints {
             $0.top.equalTo(dateImageView.snp.bottom).offset(14.5)
@@ -215,18 +327,22 @@ final class HangoutMakeTimeView: UIView {
             $0.centerX.equalTo(dateImageView)
         }
         
-        self.addSubview(timeLabel)
-        timeLabel.snp.makeConstraints {
+        self.addSubview(timeTextField)
+        timeTextField.snp.makeConstraints {
             $0.centerY.equalTo(timeImageView)
             $0.leading.equalTo(timeImageView.snp.trailing).offset(10.0)
+            $0.trailing.equalTo(contentView).offset(-49.0)
         }
         
-        self.addSubview(timeButton)
-        timeButton.snp.makeConstraints {
-            $0.centerY.equalTo(timeImageView)
-            $0.width.height.equalTo(44.0)
-            $0.leading.equalTo(timeLabel.snp.trailing).offset(10.0)
-            $0.trailing.equalTo(contentView).offset(-34.0)
+        timeTextField.addSubview(timeTextFieldRightView)
+        timeTextFieldRightView.snp.makeConstraints {
+            $0.centerY.trailing.equalToSuperview()
+        }
+        
+        self.addSubview(timeDoneButton)
+        timeDoneButton.snp.makeConstraints {
+            $0.centerY.trailing.equalTo(timeTextField)
+            $0.height.equalTo(36.0)
         }
         
         self.addSubview(timeView)

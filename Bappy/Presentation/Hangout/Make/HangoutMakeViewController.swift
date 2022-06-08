@@ -130,6 +130,7 @@ final class HangoutMakeViewController: UIViewController {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
         titleView.delegate = self
+        timeView.delegate = self
         placeView.delegate = self
         pictureView.delegate = self
         languageView.delegate = self
@@ -229,6 +230,13 @@ final class HangoutMakeViewController: UIViewController {
 // MARK: - HangoutMakeTitleViewDelegate
 extension HangoutMakeViewController: HangoutMakeTitleViewDelegate {
     func isTitleValid(_ valid: Bool) {
+        continueButtonView.isEnabled = valid
+    }
+}
+
+// MARK: - HangoutMakeTimeViewDelegate
+extension HangoutMakeViewController: HangoutMakeTimeViewDelegate {
+    func isTimeValid(_ valid: Bool) {
         continueButtonView.isEnabled = valid
     }
 }

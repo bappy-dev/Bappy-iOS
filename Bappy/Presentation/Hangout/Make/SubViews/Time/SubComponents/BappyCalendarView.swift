@@ -11,6 +11,8 @@ import SnapKit
 final class BappyCalendarView: UIView {
     
     // MARK: Properties
+    var date: Date { return datePicker.date }
+    
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.tintColor = UIColor(named: "bappy_yellow")
@@ -20,7 +22,6 @@ final class BappyCalendarView: UIView {
         datePicker.timeZone = .autoupdatingCurrent
         datePicker.minuteInterval = 10
         datePicker.minimumDate = Date() + 60 * 10
-//        datePicker.addTarget(self, action: #selector(DidChangeDatePicker), for: .valueChanged)
         return datePicker
     }()
     
@@ -58,7 +59,6 @@ final class BappyCalendarView: UIView {
             $0.top.equalTo(dividingView.snp.bottom).offset(5.5)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(datePicker.snp.width).multipliedBy(295.0/292.0)
-//            $0.height.equalTo(datePicker.snp.width).multipliedBy(295.0/292.0).offset(-20.0)
         }
     }
 }

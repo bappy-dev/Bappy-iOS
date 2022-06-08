@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "make__date_on.png",
+      "filename" : "make_chevron_down.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "make__date_on@2x.png",
+      "filename" : "make_chevron_down@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "make__date_on@3x.png",
+      "filename" : "make_chevron_down@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

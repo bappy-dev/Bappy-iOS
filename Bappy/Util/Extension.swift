@@ -42,3 +42,14 @@ extension UIView {
         self.layer.shadowRadius = 1.0
     }
 }
+
+extension Date {
+    func isSameDate(with date: Date) -> Bool {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let orgDate = dateFormatter.string(from: self)
+        let otherDate = dateFormatter.string(from: date)
+        return orgDate == otherDate
+    }
+}
