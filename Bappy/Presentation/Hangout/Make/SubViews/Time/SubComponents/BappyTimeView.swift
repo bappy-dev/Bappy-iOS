@@ -14,19 +14,12 @@ final class BappyTimeView: UIView {
     var date: Date? {
         didSet {
             guard let date = date else { return }
-            if date.isSameDate(with: Date()) {
-                datePicker.minimumDate = Date() + 2 * 60 * 60 + 60 * 10 // 2시간
-            } else {
-                datePicker.minimumDate = nil
-            }
+            datePicker.minimumDate = date.isSameDate(with: Date()) ? Date() + 60 * 70 : nil
         }
     }
     
     var selectedTime: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en")
-        dateFormatter.dateFormat = "a h:mm"
-        var time = dateFormatter.string(from: datePicker.date)
+        var time = datePicker.date.toString(dateFormat: "a h:mm")
         let startIndex = time.startIndex
         time.insert(".", at: time.index(startIndex, offsetBy: 1))
         time.insert(".", at: time.index(startIndex, offsetBy: 3))
@@ -41,7 +34,7 @@ final class BappyTimeView: UIView {
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .time
         datePicker.locale = Locale(identifier: "en")
-        datePicker.timeZone = .autoupdatingCurrent
+        datePicker.timeZone = TimeZone(identifier: TimeZone.current.identifier)
         datePicker.minuteInterval = 10
         datePicker.setValue(UIColor(named: "bappy_brown"), forKey: "textColor")
         datePicker.subviews[0].subviews[1].backgroundColor = .clear

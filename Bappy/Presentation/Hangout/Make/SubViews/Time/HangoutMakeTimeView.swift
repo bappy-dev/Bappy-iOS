@@ -153,10 +153,8 @@ final class HangoutMakeTimeView: UIView {
         if let text = dateTextField.text, text.isEmpty {
             dateImageView.image = UIImage(named: "make_date_on")
         }
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en")
-        dateFormatter.dateFormat = "M.d (E)"
-        dateTextField.text = dateFormatter.string(from: calendarView.date)
+
+        dateTextField.text = calendarView.date.toString(dateFormat: "M.d (E)")
         timeView.date = calendarView.date
     }
     
@@ -245,13 +243,22 @@ final class HangoutMakeTimeView: UIView {
         self.backgroundColor = .white
         dividingView.backgroundColor = UIColor(named: "bappy_yellow")
         scrollView.isScrollEnabled = false
+        
+        let date = Date() + 60 * 70
+        let datePlaceholder = date.toString(dateFormat: "M.d (E)")
+        var timePlaceholder = date.toString(dateFormat: "a h:mm")
+        let startIndex = timePlaceholder.startIndex
+        timePlaceholder.insert(".", at: timePlaceholder.index(startIndex, offsetBy: 1))
+        timePlaceholder.insert(".", at: timePlaceholder.index(startIndex, offsetBy: 3))
+        _ = timePlaceholder.removeLast()
+        timePlaceholder.append("0")
         dateTextField.attributedPlaceholder = NSAttributedString(
-            string: "6.8 (Wed)",
+            string: datePlaceholder,
             attributes: [
                 .foregroundColor: UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0),
                 .font: UIFont.roboto(size: 16.0)])
         timeTextField.attributedPlaceholder = NSAttributedString(
-            string: "P.M. 9:00",
+            string: timePlaceholder,
             attributes: [
                 .foregroundColor: UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0),
                 .font: UIFont.roboto(size: 16.0)])

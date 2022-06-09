@@ -7,31 +7,33 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class SearchPlaceCell: UITableViewCell {
     
     // MARK: Properties
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "place")
-        imageView.contentMode = .center
+        imageView.tintColor = UIColor(named: "bappy_brown")
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     private let placeLabel: UILabel = {
         let label = UILabel()
-        label.text = "Haeundae Beach"
-        label.font = .roboto(size: 14.0)
+        label.font = .roboto(size: 16.0, family: .Medium)
+        label.numberOfLines = 0
         label.textColor = UIColor(named: "bappy_brown")
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
     
     private let addressLabel: UILabel = {
         let label = UILabel()
-        label.text = "Busan, Haeundae, Jungdong, 1015"
-        label.font = .roboto(size: 10.0, family: .Light)
+        label.font = .roboto(size: 14.0, family: .Light)
+        label.numberOfLines = 0
         label.textColor = UIColor(named: "bappy_brown")
-        label.lineBreakMode = .byTruncatingTail
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
     
@@ -55,7 +57,7 @@ final class SearchPlaceCell: UITableViewCell {
     private func layout() {
         contentView.addSubview(placeImageView)
         placeImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10.8)
+            $0.top.equalToSuperview().inset(6.8)
             $0.leading.equalToSuperview().inset(3.0)
             $0.width.equalTo(13.0)
             $0.height.equalTo(18.0)
@@ -63,15 +65,35 @@ final class SearchPlaceCell: UITableViewCell {
         
         contentView.addSubview(placeLabel)
         placeLabel.snp.makeConstraints {
-            $0.centerY.equalTo(placeImageView)
+            $0.top.equalToSuperview().inset(6.8)
             $0.leading.equalTo(placeImageView.snp.trailing).offset(6.0)
+            $0.trailing.lessThanOrEqualToSuperview().inset(3.0)
         }
         
         contentView.addSubview(addressLabel)
         addressLabel.snp.makeConstraints {
-            $0.top.equalTo(placeLabel.snp.bottom).offset(6.0)
+            $0.top.equalTo(placeLabel.snp.bottom).offset(3.0)
             $0.leading.equalTo(placeLabel)
             $0.trailing.equalToSuperview().inset(5.0)
+            $0.bottom.equalToSuperview().inset(10.8)
         }
+    }
+}
+
+// MARK: - Methods
+extension SearchPlaceCell {
+    func setupCell(with map: Map) {
+        placeLabel.text = map.name
+        addressLabel.text = map.address
+        
+        placeImageView.kf.setImage(
+            with: map.iconURL,
+            placeholder: UIImage(named: "place"),
+            options: nil) { result in
+                guard case let Result.success(imageResult) = result else { return }
+                DispatchQueue.main.async { [weak self] in
+                    self?.placeImageView.image = imageResult.image.withRenderingMode(.alwaysTemplate)
+                }
+            }
     }
 }
