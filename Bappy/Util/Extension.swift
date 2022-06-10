@@ -42,3 +42,42 @@ extension UIView {
         self.layer.shadowRadius = 1.0
     }
 }
+
+extension Date {
+    func isSameDate(with date: Date) -> Bool {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let orgDate = dateFormatter.string(from: self)
+        let otherDate = dateFormatter.string(from: date)
+        return orgDate == otherDate
+    }
+    
+    func toString(dateFormat: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
+        dateFormatter.dateFormat = dateFormat
+        return dateFormatter.string(from: self)
+    }
+    
+    func roundUpUnitDigitOfMinutes() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        var string = dateFormatter.string(from: self + 600)
+        _ = string.popLast()
+        string.append("0")
+        return dateFormatter.date(from: string) ?? Date()
+    }
+}
+
+extension UIViewController {
+    func setUpProgressHUD() {
+        ProgressHUD.colorBackground = .black.withAlphaComponent(0.05)
+        ProgressHUD.colorHUD = .white
+        ProgressHUD.colorAnimation = UIColor(named: "bappy_yellow")!
+    }
+}

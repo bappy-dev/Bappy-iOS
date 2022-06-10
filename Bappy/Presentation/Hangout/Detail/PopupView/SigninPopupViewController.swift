@@ -35,10 +35,9 @@ final class SigninPopupViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Please sign in to join\nthis hangout!"
+        label.text = "Please sign in to join!"
         label.textColor = UIColor(named: "bappy_brown")
         label.font = .roboto(size: 24.0, family: .Medium)
-        label.numberOfLines = 2
         label.textAlignment = .center
         return label
     }()
@@ -54,10 +53,10 @@ final class SigninPopupViewController: UIViewController {
         let button = UIButton()
         button.setAttributedTitle(
             NSAttributedString(
-                string: "Going to log in",
+                string: "Go to sign-in!",
                 attributes: [
                     .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 18.0, family: .Medium)
+                    .font: UIFont.roboto(size: 20.0, family: .Bold)
                 ]),
             for: .normal)
         button.backgroundColor = UIColor(named: "bappy_yellow")

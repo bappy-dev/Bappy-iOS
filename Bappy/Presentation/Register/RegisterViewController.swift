@@ -53,7 +53,7 @@ final class RegisterViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        progressBarView.initializeProgression()
+        progressBarView.initializeProgression(1.0/7.0)
     }
     
     // MARK: Events
@@ -103,7 +103,6 @@ final class RegisterViewController: UIViewController {
         viewModel.output.showSuccessView
             .emit { [weak self] _ in
                 guard let self = self else { return }
-                print("DEBUG: ..")
                 let viewController = RegisterSuccessViewController()
                 self.navigationController?.pushViewController(viewController, animated: true)
 //                self.present(viewController, animated: true)

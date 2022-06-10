@@ -17,7 +17,7 @@ final class TitleTopView: UIView {
     private let titleView = UIView()
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .roboto(size: 20.0, family: .Medium)
+        label.font = .roboto(size: 25.0, family: .Medium)
         label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
@@ -71,7 +71,7 @@ final class TitleTopView: UIView {
         
         titleView.addSubview(subTitleLabel)
         subTitleLabel.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(17.0)
+            $0.bottom.equalToSuperview().inset(12.0)
             $0.centerX.equalToSuperview()
         }
     }

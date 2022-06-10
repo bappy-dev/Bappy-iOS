@@ -40,7 +40,7 @@ final class ParticipantImageCell: UICollectionViewCell {
 
     // MARK: Helpers
     private func configure() {
-        participantImageView.layer.cornerRadius = size == .small ? 9.0 : 20.5
+        participantImageView.layer.cornerRadius = size == .small ? 9.0 : 24.0
         participantImageView.image = UIImage(named: "no_profile_\(size.rawValue.first!)")
     }
     

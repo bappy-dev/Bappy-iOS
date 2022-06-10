@@ -7,35 +7,41 @@
 
 import UIKit
 import SnapKit
-import PhotosUI
+import YPImagePicker
 
 final class HangoutMakeViewController: UIViewController {
     
     // MARK: Properties
-    private var selectedImages = [UIImage]() {
+    private var initialized: Bool = false
+    private var selectedImage: UIImage? {
         didSet {
-            pictureView.selectedImages = self.selectedImages
+            pictureView.selectedImage = self.selectedImage
         }
     }
     
     private var numberOfImages = 0
     
     private var page: Int = 0 {
-        didSet { print("DEBUG: page \(page)") }
+        didSet {
+            let x: CGFloat = UIScreen.main.bounds.width * CGFloat(page)
+            let offset = CGPoint(x: x, y: 0)
+            scrollView.setContentOffset(offset, animated: true)
+            progressBarView.updateProgression(CGFloat(page + 1) / 8.0)
+        }
     }
-   
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 24.0, family: .Medium)
-        label.text = "Make Hangout"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
+    
+    private lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "chevron_back"), for: .normal)
+        button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
+        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
+        return button
     }()
 
     private let progressBarView = ProgressBarView()
+    private let continueButtonView = ContinueButtonView()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let bottomButtonView = BottomButtonView(viewModel: BottomButtonViewModel())
     
     private let titleView = HangoutMakeTitleView()
     private let timeView = HangoutMakeTimeView()
@@ -62,8 +68,11 @@ final class HangoutMakeViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        progressBarView.initializeProgression()
+        
+        if !initialized {
+            progressBarView.initializeProgression(1.0/8.0)
+            initialized = true
+        }
     }
 
     // MARK: Events
@@ -83,13 +92,29 @@ final class HangoutMakeViewController: UIViewController {
     private func keyboardHeightObserver(_ notification: NSNotification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardHeight = view.frame.height - keyboardFrame.minY
+        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
         UIView.animate(withDuration: 0.4) {
-            self.bottomButtonView.snp.updateConstraints {
-                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-1 * keyboardHeight)
+            self.continueButtonView.snp.updateConstraints {
+                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
             }
             self.view.layoutIfNeeded()
         }
+        
+        let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
+        titleView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
+        planView.updateTextViewPosition(bottomButtonHeight: bottomButtonHeight)
+    }
+    
+    @objc
+    private func backButtonHandler() {
+        view.endEditing(true)
+        guard page > 0 else {
+            self.dismiss(animated: true)
+            return
+        }
+        page -= 1
+        continueButtonView.isEnabled = true
     }
 
     // MARK: Helpers
@@ -106,33 +131,34 @@ final class HangoutMakeViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .white
         scrollView.showsHorizontalScrollIndicator = false
-        scrollView.isPagingEnabled = true // 임시
-//        scrollView.isScrollEnabled = false
-        scrollView.isScrollEnabled = true
-        titleLabel.addBappyShadow(shadowOffsetHeight: 1.0)
+        scrollView.isScrollEnabled = false
+        titleView.delegate = self
+        timeView.delegate = self
         placeView.delegate = self
         pictureView.delegate = self
         languageView.delegate = self
+        continueButtonView.delegate = self
     }
-
+    
     private func layout() {
-        view.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
-            $0.centerX.equalToSuperview()
-        }
-
         view.addSubview(progressBarView)
         progressBarView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(28.0)
-            $0.leading.trailing.equalToSuperview().inset(23.0)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        view.addSubview(backButton)
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(progressBarView.snp.bottom).offset(15.0)
+            $0.leading.equalToSuperview().inset(5.5)
+            $0.width.height.equalTo(44.0)
         }
 
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(progressBarView.snp.bottom).offset(25.0)
+            $0.top.equalTo(backButton.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
 
         scrollView.addSubview(contentView)
@@ -141,69 +167,83 @@ final class HangoutMakeViewController: UIViewController {
             $0.height.equalToSuperview()
         }
         
-        contentView.addSubview(titleView)
+        view.addSubview(titleView)
         titleView.snp.makeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
+            $0.top.leading.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
         }
 
-        contentView.addSubview(timeView)
+        view.addSubview(timeView)
         timeView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(titleView.snp.trailing)
         }
         
-        contentView.addSubview(placeView)
+        view.addSubview(placeView)
         placeView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(timeView.snp.trailing)
         }
         
-        contentView.addSubview(pictureView)
+        view.addSubview(pictureView)
         pictureView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(placeView.snp.trailing)
         }
         
-        contentView.addSubview(planView)
+        view.addSubview(planView)
         planView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(pictureView.snp.trailing)
         }
         
-        contentView.addSubview(languageView)
+        view.addSubview(languageView)
         languageView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(planView.snp.trailing)
         }
         
-        contentView.addSubview(openchatView)
+        view.addSubview(openchatView)
         openchatView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(languageView.snp.trailing)
         }
         
-        contentView.addSubview(participantsLimitView)
+        view.addSubview(participantsLimitView)
         participantsLimitView.snp.makeConstraints {
-            $0.top.bottom.trailing.equalToSuperview()
+            $0.top.bottom.trailing.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(openchatView.snp.trailing)
         }
         
-        view.addSubview(bottomButtonView)
-        bottomButtonView.snp.makeConstraints {
-            $0.top.equalTo(scrollView.snp.bottom)
+        view.addSubview(continueButtonView)
+        continueButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
         }
     }
 }
+
+// MARK: - HangoutMakeTitleViewDelegate
+extension HangoutMakeViewController: HangoutMakeTitleViewDelegate {
+    func isTitleValid(_ valid: Bool) {
+        continueButtonView.isEnabled = valid
+    }
+}
+
+// MARK: - HangoutMakeTimeViewDelegate
+extension HangoutMakeViewController: HangoutMakeTimeViewDelegate {
+    func isTimeValid(_ valid: Bool) {
+        continueButtonView.isEnabled = valid
+    }
+}
+
 
 // MARK: - HangoutPlaceViewDelegate
 extension HangoutMakeViewController: HangoutPlaceViewDelegate {
@@ -211,36 +251,54 @@ extension HangoutMakeViewController: HangoutPlaceViewDelegate {
         view.endEditing(true) // 임시
         let viewController = SearchPlaceViewController()
         viewController.modalPresentationStyle = .overCurrentContext
+        viewController.delegate = self
         present(viewController, animated: false, completion: nil)
+    }
+}
+
+// MARK: - SearchPlaceViewControllerDelegate
+extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
+    func getSelectedMap(_ map: Map) {
+        placeView.map = map
+        continueButtonView.isEnabled = true
     }
 }
 
 // MARK: - HangoutPictureViewDelegate
 extension HangoutMakeViewController: HangoutPictureViewDelegate {
     func addPhoto() {
-        guard numberOfImages < 9 else {
-//            let popUpContents = "사진은 최대 9장까지 첨부할 수 있습니다."
-//            let popUpViewController = PopUpViewController(buttonType: .cancel, contents: popUpContents)
-//            popUpViewController.modalPresentationStyle = .overCurrentContext
-//            present(popUpViewController, animated: false)
-            return
-        }
+        var config = YPImagePickerConfiguration()
+        config.colors.tintColor = UIColor(named: "bappy_yellow")!
+        config.shouldSaveNewPicturesToAlbum = false
+        config.showsPhotoFilters = false
+        config.showsCrop = .rectangle(ratio: 390.0/333.0)
+        config.showsCropGridOverlay = true
+        config.library.mediaType = .photo
+        config.wordings.libraryTitle = "Gallery"
+        config.wordings.cameraTitle = "Camera"
+        config.wordings.next = "Select"
+        config.wordings.save = "Done"
+        config.startOnScreen = .library
+        config.library.maxNumberOfItems = 1
+        config.library.minNumberOfItems = 1
+        config.library.spacingBetweenItems = 2.0
+        let picker = YPImagePicker(configuration: config)
         
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 9 - numberOfImages
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
+        picker.didFinishPicking { [weak self, unowned picker] items, cancelled in
+            guard !cancelled else {
+                picker.dismiss(animated: true)
+                return
+            }
+            if let photo = items.singlePhoto {
+                self?.selectedImage = photo.modifiedImage
+            }
+            picker.dismiss(animated: true)
+        }
         present(picker, animated: true)
-    }
-    
-    func removePhoto(indexPath: IndexPath) {
-        selectedImages.remove(at: indexPath.item - 1)
-        numberOfImages -= 1
     }
 }
 
-// MARK: - Hangout
+// MARK: - HangoutLanguageViewDelegate
 extension HangoutMakeViewController: HangoutLanguageViewDelegate {
     func showSelectLanguageView() {
         view.endEditing(true) // 임시
@@ -250,17 +308,11 @@ extension HangoutMakeViewController: HangoutLanguageViewDelegate {
     }
 }
 
-// MARK: - PHPickerViewControllerDelegate
-extension HangoutMakeViewController: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard !results.isEmpty else { return }
-        self.numberOfImages += results.count
-        for result in results {
-            result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
-                guard let self = self, let image = object as? UIImage else { return }
-                self.selectedImages.append(image.downSize(newWidth: 300))
-            }
-        }
+// MARK: - ContinueButtonViewDelegate
+extension HangoutMakeViewController: ContinueButtonViewDelegate {
+    func continueButtonTapped() {
+        view.endEditing(true)
+        page += 1
+//        continueButtonView.isEnabled = false / asdfasdffsd
     }
 }

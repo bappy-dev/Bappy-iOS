@@ -69,8 +69,8 @@ final class ProfileViewController: UIViewController {
         view.addSubview(titleTopView)
         titleTopView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(94.0)
             $0.bottom.equalTo(scrollView.snp.top)
-            $0.height.equalTo(141.0)
         }
     }
 }

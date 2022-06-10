@@ -6,6 +6,7 @@
 //
 
 import UIKit
+//import FacebookCore
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -35,7 +36,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // 로그인
 //        let rootViewController = BappyLoginViewController()
-        
         window?.rootViewController = rootViewController
         window?.makeKeyAndVisible()
     }

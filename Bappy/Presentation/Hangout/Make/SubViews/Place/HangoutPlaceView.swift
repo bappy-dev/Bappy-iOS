@@ -16,20 +16,19 @@ final class HangoutPlaceView: UIView {
     
     // MARK: Properties
     weak var delegate: HangoutPlaceViewDelegate?
+    var map: Map? {
+        didSet {
+            guard let place = map?.name, let address = map?.address else { return }
+            placeTextField.text = "\(place)(\(address))"
+        }
+    }
     
     private let placeCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Where do you wanna meet up?"
-        label.font = .roboto(size: 18.0, family: .Medium)
+        label.text = "Write the place\nto meet"
+        label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let asteriskLabel: UILabel = {
-        let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.numberOfLines = 2
         return label
     }()
     
@@ -37,11 +36,13 @@ final class HangoutPlaceView: UIView {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "place"))
         let containerView = UIView()
-        textField.font = .roboto(size: 14.0)
+        textField.font = .roboto(size: 16.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the place",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!,
+                         .font: UIFont.roboto(size: 16.0)
+                        ])
         containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 18.0)
         containerView.addSubview(imageView)
         textField.leftView = containerView
@@ -81,23 +82,15 @@ final class HangoutPlaceView: UIView {
     }
     
     private func layout() {
-        let vStackView = UIStackView(arrangedSubviews: [asteriskLabel])
-        vStackView.alignment = .top
-        let hStackView = UIStackView(arrangedSubviews: [placeCaptionLabel, vStackView])
-        hStackView.spacing = 3.0
-        hStackView.alignment = .fill
-        hStackView.axis = .horizontal
-        
-        self.addSubview(hStackView)
-        hStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(39.0)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(30.0)
+        self.addSubview(placeCaptionLabel)
+        placeCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
         }
         
         self.addSubview(placeTextField)
         placeTextField.snp.makeConstraints {
-            $0.top.equalTo(placeCaptionLabel.snp.bottom).offset(27.0)
+            $0.top.equalTo(placeCaptionLabel.snp.bottom).offset(96.0)
             $0.leading.trailing.equalToSuperview().inset(50.0)
         }
         

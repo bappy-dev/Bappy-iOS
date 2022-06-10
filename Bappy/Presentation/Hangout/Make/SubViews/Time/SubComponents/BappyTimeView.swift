@@ -11,18 +11,34 @@ import SnapKit
 final class BappyTimeView: UIView {
     
     //MARK: Properties
-    private let datePicker: UIDatePicker = {
+    var date: Date? {
+        didSet {
+            guard let date = date else { return }
+            datePicker.minimumDate = date.isSameDate(with: Date()) ? (Date() + 60 * 60).roundUpUnitDigitOfMinutes() : nil
+        }
+    }
+    
+    var selectedTime: String {
+        var time = datePicker.date.toString(dateFormat: "a h:mm")
+        let startIndex = time.startIndex
+        time.insert(".", at: time.index(startIndex, offsetBy: 1))
+        time.insert(".", at: time.index(startIndex, offsetBy: 3))
+        _ = time.removeLast()
+        time.append("0")
+        return time
+    }
+    
+    private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.tintColor = UIColor(named: "bappy_yellow")
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .time
         datePicker.locale = Locale(identifier: "en")
-        datePicker.timeZone = .autoupdatingCurrent
+        datePicker.timeZone = TimeZone(identifier: TimeZone.current.identifier)
         datePicker.minuteInterval = 10
         datePicker.setValue(UIColor(named: "bappy_brown"), forKey: "textColor")
         datePicker.subviews[0].subviews[1].backgroundColor = .clear
-//        datePicker.minimumDate = Date() + 60 * 10
-//        datePicker.addTarget(self, action: #selector(DidChangeDatePicker), for: .valueChanged)
+        datePicker.addTarget(self, action: #selector(datePickerDidBeginEdting), for: .editingDidBegin)
         return datePicker
     }()
    
@@ -36,6 +52,12 @@ final class BappyTimeView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Actions
+    @objc
+    private func datePickerDidBeginEdting(_ datePicker: UIDatePicker) {
+        datePicker.resignFirstResponder()
     }
 
     // MARK: Helpers

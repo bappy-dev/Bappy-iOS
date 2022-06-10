@@ -7,6 +7,10 @@
 
 import UIKit
 import SnapKit
+import Firebase
+import FirebaseAuth
+import GoogleSignIn
+import FacebookLogin
 
 final class BappyLoginViewController: UIViewController {
     
@@ -25,7 +29,7 @@ final class BappyLoginViewController: UIViewController {
         return imageView
     }()
     
-    private let googleLoginButton: UIButton = {
+    private lazy var googleLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 9.0
         button.layer.borderWidth = 2.0
@@ -40,10 +44,11 @@ final class BappyLoginViewController: UIViewController {
                 ]),
             for: .normal)
         button.adjustsImageWhenHighlighted = false
+        button.addTarget(self, action: #selector(googleButtonHandler), for: .touchUpInside)
         return button
     }()
     
-    private let facebookLoginButton: UIButton = {
+    private lazy var facebookLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 9.0
         button.layer.borderWidth = 2.0
@@ -58,6 +63,7 @@ final class BappyLoginViewController: UIViewController {
                 ]),
             for: .normal)
         button.adjustsImageWhenHighlighted = false
+        button.addTarget(self, action: #selector(facebookLoginButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -113,14 +119,162 @@ final class BappyLoginViewController: UIViewController {
         setButtonImageInset()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let user = Auth.auth().currentUser {
+            print("DEBUG: currentUser.uid \(user.uid)")
+            user.providerData.forEach { data in
+//                print("DEBUG: provider name \(data.displayName)")
+            }
+        }
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: API
+    private func signIn(name: String, password: String ,completion: @escaping(String) -> Void) {
+        var components = URLComponents()
+        components.scheme = "http"
+        components.host = "172.30.1.39:8080"
+        components.path = "/account"
+        components.queryItems = [
+            URLQueryItem(name: "name", value: name),
+            URLQueryItem(name: "password", value: password)
+        ]
+        guard let url = components.url else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let dataTask = URLSession.shared.dataTask(with: request) {data, response, error in
+            guard error == nil,
+                  let response = response as? HTTPURLResponse,
+                  let data = data,
+                  let returnValue = String(data: data, encoding: .utf8)  else {
+                      print("ERROR: URLSession data task \(error?.localizedDescription ?? "")")
+                      return
+                  }
+
+            switch response.statusCode {
+            case (200...299):
+                print("DEBUG: Network succeded")
+                completion(returnValue)
+            case (400...499):
+                print("""
+                    ERROR: Client ERROR \(response.statusCode)
+                    Response: \(response)
+                """)
+            case (500...599):
+                print("""
+                    ERROR: Server ERROR \(response.statusCode)
+                    Response: \(response)
+                """)
+            default:
+                print("""
+                    ERROR: \(response.statusCode)
+                    Response: \(response)
+                """)
+            }
+        }
+
+        dataTask.resume()
     }
     
     // MARK: Actions
     @objc
     private func skipButtonHandler() {
         self.dismiss(animated: true)
+    }
+    
+    @objc
+    private func googleButtonHandler() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+
+        // 1. Google Sign In
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { [weak self] user, error in
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
+            }
+
+            guard let authentication = user?.authentication,
+                  let idToken = authentication.idToken else { return }
+            print("DEUBG: authentication \(authentication)")
+//            print("DEUBG: idToken \(idToken)")
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                             accessToken: authentication.accessToken)
+            print("DEBUG: accessToken \(authentication.accessToken)")
+            
+            // 2. Firbase Sign In
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return
+                }
+                guard let authResult = authResult else { return }
+//                authResult.user.getIDToken(
+                authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+                    if let error = error {
+                        print("ERROR: \(error.localizedDescription)")
+                        return
+                    }
+                    print("DEBUG: idToken \(idToken!)")
+                }
+                print("DEBUG: uid \(authResult.user.uid)")
+                
+//                self?.signIn(name: idToken, password: idToken, completion: { returnValue in
+//                    print("DEBUG: returnValue \(returnValue)")
+//
+//                    self?.dismiss(animated: true)
+//                })
+                self?.dismiss(animated: true)
+            }
+        }
+    }
+    
+    @objc
+    private func facebookLoginButtonHandler() {
+        
+        // 1. Facebook Sign In
+        let loginManager = LoginManager()
+        loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
+            }
+            guard let result = result, !result.isCancelled else {
+                print("DEBUG: Cancelled")
+                return
+            }
+            print("DEBUG: \(result.token!)")
+            guard let accessToken = AccessToken.current?.tokenString else { return }
+            let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+            print("DEBUG: AccessToken \(accessToken)")
+
+            // 2. Firebase Sign In
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return
+                }
+                guard let authResult = authResult else { return }
+                authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+                    if let error = error {
+                        print("ERROR: \(error.localizedDescription)")
+                        return
+                    }
+                    print("DEBUG: idToken \(idToken!)")
+                }
+                print("DEBUG: uid \(authResult.user.uid)")
+                self?.dismiss(animated: true)
+            }
+        }
     }
     
     // MARK: Helpers

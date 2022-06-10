@@ -97,6 +97,7 @@ final class CalendarPopupViewController: UIViewController {
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .clear
+        containerView.layer.cornerRadius = 17.0
         containerView.addBappyShadow(shadowOffsetHeight: 4.0)
     }
     

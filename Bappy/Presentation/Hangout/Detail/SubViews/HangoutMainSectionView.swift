@@ -17,103 +17,82 @@ final class HangoutMainSectionView: UIView {
     // MARK: Properties
     weak var delegate: HangoutMainSectionViewDelegate?
     
-    private let hostCaptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
-        label.text = "Host"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
+    private let titleTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = .roboto(size: 32.0, family: .Bold)
+        textField.textColor = UIColor(named: "bappy_brown")
+        return textField
     }()
     
-    private let profileImageView: UIImageView = {
+    private let timeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "no_profile_s")
-        imageView.layer.cornerRadius = 12.0
-        imageView.clipsToBounds = true
+        imageView.image = UIImage(named: "detail_date")
+        imageView.contentMode = .center
         return imageView
     }()
     
-    private let nameAndFlagLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.text = "Jessica  🇺🇸"
-        label.font = .roboto(size: 13.0)
-        return label
-    }()
-    
-    private lazy var reportButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "report"), for: .normal)
-        button.imageEdgeInsets = .init(top: 15.0, left: 15.0, bottom: 15.0, right: 15.0)
-        button.addTarget(self, action: #selector(didTapReportButton), for: .touchUpInside)
-        return button
-    }()
-    
-    private let titleCaptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
-        label.text = "Title"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let timeCaptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
-        label.text = "Time"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let placeCaptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
-        label.text = "Place"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let languageCaptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 14.0, family: .Medium)
-        label.text = "Language"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let titleTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = .roboto(size: 12.0)
-        textField.textColor = UIColor(named: "bappy_brown")
-        textField.text = "#Korean #Restaurant #PNU #Yummy "
-        return textField
-    }()
-
-    
     private let timeTextField: UITextField = {
         let textField = UITextField()
-        textField.font = .roboto(size: 12.0)
+        textField.font = .roboto(size: 20.0, family: .Medium)
         textField.textColor = UIColor(named: "bappy_brown")
-        textField.text = "03. Mar. 19:00"
         return textField
     }()
     
-    private let placeTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = .roboto(size: 12.0)
-        textField.textColor = UIColor(named: "bappy_brown")
-        textField.text = "PNU maingate"
-        return textField
+    private let languageImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "detail_language")
+        imageView.contentMode = .center
+        return imageView
     }()
     
     private let languageTextField: UITextField = {
         let textField = UITextField()
-        textField.font = .roboto(size: 12.0)
+        textField.font = .roboto(size: 20.0, family: .Medium)
         textField.textColor = UIColor(named: "bappy_brown")
-        textField.text = "English"
         return textField
     }()
+    
+    private let placeImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "detail_location")
+        imageView.contentMode = .center
+        return imageView
+    }()
+    
+    private let placeTextField: UITextField = {
+        let textField = UITextField()
+        textField.font = .roboto(size: 20.0, family: .Medium)
+        textField.textColor = UIColor(named: "bappy_brown")
+        return textField
+    }()
+    
+    private let openchatImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "detail_url")
+        imageView.contentMode = .center
+        return imageView
+    }()
+    
+    private lazy var openchatButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(named: "detail_arrow")
+        button.setImage(image, for: .normal)
+        button.semanticContentAttribute = .forceRightToLeft
+        button.tintColor = UIColor(named: "bappy_brown")
+        button.setAttributedTitle(
+            NSAttributedString(
+                string: "Go Openchat   ",
+                attributes: [
+                    .foregroundColor: UIColor(named: "bappy_brown")!,
+                    .font: UIFont.roboto(size: 20.0, family: .Medium),
+                    .underlineStyle: NSUnderlineStyle.single.rawValue
+                ]),
+            for: .normal)
+        button.adjustsImageWhenHighlighted = false
+        button.addTarget(self, action: #selector(openOpenchatURL), for: .touchUpInside)
+        return button
+    }()
+    
     
     // MARK: Lifecycle
     override init(frame: CGRect) {
@@ -129,6 +108,13 @@ final class HangoutMainSectionView: UIView {
     
     // MARK: Actions
     @objc
+    private func openOpenchatURL() {
+        if let url = URL(string: "https://open.kakao.com/o/gyeerYje") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
+    @objc
     private func didTapReportButton() {
         delegate?.didTapReportButton()
     }
@@ -136,129 +122,58 @@ final class HangoutMainSectionView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
+        titleTextField.text = "Who wants to go eat?"
+        timeTextField.text = "03. Mar. 19:00"
+        languageTextField.text = "English"
+        placeTextField.text = "PNU maingate"
     }
     
     private func layout() {
-        let dividingView1 = UIView()
-        let dividingView2 = UIView()
-        let dividingView3 = UIView()
-        let dividingView4 = UIView()
-        [dividingView1, dividingView2, dividingView3, dividingView4].forEach { dividingView in
-            dividingView.backgroundColor = UIColor(named: "bappy_brown")
-        }
-        
-        self.addSubview(hostCaptionLabel)
-        hostCaptionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(3.0)
-            $0.leading.equalToSuperview().inset(28.0)
-        }
-        
-        self.addSubview(profileImageView)
-        profileImageView.snp.makeConstraints {
-            $0.top.equalTo(hostCaptionLabel.snp.bottom).offset(12.0)
-            $0.leading.equalTo(hostCaptionLabel)
-        }
-        
-        self.addSubview(nameAndFlagLabel)
-        nameAndFlagLabel.snp.makeConstraints {
-            $0.centerY.equalTo(profileImageView).offset(2.0)
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(14.0)
-        }
-        
-        self.addSubview(reportButton)
-        reportButton.snp.makeConstraints {
-            $0.centerY.equalTo(profileImageView)
-            $0.trailing.equalToSuperview().inset(21.0)
-            $0.width.height.equalTo(44.0)
-        }
-        
-        self.addSubview(titleCaptionLabel)
-        titleCaptionLabel.snp.makeConstraints {
-            $0.top.equalTo(profileImageView.snp.bottom).offset(33.0)
-            $0.leading.equalTo(profileImageView)
-            $0.width.equalTo(62.0)
-        }
-        
-        self.addSubview(timeCaptionLabel)
-        timeCaptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleCaptionLabel.snp.bottom).offset(26.0)
-            $0.leading.equalTo(profileImageView)
-            $0.width.equalTo(62.0)
-        }
-        
-        self.addSubview(placeCaptionLabel)
-        placeCaptionLabel.snp.makeConstraints {
-            $0.top.equalTo(timeCaptionLabel.snp.bottom).offset(26.0)
-            $0.leading.equalTo(profileImageView)
-            $0.width.equalTo(62.0)
-        }
-        
-        self.addSubview(languageCaptionLabel)
-        languageCaptionLabel.snp.makeConstraints {
-            $0.top.equalTo(placeCaptionLabel.snp.bottom).offset(26.0)
-            $0.leading.equalTo(profileImageView)
-            $0.bottom.equalToSuperview().inset(16.0)
-            $0.width.equalTo(62.0)
-        }
-        
-        self.addSubview(dividingView1)
-        dividingView1.snp.makeConstraints {
-            $0.width.equalTo(0.5)
-            $0.height.equalTo(15.5)
-            $0.centerY.equalTo(titleCaptionLabel)
-            $0.leading.equalTo(titleCaptionLabel.snp.trailing).offset(12.8)
-        }
-        
-        self.addSubview(dividingView2)
-        dividingView2.snp.makeConstraints {
-            $0.width.equalTo(0.5)
-            $0.height.equalTo(15.5)
-            $0.centerY.equalTo(timeCaptionLabel)
-            $0.centerX.equalTo(dividingView1)
-        }
-        
-        self.addSubview(dividingView3)
-        dividingView3.snp.makeConstraints {
-            $0.width.equalTo(0.5)
-            $0.height.equalTo(15.5)
-            $0.centerY.equalTo(placeCaptionLabel)
-            $0.centerX.equalTo(dividingView1)
-        }
-        
-        self.addSubview(dividingView4)
-        dividingView4.snp.makeConstraints {
-            $0.width.equalTo(0.5)
-            $0.height.equalTo(15.5)
-            $0.centerY.equalTo(languageCaptionLabel)
-            $0.centerX.equalTo(dividingView1)
-        }
-        
+        let vStackView = UIStackView(arrangedSubviews: [
+            timeImageView, languageImageView, placeImageView, openchatImageView
+        ])
+        vStackView.axis = .vertical
+        vStackView.distribution = .fillEqually
+        vStackView.contentMode = .center
+        vStackView.spacing = 23.0
+
         self.addSubview(titleTextField)
         titleTextField.snp.makeConstraints {
-            $0.centerY.equalTo(titleCaptionLabel)
-            $0.leading.equalTo(dividingView1.snp.trailing).offset(22.8)
-            $0.trailing.equalToSuperview().inset(14.0)
+            $0.top.equalToSuperview().inset(17.0)
+            $0.leading.equalToSuperview().inset(25.0)
+            $0.trailing.lessThanOrEqualToSuperview().inset(17.0)
+        }
+
+        self.addSubview(vStackView)
+        vStackView.snp.makeConstraints {
+            $0.top.equalTo(titleTextField.snp.bottom).offset(21.0)
+            $0.leading.equalTo(titleTextField)
+            $0.width.equalTo(20.0)
+            $0.bottom.equalToSuperview().inset(10.0)
         }
 
         self.addSubview(timeTextField)
         timeTextField.snp.makeConstraints {
-            $0.centerY.equalTo(timeCaptionLabel)
-            $0.leading.equalTo(dividingView2.snp.trailing).offset(22.8)
-            $0.trailing.equalToSuperview().inset(14.0)
+            $0.centerY.equalTo(timeImageView)
+            $0.leading.equalTo(vStackView.snp.trailing).offset(14.0)
         }
-        
-        self.addSubview(placeTextField)
-        placeTextField.snp.makeConstraints {
-            $0.centerY.equalTo(placeCaptionLabel)
-            $0.leading.equalTo(dividingView3.snp.trailing).offset(22.8)
-            $0.trailing.equalToSuperview().inset(14.0)
-        }
-        
+
         self.addSubview(languageTextField)
         languageTextField.snp.makeConstraints {
-            $0.centerY.equalTo(languageCaptionLabel)
-            $0.leading.equalTo(dividingView4.snp.trailing).offset(22.8)
-            $0.trailing.equalToSuperview().inset(14.0)
+            $0.centerY.equalTo(languageImageView)
+            $0.leading.equalTo(timeTextField)
+        }
+
+        self.addSubview(placeTextField)
+        placeTextField.snp.makeConstraints {
+            $0.centerY.equalTo(placeImageView)
+            $0.leading.equalTo(languageTextField)
+        }
+
+        self.addSubview(openchatButton)
+        openchatButton.snp.makeConstraints {
+            $0.centerY.equalTo(openchatImageView)
+            $0.leading.equalTo(placeTextField)
         }
     }
 }

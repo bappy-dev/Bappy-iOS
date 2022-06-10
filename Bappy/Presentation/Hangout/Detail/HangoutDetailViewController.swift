@@ -56,7 +56,7 @@ final class HangoutDetailViewController: UIViewController {
                     .font: UIFont.roboto(size: 18.0, family: .Medium)
                 ]),
             for: .normal)
-        button.layer.cornerRadius = 11.5
+        button.layer.cornerRadius = 29.5
         button.addBappyShadow()
         button.addTarget(self, action: #selector(joinButtonHandler), for: .touchUpInside)
         return button
@@ -122,7 +122,10 @@ final class HangoutDetailViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .white
         scrollView.keyboardDismissMode = .interactive
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.delegate = self
         mainSectionView.delegate = self
+        mapSectionView.delegate = self
     }
     
     private func layout() {
@@ -140,6 +143,7 @@ final class HangoutDetailViewController: UIViewController {
         contentView.addSubview(imageSectionView)
         imageSectionView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(imageSectionView.snp.width).multipliedBy(239.0/390.0)
         }
         
         contentView.addSubview(mainSectionView)
@@ -168,18 +172,18 @@ final class HangoutDetailViewController: UIViewController {
         
         contentView.addSubview(joinButton)
         joinButton.snp.makeConstraints {
-            $0.top.equalTo(participantsSectionView.snp.bottom).offset(24.0)
+            $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(157.0)
-            $0.height.equalTo(43.0)
-            $0.bottom.equalToSuperview().inset(42.0)
+            $0.width.equalTo(215.0)
+            $0.height.equalTo(59.0)
+            $0.bottom.equalToSuperview().inset(61.0)
         }
         
         view.addSubview(titleTopView)
         titleTopView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(94.0)
             $0.bottom.equalTo(scrollView.snp.top)
-            $0.height.equalTo(141.0)
         }
         
         titleTopView.addSubview(backButton)
@@ -203,5 +207,24 @@ extension HangoutDetailViewController: HangoutMainSectionViewDelegate {
     func didTapReportButton() {
         let viewController = ReportViewController()
         self.navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+// MARK: - HangoutMapSectionViewDelegate
+extension HangoutDetailViewController: HangoutMapSectionViewDelegate {
+    func showOpenURLView() {
+        let popupView = OpenURLPopupViewController()
+        popupView.modalPresentationStyle = .overCurrentContext
+        present(popupView, animated: false)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension HangoutDetailViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scrolledOffset = scrollView.contentOffset.y
+        guard scrolledOffset <= 0 else { return }
+        let imageHeight: CGFloat = imageSectionView.frame.height
+        imageSectionView.updateImageHeight(imageHeight - scrolledOffset)
     }
 }
