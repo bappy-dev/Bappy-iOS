@@ -14,7 +14,7 @@ final class BappyTimeView: UIView {
     var date: Date? {
         didSet {
             guard let date = date else { return }
-            datePicker.minimumDate = date.isSameDate(with: Date()) ? Date() + 60 * 70 : nil
+            datePicker.minimumDate = date.isSameDate(with: Date()) ? (Date() + 60 * 60).roundUpUnitDigitOfMinutes() : nil
         }
     }
     

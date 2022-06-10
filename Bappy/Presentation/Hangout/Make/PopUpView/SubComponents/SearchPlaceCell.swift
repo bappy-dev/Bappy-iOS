@@ -67,14 +67,14 @@ final class SearchPlaceCell: UITableViewCell {
         placeLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(6.8)
             $0.leading.equalTo(placeImageView.snp.trailing).offset(6.0)
-            $0.trailing.lessThanOrEqualToSuperview().inset(3.0)
+            $0.trailing.lessThanOrEqualToSuperview().inset(23.0)
         }
         
         contentView.addSubview(addressLabel)
         addressLabel.snp.makeConstraints {
             $0.top.equalTo(placeLabel.snp.bottom).offset(3.0)
             $0.leading.equalTo(placeLabel)
-            $0.trailing.equalToSuperview().inset(5.0)
+            $0.trailing.lessThanOrEqualToSuperview().inset(23.0)
             $0.bottom.equalToSuperview().inset(10.8)
         }
     }

@@ -132,6 +132,14 @@ final class BappyLoginViewController: UIViewController {
 //                print("DEBUG: provider displayName \(data.displayName)")
             }
         }
+//        setUpProgressHUD()
+//        ProgressHUD.show()
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//            ProgressHUD.dismiss()
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                ProgressHUD.show(nil, interaction: false)
+//            }
+//        }
     }
     
     required init?(coder: NSCoder) {
@@ -149,15 +157,6 @@ final class BappyLoginViewController: UIViewController {
             URLQueryItem(name: "password", value: password)
         ]
         guard let url = components.url else { return }
-        
-//        var urlComponents = URLComponents(string: "http://172.30.1.26:8080/account")
-//        let paramQuery1 = URLQueryItem(name: "name", value: name)
-//        let paramQuery2 = URLQueryItem(name: "password", value: password)
-//        urlComponents?.queryItems?.append(paramQuery1)
-//        urlComponents?.queryItems?.append(paramQuery2)
-//        guard let url = urlComponents?.url else { return }
-        
-        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")

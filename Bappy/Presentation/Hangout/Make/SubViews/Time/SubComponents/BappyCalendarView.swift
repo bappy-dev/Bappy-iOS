@@ -21,7 +21,7 @@ final class BappyCalendarView: UIView {
         datePicker.locale = Locale(identifier: "en")
         datePicker.timeZone = .autoupdatingCurrent
         datePicker.minuteInterval = 10
-        datePicker.minimumDate = Date() + 60 * 70
+        datePicker.minimumDate = (Date() + 60 * 60).roundUpUnitDigitOfMinutes()
         return datePicker
     }()
     

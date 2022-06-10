@@ -89,7 +89,6 @@ final class HangoutMakeViewController: UIViewController {
     private func keyboardHeightObserver(_ notification: NSNotification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardHeight = view.frame.height - keyboardFrame.minY
-        print("DEBUG: keyboardHeight \(keyboardHeight)")
         let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
         UIView.animate(withDuration: 0.4) {

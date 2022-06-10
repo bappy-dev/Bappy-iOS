@@ -84,13 +84,14 @@ final class SearchPlaceViewController: UIViewController {
         tableView.delegate = self
         tableView.register(SearchPlaceCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.separatorInset = .zero
+        tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
         tableView.prefetchDataSource = self
         tableView.keyboardDismissMode = .interactive
         return tableView
     }()
     
     private let searchBackgroundView = UIView()
+    private let noResultView = NoResultView()
     
     private let provider = ProviderImpl()
     
@@ -101,6 +102,7 @@ final class SearchPlaceViewController: UIViewController {
         configure()
         layout()
         addKeyboardObserver()
+        setUpProgressHUD()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -108,14 +110,17 @@ final class SearchPlaceViewController: UIViewController {
         
         animateShowDimmedView()
         animatePresentContainer()
+        searchTextField.becomeFirstResponder()
     }
     
     // MARK: API
     private func searchGoogleMap(key: String , query: String, language: String = "en") {
         let requestDTO = MapsRequestDTO(key: key, query: query, language: language)
         let endpoint = APIEndpoints.searchGoogleMapList(with: requestDTO)
-
+        
+        ProgressHUD.show(nil, interaction: false)
         provider.request(with: endpoint) { [weak self] result in
+            ProgressHUD.dismiss()
             switch result {
             case .success(let responseDTO):
                 self?.addMaps(with: responseDTO)
@@ -128,8 +133,10 @@ final class SearchPlaceViewController: UIViewController {
     private func searchNextGoogleMap(key: String , pageToken: String, language: String = "en") {
         let requestDTO = MapsNextRequestDTO(key: key, pagetoken: pageToken, language: language)
         let endpoint = APIEndpoints.searchGoogleMapNextList(with: requestDTO)
-
+        
+        ProgressHUD.show()
         provider.request(with: endpoint) { [weak self] result in
+            ProgressHUD.dismiss()
             switch result {
             case .success(let responseDTO):
                 self?.addMaps(with: responseDTO)
@@ -142,6 +149,7 @@ final class SearchPlaceViewController: UIViewController {
     // MARK: Actions
     @objc
     private func closeButtonHandler() {
+        searchTextField.resignFirstResponder()
         animateDismissView()
     }
     
@@ -203,7 +211,7 @@ final class SearchPlaceViewController: UIViewController {
 //        self.tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
     }
     
-    // MARK: Helpers
+    // MARK: Helpers    
     private func addKeyboardObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -213,18 +221,20 @@ final class SearchPlaceViewController: UIViewController {
         let mapPage = mapsResponseDTO.toDomain()
         nextPageToken = mapPage.nextPageToken
         mapList += mapPage.maps
-        print("DEBUG: mapList \(mapList)")
         DispatchQueue.main.async { [weak self] in
-            self?.tableView.reloadData()
+            guard let self = self else { return }
+            self.noResultView.isHidden = !self.mapList.isEmpty
+            self.tableView.reloadData()
         }
     }
     
     private func configure() {
         view.backgroundColor = .clear
+        tableView.backgroundView = noResultView
+        noResultView.isHidden = true
     }
     
     private func layout() {
-        
         searchBackgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
         searchBackgroundView.layer.cornerRadius = 17.5
         
@@ -271,7 +281,7 @@ final class SearchPlaceViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBackgroundView.snp.bottom).offset(15.0)
             $0.leading.equalToSuperview().inset(42.0)
-            $0.trailing.equalToSuperview().inset(41.0)
+            $0.trailing.equalToSuperview().inset(21.0)
             $0.bottom.equalToSuperview().inset(10.0)
         }
     }
@@ -299,7 +309,6 @@ extension SearchPlaceViewController: UITableViewDelegate {
 // MARK: - UITableViewDataSourcePrefetching
 extension SearchPlaceViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        print("DEBUG: indexPaths \(indexPaths.map { $0.row })")
         guard let pageToken = nextPageToken else { return }
         let rows = indexPaths.map { $0.row + 1 }
         let key = Bundle.main.googleMapAPIKey

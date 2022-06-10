@@ -103,7 +103,6 @@ final class RegisterViewController: UIViewController {
         viewModel.output.showSuccessView
             .emit { [weak self] _ in
                 guard let self = self else { return }
-                print("DEBUG: ..")
                 let viewController = RegisterSuccessViewController()
                 self.navigationController?.pushViewController(viewController, animated: true)
 //                self.present(viewController, animated: true)

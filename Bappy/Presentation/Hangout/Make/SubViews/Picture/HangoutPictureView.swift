@@ -120,7 +120,6 @@ extension HangoutPictureView: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension HangoutPictureView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("DEBUG: ....")
         guard indexPath.item == 0 else { return }
         delegate?.addPhoto()
     }
