@@ -16,33 +16,32 @@ final class HangoutLanguageView: UIView {
     
     // MARK: Properties
     weak var delegate: HangoutLanguageViewDelegate?
+    var language: String? {
+        didSet {
+            guard let language = language else { return }
+            languageTextField.text = language
+        }
+    }
     
     private let languageCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Please choose a language for Hangout"
-        label.font = .roboto(size: 18.0, family: .Medium)
+        label.text = "Choose\na language"
+        label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
+        label.numberOfLines = 2
         return label
     }()
-    
-    private let asteriskLabel: UILabel = {
-        let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0)
-        label.textColor = UIColor(named: "bappy_yellow")
-        return label
-    }()
-    
+
     private lazy var languageTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "make_language"))
         let containerView = UIView()
-        textField.font = .roboto(size: 14.0)
+        textField.font = .roboto(size: 16.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Enter your language",
+            string: "Enter the language",
             attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
-        containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 15.0)
+        containerView.frame = CGRect(x: 0, y: 0, width: 25.0, height: 15.0)
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .always
@@ -81,30 +80,22 @@ final class HangoutLanguageView: UIView {
     }
     
     private func layout() {
-        let vStackView = UIStackView(arrangedSubviews: [asteriskLabel])
-        vStackView.alignment = .top
-        let hStackView = UIStackView(arrangedSubviews: [languageCaptionLabel, vStackView])
-        hStackView.spacing = 3.0
-        hStackView.alignment = .fill
-        hStackView.axis = .horizontal
-        
-        self.addSubview(hStackView)
-        hStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(39.0)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(30.0)
+        self.addSubview(languageCaptionLabel)
+        languageCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
         }
         
         self.addSubview(languageTextField)
         languageTextField.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(54.0)
         }
         
         self.addSubview(underlinedView)
         underlinedView.snp.makeConstraints {
-            $0.top.equalTo(hStackView.snp.bottom).offset(62.0)
+            $0.top.equalTo(languageCaptionLabel.snp.bottom).offset(119.0)
             $0.top.equalTo(languageTextField.snp.bottom).offset(7.0)
-            $0.width.equalTo(180.0)
+            $0.leading.trailing.equalToSuperview().inset(44.0)
             $0.height.equalTo(1.0)
             $0.centerX.equalToSuperview()
         }

@@ -264,6 +264,14 @@ extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
     }
 }
 
+// MARK: - SearchPlaceViewControllerDelegate
+extension HangoutMakeViewController: SelectLanguageViewControllerDelegate {
+    func getSelectedLanguage(_ language: String) {
+        languageView.language = language
+        continueButtonView.isEnabled = true
+    }
+}
+
 // MARK: - HangoutPictureViewDelegate
 extension HangoutMakeViewController: HangoutPictureViewDelegate {
     func addPhoto() {
@@ -304,6 +312,7 @@ extension HangoutMakeViewController: HangoutLanguageViewDelegate {
         view.endEditing(true) // 임시
         let viewController = SelectLanguageViewController()
         viewController.modalPresentationStyle = .overCurrentContext
+        viewController.delegate = self
         present(viewController, animated: false, completion: nil)
     }
 }

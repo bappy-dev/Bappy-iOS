@@ -148,6 +148,7 @@ final class SearchPlaceViewController: UIViewController {
         }
     }
     
+    // MARK: Events
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
@@ -178,24 +179,19 @@ final class SearchPlaceViewController: UIViewController {
         }
     }
     
-    private func animateDismissView(shouldTransferPlace: Bool = false) {
+    private func animateDismissView() {
         UIView.animate(withDuration: 0.3) {
             self.containerView.snp.updateConstraints {
                 $0.bottom.equalToSuperview().inset(-self.defaultHeight)
             }
             self.view.layoutIfNeeded()
         }
-//        self.delegate?.showTabBar()
-//
+        
         dimmedView.alpha = maxDimmedAlpha
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = 0
         } completion: { _ in
-            self.dismiss(animated: false) {
-                if shouldTransferPlace {
-//                    self.delegate?.showDetailViewController(index: self.viewModel.postIndex)
-                }
-            }
+            self.dismiss(animated: false)
         }
     }
     
@@ -301,7 +297,7 @@ extension SearchPlaceViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         delegate?.getSelectedMap(mapList[indexPath.row])
-        self.dismiss(animated: true)
+        animateDismissView()
     }
 }
 
