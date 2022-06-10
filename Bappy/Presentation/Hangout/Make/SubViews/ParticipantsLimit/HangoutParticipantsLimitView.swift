@@ -15,24 +15,17 @@ final class HangoutParticipantsLimitView: UIView {
     
     private let limitCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "How many people do you want to meet?"
-        label.font = .roboto(size: 18.0, family: .Medium)
+        label.text = "How\nmany people?"
+        label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let asteriskLabel: UILabel = {
-        let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.numberOfLines = 2
         return label
     }()
     
     private let numberLabel: UILabel = {
         let label = UILabel()
         label.text = "4"
-        label.font = .roboto(size: 38.0, family: .Bold)
+        label.font = .roboto(size: 65.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
         return label
     }()
@@ -52,16 +45,9 @@ final class HangoutParticipantsLimitView: UIView {
     private let discriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Participants Limit  4 ~ 10"
-        label.font = .roboto(size: 10.0, family: .Light)
+        label.font = .roboto(size: 15.0, family: .Regular)
         label.textColor = .black.withAlphaComponent(0.33)
         return label
-    }()
-    
-    private let discriptionImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "make_participants")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
     }()
     
     // MARK: Lifecycle
@@ -109,52 +95,36 @@ final class HangoutParticipantsLimitView: UIView {
     }
     
     private func layout() {
-        let vStackView = UIStackView(arrangedSubviews: [asteriskLabel])
-        vStackView.alignment = .top
-        let hStackView = UIStackView(arrangedSubviews: [limitCaptionLabel, vStackView])
-        hStackView.spacing = 3.0
-        hStackView.alignment = .fill
-        hStackView.axis = .horizontal
-        
-        self.addSubview(hStackView)
-        hStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(39.0)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(30.0)
+        self.addSubview(limitCaptionLabel)
+        limitCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
         }
         
         self.addSubview(numberLabel)
         numberLabel.snp.makeConstraints {
-            $0.top.equalTo(hStackView.snp.bottom).offset(36.0)
+            $0.top.equalTo(limitCaptionLabel.snp.bottom).offset(88.0)
             $0.centerX.equalToSuperview()
         }
         
         self.addSubview(minusButton)
         minusButton.snp.makeConstraints {
             $0.width.height.equalTo(44.0)
-            $0.centerY.equalTo(numberLabel)
-            $0.centerX.equalToSuperview().offset(-70.0)
+            $0.centerY.equalTo(numberLabel).offset(4.0)
+            $0.centerX.equalToSuperview().offset(-80.0)
         }
         
         self.addSubview(plusButton)
         plusButton.snp.makeConstraints {
             $0.width.height.equalTo(44.0)
-            $0.centerY.equalTo(numberLabel)
-            $0.centerX.equalToSuperview().offset(70.0)
+            $0.centerY.equalTo(minusButton)
+            $0.centerX.equalToSuperview().offset(80.0)
         }
         
         self.addSubview(discriptionLabel)
         discriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(numberLabel.snp.bottom).offset(35.0)
+            $0.top.equalTo(numberLabel.snp.bottom).offset(15.0)
             $0.centerX.equalToSuperview()
-        }
-        
-        self.addSubview(discriptionImageView)
-        discriptionImageView.snp.makeConstraints {
-            $0.centerY.equalTo(discriptionLabel)
-            $0.trailing.equalTo(discriptionLabel.snp.leading).offset(-5.0)
-            $0.width.equalTo(10.0)
-            $0.height.equalTo(8.5)
         }
     }
 }
