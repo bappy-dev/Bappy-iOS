@@ -21,10 +21,10 @@ final class NoResultView: UIView {
     
     private let captionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Oops, there is no results\nfor your serahing. Try again!"
+        label.text = "Oops, there is no results\nfor your searching. Try again!\n\n"
         label.textColor = UIColor(named: "bappy_brown")
         label.font = .roboto(size: 20.0, family: .Medium)
-        label.numberOfLines = 2
+        label.numberOfLines = 4
         label.textAlignment = .center
         return label
     }()
@@ -58,7 +58,7 @@ final class NoResultView: UIView {
         self.addSubview(vStackView)
         vStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-50.0)
+            $0.centerY.equalToSuperview()
         }
     }
 }

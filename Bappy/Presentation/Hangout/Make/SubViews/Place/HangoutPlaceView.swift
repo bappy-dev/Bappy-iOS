@@ -16,6 +16,12 @@ final class HangoutPlaceView: UIView {
     
     // MARK: Properties
     weak var delegate: HangoutPlaceViewDelegate?
+    var map: Map? {
+        didSet {
+            guard let place = map?.name else { return }
+            placeTextField.text = place
+        }
+    }
     
     private let placeCaptionLabel: UILabel = {
         let label = UILabel()

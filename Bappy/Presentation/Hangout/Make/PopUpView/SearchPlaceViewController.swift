@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 protocol SearchPlaceViewControllerDelegate: AnyObject {
-    
+    func getSelectedMap(_ map: Map)
 }
 
 private let reuseIdentifier = "SearchPlaceCell"
@@ -110,7 +110,9 @@ final class SearchPlaceViewController: UIViewController {
         
         animateShowDimmedView()
         animatePresentContainer()
-        searchTextField.becomeFirstResponder()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+            self?.searchTextField.becomeFirstResponder()
+        }
     }
     
     // MARK: API
@@ -144,6 +146,12 @@ final class SearchPlaceViewController: UIViewController {
                 print("ERROR: \(error)")
             }
         }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
+        searchTextField.resignFirstResponder()
     }
     
     // MARK: Actions
@@ -196,19 +204,8 @@ final class SearchPlaceViewController: UIViewController {
     private func keyboardHeightObserver(_ notification: NSNotification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
         let keyboardHeight = view.frame.height - keyboardFrame.minY
-        
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.snp.remakeConstraints {
-                $0.top.equalTo(self.searchBackgroundView.snp.bottom).offset(15.0)
-                $0.leading.equalToSuperview().inset(42.0)
-                $0.trailing.equalToSuperview().inset(41.0)
-                $0.bottom.equalToSuperview().inset(keyboardHeight + 10.0)
-            }
-            
-            self.view.layoutIfNeeded()
-        }
-//        self.tableView.contentInset.bottom = keyboardHeight
-//        self.tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
+        self.tableView.contentInset.bottom = keyboardHeight
+        self.tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
     }
     
     // MARK: Helpers    
@@ -303,6 +300,8 @@ extension SearchPlaceViewController: UITableViewDataSource {
 extension SearchPlaceViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        delegate?.getSelectedMap(mapList[indexPath.row])
+        self.dismiss(animated: true)
     }
 }
 
@@ -327,12 +326,12 @@ extension SearchPlaceViewController: UITextFieldDelegate {
               !text.isEmpty,
               text.lowercased() != searchedText.lowercased()
         else { return false }
+        textField.resignFirstResponder()
         searchedText = text
         nextPageToken = nil
         mapList = []
         let key = Bundle.main.googleMapAPIKey
         searchGoogleMap(key: key, query: text)
-        textField.resignFirstResponder()
         return true
     }
 }

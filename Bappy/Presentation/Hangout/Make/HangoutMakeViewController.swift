@@ -247,7 +247,16 @@ extension HangoutMakeViewController: HangoutPlaceViewDelegate {
         view.endEditing(true) // 임시
         let viewController = SearchPlaceViewController()
         viewController.modalPresentationStyle = .overCurrentContext
+        viewController.delegate = self
         present(viewController, animated: false, completion: nil)
+    }
+}
+
+// MARK: - SearchPlaceViewControllerDelegate
+extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
+    func getSelectedMap(_ map: Map) {
+        placeView.map = map
+        continueButtonView.isEnabled = true
     }
 }
 
