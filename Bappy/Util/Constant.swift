@@ -24,3 +24,5 @@ public var bottomPadding: CGFloat {
         .first(where: \.isKeyWindow)
         .map { $0.safeAreaInsets.bottom } ?? 0
 }
+
+public var bottomInset: CGFloat = 0

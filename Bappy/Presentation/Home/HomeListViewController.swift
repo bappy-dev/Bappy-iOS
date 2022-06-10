@@ -94,11 +94,6 @@ extension HomeListViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension HomeListViewController: HangoutCellDelegate {
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let viewController = HangoutDetailViewController()
-//        viewController.hidesBottomBarWhenPushed = true
-//        navigationController?.pushViewController(viewController, animated: true)
-//    }
     func showDetailView(_ indexPath: IndexPath) {
         let viewController = HangoutDetailViewController()
         viewController.hidesBottomBarWhenPushed = true
