@@ -11,7 +11,6 @@ import Firebase
 import FirebaseAuth
 import GoogleSignIn
 import FacebookLogin
-import YPImagePicker //dadf
 
 final class BappyLoginViewController: UIViewController {
     
