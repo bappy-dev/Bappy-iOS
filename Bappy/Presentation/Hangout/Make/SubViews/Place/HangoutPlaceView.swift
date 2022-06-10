@@ -18,8 +18,8 @@ final class HangoutPlaceView: UIView {
     weak var delegate: HangoutPlaceViewDelegate?
     var map: Map? {
         didSet {
-            guard let place = map?.name else { return }
-            placeTextField.text = place
+            guard let place = map?.name, let address = map?.address else { return }
+            placeTextField.text = "\(place)(\(address))"
         }
     }
     

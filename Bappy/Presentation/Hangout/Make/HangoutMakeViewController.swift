@@ -7,14 +7,15 @@
 
 import UIKit
 import SnapKit
-import PhotosUI
+import YPImagePicker
 
 final class HangoutMakeViewController: UIViewController {
     
     // MARK: Properties
-    private var selectedImages = [UIImage]() {
+    private var initialized: Bool = false
+    private var selectedImage: UIImage? {
         didSet {
-            pictureView.selectedImages = self.selectedImages
+            pictureView.selectedImage = self.selectedImage
         }
     }
     
@@ -50,7 +51,6 @@ final class HangoutMakeViewController: UIViewController {
     private let languageView = HangoutLanguageView()
     private let openchatView = HangoutOpenchatView()
     private let participantsLimitView = HangoutParticipantsLimitView()
-    
 
     // MARK: Lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -68,8 +68,11 @@ final class HangoutMakeViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        progressBarView.initializeProgression(1.0/8.0)
+        
+        if !initialized {
+            progressBarView.initializeProgression(1.0/8.0)
+            initialized = true
+        }
     }
 
     // MARK: Events
@@ -263,25 +266,34 @@ extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
 // MARK: - HangoutPictureViewDelegate
 extension HangoutMakeViewController: HangoutPictureViewDelegate {
     func addPhoto() {
-        guard numberOfImages < 9 else {
-//            let popUpContents = "사진은 최대 9장까지 첨부할 수 있습니다."
-//            let popUpViewController = PopUpViewController(buttonType: .cancel, contents: popUpContents)
-//            popUpViewController.modalPresentationStyle = .overCurrentContext
-//            present(popUpViewController, animated: false)
-            return
-        }
+        var config = YPImagePickerConfiguration()
+        config.colors.tintColor = UIColor(named: "bappy_yellow")!
+        config.shouldSaveNewPicturesToAlbum = false
+        config.showsPhotoFilters = false
+        config.showsCrop = .rectangle(ratio: 390.0/333.0)
+        config.showsCropGridOverlay = true
+        config.library.mediaType = .photo
+        config.wordings.libraryTitle = "Gallery"
+        config.wordings.cameraTitle = "Camera"
+        config.wordings.next = "Select"
+        config.wordings.save = "Done"
+        config.startOnScreen = .library
+        config.library.maxNumberOfItems = 1
+        config.library.minNumberOfItems = 1
+        config.library.spacingBetweenItems = 2.0
+        let picker = YPImagePicker(configuration: config)
         
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 9 - numberOfImages
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
+        picker.didFinishPicking { [weak self, unowned picker] items, cancelled in
+            guard !cancelled else {
+                picker.dismiss(animated: true)
+                return
+            }
+            if let photo = items.singlePhoto {
+                self?.selectedImage = photo.modifiedImage
+            }
+            picker.dismiss(animated: true)
+        }
         present(picker, animated: true)
-    }
-    
-    func removePhoto(indexPath: IndexPath) {
-        selectedImages.remove(at: indexPath.item - 1)
-        numberOfImages -= 1
     }
 }
 
@@ -300,23 +312,6 @@ extension HangoutMakeViewController: ContinueButtonViewDelegate {
     func continueButtonTapped() {
         view.endEditing(true)
         page += 1
-        continueButtonView.isEnabled = false
+//        continueButtonView.isEnabled = false / asdfasdffsd
     }
 }
-
-// MARK: - PHPickerViewControllerDelegate
-extension HangoutMakeViewController: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard !results.isEmpty else { return }
-        self.numberOfImages += results.count
-        for result in results {
-            result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
-                guard let self = self, let image = object as? UIImage else { return }
-                self.selectedImages.append(image.downSize(newWidth: 300))
-            }
-        }
-    }
-}
-
-

@@ -11,6 +11,7 @@ import Firebase
 import FirebaseAuth
 import GoogleSignIn
 import FacebookLogin
+import YPImagePicker //dadf
 
 final class BappyLoginViewController: UIViewController {
     
@@ -126,20 +127,8 @@ final class BappyLoginViewController: UIViewController {
             print("DEBUG: currentUser.uid \(user.uid)")
             user.providerData.forEach { data in
 //                print("DEBUG: provider name \(data.displayName)")
-//                print("DEBUG: provider email \(data.email)")
-//                print("DEBUG: provider photoURL \(data.photoURL)")
-//                print("DEBUG: provider phoneNumber \(data.phoneNumber)")
-//                print("DEBUG: provider displayName \(data.displayName)")
             }
         }
-//        setUpProgressHUD()
-//        ProgressHUD.show()
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//            ProgressHUD.dismiss()
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                ProgressHUD.show(nil, interaction: false)
-//            }
-//        }
     }
     
     required init?(coder: NSCoder) {
