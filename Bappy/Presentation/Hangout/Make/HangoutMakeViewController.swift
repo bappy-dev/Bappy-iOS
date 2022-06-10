@@ -104,6 +104,7 @@ final class HangoutMakeViewController: UIViewController {
         let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
         titleView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
         planView.updateTextViewPosition(bottomButtonHeight: bottomButtonHeight)
+        openchatView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
     }
     
     @objc

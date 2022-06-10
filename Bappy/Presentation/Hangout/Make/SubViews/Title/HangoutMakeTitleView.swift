@@ -71,11 +71,10 @@ final class HangoutMakeTitleView: UIView {
     // MARK: Methods
     func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
         guard titleTextField.isFirstResponder else { return }
-        let labelPostion = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
-        let y = (bottomButtonHeight > labelPostion) ? bottomButtonHeight - labelPostion + 5.0 : 0
+        let labelPosition = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
+        let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
         let offset = CGPoint(x: 0, y: y)
         scrollView.setContentOffset(offset, animated: true)
-        
     }
     
     // MARK: Actions
