@@ -66,7 +66,7 @@ final class HangoutMapSectionView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        mapButton.kf.setImage(with: URL(string: example_map_url), for: .normal)
+        mapButton.kf.setImage(with: URL(string: EXAMPLE_MAP_URL), for: .normal)
         placeLabel.text = "PNU maingate"
         backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 15.0

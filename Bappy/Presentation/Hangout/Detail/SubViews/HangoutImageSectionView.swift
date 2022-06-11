@@ -52,7 +52,7 @@ final class HangoutImageSectionView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        postImageView.kf.setImage(with: URL(string: example_image2_url))
+        postImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE2_URL))
     }
     
     private func layout() {

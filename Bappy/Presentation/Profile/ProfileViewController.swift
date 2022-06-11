@@ -12,8 +12,22 @@ final class ProfileViewController: UIViewController {
     
     // MARK: Properties
     private let titleTopView = TitleTopView(title: "Profile", subTitle: "Setting")
-    private let scrollView = UIScrollView()
-    private let contentView = ProfileView()
+    private lazy var settingButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "profile_setting"), for: .normal)
+        button.addTarget(self, action: #selector(settingButtonHandler), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = UIColor(named: "bappy_lightgray")
+//        tableView.dataSource = self
+        tableView.delegate = self
+        return tableView
+    }()
+    
+    private let headerView = ProfileHeaderView()
     
     // MARK: Lifecycle
     init() {
@@ -44,6 +58,15 @@ final class ProfileViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Actions
+    @objc
+    private func settingButtonHandler() {
+        let viewController = ProfileSettingViewController()
+        viewController.modalPresentationStyle = .fullScreen
+        viewController.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     // MARK: Helpers
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
         guard let navigationController = navigationController as? BappyNavigationViewController else { return }
@@ -51,26 +74,39 @@ final class ProfileViewController: UIViewController {
     }
     
     private func configure() {
+        view.backgroundColor = .white
         
+        headerView.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 352.0)
+        tableView.tableHeaderView = headerView
     }
     
     private func layout() {
-        view.addSubview(scrollView)
-        scrollView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        scrollView.addSubview(contentView)
-        contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalTo(view.frame.width)
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         view.addSubview(titleTopView)
         titleTopView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(94.0)
-            $0.bottom.equalTo(scrollView.snp.top)
+            $0.bottom.equalTo(tableView.snp.top)
         }
+        
+        titleTopView.addSubview(settingButton)
+        settingButton.snp.makeConstraints {
+            $0.width.height.equalTo(44.0)
+            $0.trailing.equalToSuperview().inset(21.3)
+            $0.bottom.equalToSuperview().inset(48.6)
+        }
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension ProfileViewController: UITableViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scrolledOffset = scrollView.contentOffset.y
+        if scrolledOffset < 0 { scrollView.contentOffset.y = 0 }
     }
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 protocol HangoutCellDelegate: AnyObject {
     func showDetailView(_ indexPath: IndexPath)
@@ -22,7 +23,6 @@ final class HangoutCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "example_post2.png")
         return imageView
     }()
     
@@ -126,6 +126,7 @@ final class HangoutCell: UITableViewCell {
     // MARK: Helpers
     private func configure() {
         contentView.backgroundColor = .white
+        postImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE2_URL))
     }
     
     private func layout() {

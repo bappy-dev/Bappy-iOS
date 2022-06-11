@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "switch_selected.png",
+      "filename" : "profile_faq.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "switch_selected@2x.png",
+      "filename" : "profile_faq@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "switch_selected@3x.png",
+      "filename" : "profile_faq@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

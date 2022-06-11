@@ -1,8 +1,8 @@
 //
-//  Constant.swift
+//  PublicVariable.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/05/19.
+//  Created by 정동천 on 2022/06/11.
 //
 
 import UIKit
