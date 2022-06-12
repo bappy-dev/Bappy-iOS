@@ -35,15 +35,17 @@ final class BappyLoginViewController: UIViewController {
     
     private lazy var googleLoginButton: UIButton = {
         let button = UIButton()
-        button.layer.cornerRadius = 9.0
-        button.layer.borderWidth = 2.0
-        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
+        button.layer.cornerRadius = 24.0
+//        button.layer.cornerRadius = 9.0
+//        button.layer.borderWidth = 2.0
+//        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
+        button.backgroundColor = .white
         button.setImage(UIImage(named: "login_google"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
-                string: "Sign-in with Google",
+                string: "Sign in with Google",
                 attributes: [
-                    .font: UIFont.roboto(size: 12.0),
+                    .font: UIFont.roboto(size: 16.0, family: .Bold),
                     .foregroundColor: UIColor(named: "bappy_gray")!
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
@@ -53,15 +55,17 @@ final class BappyLoginViewController: UIViewController {
     
     private lazy var facebookLoginButton: UIButton = {
         let button = UIButton()
-        button.layer.cornerRadius = 9.0
-        button.layer.borderWidth = 2.0
-        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
+        button.layer.cornerRadius = 24.0
+//        button.layer.cornerRadius = 9.0
+//        button.layer.borderWidth = 2.0
+//        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
+        button.backgroundColor = .white
         button.setImage(UIImage(named: "login_kakao"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
-                string: "Sign-in with facebook",
+                string: "Sign in with facebook",
                 attributes: [
-                    .font: UIFont.roboto(size: 12.0),
+                    .font: UIFont.roboto(size: 16.0, family: .Bold),
                     .foregroundColor: UIColor(named: "bappy_gray")!
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
@@ -71,15 +75,17 @@ final class BappyLoginViewController: UIViewController {
     
     private lazy var appleLoginButton: UIButton = {
         let button = UIButton()
-        button.layer.cornerRadius = 9.0
-        button.layer.borderWidth = 2.0
-        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
+        button.layer.cornerRadius = 24.0
+//        button.layer.cornerRadius = 9.0
+//        button.layer.borderWidth = 2.0
+//        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
+        button.backgroundColor = .white
         button.setImage(UIImage(named: "login_apple"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
-                string: "Sign-in with Apple",
+                string: "Sign in with Apple",
                 attributes: [
-                    .font: UIFont.roboto(size: 12.0),
+                    .font: UIFont.roboto(size: 16.0, family: .Bold),
                     .foregroundColor: UIColor(named: "bappy_gray")!
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
@@ -93,14 +99,14 @@ final class BappyLoginViewController: UIViewController {
         let image = UIImage(systemName: "chevron.backward")
         button.setImage(image, for: .normal)
         button.setPreferredSymbolConfiguration(configuration, forImageIn: .normal)
-        button.tintColor = UIColor(named: "bappy_yellow")
+        button.tintColor = .white
         button.semanticContentAttribute = .forceRightToLeft
         button.setAttributedTitle(
             NSAttributedString(
                 string: "Login Skip  ",
                 attributes: [
-                    .font: UIFont.roboto(size: 13.0),
-                    .foregroundColor: UIColor(named: "bappy_yellow")!
+                    .font: UIFont.roboto(size: 16.0, family: .Bold),
+                    .foregroundColor: UIColor.white
                 ]), for: .normal)
         button.addTarget(self, action: #selector(skipButtonHandler), for: .touchUpInside)
         return button
@@ -166,7 +172,7 @@ final class BappyLoginViewController: UIViewController {
     }
     
     private func configure() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "bappy_yellow")
     }
     
     private func layout() {
@@ -203,7 +209,7 @@ final class BappyLoginViewController: UIViewController {
         loginSkipButton.snp.makeConstraints {
             $0.top.equalTo(vStackView.snp.bottom).offset(5.0)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(80)
+//            $0.width.equalTo(80)
             $0.height.equalTo(44.0)
         }
     }

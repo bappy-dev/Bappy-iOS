@@ -14,7 +14,7 @@ final class HangoutPlanSectionView: UIView {
     private let planImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_plan")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     

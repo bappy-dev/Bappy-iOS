@@ -27,7 +27,7 @@ final class HangoutMainSectionView: UIView {
     private let timeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_date")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -41,7 +41,7 @@ final class HangoutMainSectionView: UIView {
     private let languageImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_language")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -55,7 +55,7 @@ final class HangoutMainSectionView: UIView {
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_location")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -69,7 +69,7 @@ final class HangoutMainSectionView: UIView {
     private let openchatImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_url")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -134,7 +134,7 @@ final class HangoutMainSectionView: UIView {
         ])
         vStackView.axis = .vertical
         vStackView.distribution = .fillEqually
-        vStackView.contentMode = .center
+        vStackView.contentMode = .scaleAspectFit
         vStackView.spacing = 23.0
 
         self.addSubview(titleTextField)

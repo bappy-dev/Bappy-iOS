@@ -38,14 +38,14 @@ final class HangoutCell: UITableViewCell {
     private let timeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "home_time")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "home_location")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -71,7 +71,7 @@ final class HangoutCell: UITableViewCell {
     private let participantsImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "home_participants")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     

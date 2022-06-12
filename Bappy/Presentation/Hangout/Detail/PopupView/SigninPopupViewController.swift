@@ -69,7 +69,7 @@ final class SigninPopupViewController: UIViewController {
         let configuration = UIImage.SymbolConfiguration(pointSize: 14.0, weight: .medium)
         let image = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
         imageView.image = image
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         imageView.tintColor = UIColor(named: "bappy_brown")
         return imageView
     }()

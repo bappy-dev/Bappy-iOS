@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 
+private let reuseIdentifier = "ProfileHangoutCell"
+
 final class ProfileViewController: UIViewController {
     
     // MARK: Properties
@@ -22,8 +24,11 @@ final class ProfileViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = UIColor(named: "bappy_lightgray")
-//        tableView.dataSource = self
+        tableView.dataSource = self
         tableView.delegate = self
+        tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.rowHeight = 157.0
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -100,6 +105,19 @@ final class ProfileViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(21.3)
             $0.bottom.equalToSuperview().inset(48.6)
         }
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ProfileViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! ProfileHangoutCell
+        
+        return cell
     }
 }
 

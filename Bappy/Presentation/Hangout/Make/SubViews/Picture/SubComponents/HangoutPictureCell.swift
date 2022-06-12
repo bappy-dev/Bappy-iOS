@@ -43,7 +43,7 @@ final class HangoutPictureCell: UICollectionViewCell {
     private let addPictureImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "picture_add")
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
