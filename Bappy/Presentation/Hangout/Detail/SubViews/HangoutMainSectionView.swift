@@ -86,8 +86,7 @@ final class HangoutMainSectionView: UIView {
                     .foregroundColor: UIColor(named: "bappy_brown")!,
                     .font: UIFont.roboto(size: 20.0, family: .Medium),
                     .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]),
-            for: .normal)
+                ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(openOpenchatURL), for: .touchUpInside)
         return button

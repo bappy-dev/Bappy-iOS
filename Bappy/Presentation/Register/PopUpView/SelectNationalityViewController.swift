@@ -1,29 +1,27 @@
 //
-//  SelectLanguageViewController.swift
+//  SelectNationalityViewController.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/05/31.
+//  Created by 정동천 on 2022/06/12.
 //
 
 import UIKit
 import SnapKit
 
-protocol SelectLanguageViewControllerDelegate: AnyObject {
-    func getSelectedLanguage(_ language: String)
+protocol SelectNationalityViewControllerDelegate: AnyObject {
+    func getSelectedCountry(_ country: Country)
 }
 
-private let reuseIdentifier = "SelectLanguageCell"
-final class SelectLanguageViewController: UIViewController {
+private let reuseIdentifier = "CountryCell"
+final class SelectNationalityViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: SelectLanguageViewControllerDelegate?
-    private let languageList = [
-        "Arabic", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew",
-        "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"
-    ]
-    private var searchedLanguageList: [String] = [] {
+    weak var delegate: SelectNationalityViewControllerDelegate?
+    private var countries: [Country]
+    
+    private var searchedCountries: [Country] = [] {
         didSet {
-            noResultView.isHidden = !searchedLanguageList.isEmpty
+            noResultView.isHidden = !searchedCountries.isEmpty
             self.tableView.reloadData()
         }
     }
@@ -61,7 +59,7 @@ final class SelectLanguageViewController: UIViewController {
         let label = UILabel()
         label.font = .roboto(size: 22.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
-        label.text = "Select language"
+        label.text = "Select nationality"
         return label
     }()
     
@@ -72,7 +70,7 @@ final class SelectLanguageViewController: UIViewController {
         textField.font = .roboto(size: 16.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Search your language",
+            string: "Search your nationality",
             attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
         containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 14.0)
         containerView.addSubview(imageView)
@@ -86,7 +84,7 @@ final class SelectLanguageViewController: UIViewController {
         let tableView = UITableView()
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(CountryCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = 41.5
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
         tableView.keyboardDismissMode = .interactive
@@ -96,12 +94,24 @@ final class SelectLanguageViewController: UIViewController {
     private let noResultView = NoResultView()
     
     // MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.countries = NSLocale.isoCountryCodes
+            .map { NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: $0]) }
+            .map { countryCode -> Country in
+                let code = String(countryCode[countryCode.index(after: countryCode.startIndex)...])
+                let name = NSLocale(localeIdentifier: "en_UK")
+                    .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
+                return Country(code: code, name: name)
+            }
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         configure()
         layout()
         addKeyboardObserver()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -162,10 +172,10 @@ final class SelectLanguageViewController: UIViewController {
     private func textFieldEditingChanged(_ textField: UITextField) {
         guard let text = textField.text else { return }
         if text.isEmpty {
-            searchedLanguageList = languageList
+            searchedCountries = countries
         } else {
-            searchedLanguageList = languageList
-                .filter { $0.lowercased().contains(text.lowercased()) }
+            searchedCountries = countries
+                .filter { $0.name.lowercased().contains(text.lowercased()) }
         }
     }
     
@@ -185,7 +195,7 @@ final class SelectLanguageViewController: UIViewController {
     
     private func configure() {
         view.backgroundColor = .clear
-        searchedLanguageList = languageList
+        searchedCountries = countries
         tableView.backgroundView = noResultView
         noResultView.isHidden = true
     }
@@ -244,25 +254,23 @@ final class SelectLanguageViewController: UIViewController {
     }
 }
 // MARK: - UITableViewDataSource
-extension SelectLanguageViewController: UITableViewDataSource {
+extension SelectNationalityViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchedLanguageList.count
+        return searchedCountries.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
-        cell.textLabel?.text = searchedLanguageList[indexPath.row]
-        cell.textLabel?.textColor = UIColor(named: "bappy_brown")
-        cell.textLabel?.font = .roboto(size: 14.0)
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! CountryCell
+        cell.country = searchedCountries[indexPath.row]
         return cell
     }
 }
 
 // MARK: - UITableViewDelegate
-extension SelectLanguageViewController: UITableViewDelegate {
+extension SelectNationalityViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        delegate?.getSelectedLanguage(searchedLanguageList[indexPath.row])
+        delegate?.getSelectedCountry(searchedCountries[indexPath.row])
         searchTextField.resignFirstResponder()
         animateDismissView()
     }

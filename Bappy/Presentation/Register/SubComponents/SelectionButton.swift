@@ -46,8 +46,7 @@ final class SelectionButton: UIButton {
                     attributes: [
                         .font: UIFont.roboto(size: 14.0),
                         .foregroundColor: UIColor(named: "bappy_brown")!
-                    ]),
-                for: .normal)
+                    ]), for: .normal)
             self.backgroundColor = UIColor(named: "bappy_yellow")
             self.clipsToBounds = false
         } else {
@@ -57,8 +56,7 @@ final class SelectionButton: UIButton {
                     attributes: [
                         .font: UIFont.roboto(size: 14.0),
                         .foregroundColor: UIColor(named: "bappy_gray")!
-                    ]),
-                for: .normal)
+                    ]), for: .normal)
             self.backgroundColor = UIColor(named: "bappy_lightgray")
             self.clipsToBounds = true
         }

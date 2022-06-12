@@ -50,8 +50,7 @@ final class HangoutOpenchatView: UIView {
                     .foregroundColor: UIColor.black.withAlphaComponent(0.33),
                     .font: UIFont.roboto(size: 10.0),
                     .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]),
-            for: .normal)
+                ]), for: .normal)
         return button
     }()
     

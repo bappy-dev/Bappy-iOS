@@ -17,12 +17,16 @@ final class BirthPickerView: UIView {
     //MARK: Properties
     weak var delegate: BirthPickerViewDelegate?
     
-    var yearList: [String] = Array(1970...2010)
+    private var year: String = "2000"
+    private var month: String = "07"
+    private var day: String = "15"
+        
+    private var yearList: [String] = Array(1970...2010)
         .map { String($0) }
-    var monthList: [String] = Array(1...12)
+    private var monthList: [String] = Array(1...12)
         .map { String($0) }
         .map { ($0.count == 1) ? "0\($0)" : $0 }
-    var dayList: [String] = Array(1...31)
+    private var dayList: [String] = Array(1...31)
         .map { String($0) }
         .map { ($0.count == 1) ? "0\($0)" : $0 }
     
@@ -53,10 +57,9 @@ final class BirthPickerView: UIView {
             NSAttributedString(
                 string: "Done",
                 attributes: [
-                    .font: UIFont.roboto(size: 18.0, family: .Bold),
+                    .font: UIFont.roboto(size: 18.0, family: .Medium),
                     .foregroundColor: UIColor(named: "bappy_brown")!
-                ]),
-            for: .normal)
+                ]), for: .normal)
         button.addTarget(self, action: #selector(doneButtonHandler), for: .touchUpInside)
         return button
     }()
@@ -67,6 +70,7 @@ final class BirthPickerView: UIView {
         
         layout()
         configure()
+        selectPickerViewRow(year: year, month: month, day: day, animated: false)
     }
     
     required init?(coder: NSCoder) {
@@ -76,9 +80,6 @@ final class BirthPickerView: UIView {
     // MARK: Actions
     @objc
     private func doneButtonHandler() {
-        let year = yearList[yearPickerView.selectedRow(inComponent: 0)]
-        let month = monthList[monthPickerView.selectedRow(inComponent: 0)]
-        let day = dayList[dayPickerView.selectedRow(inComponent: 0)]
         let birth = "\(year)-\(month)-\(day)"
         delegate?.birthPickerViewDidSelect(birthDate: birth)
         UIView.transition(with: self,
@@ -89,14 +90,19 @@ final class BirthPickerView: UIView {
     }
     
     // MARK: Helpers
+    private func selectPickerViewRow(year: String, month: String, day: String, animated: Bool = false) {
+        guard let yearRow = yearList.firstIndex(of: year),
+              let monthRow = monthList.firstIndex(of: month),
+              let dayRow = dayList.firstIndex(of: day) else { return }
+        yearPickerView.selectRow(yearRow, inComponent: 0, animated: animated)
+        monthPickerView.selectRow(monthRow, inComponent: 0, animated: animated)
+        dayPickerView.selectRow(dayRow, inComponent: 0, animated: animated)
+    }
+    
     private func configure() {
         self.backgroundColor = .white
         self.layer.cornerRadius = 5.0
         self.addBappyShadow(shadowOffsetHeight: 3.5)
-        
-        yearPickerView.selectRow(30, inComponent: 0, animated: false)
-        monthPickerView.selectRow(5, inComponent: 0, animated: false)
-        dayPickerView.selectRow(14, inComponent: 0, animated: false)
     }
     
     private func layout() {
@@ -168,8 +174,8 @@ extension BirthPickerView: UIPickerViewDataSource, UIPickerViewDelegate {
             let label = UILabel()
             label.textAlignment = .center
             label.text = titleList[row]
-            label.font = .roboto(size: 22.0, family: .Medium)
-            label.textColor = UIColor(named: "bappy_brown")
+            label.font = .roboto(size: 22.0, family: .Regular)
+            label.textColor = .black.withAlphaComponent(0.95)
             return label
         }()
         return titleLabel
@@ -177,5 +183,20 @@ extension BirthPickerView: UIPickerViewDataSource, UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return 45.0
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("DEBUG: dfasdfasdf")
+        let year = yearList[yearPickerView.selectedRow(inComponent: 0)]
+        let month = monthList[monthPickerView.selectedRow(inComponent: 0)]
+        let day = dayList[dayPickerView.selectedRow(inComponent: 0)]
+        let birth = "\(year)-\(month)-\(day)"
+        if birth.isValidDateType() {
+            self.year = year
+            self.month = month
+            self.day = day
+        } else {
+            selectPickerViewRow(year: self.year, month: self.month, day: self.day, animated: true)
+        }
     }
 }

@@ -74,6 +74,16 @@ extension Date {
     }
 }
 
+extension String {
+    func isValidDateType(format: String = "yyyy-MM-dd") -> Bool {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self) != nil
+    }
+}
+
 extension UIViewController {
     func setUpProgressHUD() {
         ProgressHUD.colorBackground = .black.withAlphaComponent(0.05)

@@ -36,16 +36,13 @@ final class BappyLoginViewController: UIViewController {
     private lazy var googleLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
-//        button.layer.cornerRadius = 9.0
-//        button.layer.borderWidth = 2.0
-//        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
         button.backgroundColor = .white
         button.setImage(UIImage(named: "login_google"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
                 string: "Sign in with Google",
                 attributes: [
-                    .font: UIFont.roboto(size: 16.0, family: .Bold),
+                    .font: UIFont.roboto(size: 18.0, family: .Bold),
                     .foregroundColor: UIColor(named: "bappy_gray")!
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
@@ -56,17 +53,14 @@ final class BappyLoginViewController: UIViewController {
     private lazy var facebookLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
-//        button.layer.cornerRadius = 9.0
-//        button.layer.borderWidth = 2.0
-//        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
-        button.backgroundColor = .white
-        button.setImage(UIImage(named: "login_kakao"), for: .normal)
+        button.backgroundColor = UIColor(red: 24.0/255.0, green: 119.0/255.0, blue: 242.0/255.0, alpha: 1.0)
+        button.setImage(UIImage(named: "login_facebook"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
-                string: "Sign in with facebook",
+                string: "Sign in with Facebook",
                 attributes: [
-                    .font: UIFont.roboto(size: 16.0, family: .Bold),
-                    .foregroundColor: UIColor(named: "bappy_gray")!
+                    .font: UIFont.roboto(size: 18.0, family: .Bold),
+                    .foregroundColor: UIColor.white
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(facebookLoginButtonHandler), for: .touchUpInside)
@@ -76,17 +70,14 @@ final class BappyLoginViewController: UIViewController {
     private lazy var appleLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
-//        button.layer.cornerRadius = 9.0
-//        button.layer.borderWidth = 2.0
-//        button.layer.borderColor = UIColor(named: "bappy_lightgray")?.cgColor
-        button.backgroundColor = .white
+        button.backgroundColor = .black
         button.setImage(UIImage(named: "login_apple"), for: .normal)
         button.setAttributedTitle(
             NSAttributedString(
                 string: "Sign in with Apple",
                 attributes: [
-                    .font: UIFont.roboto(size: 16.0, family: .Bold),
-                    .foregroundColor: UIColor(named: "bappy_gray")!
+                    .font: UIFont.roboto(size: 18.0, family: .Bold),
+                    .foregroundColor: UIColor.white
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(appleLoginButtonHandler), for: .touchUpInside)
@@ -106,7 +97,8 @@ final class BappyLoginViewController: UIViewController {
                 string: "Login Skip  ",
                 attributes: [
                     .font: UIFont.roboto(size: 16.0, family: .Bold),
-                    .foregroundColor: UIColor.white
+                    .foregroundColor: UIColor.white,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue
                 ]), for: .normal)
         button.addTarget(self, action: #selector(skipButtonHandler), for: .touchUpInside)
         return button
@@ -176,9 +168,7 @@ final class BappyLoginViewController: UIViewController {
     }
     
     private func layout() {
-        let vStackView = UIStackView(arrangedSubviews: [
-            googleLoginButton, facebookLoginButton, appleLoginButton
-        ])
+        let vStackView = UIStackView(arrangedSubviews: [googleLoginButton, facebookLoginButton, appleLoginButton])
         vStackView.axis = .vertical
         vStackView.spacing = 18.0
         vStackView.distribution = .fillEqually
@@ -204,12 +194,11 @@ final class BappyLoginViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(47.0)
             $0.height.equalTo(180.0)
         }
-        
+
         view.addSubview(loginSkipButton)
         loginSkipButton.snp.makeConstraints {
-            $0.top.equalTo(vStackView.snp.bottom).offset(5.0)
+            $0.top.equalTo(vStackView.snp.bottom).offset(10.0)
             $0.centerX.equalToSuperview()
-//            $0.width.equalTo(80)
             $0.height.equalTo(44.0)
         }
     }

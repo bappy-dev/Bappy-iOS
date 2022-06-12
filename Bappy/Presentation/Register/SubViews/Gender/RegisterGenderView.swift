@@ -11,19 +11,12 @@ import SnapKit
 final class RegisterGenderView: UIView {
     
     // MARK: Properties
-    private let genderQuestionLabel: UILabel = {
+    private let genderCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Select your gender?"
-        label.font = .roboto(size: 16.0)
+        label.text = "What's\nyour gender"
+        label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let asteriskLabel: UILabel = {
-        let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.numberOfLines = 2
         return label
     }()
     
@@ -69,32 +62,20 @@ final class RegisterGenderView: UIView {
     
     // MARK: Helpers
     private func layout() {
-        self.addSubview(genderQuestionLabel)
-        genderQuestionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20.0)
-            $0.leading.equalToSuperview().inset(30.0)
-        }
-        
-        self.addSubview(asteriskLabel)
-        asteriskLabel.snp.makeConstraints {
-            $0.top.equalTo(genderQuestionLabel).offset(-3.0)
-            $0.leading.equalTo(genderQuestionLabel.snp.trailing).offset(6.0)
-        }
-        
-        self.addSubview(maleButton)
-        
-        let stackView = UIStackView(
-            arrangedSubviews: [
-                maleButton,
-                femaleButton,
-                otherButton])
+        let stackView = UIStackView(arrangedSubviews: [maleButton, femaleButton, otherButton])
         stackView.spacing = 19.0
         stackView.distribution = .fillEqually
         stackView.axis = .horizontal
         
+        self.addSubview(genderCaptionLabel)
+        genderCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
+        }
+   
         self.addSubview(stackView)
         stackView.snp.makeConstraints {
-            $0.top.equalTo(genderQuestionLabel.snp.bottom).offset(30.0)
+            $0.top.equalTo(genderCaptionLabel.snp.bottom).offset(80.0)
             $0.leading.trailing.equalToSuperview().inset(23.0)
             $0.height.equalTo(39.0)
         }

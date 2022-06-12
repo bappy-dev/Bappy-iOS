@@ -27,8 +27,7 @@ final class BottomButtonView: UIView {
             NSAttributedString(
                 string: " Back",
                 attributes: [.font: UIFont.roboto(size: 12.0, family: .Medium)
-                ]),
-            for: .normal)
+                ]), for: .normal)
         return button
     }()
     
@@ -44,8 +43,7 @@ final class BottomButtonView: UIView {
             NSAttributedString(
                 string: "Tap To Continue  ",
                 attributes: [.font: UIFont.roboto(size: 12.0, family: .Medium)
-                ]),
-            for: .normal)
+                ]), for: .normal)
         return button
     }()
     

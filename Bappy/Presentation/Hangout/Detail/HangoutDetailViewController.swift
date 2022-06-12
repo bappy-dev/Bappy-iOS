@@ -40,8 +40,7 @@ final class HangoutDetailViewController: UIViewController {
                 attributes: [
                     .foregroundColor: UIColor.white,
                     .font: UIFont.roboto(size: 18.0)
-                ]),
-            for: .normal)
+                ]), for: .normal)
         return button
     }()
     
@@ -54,8 +53,7 @@ final class HangoutDetailViewController: UIViewController {
                 attributes: [
                     .foregroundColor: UIColor(named: "bappy_brown")!,
                     .font: UIFont.roboto(size: 18.0, family: .Medium)
-                ]),
-            for: .normal)
+                ]), for: .normal)
         button.layer.cornerRadius = 29.5
         button.addBappyShadow()
         button.addTarget(self, action: #selector(joinButtonHandler), for: .touchUpInside)

@@ -46,8 +46,7 @@ final class SearchPlaceViewController: UIViewController {
                 string: "Close",
                 attributes: [
                     .font: UIFont.roboto(size: 18.0, family: .Medium),
-                    .foregroundColor: UIColor(named: "bappy_yellow")!]),
-            for: .normal)
+                    .foregroundColor: UIColor(named: "bappy_yellow")!]), for: .normal)
         button.addTarget(self, action: #selector(closeButtonHandler), for: .touchUpInside)
         return button
     }()

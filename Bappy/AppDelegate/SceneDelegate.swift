@@ -19,16 +19,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.tintColor = UIColor(named: "bappy_gray")
         
         // 회원가입
-//        let viewModel = RegisterViewModel()
-//        let viewController = RegisterViewController(viewModel: viewModel)
-//        let rootViewController = UINavigationController(rootViewController: viewController)
-//        rootViewController.navigationBar.isHidden = true
+        let viewController = RegisterViewController()
+        let rootViewController = UINavigationController(rootViewController: viewController)
+        rootViewController.navigationBar.isHidden = true
         
         // 회원가입 성공
 //        let rootViewController = RegisterSuccessViewController()
         
         // 메인탭
-        let rootViewController = BappyTabBarController()
+//        let rootViewController = BappyTabBarController()
         
         // 행아웃 만들기
 //        let viewController = HangoutMakeViewController()

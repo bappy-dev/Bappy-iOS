@@ -57,8 +57,7 @@ final class SigninPopupViewController: UIViewController {
                 attributes: [
                     .foregroundColor: UIColor(named: "bappy_brown")!,
                     .font: UIFont.roboto(size: 20.0, family: .Bold)
-                ]),
-            for: .normal)
+                ]), for: .normal)
         button.backgroundColor = UIColor(named: "bappy_yellow")
         button.layer.cornerRadius = 21.0
         return button
