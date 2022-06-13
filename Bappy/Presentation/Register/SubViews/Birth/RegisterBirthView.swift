@@ -10,6 +10,8 @@ import UIKit
 final class RegisterBirthView: UIView {
     
     // MARK: Properties
+    private let viewModel: RegisterBirthViewModel
+    
     private let birthCaptionLabel: UILabel = {
         let label = UILabel()
         label.text = "When\nwere you born"
@@ -45,9 +47,11 @@ final class RegisterBirthView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: RegisterBirthViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
+        configure()
         layout()
     }
     
@@ -67,6 +71,10 @@ final class RegisterBirthView: UIView {
     }
     
     // MARK: Helpers
+    private func configure() {
+        self.backgroundColor = .white
+    }
+    
     private func layout() {
         self.addSubview(birthCaptionLabel)
         birthCaptionLabel.snp.makeConstraints {

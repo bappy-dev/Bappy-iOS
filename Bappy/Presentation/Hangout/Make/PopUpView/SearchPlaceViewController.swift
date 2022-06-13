@@ -101,7 +101,6 @@ final class SearchPlaceViewController: UIViewController {
         configure()
         layout()
         addKeyboardObserver()
-        setUpProgressHUD()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -119,7 +118,7 @@ final class SearchPlaceViewController: UIViewController {
         let requestDTO = MapsRequestDTO(key: key, query: query, language: language)
         let endpoint = APIEndpoints.searchGoogleMapList(with: requestDTO)
         
-        ProgressHUD.show(nil, interaction: false)
+        ProgressHUD.show(interaction: false)
         provider.request(with: endpoint) { [weak self] result in
             ProgressHUD.dismiss()
             switch result {

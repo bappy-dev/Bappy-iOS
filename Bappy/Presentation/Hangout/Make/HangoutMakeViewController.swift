@@ -115,7 +115,7 @@ final class HangoutMakeViewController: UIViewController {
             return
         }
         page -= 1
-        continueButtonView.isEnabled = true
+//        continueButtonView.isEnabled = true
     }
 
     // MARK: Helpers
@@ -234,14 +234,14 @@ final class HangoutMakeViewController: UIViewController {
 // MARK: - HangoutMakeTitleViewDelegate
 extension HangoutMakeViewController: HangoutMakeTitleViewDelegate {
     func isTitleValid(_ valid: Bool) {
-        continueButtonView.isEnabled = valid
+//        continueButtonView.isEnabled = valid
     }
 }
 
 // MARK: - HangoutMakeTimeViewDelegate
 extension HangoutMakeViewController: HangoutMakeTimeViewDelegate {
     func isTimeValid(_ valid: Bool) {
-        continueButtonView.isEnabled = valid
+//        continueButtonView.isEnabled = valid
     }
 }
 
@@ -261,7 +261,7 @@ extension HangoutMakeViewController: HangoutPlaceViewDelegate {
 extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
     func getSelectedMap(_ map: Map) {
         placeView.map = map
-        continueButtonView.isEnabled = true
+//        continueButtonView.isEnabled = true
     }
 }
 
@@ -269,7 +269,7 @@ extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
 extension HangoutMakeViewController: SelectLanguageViewControllerDelegate {
     func getSelectedLanguage(_ language: String) {
         languageView.language = language
-        continueButtonView.isEnabled = true
+//        continueButtonView.isEnabled = true
     }
 }
 

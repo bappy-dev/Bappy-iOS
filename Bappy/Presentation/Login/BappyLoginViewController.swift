@@ -47,6 +47,7 @@ final class BappyLoginViewController: UIViewController {
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(googleButtonHandler), for: .touchUpInside)
+        button.addBappyShadow()
         return button
     }()
     
@@ -64,6 +65,7 @@ final class BappyLoginViewController: UIViewController {
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(facebookLoginButtonHandler), for: .touchUpInside)
+        button.addBappyShadow()
         return button
     }()
     
@@ -81,6 +83,7 @@ final class BappyLoginViewController: UIViewController {
                 ]), for: .normal)
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(appleLoginButtonHandler), for: .touchUpInside)
+        button.addBappyShadow()
         return button
     }()
     
@@ -118,17 +121,6 @@ final class BappyLoginViewController: UIViewController {
         setButtonImageInset()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if let user = Auth.auth().currentUser {
-            print("DEBUG: currentUser.uid \(user.uid)")
-//            user.providerData.forEach { data in
-//                print("DEBUG: provider name \(data.displayName)")
-//            }
-        }
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -136,7 +128,8 @@ final class BappyLoginViewController: UIViewController {
     // MARK: Actions
     @objc
     private func skipButtonHandler() {
-        self.dismiss(animated: true)
+        ProgressHUD.show(interaction: false)
+        signInAnonymously()
     }
     
     @objc
@@ -204,18 +197,19 @@ final class BappyLoginViewController: UIViewController {
     }
 }
 
-// MARK: - Firebase Sign In
+// MARK: - Sign In Guest Mode
 extension BappyLoginViewController {
-    func signInWithFirebase(with credential: AuthCredential) {
-        Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-            guard let self = self else { return }
+    func signInAnonymously() {
+        Auth.auth().signInAnonymously { authResult, error in
             if let error = error {
                 print("ERROR: \(error.localizedDescription)")
+                ProgressHUD.dismiss()
                 return
             }
             
             guard let authResult = authResult else { return }
             authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+                ProgressHUD.dismiss()
                 if let error = error {
                     print("ERROR: \(error.localizedDescription)")
                     return
@@ -223,7 +217,44 @@ extension BappyLoginViewController {
                 print("DEBUG: idToken \(idToken!)")
             }
             print("DEBUG: uid \(authResult.user.uid)")
-            self.dismiss(animated: true)
+            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+            sceneDelegate.switchRootViewToMainView(animated: true)
+        }
+    }
+}
+
+// MARK: - Firebase Sign In
+extension BappyLoginViewController {
+    func signInWithFirebase(with credential: AuthCredential) {
+        ProgressHUD.show(interaction: false)
+        Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+            guard let self = self else { return }
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
+            }
+
+            guard let authResult = authResult else { return }
+            authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return
+                }
+                ProgressHUD.dismiss()
+                
+                // Resisterd in Backend
+                if let displayName = authResult.user.displayName, displayName == authResult.user.uid {
+                    guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                    sceneDelegate.switchRootViewToMainView(animated: true)
+                } else {
+                    // Not resisterd in Backend
+                    let viewModel = RegisterViewModel(dependency: .init(page: 0, numOfPage: 4, isButtonEnabled: false))
+                    let viewController = RegisterViewController(viewModel: viewModel)
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                }
+        
+                
+            }
         }
     }
 }

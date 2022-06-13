@@ -12,14 +12,21 @@ import RxCocoa
 final class RegisterNameViewModel: ViewModelType {
     struct Dependency {
         var name: String
+        var minimumLength: Int
+        var maximumLength: Int
     }
     
     struct Input {
-        var nameText: AnyObserver<String>
+        var name: AnyObserver<String>
+        var minimumLength: AnyObserver<Int>
+        var maximumLength: AnyObserver<Int>
+        var editingDidBegin: AnyObserver<Void>
     }
     
     struct Output {
-        var isNameValid: Driver<Bool>
+        var isValid: Driver<Bool>
+        var modifiedName: Signal<String>
+        var shouldHideRule: Signal<Bool>
     }
     
     let dependency: Dependency
@@ -27,25 +34,60 @@ final class RegisterNameViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let nameText$: BehaviorSubject<String>
+    private let name$: BehaviorSubject<String>
+    private let minimumLength$: BehaviorSubject<Int>
+    private let maximumLength$: BehaviorSubject<Int>
+    private let editingDidBegin$ = PublishSubject<Void>()
     
-    init(dependency: Dependency = Dependency(name: "")) {
+    init(dependency: Dependency = Dependency(name: "", minimumLength: 0, maximumLength: 0)) {
         self.dependency = dependency
         
         // Streams
-        let nameText$ = BehaviorSubject<String>(value: dependency.name)
-        let isNameValid$ = nameText$.map(validation)
+        let name$ = BehaviorSubject<String>(value: dependency.name)
+        let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
+        let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
+        
+        let isNameValid = name$
+            .withLatestFrom(minimumLength$, resultSelector: validation)
+            .share()
+        let isValid = isNameValid
             .asDriver(onErrorJustReturn: false)
+        let modifiedName = name$
+            .withLatestFrom(maximumLength$, resultSelector: removeExcessString)
+            .asSignal(onErrorJustReturn: "")
+        let shouldHideRule = Observable
+            .combineLatest(editingDidBegin$, isNameValid)
+            .map { $1 }
+            .distinctUntilChanged()
+            .asSignal(onErrorJustReturn: false)
         
         // Input & Output
-        self.input = Input(nameText: nameText$.asObserver())
-        self.output = Output(isNameValid: isNameValid$)
+        self.input = Input(
+            name: name$.asObserver(),
+            minimumLength: minimumLength$.asObserver(),
+            maximumLength: maximumLength$.asObserver(),
+            editingDidBegin: editingDidBegin$.asObserver()
+        )
+        self.output = Output(
+            isValid: isValid,
+            modifiedName: modifiedName,
+            shouldHideRule: shouldHideRule
+        )
         
         // Binding
-        self.nameText$ = nameText$
+        self.name$ = name$
+        self.minimumLength$ = minimumLength$
+        self.maximumLength$ = maximumLength$
     }
 }
 
-private func validation(name: String) -> Bool {
-    return name.count > 1
+private func validation(name: String, minimumLength: Int) -> Bool {
+    return name.count >= minimumLength
+}
+
+private func removeExcessString(name: String, maximumLength: Int) -> String {
+    guard name.count > maximumLength else { return name }
+    let startIndex = name.startIndex
+    let lastIndex = name.index(startIndex, offsetBy: maximumLength)
+    return String(name[startIndex..<lastIndex])
 }

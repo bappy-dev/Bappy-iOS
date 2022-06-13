@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
 
 final class ProfileSettingViewController: UIViewController {
     
@@ -51,6 +52,7 @@ final class ProfileSettingViewController: UIViewController {
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .white
+        serviceView.delegate = self
     }
 
     private func layout() {
@@ -77,6 +79,19 @@ final class ProfileSettingViewController: UIViewController {
         serviceView.snp.makeConstraints {
             $0.top.equalTo(notificationView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
+        }
+    }
+}
+
+// MARK: - ProfileSettingServiceViewDelegate
+extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
+    func logoutButtonTapped() {
+        do {
+            try Auth.auth().signOut()
+            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+            sceneDelegate.switchRootViewToSignInView(animated: true)
+        } catch {
+            fatalError("Failed sign out")
         }
     }
 }

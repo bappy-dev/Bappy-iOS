@@ -8,9 +8,15 @@
 import UIKit
 import SnapKit
 
+protocol ProfileSettingServiceViewDelegate: AnyObject {
+    func logoutButtonTapped()
+}
+
 final class ProfileSettingServiceView: UIView {
     
     // MARK: Properites
+    weak var delegate: ProfileSettingServiceViewDelegate?
+    
     private let serviceImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -34,7 +40,7 @@ final class ProfileSettingServiceView: UIView {
         return button
     }()
     
-    private let deleteAccountButton: UIButton = {
+    private lazy var deleteAccountButton: UIButton = {
         let button = UIButton(type: .system)
         button.setAttributedTitle(
             NSAttributedString(
@@ -47,7 +53,7 @@ final class ProfileSettingServiceView: UIView {
         return button
     }()
     
-    private let logoutButton: UIButton = {
+    private lazy var logoutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setAttributedTitle(
             NSAttributedString(
@@ -57,6 +63,7 @@ final class ProfileSettingServiceView: UIView {
                     .font: UIFont.roboto(size: 16.0),
                     .underlineStyle: NSUnderlineStyle.single.rawValue
                 ]), for: .normal)
+        button.addTarget(self, action: #selector(logoutButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -71,6 +78,12 @@ final class ProfileSettingServiceView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Actions
+    @objc
+    private func logoutButtonHandler() {
+        delegate?.logoutButtonTapped()
     }
     
     // MARK: Helpers

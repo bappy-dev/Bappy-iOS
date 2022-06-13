@@ -13,6 +13,7 @@ private let reuseIdentifier = "ProfileHangoutCell"
 final class ProfileViewController: UIViewController {
     
     // MARK: Properties
+    private var count: Int = 0
     private let titleTopView = TitleTopView(title: "Profile", subTitle: "Setting")
     private lazy var settingButton: UIButton = {
         let button = UIButton()
@@ -39,28 +40,28 @@ final class ProfileViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         configure()
+        layout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         setStatusBarStyle(statusBarStyle: .lightContent)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self = self else { return }
+            self.count = 10
+            self.tableView.reloadData()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         setStatusBarStyle(statusBarStyle: .darkContent)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        layout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: Actions
@@ -81,8 +82,8 @@ final class ProfileViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .white
         
-        headerView.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 352.0)
         tableView.tableHeaderView = headerView
+        headerView.frame.size.height = 352.0
     }
     
     private func layout() {
@@ -111,7 +112,7 @@ final class ProfileViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

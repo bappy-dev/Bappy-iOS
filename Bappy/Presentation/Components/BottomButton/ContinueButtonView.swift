@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 protocol ContinueButtonViewDelegate: AnyObject {
     func continueButtonTapped()
@@ -15,16 +17,13 @@ protocol ContinueButtonViewDelegate: AnyObject {
 final class ContinueButtonView: UIView {
     
     // MARK: Properties
+    private let viewModel: ContinueButtonViewModel
+    private let disposeBag = DisposeBag()
+    
     weak var delegate: ContinueButtonViewDelegate?
+ 
     
-    var isEnabled: Bool = false {
-        didSet {
-            continueButton.isEnabled = isEnabled
-            continueButton.backgroundColor = isEnabled ? UIColor(named: "bappy_yellow") : UIColor(red: 238.0/255.0, green: 238.0/255.0, blue: 234.0/255.0, alpha: 1.0)
-        }
-    }
-    
-    private lazy var continueButton: UIButton = {
+    private let continueButton: UIButton = {
         let button = UIButton()
         button.setAttributedTitle(
             NSAttributedString(
@@ -34,32 +33,26 @@ final class ContinueButtonView: UIView {
                     .font: UIFont.roboto(size: 23.0, family: .Bold)
                 ]), for: .normal)
         button.layer.cornerRadius = 23.5
-        button.addTarget(self, action: #selector(continueButtonHandler), for: .touchUpInside)
         return button
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ContinueButtonViewModel = ContinueButtonViewModel()) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func continueButtonHandler(_ button: UIButton) {
-        delegate?.continueButtonTapped()
-    }
-    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        isEnabled = false
     }
     
     private func layout() {
@@ -71,5 +64,22 @@ final class ContinueButtonView: UIView {
             $0.bottom.equalToSuperview().inset(28.0)
             $0.height.equalTo(47.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ContinueButtonView {
+    private func bind() {
+        continueButton.rx.tap
+            .bind(to: viewModel.input.buttonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isButtonEnabled
+            .drive(onNext: { [weak self] isEnabled in
+                guard let self = self else { return }
+                self.continueButton.isEnabled = isEnabled
+                self.continueButton.backgroundColor = isEnabled ? UIColor(named: "bappy_yellow") : UIColor(red: 238.0/255.0, green: 238.0/255.0, blue: 234.0/255.0, alpha: 1.0)
+            })
+            .disposed(by: disposeBag)
     }
 }

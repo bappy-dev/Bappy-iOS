@@ -6,7 +6,7 @@
 //
 
 import UIKit
-//import FacebookCore
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -18,10 +18,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.backgroundColor = .white
         window?.tintColor = UIColor(named: "bappy_gray")
         
+        setProgressHUDStyle()
+        
+        // Check Sign In State
+        guard let user = Auth.auth().currentUser else {
+            print("DEBUG: No user signed in")
+            switchRootViewToSignInView()
+            return
+        }
+        
+        // Check Guest Mode
+        guard !user.isAnonymous else {
+            print("DEBUG: Anonymous user signs in")
+            switchRootViewToMainView()
+            return
+        }
+        
+        // Check registerd Firebase, but not in Backend
+        guard let displayName = user.displayName, displayName == user.uid else {
+            do { try Auth.auth().signOut() }
+            catch { fatalError("ERROR: Failed signOut") }
+            switchRootViewToSignInView()
+            return
+        }
+        
+        // Sign In Registerd User
+        switchRootViewToMainView()
+        
         // 회원가입
-        let viewController = RegisterViewController()
-        let rootViewController = UINavigationController(rootViewController: viewController)
-        rootViewController.navigationBar.isHidden = true
+//        let viewController = RegisterViewController()
+//        let rootViewController = UINavigationController(rootViewController: viewController)
+//        rootViewController.navigationBar.isHidden = true
         
         // 회원가입 성공
 //        let rootViewController = RegisterSuccessViewController()
@@ -35,8 +62,52 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // 로그인
 //        let rootViewController = BappyLoginViewController()
-        window?.rootViewController = rootViewController
-        window?.makeKeyAndVisible()
+        
+//        window?.rootViewController = rootViewController
+//        window?.makeKeyAndVisible()
     }
 }
 
+extension SceneDelegate {
+    private func setProgressHUDStyle() {
+        ProgressHUD.colorBackground = .black.withAlphaComponent(0.05)
+        ProgressHUD.colorHUD = .white
+        ProgressHUD.colorAnimation = UIColor(named: "bappy_brown")!
+    }
+}
+
+extension SceneDelegate {
+    func switchRootViewToSignInView(animated: Bool = false, completion: ((UINavigationController?) -> Void)? = nil) {
+        let naviRootViewController = BappyLoginViewController()
+        let viewController = UINavigationController(rootViewController: naviRootViewController)
+        viewController.navigationBar.isHidden = true
+        self.window?.rootViewController = viewController
+        window?.makeKeyAndVisible()
+        guard let completion = completion else { return }
+        completion(viewController)
+        
+        if animated {
+            UIView.transition(with: window!,
+                              duration: 0.4,
+                              options: UIView.AnimationOptions.transitionCrossDissolve,
+                              animations: nil,
+                              completion: nil)
+        }
+    }
+    
+    func switchRootViewToMainView(animated: Bool = false, completion: ((BappyTabBarController?) -> Void)? = nil) {
+        let viewController = BappyTabBarController()
+        self.window?.rootViewController = viewController
+        window?.makeKeyAndVisible()
+        guard let completion = completion else { return }
+        completion(viewController)
+        
+        if animated {
+            UIView.transition(with: window!,
+                              duration: 0.4,
+                              options: UIView.AnimationOptions.transitionCrossDissolve,
+                              animations: nil,
+                              completion: nil)
+        }
+    }
+}

@@ -13,31 +13,41 @@ final class RegisterViewModel: ViewModelType {
     
     struct SubViewModels {
         let nameViewModel: RegisterNameViewModel
-        let bottomButtonViewModel: BottomButtonViewModel
+        let genderViewModel: RegisterGenderViewModel
+        let birthViewModel: RegisterBirthViewModel
+        let nationalityViewModel: RegisterNationalityViewModel
+        let continueButtonViewModel: ContinueButtonViewModel
+        let progressBarViewModel: ProgressBarViewModel
     }
     
     struct Dependency {
         var page: Int
         var numOfPage: Int
+        var isButtonEnabled: Bool
     }
     
     struct Input {
         var page: AnyObserver<Int>
         var numOfPage: AnyObserver<Int>
-        var goNextPage: AnyObserver<Void>
-        var goPreviousPage: AnyObserver<Void>
-//        var isNameValid: AnyObserver<Bool>
+        var continueButtonTapped: AnyObserver<Void>
+        var backButtonTapped: AnyObserver<Void>
+        var name: AnyObserver<String>
+        var gender: AnyObserver<Gender>
+        var birth: AnyObserver<String>
+        var nationality: AnyObserver<Country>
+        var isNameValid: AnyObserver<Bool>
+        var isGenderValid: AnyObserver<Bool>
+        var isBirthValid: AnyObserver<Bool>
+        var isNationalityValid: AnyObserver<Bool>
     }
     
     struct Output {
-//        var isNameValid: Driver<Bool>
+        var shouldKeyboardHide: Signal<Void>
         var pageContentOffset: Driver<CGPoint>
         var progression: Driver<CGFloat>
-//        var isContentValid: Driver<Bool>
-//        var isFirstPage: Driver<Bool>
-//        var isLastPage: Driver<Bool>
-//        var shouldKeyboardShow: Driver<Bool>
-        var showSuccessView: Signal<Void>
+        var popView: Signal<Void>
+        var showCompleteView: Signal<Void>
+        var isContinueButtonEnabled: Signal<Bool>
     }
     
     let dependency: Dependency
@@ -46,69 +56,126 @@ final class RegisterViewModel: ViewModelType {
     let output: Output
     
     let subViewModels = SubViewModels(
-        nameViewModel: RegisterNameViewModel(),
-        bottomButtonViewModel: BottomButtonViewModel()
+        nameViewModel: RegisterNameViewModel(dependency: .init(name: "", minimumLength: 3, maximumLength: 20)),
+        genderViewModel: RegisterGenderViewModel(),
+        birthViewModel: RegisterBirthViewModel(),
+        nationalityViewModel: RegisterNationalityViewModel(),
+        continueButtonViewModel: ContinueButtonViewModel(),
+        progressBarViewModel: ProgressBarViewModel()
     )
     
     private let page$: BehaviorSubject<Int>
     private let numOfPage$: BehaviorSubject<Int>
-    private let goNextPage$ = PublishSubject<Void>()
-    private let goPreviousPage$ = PublishSubject<Void>()
+    private let continueButtonTapped$ = PublishSubject<Void>()
+    private let backButtonTapped$ = PublishSubject<Void>()
+    private let name$ = PublishSubject<String>()
+    private let gender$ = PublishSubject<Gender>()
+    private let birth$ = PublishSubject<String>()
+    private let nationality$ = PublishSubject<Country>()
+    private let isNameValid$ = BehaviorSubject<Bool>(value: false)
+    private let isGenderValid$ = BehaviorSubject<Bool>(value: false)
+    private let isBirthValid$ = BehaviorSubject<Bool>(value: false)
+    private let isNationalityValid$ = BehaviorSubject<Bool>(value: false)
     
-    init(dependency: Dependency = Dependency(page: 0, numOfPage: 0)) {
+    init(dependency: Dependency = Dependency(page: 0, numOfPage: 0, isButtonEnabled: false)) {
         self.dependency = dependency
         
         // Streams
         let page$ = BehaviorSubject<Int>(value: dependency.page)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         
-        let pageContentOffset$ = page$.map(getContentOffset)
+        let shouldKeyboardHide = Observable
+            .merge(continueButtonTapped$, backButtonTapped$)
+            .asSignal(onErrorJustReturn: Void())
+        let pageContentOffset = page$.map(getContentOffset)
             .asDriver(onErrorJustReturn: .zero)
-        let progression$ = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
+        let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
                                                 resultSelector: getProgression)
             .asDriver(onErrorJustReturn: .zero)
-        let showSuccessView$ = goNextPage$
+        let backButtonTappedWithPage = backButtonTapped$
+            .withLatestFrom(page$)
+            .share()
+        let popView = backButtonTappedWithPage
+            .filter { $0 == 0 }
+            .map { _ in }
+            .asSignal(onErrorJustReturn: Void())
+        let showCompleteView = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
             .filter { $0.0 + 1 == $0.1 }
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
-//        let shouldKeyboardShow$ = page$.map { false }
-            
+        let isContinueButtonEnabled = Observable
+            .combineLatest(page$, isNameValid$, isGenderValid$, isBirthValid$, isNationalityValid$)
+            .map(shouldButtonEnabled)
+            .distinctUntilChanged()
+            .asSignal(onErrorJustReturn: false)
         
         // Input & Output
-        self.input = Input(page: page$.asObserver(),
-                           numOfPage: numOfPage$.asObserver(),
-                           goNextPage: goNextPage$.asObserver(),
-                           goPreviousPage: goPreviousPage$.asObserver())
-        self.output = Output(pageContentOffset: pageContentOffset$,
-                             progression: progression$,
-                             showSuccessView: showSuccessView$)
-//                             isContentValid: <#T##Driver<Bool>#>,
-//                             isFirstPage: <#T##Driver<Bool>#>,
-//                             isLastPage: <#T##Driver<Bool>#>)
+        self.input = Input(
+            page: page$.asObserver(),
+            numOfPage: numOfPage$.asObserver(),
+            continueButtonTapped: continueButtonTapped$.asObserver(),
+            backButtonTapped: backButtonTapped$.asObserver(),
+            name: name$.asObserver(),
+            gender: gender$.asObserver(),
+            birth: birth$.asObserver(),
+            nationality: nationality$.asObserver(),
+            isNameValid: isNameValid$.asObserver(),
+            isGenderValid: isGenderValid$.asObserver(),
+            isBirthValid: isBirthValid$.asObserver(),
+            isNationalityValid: isNationalityValid$.asObserver()
+        )
+        
+        self.output = Output(
+            shouldKeyboardHide: shouldKeyboardHide,
+            pageContentOffset: pageContentOffset,
+            progression: progression,
+            popView: popView,
+            showCompleteView: showCompleteView,
+            isContinueButtonEnabled: isContinueButtonEnabled
+        )
         
         // Binding
         self.page$ = page$
         self.numOfPage$ = numOfPage$
         
-        goNextPage$.withLatestFrom(Observable.combineLatest(page$, numOfPage$))
+        continueButtonTapped$.withLatestFrom(Observable.combineLatest(page$, numOfPage$))
             .filter { $0.0 + 1 < $0.1 }
             .map { $0.0 + 1 }
             .bind(to: page$)
             .disposed(by: disposeBag)
         
-        goPreviousPage$.withLatestFrom(page$)
+        backButtonTappedWithPage
             .filter { $0 > 0 }
             .map { $0 - 1 }
             .bind(to: page$)
             .disposed(by: disposeBag)
         
-        subViewModels.bottomButtonViewModel.output.didTapPreviousButton
-            .emit(to: goPreviousPage$)
+        // NameView
+        subViewModels.nameViewModel.output.modifiedName
+            .emit(to: name$)
             .disposed(by: disposeBag)
         
-        subViewModels.bottomButtonViewModel.output.didTapNextButton
-            .emit(to: goNextPage$)
+        subViewModels.nameViewModel.output.isValid
+            .drive(isNameValid$)
+            .disposed(by: disposeBag)
+        
+        // GenderView
+        subViewModels.genderViewModel.output.gender
+            .emit(to: gender$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.genderViewModel.output.isValid
+            .drive(isGenderValid$)
+            .disposed(by: disposeBag)
+        
+        // ContinueButton
+        output.isContinueButtonEnabled
+            .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)
+            .disposed(by: disposeBag)
+        
+        subViewModels.continueButtonViewModel.output.continueButtonTapped
+            .emit(to: continueButtonTapped$)
             .disposed(by: disposeBag)
     }
 }
@@ -120,4 +187,14 @@ private func getContentOffset(page: Int) -> CGPoint {
 
 private func getProgression(currentPage: Int, numOfPage: Int) -> CGFloat {
     return CGFloat(currentPage + 1) / CGFloat(numOfPage)
+}
+
+private func shouldButtonEnabled(page: Int, isNameValid: Bool, isGenderValid: Bool, isBirthValid: Bool, isNationalityValid: Bool) -> Bool {
+    switch page {
+    case 0: return isNameValid
+    case 1: return isGenderValid
+    case 2: return isBirthValid
+    case 3: return isNationalityValid
+    default: return false
+    }
 }

@@ -15,11 +15,13 @@ protocol RegisterNationalityViewDelegate: AnyObject {
 final class RegisterNationalityView: UIView {
     
     // MARK: Properties
+    private let viewModel: RegisterNationalityViewModel
+    
     weak var delegate: RegisterNationalityViewDelegate?
     var country: Country? {
         didSet {
             guard let country = country else { return }
-            nationalityTextField.text = country.name
+            nationalityTextField.text = "\(country.name) \(country.flag)"
         }
     }
     
@@ -57,8 +59,11 @@ final class RegisterNationalityView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: RegisterNationalityViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        
+        configure()
         layout()
     }
     
@@ -73,6 +78,10 @@ final class RegisterNationalityView: UIView {
     }
     
     // MARK: Helpers
+    private func configure() {
+        self.backgroundColor = .white
+    }
+    
     private func layout() {
         self.addSubview(nationalityCaptionLabel)
         nationalityCaptionLabel.snp.makeConstraints {

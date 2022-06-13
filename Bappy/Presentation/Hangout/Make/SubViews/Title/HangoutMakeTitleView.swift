@@ -81,7 +81,7 @@ final class HangoutMakeTitleView: UIView {
     @objc
     private func textFieldEditingHandler(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        let isValid = (text.count >= 14)
+        let isValid = (text.count >= 10)
         ruleDescriptionLabel.isHidden = isValid
         delegate?.isTitleValid(isValid)
     }

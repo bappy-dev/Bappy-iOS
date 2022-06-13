@@ -7,12 +7,15 @@
 
 import UIKit
 import SnapKit
-//import RxSwift
-//import RxCocoa
+import RxSwift
+import RxCocoa
 
 final class RegisterViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: RegisterViewModel
+    private let disposeBag = DisposeBag()
+    
     private var page: Int = 0 {
         didSet {
             let x: CGFloat = UIScreen.main.bounds.width * CGFloat(page)
@@ -22,32 +25,48 @@ final class RegisterViewController: UIViewController {
         }
     }
     
-    private lazy var backButton: UIButton = {
+    private let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "chevron_back"), for: .normal)
         button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
         return button
     }()
     
-    private let progressBarView = ProgressBarView()
-    private let continueButtonView = ContinueButtonView()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    private let nameView = RegisterNameView()
-    private let genderView = RegisterGenderView()
-    private let birthView = RegisterBirthView()
-    private let nationalityView = RegisterNationalityView()
+    private let progressBarView: ProgressBarView
+    private let continueButtonView: ContinueButtonView
+    
+    private let nameView: RegisterNameView
+    private let genderView: RegisterGenderView
+    private let birthView: RegisterBirthView
+    private let nationalityView: RegisterNationalityView
     
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-
+    init(viewModel: RegisterViewModel) {
+        let nameViewModel = viewModel.subViewModels.nameViewModel
+        let genderViewModel = viewModel.subViewModels.genderViewModel
+        let birthViewModel = viewModel.subViewModels.birthViewModel
+        let nationalityViewModel = viewModel.subViewModels.nationalityViewModel
+        let progressBarViewModel = viewModel.subViewModels.progressBarViewModel
+        let continueButtonViewModel = viewModel.subViewModels.continueButtonViewModel
+        
+        self.viewModel = viewModel
+        self.nameView = RegisterNameView(viewModel: nameViewModel)
+        self.genderView = RegisterGenderView(viewModel: genderViewModel)
+        self.birthView = RegisterBirthView(viewModel: birthViewModel)
+        self.nationalityView = RegisterNationalityView(viewModel: nationalityViewModel)
+        self.progressBarView = ProgressBarView(viewModel: progressBarViewModel)
+        self.continueButtonView = ContinueButtonView(viewModel: continueButtonViewModel)
+        
+        super.init(nibName: nil, bundle: nil)
+        
         configure()
         layout()
         addKeyboardObserver()
         addTapGestureOnScrollView()
+        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -58,7 +77,7 @@ final class RegisterViewController: UIViewController {
         super.viewDidAppear(animated)
         
         progressBarView.initializeProgression(1.0/4.0)
-        continueButtonView.isEnabled = true
+//        continueButtonView.isEnabled = true
     }
 
     // MARK: Events
@@ -86,17 +105,9 @@ final class RegisterViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
-    }
-    
-    @objc
-    private func backButtonHandler() {
-        view.endEditing(true)
-        guard page > 0 else {
-            self.dismiss(animated: true)
-            return
-        }
-        page -= 1
-        continueButtonView.isEnabled = true
+        
+        let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
+        nameView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
     }
     
     // MARK: Helpers
@@ -180,6 +191,58 @@ final class RegisterViewController: UIViewController {
     }
 }
 
+// MARK: - Bind
+extension RegisterViewController {
+    private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldKeyboardHide
+            .emit(onNext: { _ in
+                print("DEBUG: dfasdfasdfsad")
+            })
+//            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.pageContentOffset
+            .drive(scrollView.rx.setContentOffset)
+            .disposed(by: disposeBag)
+
+        viewModel.output.shouldKeyboardHide
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+
+        viewModel.output.progression
+            .drive(progressBarView.rx.setProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Binder
+// MainScheduler에서 수행, Observer only -> 값을 주입할 수 있지만, 값을 관찰할 수 없음
+extension Reactive where Base: UIScrollView {
+    var setContentOffset: Binder<CGPoint> {
+        return Binder(self.base) { scrollView, offset in
+            scrollView.setContentOffset(offset, animated: true)
+        }
+    }
+}
+
+extension Reactive where Base: UIView {
+    var endEditing: Binder<Void> {
+        return Binder(self.base) { view, _ in
+            view.endEditing(true)
+        }
+    }
+}
+
 // MARK: - RegisterNationalityViewDelegate
 extension RegisterViewController: RegisterNationalityViewDelegate {
     func showSelectNationalityView() {
@@ -201,8 +264,12 @@ extension RegisterViewController: SelectNationalityViewControllerDelegate {
 // MARK: - ContinueButtonViewDelegate
 extension RegisterViewController: ContinueButtonViewDelegate {
     func continueButtonTapped() {
-        view.endEditing(true)
-        page += 1
+//        view.endEditing(true)
+//        let popupView = RegisterCompletedViewController()
+//        popupView.modalPresentationStyle = .overCurrentContext
+//        present(popupView, animated: false)
+        
+//        page += 1
 //        continueButtonView.isEnabled = false / asdfasdffsd
     }
 }
@@ -413,21 +480,4 @@ extension RegisterViewController: ContinueButtonViewDelegate {
 //    }
 //}
 //
-//// MARK: Binder
-//// MainScheduler에서 수행, Observer only -> 값을 주입할 수 있지만, 값을 관찰할 수 없음
-//extension Reactive where Base: UIScrollView {
-//    var setContentOffset: Binder<CGPoint> {
-//        return Binder(self.base) { scrollView, offset in
-//            scrollView.setContentOffset(offset, animated: true)
-//        }
-//    }
-//}
-//
-//// MARK: ControlEvent
-//// MainScheduler에서 수행, Observable only -> 값을 관찰할 수 있지만, 값을 주입할 수 없음
-//extension Reactive where Base: UIView {
-//    var numOfSubviews: ControlEvent<Int> {
-//        let source = self.methodInvoked(#selector(Base.didAddSubview)).map { _ in base.subviews.count }
-//        return ControlEvent(events: source)
-//    }
-//}
+

@@ -15,7 +15,7 @@ final class CountryCell: UITableViewCell {
         didSet {
             guard let country = country else { return }
             countryLabel.text = country.name
-            countryFlagLabel.text = flag(code: country.code)
+            countryFlagLabel.text = country.flag
         }
     }
     
@@ -45,15 +45,6 @@ final class CountryCell: UITableViewCell {
     }
     
     // MARK: Helpers
-    private func flag(code:String) -> String {
-        let base : UInt32 = 127397
-        var s = ""
-        for v in code.unicodeScalars {
-            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
-        }
-        return String(s)
-    }
-    
     private func configure() {
         contentView.backgroundColor = .white
     }

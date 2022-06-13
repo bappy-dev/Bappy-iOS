@@ -186,7 +186,6 @@ extension BirthPickerView: UIPickerViewDataSource, UIPickerViewDelegate {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        print("DEBUG: dfasdfasdf")
         let year = yearList[yearPickerView.selectedRow(inComponent: 0)]
         let month = monthList[monthPickerView.selectedRow(inComponent: 0)]
         let day = dayList[dayPickerView.selectedRow(inComponent: 0)]

@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class RegisterNameView: UIView {
     
     // MARK: Properties
+    private let viewModel: RegisterNameViewModel
+    private let disposeBag = DisposeBag()
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
@@ -23,15 +28,13 @@ final class RegisterNameView: UIView {
         return label
     }()
     
-    private lazy var nameTextField: UITextField = {
+    private let nameTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
         textField.textColor = UIColor(named: "bappy_brown")
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter your name",
             attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
-        textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
-        textField.delegate = self
         return textField
     }()
     
@@ -51,11 +54,13 @@ final class RegisterNameView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: RegisterNameViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -69,15 +74,6 @@ final class RegisterNameView: UIView {
         let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
         let offset = CGPoint(x: 0, y: y)
         scrollView.setContentOffset(offset, animated: true)
-    }
-    
-    // MARK: Actions
-    @objc
-    private func textFieldEditingHandler(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        let isValid = (text.count >= 3)
-        ruleDescriptionLabel.isHidden = isValid
-//        delegate?.isTitleValid(isValid)
     }
     
     // MARK: Helpers
@@ -128,11 +124,29 @@ final class RegisterNameView: UIView {
     }
 }
 
-// MARK: - UITextFieldDelegate
-extension RegisterNameView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let maxLength: Int = 20
-        guard let text = textField.text, text.count + string.count <= maxLength else { return false }
-        return true
+// MARK: - Bind
+extension RegisterNameView {
+    private func bind() {
+        nameTextField.rx.text
+            .orEmpty
+            .bind(to: viewModel.input.name)
+            .disposed(by: disposeBag)
+        
+        nameTextField.rx.controlEvent(.editingDidBegin)
+            .map { _ in }
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.modifiedName
+            .emit(to: nameTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideRule
+            .map {
+                print("DEBUG: shouldHide \($0)")
+                return $0
+            }
+            .emit(to: ruleDescriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }

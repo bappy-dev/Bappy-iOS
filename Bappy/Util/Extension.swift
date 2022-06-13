@@ -82,12 +82,13 @@ extension String {
         dateFormatter.dateFormat = format
         return dateFormatter.date(from: self) != nil
     }
-}
-
-extension UIViewController {
-    func setUpProgressHUD() {
-        ProgressHUD.colorBackground = .black.withAlphaComponent(0.05)
-        ProgressHUD.colorHUD = .white
-        ProgressHUD.colorAnimation = UIColor(named: "bappy_yellow")!
+    
+    func toFlag() -> String {
+        let base : UInt32 = 127397
+        var s = ""
+        for v in self.unicodeScalars {
+            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
+        }
+        return String(s)
     }
 }

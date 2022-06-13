@@ -25,29 +25,32 @@ final class HomeListViewController: UIViewController {
         configure()
         layout()
         configureTableView()
+        configureRefreshControl()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        // 임시
-        
-        guard !hasShown else { return }
-        let rootViewController = BappyLoginViewController()
-        rootViewController.modalPresentationStyle = .fullScreen
-        self.present(rootViewController, animated: false)
-        hasShown = true
+    // MARK: Actions
+    @objc func refresh() {
+        self.tableView.refreshControl?.endRefreshing()
     }
-    
+
     // MARK: Helpers
     private func configureTableView() {
         tableView.dataSource = self
         tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .none
         tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
+    }
+    
+    private func configureRefreshControl() {
+        tableView.refreshControl = UIRefreshControl()
+        let refreshControl = self.tableView.refreshControl
+        refreshControl?.backgroundColor = .white
+        refreshControl?.tintColor = UIColor(named: "bappy_yellow")
+        refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
     
     private func configure() {
