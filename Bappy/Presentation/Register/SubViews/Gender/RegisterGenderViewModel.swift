@@ -20,9 +20,9 @@ final class RegisterGenderViewModel: ViewModelType {
     
     struct Output {
         var gender: Signal<Gender>
-        var isMaleSelected: Driver<Bool>
-        var isFemaleSelected: Driver<Bool>
-        var isOtherSelected: Driver<Bool>
+        var isMaleSelected: BehaviorRelay<Bool>
+        var isFemaleSelected: BehaviorRelay<Bool>
+        var isOtherSelected: BehaviorRelay<Bool>
         var isValid: Driver<Bool>
     }
     
@@ -42,15 +42,9 @@ final class RegisterGenderViewModel: ViewModelType {
         // Streams
         let gender = gender$
             .asSignal(onErrorJustReturn: .other)
-        let isMaleSelected = gender
-            .map { $0 == .male }
-            .asDriver(onErrorJustReturn: false)
-        let isFemaleSelected = gender
-            .map { $0 == .female }
-            .asDriver(onErrorJustReturn: false)
-        let isOtherSelected = gender
-            .map { $0 == .other }
-            .asDriver(onErrorJustReturn: false)
+        let isMaleSelected = BehaviorRelay<Bool>(value: false)
+        let isFemaleSelected = BehaviorRelay<Bool>(value: false)
+        let isOtherSelected = BehaviorRelay<Bool>(value: false)
         let isValid = gender
             .map { _ in true }
             .distinctUntilChanged()
@@ -85,6 +79,21 @@ final class RegisterGenderViewModel: ViewModelType {
         otherButtonTapped$
             .map { Gender.other }
             .bind(to: gender$)
+            .disposed(by: disposeBag)
+        
+        gender
+            .map { $0 == .male }
+            .emit(to: isMaleSelected)
+            .disposed(by: disposeBag)
+        
+        gender
+            .map { $0 == .female }
+            .emit(to: isFemaleSelected)
+            .disposed(by: disposeBag)
+        
+        gender
+            .map { $0 == .other }
+            .emit(to: isOtherSelected)
             .disposed(by: disposeBag)
     }
 }

@@ -142,10 +142,6 @@ extension RegisterNameView {
             .disposed(by: disposeBag)
         
         viewModel.output.shouldHideRule
-            .map {
-                print("DEBUG: shouldHide \($0)")
-                return $0
-            }
             .emit(to: ruleDescriptionLabel.rx.isHidden)
             .disposed(by: disposeBag)
     }

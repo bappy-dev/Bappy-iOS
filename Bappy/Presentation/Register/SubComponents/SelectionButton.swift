@@ -41,7 +41,6 @@ final class SelectionButton: UIButton {
 extension Reactive where Base: SelectionButton {
     var isSelected: Binder<Bool> {
         return Binder(self.base) { button, isSelected in
-            print("DEBUG: \(isSelected)")
             if isSelected {
                 button.setAttributedTitle(
                     NSAttributedString(

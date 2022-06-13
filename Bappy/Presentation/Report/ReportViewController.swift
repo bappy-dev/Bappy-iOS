@@ -178,7 +178,7 @@ extension ReportViewController: PHPickerViewControllerDelegate {
         for result in results {
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
                 guard let self = self, let image = object as? UIImage else { return }
-                self.selectedImages.append(image.downSize(newWidth: 300))
+                self.selectedImages.append(image)
             }
         }
     }

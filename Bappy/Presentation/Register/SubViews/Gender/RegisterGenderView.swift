@@ -90,15 +90,15 @@ extension RegisterGenderView {
             .disposed(by: disposeBag)
         
         viewModel.output.isMaleSelected
-            .drive(maleButton.rx.isSelected)
+            .bind(to: maleButton.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.isFemaleSelected
-            .drive(femaleButton.rx.isSelected)
+            .bind(to: femaleButton.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.isOtherSelected
-            .drive(otherButton.rx.isSelected)
+            .bind(to: otherButton.rx.isSelected)
             .disposed(by: disposeBag)
     }
 }
