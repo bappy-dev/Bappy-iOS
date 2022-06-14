@@ -248,7 +248,7 @@ extension BappyLoginViewController {
                     sceneDelegate.switchRootViewToMainView(animated: true)
                 } else {
                     // Not resisterd in Backend
-                    let yearList = Array(1970...2010)
+                    let yearList = Array(1931...Date.thisYear-17)
                         .map { String($0) }
                     let monthList = Array(1...12)
                         .map { String($0) }
@@ -256,6 +256,16 @@ extension BappyLoginViewController {
                     let dayList = Array(1...31)
                         .map { String($0) }
                         .map { ($0.count == 1) ? "0\($0)" : $0 }
+                    let country = Country(code: "KR", name: "South Korea")
+                    let countries = NSLocale.isoCountryCodes
+                        .map { NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: $0]) }
+                        .map { countryCode -> Country in
+                            let code = String(countryCode[countryCode.index(after: countryCode.startIndex)...])
+                            let name = NSLocale(localeIdentifier: "en_UK")
+                                .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
+                            return Country(code: code, name: name)
+                        }
+                    
                     let dependency = RegisterViewModel.Dependency(
                         page: 0,
                         numOfPage: 4,
@@ -263,20 +273,23 @@ extension BappyLoginViewController {
                         nameDependency: .init(
                             name: "",
                             minimumLength: 3,
-                            maximumLength: 20),
+                            maximumLength: 30),
                         birthDependency: .init(
                             year: "2000",
-                            month: "07",
+                            month: "06",
                             day: "15",
                             yearList: yearList,
                             monthList: monthList,
-                            dayList: dayList))
+                            dayList: dayList),
+                        country: country,
+                        selectnationalityDependency: .init(
+                            country: country,
+                            countries: countries)
+                    )
                     let viewModel = RegisterViewModel(dependency: dependency)
                     let viewController = RegisterViewController(viewModel: viewModel)
                     self.navigationController?.pushViewController(viewController, animated: true)
                 }
-        
-                
             }
         }
     }

@@ -88,7 +88,6 @@ final class RegisterViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        nationalityView.delegate = self
     }
     
     private func layout() {
@@ -182,6 +181,25 @@ extension RegisterViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showSelectNationalityView
+            .emit(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                let viewModel = self.viewModel.subViewModels.selectNationalityViewModel
+                let viewController = SelectNationalityViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showCompleteView
+            .emit(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                let viewController = RegisterCompletedViewController()
+                viewController.modalPresentationStyle = .overCurrentContext
+                self.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
         RxKeyboard.instance.visibleHeight
             .skip(1)
             .drive(onNext: { [weak self] keyboardHeight in
@@ -221,23 +239,5 @@ extension Reactive where Base: UIView {
         return Binder(self.base) { view, _ in
             view.endEditing(true)
         }
-    }
-}
-
-// MARK: - RegisterNationalityViewDelegate
-extension RegisterViewController: RegisterNationalityViewDelegate {
-    func showSelectNationalityView() {
-        view.endEditing(true) // 임시
-        let viewController = SelectNationalityViewController()
-        viewController.modalPresentationStyle = .overCurrentContext
-        viewController.delegate = self
-        present(viewController, animated: false, completion: nil)
-    }
-}
-
-// MARK: - SelectNationalityViewControllerDelegate
-extension RegisterViewController: SelectNationalityViewControllerDelegate {
-    func getSelectedCountry(_ country: Country) {
-        nationalityView.country = country
     }
 }

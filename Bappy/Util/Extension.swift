@@ -57,6 +57,14 @@ extension Date {
         string.append("0")
         return dateFormatter.date(from: string) ?? Date()
     }
+    
+    static var thisYear: Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
+        dateFormatter.dateFormat = "yyyy"
+        return Int(dateFormatter.string(from: Date())) ?? 0
+    }
 }
 
 extension String {

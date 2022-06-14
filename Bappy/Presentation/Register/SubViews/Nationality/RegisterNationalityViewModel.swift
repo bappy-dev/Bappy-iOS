@@ -5,21 +5,25 @@
 //  Created by 정동천 on 2022/05/11.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import RxCocoa
 
 final class RegisterNationalityViewModel: ViewModelType {
     struct Dependency {
-      
+        var country: Country
+        var text: String { "\(country.name) \(country.flag)" }
     }
     
     struct Input {
-   
+        var country: AnyObserver<Country>
+        var textFieldTapped: AnyObserver<Void>
     }
     
     struct Output {
-      
+        var country: Signal<String>
+        var isValid: Driver<Bool>
+        var textFieldTapped: Signal<Void>
     }
     
     let dependency: Dependency
@@ -27,14 +31,33 @@ final class RegisterNationalityViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    init(dependency: Dependency = Dependency()) {
+    private let country$ = PublishSubject<Country>()
+    private let textFieldTapped$ = PublishSubject<Void>()
+    
+    init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
+        let country = country$
+            .map { "\($0.name) \($0.flag)" }
+            .asSignal(onErrorJustReturn: dependency.text)
+        let isValid = country
+            .map { _ in true }
+            .asDriver(onErrorJustReturn: false)
+        let textFieldTapped = textFieldTapped$
+            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
-        self.input = Input()
-        self.output = Output()
+        self.input = Input(
+            country: country$.asObserver(),
+            textFieldTapped: textFieldTapped$.asObserver()
+        )
+        
+        self.output = Output(
+            country: country,
+            isValid: isValid,
+            textFieldTapped: textFieldTapped
+        )
         
         // Binding
 

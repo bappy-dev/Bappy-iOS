@@ -106,10 +106,6 @@ final class RegisterBirthView: UIView {
 // MARK: - Bind
 extension RegisterBirthView {
     func bind() {
-//        birthTextField.rx.text
-//            .orEmpty
-//            .bind(to: viewModel.input.date)
-//            .disposed(by: disposeBag)
         viewModel.output.date
             .emit(to: birthTextField.rx.text)
             .disposed(by: disposeBag)

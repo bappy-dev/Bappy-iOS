@@ -19,6 +19,8 @@ final class RegisterViewModel: ViewModelType {
         let nationalityViewModel: RegisterNationalityViewModel
         let continueButtonViewModel: ContinueButtonViewModel
         let progressBarViewModel: ProgressBarViewModel
+        let selectNationalityViewModel: SelectNationalityViewModel
+        let completedViewModel: RegisterCompletedViewModel
     }
     
     struct Dependency {
@@ -27,6 +29,8 @@ final class RegisterViewModel: ViewModelType {
         var isButtonEnabled: Bool
         var nameDependency: RegisterNameViewModel.Dependency
         var birthDependency: RegisterBirthViewModel.Dependency
+        var country: Country
+        var selectnationalityDependency: SelectNationalityViewModel.Dependency
     }
     
     struct Input {
@@ -37,12 +41,13 @@ final class RegisterViewModel: ViewModelType {
         var name: AnyObserver<String>
         var gender: AnyObserver<Gender>
         var birth: AnyObserver<String>
-        var nationality: AnyObserver<Country>
+        var country: AnyObserver<Country>
         var isNameValid: AnyObserver<Bool>
         var isGenderValid: AnyObserver<Bool>
         var isBirthValid: AnyObserver<Bool>
         var isNationalityValid: AnyObserver<Bool>
         var keyboardWithButtonHeight: AnyObserver<CGFloat>
+        var nationalityTextFieldTapped: AnyObserver<Void>
     }
     
     struct Output {
@@ -53,6 +58,8 @@ final class RegisterViewModel: ViewModelType {
         var showCompleteView: Signal<Void>
         var isContinueButtonEnabled: Signal<Bool>
         var keyboardWithButtonHeight: Signal<CGFloat>
+        var country: Signal<Country>
+        var showSelectNationalityView: Signal<Void>
     }
     
     let dependency: Dependency
@@ -69,12 +76,13 @@ final class RegisterViewModel: ViewModelType {
     private let name$ = PublishSubject<String>()
     private let gender$ = PublishSubject<Gender>()
     private let birth$ = PublishSubject<String>()
-    private let nationality$ = PublishSubject<Country>()
+    private let country$ = PublishSubject<Country>()
     private let isNameValid$ = BehaviorSubject<Bool>(value: false)
     private let isGenderValid$ = BehaviorSubject<Bool>(value: false)
     private let isBirthValid$ = BehaviorSubject<Bool>(value: false)
     private let isNationalityValid$ = BehaviorSubject<Bool>(value: false)
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
+    private let nationalityTextFieldTapped$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -82,9 +90,11 @@ final class RegisterViewModel: ViewModelType {
             nameViewModel: RegisterNameViewModel(dependency: dependency.nameDependency),
             genderViewModel: RegisterGenderViewModel(),
             birthViewModel: RegisterBirthViewModel(dependency: dependency.birthDependency),
-            nationalityViewModel: RegisterNationalityViewModel(),
+            nationalityViewModel: RegisterNationalityViewModel(dependency: .init(country: dependency.country)),
             continueButtonViewModel: ContinueButtonViewModel(),
-            progressBarViewModel: ProgressBarViewModel()
+            progressBarViewModel: ProgressBarViewModel(),
+            selectNationalityViewModel: SelectNationalityViewModel(dependency: dependency.selectnationalityDependency),
+            completedViewModel: RegisterCompletedViewModel()
         )
         
         // Streams
@@ -92,7 +102,7 @@ final class RegisterViewModel: ViewModelType {
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         
         let shouldKeyboardHide = Observable
-            .merge(continueButtonTapped$, backButtonTapped$)
+            .merge(continueButtonTapped$, backButtonTapped$, nationalityTextFieldTapped$)
             .asSignal(onErrorJustReturn: Void())
         let pageContentOffset = page$.map(getContentOffset)
             .asDriver(onErrorJustReturn: .zero)
@@ -106,8 +116,12 @@ final class RegisterViewModel: ViewModelType {
             .filter { $0 == 0 }
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
-        let showCompleteView = continueButtonTapped$
+        
+        let continueButtonTappedWithPage = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
+            .share()
+        
+        let showCompleteView = continueButtonTappedWithPage
             .filter { $0.0 + 1 == $0.1 }
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
@@ -117,11 +131,11 @@ final class RegisterViewModel: ViewModelType {
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
-//        let keyboardWithButtonHeight = Observable
-//            .combineLatest(keyboardWithButtonHeight$, page$)
-//            .filter { $1 == 0 }
-//            .map { $0.0 }
             .asSignal(onErrorJustReturn: 0)
+        let country = country$
+            .asSignal(onErrorJustReturn: dependency.country)
+        let showSelectNationalityView = nationalityTextFieldTapped$
+            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
@@ -132,12 +146,13 @@ final class RegisterViewModel: ViewModelType {
             name: name$.asObserver(),
             gender: gender$.asObserver(),
             birth: birth$.asObserver(),
-            nationality: nationality$.asObserver(),
+            country: country$.asObserver(),
             isNameValid: isNameValid$.asObserver(),
             isGenderValid: isGenderValid$.asObserver(),
             isBirthValid: isBirthValid$.asObserver(),
             isNationalityValid: isNationalityValid$.asObserver(),
-            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver()
+            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver(),
+            nationalityTextFieldTapped: nationalityTextFieldTapped$.asObserver()
         )
         
         self.output = Output(
@@ -147,14 +162,16 @@ final class RegisterViewModel: ViewModelType {
             popView: popView,
             showCompleteView: showCompleteView,
             isContinueButtonEnabled: isContinueButtonEnabled,
-            keyboardWithButtonHeight: keyboardWithButtonHeight
+            keyboardWithButtonHeight: keyboardWithButtonHeight,
+            country: country,
+            showSelectNationalityView: showSelectNationalityView
         )
         
         // Binding
         self.page$ = page$
         self.numOfPage$ = numOfPage$
         
-        continueButtonTapped$.withLatestFrom(Observable.combineLatest(page$, numOfPage$))
+        continueButtonTappedWithPage
             .filter { $0.0 + 1 < $0.1 }
             .map { $0.0 + 1 }
             .bind(to: page$)
@@ -193,6 +210,19 @@ final class RegisterViewModel: ViewModelType {
             .drive(isBirthValid$)
             .disposed(by: disposeBag)
         
+        // NationalityView
+        country
+            .emit(to: subViewModels.nationalityViewModel.input.country)
+            .disposed(by: disposeBag)
+        
+        subViewModels.nationalityViewModel.output.textFieldTapped
+            .emit(to: nationalityTextFieldTapped$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.nationalityViewModel.output.isValid
+            .drive(isNationalityValid$)
+            .disposed(by: disposeBag)
+        
         // ContinueButton
         output.isContinueButtonEnabled
             .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)
@@ -200,6 +230,11 @@ final class RegisterViewModel: ViewModelType {
         
         subViewModels.continueButtonViewModel.output.continueButtonTapped
             .emit(to: continueButtonTapped$)
+            .disposed(by: disposeBag)
+        
+        // SelectNationalityView
+        subViewModels.selectNationalityViewModel.output.country
+            .emit(to: country$)
             .disposed(by: disposeBag)
     }
 }

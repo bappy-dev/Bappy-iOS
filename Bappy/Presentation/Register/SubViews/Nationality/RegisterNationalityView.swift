@@ -7,23 +7,14 @@
 
 import UIKit
 import SnapKit
-
-protocol RegisterNationalityViewDelegate: AnyObject {
-    func showSelectNationalityView()
-}
+import RxSwift
+import RxCocoa
 
 final class RegisterNationalityView: UIView {
     
     // MARK: Properties
     private let viewModel: RegisterNationalityViewModel
-    
-    weak var delegate: RegisterNationalityViewDelegate?
-    var country: Country? {
-        didSet {
-            guard let country = country else { return }
-            nationalityTextField.text = "\(country.name) \(country.flag)"
-        }
-    }
+    private let disposeBag = DisposeBag()
     
     private let nationalityCaptionLabel: UILabel = {
         let label = UILabel()
@@ -34,7 +25,7 @@ final class RegisterNationalityView: UIView {
         return label
     }()
     
-    private lazy var nationalityTextField: UITextField = {
+    private let nationalityTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "make_language"))
         let containerView = UIView()
@@ -47,7 +38,6 @@ final class RegisterNationalityView: UIView {
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.addTarget(self, action: #selector(nationalityTextFieldHandler), for: .editingDidBegin)
         return textField
     }()
     
@@ -65,16 +55,11 @@ final class RegisterNationalityView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func nationalityTextFieldHandler(_ textField: UITextField) {
-        delegate?.showSelectNationalityView()
     }
     
     // MARK: Helpers
@@ -102,5 +87,18 @@ final class RegisterNationalityView: UIView {
             $0.height.equalTo(1.0)
             $0.centerX.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension RegisterNationalityView {
+    private func bind() {
+        nationalityTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.textFieldTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.country
+            .emit(to: nationalityTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }

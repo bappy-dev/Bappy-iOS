@@ -47,15 +47,6 @@ final class BirthPickerView: UIView {
     }
     
     // MARK: Helpers
-//    private func selectPickerViewRow(year: String, month: String, day: String, animated: Bool = false) {
-//        guard let yearRow = yearList.firstIndex(of: year),
-//              let monthRow = monthList.firstIndex(of: month),
-//              let dayRow = dayList.firstIndex(of: day) else { return }
-//        yearPickerView.selectRow(yearRow, inComponent: 0, animated: animated)
-//        monthPickerView.selectRow(monthRow, inComponent: 0, animated: animated)
-//        dayPickerView.selectRow(dayRow, inComponent: 0, animated: animated)
-//    }
-    
     private func configure() {
         self.backgroundColor = .white
         self.layer.cornerRadius = 5.0
@@ -76,7 +67,6 @@ final class BirthPickerView: UIView {
         
         self.addSubview(selectView)
         selectView.snp.makeConstraints {
-            $0.centerY.equalToSuperview().offset(-20.0)
             $0.height.equalTo(38.0)
             $0.leading.equalToSuperview().inset(15.0)
             $0.trailing.equalToSuperview().inset(7.0)
@@ -84,7 +74,7 @@ final class BirthPickerView: UIView {
         
         self.addSubview(birthStackView)
         birthStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20.0)
+            $0.centerY.equalTo(selectView)
             $0.leading.trailing.equalToSuperview()
         }
         
@@ -92,7 +82,7 @@ final class BirthPickerView: UIView {
         doneButton.snp.makeConstraints {
             $0.top.equalTo(birthStackView.snp.bottom)
             $0.centerX.bottom.equalToSuperview()
-            $0.height.equalTo(60.0)
+            $0.height.equalTo(50.0)
         }
     }
 }
@@ -122,62 +112,34 @@ extension BirthPickerView {
         viewModel.output.yearList
             .drive(yearPickerView.rx.items) { [yearPickerView] _, title, _ in
                 yearPickerView.subviews.forEach { $0.backgroundColor = .clear }
-                let titleLabel: UILabel = {
-                    let label = UILabel()
-                    label.textAlignment = .center
-                    label.text = title
-                    label.font = .roboto(size: 22.0, family: .Regular)
-                    label.textColor = .black.withAlphaComponent(0.95)
-                    return label
-                }()
-                return titleLabel
+                return createTitleLabel(title: title)
             }
             .disposed(by: disposeBag)
         
         viewModel.output.monthList
             .drive(monthPickerView.rx.items) { [monthPickerView] _, title, _ in
                 monthPickerView.subviews.forEach { $0.backgroundColor = .clear }
-                let titleLabel: UILabel = {
-                    let label = UILabel()
-                    label.textAlignment = .center
-                    label.text = title
-                    label.font = .roboto(size: 22.0, family: .Regular)
-                    label.textColor = .black.withAlphaComponent(0.95)
-                    return label
-                }()
-                return titleLabel
+                return createTitleLabel(title: title)
             }
             .disposed(by: disposeBag)
         
         viewModel.output.dayList
             .drive(dayPickerView.rx.items) { [dayPickerView] _, title, _ in
                 dayPickerView.subviews.forEach { $0.backgroundColor = .clear }
-                let titleLabel: UILabel = {
-                    let label = UILabel()
-                    label.textAlignment = .center
-                    label.text = title
-                    label.font = .roboto(size: 22.0, family: .Regular)
-                    label.textColor = .black.withAlphaComponent(0.95)
-                    return label
-                }()
-                return titleLabel
+                return createTitleLabel(title: title)
             }
-            .disposed(by: disposeBag)
-
-        Observable.just((row: 30, component: 0))
-            .bind(to: yearPickerView.rx.selectRow)
             .disposed(by: disposeBag)
         
         viewModel.output.yearRow
-            .emit(to: yearPickerView.rx.selectRow)
+            .bind(to: yearPickerView.rx.selectRow)
             .disposed(by: disposeBag)
         
         viewModel.output.monthRow
-            .emit(to: monthPickerView.rx.selectRow)
+            .bind(to: monthPickerView.rx.selectRow)
             .disposed(by: disposeBag)
         
         viewModel.output.dayRow
-            .emit(to: dayPickerView.rx.selectRow)
+            .bind(to: dayPickerView.rx.selectRow)
             .disposed(by: disposeBag)
 
         
@@ -201,4 +163,16 @@ extension Reactive where Base: UIPickerView {
             pickerView.selectRow(index.row, inComponent: index.component, animated: true)
         }
     }
+}
+
+private func createTitleLabel(title: String) -> UILabel {
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = title
+        label.font = .roboto(size: 22.0, family: .Regular)
+        label.textColor = .black.withAlphaComponent(0.95)
+        return label
+    }()
+    return titleLabel
 }

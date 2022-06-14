@@ -7,15 +7,14 @@
 
 import UIKit
 import SnapKit
-
-protocol RegisterCompletedViewControllerDelegate: AnyObject {
-    
-}
+import RxSwift
+import RxCocoa
 
 final class RegisterCompletedViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: RegisterCompletedViewControllerDelegate?
+    private let viewModel: RegisterCompletedViewModel
+    private let disposeBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
     
@@ -27,11 +26,7 @@ final class RegisterCompletedViewController: UIViewController {
         return view
     }()
     
-    private lazy var dimmedView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }()
+    private lazy var dimmedView = UIView()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -109,11 +104,17 @@ final class RegisterCompletedViewController: UIViewController {
     }()
     
     // MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init(viewModel: RegisterCompletedViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -161,6 +162,7 @@ final class RegisterCompletedViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .clear
         containerView.addBappyShadow(shadowOffsetHeight: 2.0)
+        dimmedView.backgroundColor = .black
     }
     
     private func layout() {
@@ -225,3 +227,15 @@ final class RegisterCompletedViewController: UIViewController {
     }
 }
 
+// MARK: - Bind
+extension RegisterCompletedViewController {
+    private func bind() {
+        okButton.rx.tap
+            .bind(to: viewModel.input.okayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        laterButton.rx.tap
+            .bind(to: viewModel.input.laterButtonTapped)
+            .disposed(by: disposeBag)
+    }
+}

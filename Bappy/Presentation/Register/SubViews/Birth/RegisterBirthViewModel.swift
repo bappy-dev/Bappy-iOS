@@ -22,9 +22,7 @@ final class RegisterBirthViewModel: ViewModelType {
         var yearList: [String]
         var monthList: [String]
         var dayList: [String]
-        var date: String {
-            "\(year)-\(month)-\(day)"
-        }
+        var date: String { "\(year)-\(month)-\(day)" }
     }
     
     struct Input {

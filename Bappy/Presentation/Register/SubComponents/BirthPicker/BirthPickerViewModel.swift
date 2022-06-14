@@ -42,9 +42,9 @@ final class BirthPickerViewModel: ViewModelType {
         var yearList: Driver<[String]> // 고정값
         var monthList: Driver<[String]> // 고정값
         var dayList: Driver<[String]> // 고정값
-        var yearRow: Signal<(row: Int, component: Int)>
-        var monthRow: Signal<(row: Int, component: Int)>
-        var dayRow: Signal<(row: Int, component: Int)>
+        var yearRow: BehaviorRelay<(row: Int, component: Int)>
+        var monthRow: BehaviorRelay<(row: Int, component: Int)>
+        var dayRow: BehaviorRelay<(row: Int, component: Int)>
         var shouldHide: Signal<Void>
     }
     
@@ -96,27 +96,9 @@ final class BirthPickerViewModel: ViewModelType {
             .asDriver(onErrorJustReturn: [])
         let dayList = dayList$
             .asDriver(onErrorJustReturn: [])
-        
-        
-        let yearRow = selectedDate
-            .filter { !isValidDateForm(date: (year: $0.0, month: $0.1, day: $0.2)) }
-            .withLatestFrom(Observable.combineLatest(yearList$, year$))
-            .map { $0.0.firstIndex(of: $0.1) ?? 0 }
-            .map { (row: $0, component: 0) }
-            .asSignal(onErrorJustReturn: (row: 0, component: 0))
-        
-        let monthRow = selectedDate
-            .filter { !isValidDateForm(date: (year: $0.0, month: $0.1, day: $0.2)) }
-            .withLatestFrom(Observable.combineLatest(monthList$, month$))
-            .map { $0.0.firstIndex(of: $0.1) ?? 0 }
-            .map { (row: $0, component: 0) }
-            .asSignal(onErrorJustReturn: (row: 0, component: 0))
-        let dayRow = selectedDate
-            .filter { !isValidDateForm(date: (year: $0.0, month: $0.1, day: $0.2)) }
-            .withLatestFrom(Observable.combineLatest(dayList$, day$))
-            .map { $0.0.firstIndex(of: $0.1) ?? 0 }
-            .map { (row: $0, component: 0) }
-            .asSignal(onErrorJustReturn: (row: 0, component: 0))
+        let yearRow = BehaviorRelay<(row: Int, component: Int)>(value: (row: dependency.yearRow, component: 0))
+        let monthRow = BehaviorRelay<(row: Int, component: Int)>(value: (row: dependency.monthRow, component: 0))
+        let dayRow = BehaviorRelay<(row: Int, component: Int)>(value: (row: dependency.dayRow, component: 0))
         let shouldHide = doneButtonTapped$
             .asSignal(onErrorJustReturn: Void())
 
@@ -172,6 +154,30 @@ final class BirthPickerViewModel: ViewModelType {
             .filter(isValidDateForm)
             .map { $0.2 }
             .bind(to: day$)
+            .disposed(by: disposeBag)
+        
+        selectedDate
+            .filter { !isValidDateForm(date: (year: $0.0, month: $0.1, day: $0.2)) }
+            .withLatestFrom(Observable.combineLatest(yearList$, year$))
+            .map { $0.0.firstIndex(of: $0.1) ?? 0 }
+            .map { (row: $0, component: 0) }
+            .bind(to: yearRow)
+            .disposed(by: disposeBag)
+        
+        selectedDate
+            .filter { !isValidDateForm(date: (year: $0.0, month: $0.1, day: $0.2)) }
+            .withLatestFrom(Observable.combineLatest(monthList$, month$))
+            .map { $0.0.firstIndex(of: $0.1) ?? 0 }
+            .map { (row: $0, component: 0) }
+            .bind(to: monthRow)
+            .disposed(by: disposeBag)
+        
+        selectedDate
+            .filter { !isValidDateForm(date: (year: $0.0, month: $0.1, day: $0.2)) }
+            .withLatestFrom(Observable.combineLatest(dayList$, day$))
+            .map { $0.0.firstIndex(of: $0.1) ?? 0 }
+            .map { (row: $0, component: 0) }
+            .bind(to: dayRow)
             .disposed(by: disposeBag)
     }
 }
