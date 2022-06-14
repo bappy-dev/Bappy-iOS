@@ -50,7 +50,6 @@ final class RegisterViewController: UIViewController {
         
         configure()
         layout()
-        addKeyboardObserver()
         addTapGestureOnScrollView()
         bind()
     }
@@ -77,34 +76,10 @@ final class RegisterViewController: UIViewController {
         view.endEditing(true)
     }
     
-    // MARK: Actions
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
-        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
-
-        UIView.animate(withDuration: 0.4) {
-            self.continueButtonView.snp.updateConstraints {
-                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
-            }
-            self.view.layoutIfNeeded()
-        }
-        
-        let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
-        nameView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
-    }
-    
     // MARK: Helpers
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
-    }
-
-    private func addKeyboardObserver() {
-//        NotificationCenter.default.rx.no
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     private func configure() {
@@ -206,11 +181,33 @@ extension RegisterViewController {
                 self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] keyboardHeight in
+                guard let self = self else { return }
+                let bottomPadding = self.view.safeAreaInsets.bottom
+                let defaultOffset = (keyboardHeight != 0) ? bottomPadding : bottomPadding * 2.0 / 3.0
+
+                UIView.animate(withDuration: 0.4) {
+                    self.continueButtonView.snp.updateConstraints {
+                        $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(defaultOffset - keyboardHeight)
+                    }
+                    self.view.layoutIfNeeded()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .map { [weak self] keyboardHeight in
+                return keyboardHeight + (self?.continueButtonView.frame.height ?? 0)
+            }
+            .drive(viewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
     }
 }
 
 // MARK: - Binder
-// MainScheduler에서 수행, Observer only -> 값을 주입할 수 있지만, 값을 관찰할 수 없음
 extension Reactive where Base: UIScrollView {
     var setContentOffset: Binder<CGPoint> {
         return Binder(self.base) { scrollView, offset in

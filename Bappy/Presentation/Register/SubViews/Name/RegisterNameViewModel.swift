@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/05/11.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import RxCocoa
 
@@ -21,12 +21,14 @@ final class RegisterNameViewModel: ViewModelType {
         var minimumLength: AnyObserver<Int>
         var maximumLength: AnyObserver<Int>
         var editingDidBegin: AnyObserver<Void>
+        var keyboardWithButtonHeight: AnyObserver<CGFloat>
     }
     
     struct Output {
         var isValid: Driver<Bool>
         var modifiedName: Signal<String>
         var shouldHideRule: Signal<Bool>
+        var keyboardWithButtonHeight: Signal<CGFloat>
     }
     
     let dependency: Dependency
@@ -38,6 +40,7 @@ final class RegisterNameViewModel: ViewModelType {
     private let minimumLength$: BehaviorSubject<Int>
     private let maximumLength$: BehaviorSubject<Int>
     private let editingDidBegin$ = PublishSubject<Void>()
+    private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     
     init(dependency: Dependency = Dependency(name: "", minimumLength: 0, maximumLength: 0)) {
         self.dependency = dependency
@@ -60,18 +63,22 @@ final class RegisterNameViewModel: ViewModelType {
             .map { $1 }
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
+        let keyboardWithButtonHeight = keyboardWithButtonHeight$
+            .asSignal(onErrorJustReturn: 0)
         
         // Input & Output
         self.input = Input(
             name: name$.asObserver(),
             minimumLength: minimumLength$.asObserver(),
             maximumLength: maximumLength$.asObserver(),
-            editingDidBegin: editingDidBegin$.asObserver()
+            editingDidBegin: editingDidBegin$.asObserver(),
+            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver()
         )
         self.output = Output(
             isValid: isValid,
             modifiedName: modifiedName,
-            shouldHideRule: shouldHideRule
+            shouldHideRule: shouldHideRule,
+            keyboardWithButtonHeight: keyboardWithButtonHeight
         )
         
         // Binding

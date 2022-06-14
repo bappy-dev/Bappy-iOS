@@ -100,5 +100,7 @@ extension RegisterGenderView {
         viewModel.output.isOtherSelected
             .bind(to: otherButton.rx.isSelected)
             .disposed(by: disposeBag)
+        
+        
     }
 }

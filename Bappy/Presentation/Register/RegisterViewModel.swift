@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import SwiftUI
 
 final class RegisterViewModel: ViewModelType {
     
@@ -24,6 +25,8 @@ final class RegisterViewModel: ViewModelType {
         var page: Int
         var numOfPage: Int
         var isButtonEnabled: Bool
+        var nameDependency: RegisterNameViewModel.Dependency
+        var birthDependency: RegisterBirthViewModel.Dependency
     }
     
     struct Input {
@@ -39,6 +42,7 @@ final class RegisterViewModel: ViewModelType {
         var isGenderValid: AnyObserver<Bool>
         var isBirthValid: AnyObserver<Bool>
         var isNationalityValid: AnyObserver<Bool>
+        var keyboardWithButtonHeight: AnyObserver<CGFloat>
     }
     
     struct Output {
@@ -48,6 +52,7 @@ final class RegisterViewModel: ViewModelType {
         var popView: Signal<Void>
         var showCompleteView: Signal<Void>
         var isContinueButtonEnabled: Signal<Bool>
+        var keyboardWithButtonHeight: Signal<CGFloat>
     }
     
     let dependency: Dependency
@@ -55,14 +60,7 @@ final class RegisterViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    let subViewModels = SubViewModels(
-        nameViewModel: RegisterNameViewModel(dependency: .init(name: "", minimumLength: 3, maximumLength: 20)),
-        genderViewModel: RegisterGenderViewModel(),
-        birthViewModel: RegisterBirthViewModel(),
-        nationalityViewModel: RegisterNationalityViewModel(),
-        continueButtonViewModel: ContinueButtonViewModel(),
-        progressBarViewModel: ProgressBarViewModel()
-    )
+    let subViewModels: SubViewModels
     
     private let page$: BehaviorSubject<Int>
     private let numOfPage$: BehaviorSubject<Int>
@@ -76,9 +74,18 @@ final class RegisterViewModel: ViewModelType {
     private let isGenderValid$ = BehaviorSubject<Bool>(value: false)
     private let isBirthValid$ = BehaviorSubject<Bool>(value: false)
     private let isNationalityValid$ = BehaviorSubject<Bool>(value: false)
+    private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     
-    init(dependency: Dependency = Dependency(page: 0, numOfPage: 0, isButtonEnabled: false)) {
+    init(dependency: Dependency) {
         self.dependency = dependency
+        self.subViewModels = SubViewModels(
+            nameViewModel: RegisterNameViewModel(dependency: dependency.nameDependency),
+            genderViewModel: RegisterGenderViewModel(),
+            birthViewModel: RegisterBirthViewModel(dependency: dependency.birthDependency),
+            nationalityViewModel: RegisterNationalityViewModel(),
+            continueButtonViewModel: ContinueButtonViewModel(),
+            progressBarViewModel: ProgressBarViewModel()
+        )
         
         // Streams
         let page$ = BehaviorSubject<Int>(value: dependency.page)
@@ -109,6 +116,12 @@ final class RegisterViewModel: ViewModelType {
             .map(shouldButtonEnabled)
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
+        let keyboardWithButtonHeight = keyboardWithButtonHeight$
+//        let keyboardWithButtonHeight = Observable
+//            .combineLatest(keyboardWithButtonHeight$, page$)
+//            .filter { $1 == 0 }
+//            .map { $0.0 }
+            .asSignal(onErrorJustReturn: 0)
         
         // Input & Output
         self.input = Input(
@@ -123,7 +136,8 @@ final class RegisterViewModel: ViewModelType {
             isNameValid: isNameValid$.asObserver(),
             isGenderValid: isGenderValid$.asObserver(),
             isBirthValid: isBirthValid$.asObserver(),
-            isNationalityValid: isNationalityValid$.asObserver()
+            isNationalityValid: isNationalityValid$.asObserver(),
+            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver()
         )
         
         self.output = Output(
@@ -132,7 +146,8 @@ final class RegisterViewModel: ViewModelType {
             progression: progression,
             popView: popView,
             showCompleteView: showCompleteView,
-            isContinueButtonEnabled: isContinueButtonEnabled
+            isContinueButtonEnabled: isContinueButtonEnabled,
+            keyboardWithButtonHeight: keyboardWithButtonHeight
         )
         
         // Binding
@@ -152,6 +167,10 @@ final class RegisterViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // NameView
+        keyboardWithButtonHeight
+            .emit(to: subViewModels.nameViewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
+        
         subViewModels.nameViewModel.output.modifiedName
             .emit(to: name$)
             .disposed(by: disposeBag)
@@ -167,6 +186,11 @@ final class RegisterViewModel: ViewModelType {
         
         subViewModels.genderViewModel.output.isValid
             .drive(isGenderValid$)
+            .disposed(by: disposeBag)
+        
+        // BirthView
+        subViewModels.birthViewModel.output.isValid
+            .drive(isBirthValid$)
             .disposed(by: disposeBag)
         
         // ContinueButton

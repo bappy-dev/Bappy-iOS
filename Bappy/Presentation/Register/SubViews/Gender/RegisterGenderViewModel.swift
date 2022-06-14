@@ -10,7 +10,9 @@ import RxSwift
 import RxCocoa
 
 final class RegisterGenderViewModel: ViewModelType {
-    struct Dependency {}
+    struct Dependency {
+        var gender: Gender
+    }
     
     struct Input {
         var maleButtonTapped: AnyObserver<Void>
@@ -36,12 +38,12 @@ final class RegisterGenderViewModel: ViewModelType {
     private let femaleButtonTapped$ = PublishSubject<Void>()
     private let otherButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency = Dependency()) {
+    init(dependency: Dependency = Dependency(gender: .other)) {
         self.dependency = dependency
         
         // Streams
         let gender = gender$
-            .asSignal(onErrorJustReturn: .other)
+            .asSignal(onErrorJustReturn: dependency.gender)
         let isMaleSelected = BehaviorRelay<Bool>(value: false)
         let isFemaleSelected = BehaviorRelay<Bool>(value: false)
         let isOtherSelected = BehaviorRelay<Bool>(value: false)

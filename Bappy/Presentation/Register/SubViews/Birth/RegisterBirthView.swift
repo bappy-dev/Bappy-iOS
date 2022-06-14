@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class RegisterBirthView: UIView {
     
     // MARK: Properties
     private let viewModel: RegisterBirthViewModel
+    private let disposeBag = DisposeBag()
     
     private let birthCaptionLabel: UILabel = {
         let label = UILabel()
@@ -25,9 +28,6 @@ final class RegisterBirthView: UIView {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
         textField.textColor = UIColor(named: "bappy_brown")
-//        textField.attributedPlaceholder = NSAttributedString(
-//            string: "Select your birth date",
-//            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
         textField.addTarget(self, action: #selector(showBirthPicker), for: .editingDidBegin)
         return textField
     }()
@@ -39,20 +39,18 @@ final class RegisterBirthView: UIView {
         return underlinedView
     }()
     
-    private lazy var birthPickerView: BirthPickerView = {
-        let birthPickerView = BirthPickerView()
-//        birthPickerView.isHidden = true
-        birthPickerView.delegate = self
-        return birthPickerView
-    }()
+    private let birthPickerView: BirthPickerView
     
     // MARK: Lifecycle
     init(viewModel: RegisterBirthViewModel) {
+        let birthPickerViewModel = viewModel.subViewModels.birthPickerViewModel
         self.viewModel = viewModel
+        self.birthPickerView = BirthPickerView(viewModel: birthPickerViewModel)
         super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -105,9 +103,15 @@ final class RegisterBirthView: UIView {
     }
 }
 
-// MARK: - BirthPickerViewDelegate
-extension RegisterBirthView: BirthPickerViewDelegate {
-    func birthPickerViewDidSelect(birthDate: String) {
-        birthTextField.text = birthDate
+// MARK: - Bind
+extension RegisterBirthView {
+    func bind() {
+//        birthTextField.rx.text
+//            .orEmpty
+//            .bind(to: viewModel.input.date)
+//            .disposed(by: disposeBag)
+        viewModel.output.date
+            .emit(to: birthTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }

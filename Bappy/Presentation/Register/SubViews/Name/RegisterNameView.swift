@@ -144,5 +144,15 @@ extension RegisterNameView {
         viewModel.output.shouldHideRule
             .emit(to: ruleDescriptionLabel.rx.isHidden)
             .disposed(by: disposeBag)
+        
+        viewModel.output.keyboardWithButtonHeight
+            .emit(onNext: { [weak self] height in
+                guard let self = self else { return }
+                let labelPosition = self.scrollView.frame.height - self.ruleDescriptionLabel.frame.maxY
+                let y = (height > labelPosition) ? height - labelPosition + 5.0 : 0
+                let offset = CGPoint(x: 0, y: y)
+                self.scrollView.setContentOffset(offset, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }

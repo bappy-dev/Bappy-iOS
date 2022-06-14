@@ -248,7 +248,30 @@ extension BappyLoginViewController {
                     sceneDelegate.switchRootViewToMainView(animated: true)
                 } else {
                     // Not resisterd in Backend
-                    let viewModel = RegisterViewModel(dependency: .init(page: 0, numOfPage: 4, isButtonEnabled: false))
+                    let yearList = Array(1970...2010)
+                        .map { String($0) }
+                    let monthList = Array(1...12)
+                        .map { String($0) }
+                        .map { ($0.count == 1) ? "0\($0)" : $0 }
+                    let dayList = Array(1...31)
+                        .map { String($0) }
+                        .map { ($0.count == 1) ? "0\($0)" : $0 }
+                    let dependency = RegisterViewModel.Dependency(
+                        page: 0,
+                        numOfPage: 4,
+                        isButtonEnabled: false,
+                        nameDependency: .init(
+                            name: "",
+                            minimumLength: 3,
+                            maximumLength: 20),
+                        birthDependency: .init(
+                            year: "2000",
+                            month: "07",
+                            day: "15",
+                            yearList: yearList,
+                            monthList: monthList,
+                            dayList: dayList))
+                    let viewModel = RegisterViewModel(dependency: dependency)
                     let viewController = RegisterViewController(viewModel: viewModel)
                     self.navigationController?.pushViewController(viewController, animated: true)
                 }

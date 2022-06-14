@@ -46,7 +46,7 @@ extension Reactive where Base: SelectionButton {
                     NSAttributedString(
                         string: base.title,
                         attributes: [
-                            .font: UIFont.roboto(size: 14.0),
+                            .font: UIFont.roboto(size: 16.0, family: .Medium),
                             .foregroundColor: UIColor(named: "bappy_brown")!
                         ]), for: .normal)
                 button.backgroundColor = UIColor(named: "bappy_yellow")
@@ -56,7 +56,7 @@ extension Reactive where Base: SelectionButton {
                     NSAttributedString(
                         string: base.title,
                         attributes: [
-                            .font: UIFont.roboto(size: 14.0),
+                            .font: UIFont.roboto(size: 16.0, family: .Medium),
                             .foregroundColor: UIColor(named: "bappy_gray")!
                         ]), for: .normal)
                 button.backgroundColor = UIColor(named: "bappy_lightgray")
