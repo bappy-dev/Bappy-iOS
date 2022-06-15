@@ -8,15 +8,18 @@
 import UIKit
 import SnapKit
 import YPImagePicker
+import RxSwift
+import RxCocoa
 
 final class HangoutMakeViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: HangoutMakeViewModel
+    private let disposeBag = DisposeBag()
+    
     private var initialized: Bool = false
     private var selectedImage: UIImage? {
-        didSet {
-            pictureView.selectedImage = self.selectedImage
-        }
+        didSet { pictureView.selectedImage = self.selectedImage }
     }
     
     private var numberOfImages = 0
@@ -53,9 +56,10 @@ final class HangoutMakeViewController: UIViewController {
     private let participantsLimitView = HangoutParticipantsLimitView()
 
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-
+    init(viewModel: HangoutMakeViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        
         configure()
         layout()
         addKeyboardObserver()

@@ -112,10 +112,10 @@ extension HomeListViewController: HomeListTopViewDelegate {
     }
     
     func showWriteView() {
-        let rootViewController = HangoutMakeViewController()
-        let viewController = UINavigationController(rootViewController: rootViewController)
-        viewController.modalPresentationStyle = .fullScreen
-        viewController.navigationBar.isHidden = true
-        present(viewController, animated: true)
+//        let rootViewController = HangoutMakeViewController()
+//        let viewController = UINavigationController(rootViewController: rootViewController)
+//        viewController.modalPresentationStyle = .fullScreen
+//        viewController.navigationBar.isHidden = true
+//        present(viewController, animated: true)
     }
 }

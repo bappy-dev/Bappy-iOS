@@ -93,13 +93,13 @@ final class BirthPickerView: UIView {
         clipView.addSubview(topGradientView)
         topGradientView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(60.0)
+            $0.height.equalTo(70.0)
         }
         
         clipView.addSubview(bottomGradientView)
         bottomGradientView.snp.makeConstraints {
             $0.bottom.leading.trailing.equalToSuperview()
-            $0.height.equalTo(60.0)
+            $0.height.equalTo(70.0)
         }
         
         self.addSubview(doneButton)

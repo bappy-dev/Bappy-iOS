@@ -55,10 +55,10 @@ final class RegisterCompletedViewController: UIViewController {
     
     private let okButton: UIButton = {
         let button = UIButton()
+        button.backgroundColor = .bappyYellow
         button.setBappyTitle(
             title: "Okay!",
-            font: .roboto(size: 24.0, family: .Medium),
-            color: .bappyYellow
+            font: .roboto(size: 24.0, family: .Medium)
         )
         button.layer.cornerRadius = 21.0
         return button

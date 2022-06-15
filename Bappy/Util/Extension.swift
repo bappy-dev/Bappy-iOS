@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 
+// MARK: - UIFont
 extension UIFont {
     enum Family: String {
         case Black, Bold, Light, Medium, Regular, Thin
@@ -18,6 +19,7 @@ extension UIFont {
     }
 }
 
+// MARK: - UIView
 extension UIView {
     func addBappyShadow(shadowOffsetHeight: CGFloat = 2.0) {
         self.clipsToBounds = false
@@ -28,6 +30,7 @@ extension UIView {
     }
 }
 
+// MARK: - DATE
 extension Date {
     func isSameDate(with date: Date) -> Bool {
         let dateFormatter = DateFormatter()
@@ -67,6 +70,7 @@ extension Date {
     }
 }
 
+// MARK: - String
 extension String {
     func isValidDateType(format: String = "yyyy-MM-dd") -> Bool {
         let dateFormatter = DateFormatter()
@@ -86,6 +90,7 @@ extension String {
     }
 }
 
+// MARK: - UIButton
 extension UIButton {
     func setBappyTitle(title: String, font: UIFont = .roboto(size: 16.0, family: .Regular), color: UIColor = .bappyBrown, hasUnderline: Bool = false) {
         var attributes: [NSAttributedString.Key: Any] = [
@@ -103,10 +108,35 @@ extension UIButton {
     }
 }
 
+// MARK: - UIColor
 extension UIColor {
     static var bappyYellow: UIColor { UIColor(named: "bappy_yellow") ?? .clear }
     static var bappyBrown: UIColor { UIColor(named: "bappy_brown") ?? .clear }
     static var bappyGray: UIColor { UIColor(named: "bappy_gray") ?? .clear }
     static var bappyLightgray: UIColor { UIColor(named: "bappy_lightgray") ?? .clear }
     static var bappyCoral: UIColor { UIColor(named: "bappy_coral") ?? .clear }
+}
+
+// MARK: - Binder
+extension Reactive where Base: UIScrollView {
+    var setContentOffset: Binder<CGPoint> {
+        return Binder(self.base) { scrollView, offset in
+            scrollView.setContentOffset(offset, animated: true)
+        }
+    }
+}
+
+extension Reactive where Base: UIView {
+    var endEditing: Binder<Void> {
+        return Binder(self.base) { view, _ in
+            view.endEditing(true)
+        }
+    }
+}
+
+extension RxSwift.Reactive where Base: UIViewController {
+    public var viewDidAppear: Observable<Bool> {
+        return methodInvoked(#selector(UIViewController.viewDidAppear))
+            .map { $0.first as? Bool ?? false }
+    }
 }

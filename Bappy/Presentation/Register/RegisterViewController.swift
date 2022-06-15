@@ -15,15 +15,11 @@ final class RegisterViewController: UIViewController {
     // MARK: Properties
     private let viewModel: RegisterViewModel
     private let disposeBag = DisposeBag()
-    
     private let backButton = UIButton()
-    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    
     private let progressBarView: ProgressBarView
     private let continueButtonView: ContinueButtonView
-    
     private let nameView: RegisterNameView
     private let genderView: RegisterGenderView
     private let birthView: RegisterBirthView
@@ -50,18 +46,12 @@ final class RegisterViewController: UIViewController {
         
         configure()
         layout()
-        addTapGestureOnScrollView()
         bind()
+        addTapGestureOnScrollView()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        progressBarView.initializeProgression(1.0/4.0)
     }
 
     // MARK: Events
@@ -159,6 +149,10 @@ extension RegisterViewController {
             .bind(to: viewModel.input.backButtonTapped)
             .disposed(by: disposeBag)
         
+        self.rx.viewDidAppear
+            .bind(to: viewModel.input.viewDidAppear)
+            .disposed(by: disposeBag)
+        
         viewModel.output.shouldKeyboardHide
             .emit(to: view.rx.endEditing)
             .disposed(by: disposeBag)
@@ -172,7 +166,12 @@ extension RegisterViewController {
             .disposed(by: disposeBag)
 
         viewModel.output.progression
+            .skip(1)
             .drive(progressBarView.rx.setProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.initProgression
+            .emit(to: progressBarView.rx.initProgression)
             .disposed(by: disposeBag)
         
         viewModel.output.popView
@@ -223,22 +222,5 @@ extension RegisterViewController {
             }
             .drive(viewModel.input.keyboardWithButtonHeight)
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - Binder
-extension Reactive where Base: UIScrollView {
-    var setContentOffset: Binder<CGPoint> {
-        return Binder(self.base) { scrollView, offset in
-            scrollView.setContentOffset(offset, animated: true)
-        }
-    }
-}
-
-extension Reactive where Base: UIView {
-    var endEditing: Binder<Void> {
-        return Binder(self.base) { view, _ in
-            view.endEditing(true)
-        }
     }
 }

@@ -44,7 +44,6 @@ final class RegisterNationalityView: UIView {
     private let underlinedView: UIView = {
         let underlinedView = UIView()
         underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
-        underlinedView.addBappyShadow(shadowOffsetHeight: 1.0)
         return underlinedView
     }()
     

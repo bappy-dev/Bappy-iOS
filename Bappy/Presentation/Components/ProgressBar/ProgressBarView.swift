@@ -47,13 +47,16 @@ final class ProgressBarView: UIView {
 // MARK: - Methods
 extension ProgressBarView {
     func initializeProgression(_ progression: CGFloat) {
+        yellowView.snp.remakeConstraints {
+            $0.top.leading.bottom.equalToSuperview()
+            $0.width.equalTo(0)
+        }
         updateProgression(progression)
     }
     
     func updateProgression(_ progression: CGFloat) {
-        yellowView.snp.removeConstraints()
         UIView.animate(withDuration: 0.3) {
-            self.yellowView.snp.makeConstraints {
+            self.yellowView.snp.remakeConstraints {
                 $0.top.leading.bottom.equalToSuperview()
                 $0.width.equalTo(self.snp.width).multipliedBy(progression)
             }
@@ -67,6 +70,12 @@ extension Reactive where Base: ProgressBarView {
     var setProgression: Binder<CGFloat> {
         return Binder(self.base) { progressBarView, progression in
             progressBarView.updateProgression(progression)
+        }
+    }
+    
+    var initProgression: Binder<CGFloat> {
+        return Binder(self.base) { progressBarView, progression in
+            progressBarView.initializeProgression(progression)
         }
     }
 }

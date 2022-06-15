@@ -118,7 +118,11 @@ final class BappyTabBarController: UITabBarController {
     
     @objc
     private func writeButtonHandler() {
-        let rootViewController = HangoutMakeViewController()
+        let dependency = HangoutMakeViewModel.Dependency(
+            numOfPage: 9
+        )
+        let viewModel = HangoutMakeViewModel(dependency: dependency)
+        let rootViewController = HangoutMakeViewController(viewModel: viewModel)
         let viewController = UINavigationController(rootViewController: rootViewController)
         viewController.modalPresentationStyle = .fullScreen
         viewController.navigationBar.isHidden = true

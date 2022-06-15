@@ -48,12 +48,14 @@ final class RegisterViewModel: ViewModelType {
         var isNationalityValid: AnyObserver<Bool>
         var keyboardWithButtonHeight: AnyObserver<CGFloat>
         var nationalityTextFieldTapped: AnyObserver<Void>
+        var viewDidAppear: AnyObserver<Bool>
     }
     
     struct Output {
         var shouldKeyboardHide: Signal<Void>
         var pageContentOffset: Driver<CGPoint>
         var progression: Driver<CGFloat>
+        var initProgression: Signal<CGFloat>
         var popView: Signal<Void>
         var showCompleteView: Signal<Void>
         var isContinueButtonEnabled: Signal<Bool>
@@ -83,6 +85,7 @@ final class RegisterViewModel: ViewModelType {
     private let isNationalityValid$ = BehaviorSubject<Bool>(value: false)
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     private let nationalityTextFieldTapped$ = PublishSubject<Void>()
+    private let viewDidAppear$ = PublishSubject<Bool>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -109,6 +112,9 @@ final class RegisterViewModel: ViewModelType {
         let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
                                                 resultSelector: getProgression)
             .asDriver(onErrorJustReturn: .zero)
+        let initProgression = viewDidAppear$
+            .withLatestFrom(progression)
+            .asSignal(onErrorJustReturn: 0)
         let backButtonTappedWithPage = backButtonTapped$
             .withLatestFrom(page$)
             .share()
@@ -152,13 +158,15 @@ final class RegisterViewModel: ViewModelType {
             isBirthValid: isBirthValid$.asObserver(),
             isNationalityValid: isNationalityValid$.asObserver(),
             keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver(),
-            nationalityTextFieldTapped: nationalityTextFieldTapped$.asObserver()
+            nationalityTextFieldTapped: nationalityTextFieldTapped$.asObserver(),
+            viewDidAppear: viewDidAppear$.asObserver()
         )
         
         self.output = Output(
             shouldKeyboardHide: shouldKeyboardHide,
             pageContentOffset: pageContentOffset,
             progression: progression,
+            initProgression: initProgression,
             popView: popView,
             showCompleteView: showCompleteView,
             isContinueButtonEnabled: isContinueButtonEnabled,
