@@ -18,7 +18,7 @@ final class RegisterViewController: UIViewController {
     private let backButton = UIButton()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let progressBarView: ProgressBarView
+    private let progressBarView = ProgressBarView()
     private let continueButtonView: ContinueButtonView
     private let nameView: RegisterNameView
     private let genderView: RegisterGenderView
@@ -31,7 +31,6 @@ final class RegisterViewController: UIViewController {
         let genderViewModel = viewModel.subViewModels.genderViewModel
         let birthViewModel = viewModel.subViewModels.birthViewModel
         let nationalityViewModel = viewModel.subViewModels.nationalityViewModel
-        let progressBarViewModel = viewModel.subViewModels.progressBarViewModel
         let continueButtonViewModel = viewModel.subViewModels.continueButtonViewModel
         
         self.viewModel = viewModel
@@ -39,7 +38,6 @@ final class RegisterViewController: UIViewController {
         self.genderView = RegisterGenderView(viewModel: genderViewModel)
         self.birthView = RegisterBirthView(viewModel: birthViewModel)
         self.nationalityView = RegisterNationalityView(viewModel: nationalityViewModel)
-        self.progressBarView = ProgressBarView(viewModel: progressBarViewModel)
         self.continueButtonView = ContinueButtonView(viewModel: continueButtonViewModel)
         
         super.init(nibName: nil, bundle: nil)

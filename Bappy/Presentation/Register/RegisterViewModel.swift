@@ -18,7 +18,6 @@ final class RegisterViewModel: ViewModelType {
         let birthViewModel: RegisterBirthViewModel
         let nationalityViewModel: RegisterNationalityViewModel
         let continueButtonViewModel: ContinueButtonViewModel
-        let progressBarViewModel: ProgressBarViewModel
         let selectNationalityViewModel: SelectNationalityViewModel
         let completedViewModel: RegisterCompletedViewModel
     }
@@ -95,7 +94,6 @@ final class RegisterViewModel: ViewModelType {
             birthViewModel: RegisterBirthViewModel(dependency: dependency.birthDependency),
             nationalityViewModel: RegisterNationalityViewModel(dependency: .init(country: dependency.country)),
             continueButtonViewModel: ContinueButtonViewModel(),
-            progressBarViewModel: ProgressBarViewModel(),
             selectNationalityViewModel: SelectNationalityViewModel(dependency: dependency.selectnationalityDependency),
             completedViewModel: RegisterCompletedViewModel()
         )

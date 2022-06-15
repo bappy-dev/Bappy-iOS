@@ -12,13 +12,11 @@ import RxSwift
 final class ProgressBarView: UIView {
     
     // MARK: Properties
-    private let viewModel: ProgressBarViewModel
     private let yellowView = UIView()
     
     // MARK: Lifecycle
-    init(viewModel: ProgressBarViewModel = ProgressBarViewModel()) {
-        self.viewModel = viewModel
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         configure()
         layout()
