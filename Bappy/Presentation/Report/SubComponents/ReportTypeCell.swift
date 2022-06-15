@@ -33,7 +33,7 @@ final class ReportTypeCell: UITableViewCell {
         backgroundView.backgroundColor = .clear
 
         let tintedView = UIView()
-        tintedView.backgroundColor = UIColor(named: "bappy_yellow")
+        tintedView.backgroundColor = .bappyYellow
         tintedView.layer.cornerRadius = 7.0
         tintedView.addBappyShadow(shadowOffsetHeight: 1.0)
 
@@ -55,7 +55,7 @@ final class ReportTypeCell: UITableViewCell {
         self.textLabel?.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                .foregroundColor: UIColor(named: "bappy_brown")!,
+                .foregroundColor: UIColor.bappyBrown,
                 .font: UIFont.roboto(size: 12.0)
             ])
     }

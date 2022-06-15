@@ -20,13 +20,10 @@ final class HomeListTopView: UIView {
     
     private let localeSelctionButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Busan",
-                attributes: [
-                    .font: UIFont.roboto(size: 32.0, family: .Medium),
-                    .foregroundColor: UIColor(named: "bappy_brown")!
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Busan",
+            font: .roboto(size: 32.0, family: .Medium)
+        )
         return button
     }()
     
@@ -99,7 +96,7 @@ final class HomeListTopView: UIView {
         
         let localeButtonImage = UIImage(systemName: "arrowtriangle.down.fill")
         let localeButtonImageView = UIImageView(image: localeButtonImage)
-        localeButtonImageView.tintColor = UIColor(named: "bappy_yellow")
+        localeButtonImageView.tintColor = .bappyYellow
         localeButtonImageView.contentMode = .scaleToFill
         
         self.addSubview(localeSelctionButton)

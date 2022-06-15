@@ -28,7 +28,7 @@ final class ProfileHeaderView: UIView {
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Jessica"
         return label
     }()
@@ -36,7 +36,7 @@ final class ProfileHeaderView: UIView {
     private let flagLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "🇺🇸"
         return label
     }()
@@ -44,7 +44,7 @@ final class ProfileHeaderView: UIView {
     private let genderAndBirthLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 16.0)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Female / 2007.07.27"
         return label
     }()

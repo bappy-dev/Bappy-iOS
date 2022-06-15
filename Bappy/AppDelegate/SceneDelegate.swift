@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .white
-        window?.tintColor = UIColor(named: "bappy_gray")
+        window?.tintColor = .bappyGray
         
         setProgressHUDStyle()
         
@@ -72,7 +72,7 @@ extension SceneDelegate {
     private func setProgressHUDStyle() {
         ProgressHUD.colorBackground = .black.withAlphaComponent(0.05)
         ProgressHUD.colorHUD = .white
-        ProgressHUD.colorAnimation = UIColor(named: "bappy_brown")!
+        ProgressHUD.colorAnimation = .bappyBrown
     }
 }
 
@@ -81,17 +81,20 @@ extension SceneDelegate {
         let naviRootViewController = BappyLoginViewController()
         let viewController = UINavigationController(rootViewController: naviRootViewController)
         viewController.navigationBar.isHidden = true
+        viewController.interactivePopGestureRecognizer?.isEnabled = false
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         guard let completion = completion else { return }
         completion(viewController)
         
         if animated {
-            UIView.transition(with: window!,
-                              duration: 0.4,
-                              options: UIView.AnimationOptions.transitionCrossDissolve,
-                              animations: nil,
-                              completion: nil)
+            UIView.transition(
+                with: window!,
+                duration: 0.4,
+                options: .transitionCrossDissolve,
+                animations: nil,
+                completion: nil
+            )
         }
     }
     
@@ -103,11 +106,13 @@ extension SceneDelegate {
         completion(viewController)
         
         if animated {
-            UIView.transition(with: window!,
-                              duration: 0.4,
-                              options: UIView.AnimationOptions.transitionCrossDissolve,
-                              animations: nil,
-                              completion: nil)
+            UIView.transition(
+                with: window!,
+                duration: 0.4,
+                options: .transitionCrossDissolve,
+                animations: nil,
+                completion: nil
+            )
         }
     }
 }

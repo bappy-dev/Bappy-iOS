@@ -38,7 +38,7 @@ final class HangoutMapSectionView: UIView {
     private let placeLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 12.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.textAlignment = .center
         return label
     }()

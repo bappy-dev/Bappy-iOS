@@ -33,7 +33,7 @@ final class ReportImageSectionView: UIView {
     private let photoCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Photo"
         return label
     }()
@@ -52,7 +52,7 @@ final class ReportImageSectionView: UIView {
     private let numOfImageLabel: UILabel = {
         let label = UILabel()
         label.text = "0/5"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 12.0)
         return label
     }()

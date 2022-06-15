@@ -49,13 +49,12 @@ final class HomeListViewController: UIViewController {
         tableView.refreshControl = UIRefreshControl()
         let refreshControl = self.tableView.refreshControl
         refreshControl?.backgroundColor = .white
-        refreshControl?.tintColor = UIColor(named: "bappy_yellow")
+        refreshControl?.tintColor = .bappyYellow
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
     
     private func configure() {
         view.backgroundColor = .white
-//        tableView.backgroundColor = UIColor(named: "bappy_lightgray")
         topView.delegate = self
     }
     

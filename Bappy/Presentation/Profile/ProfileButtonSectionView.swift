@@ -42,7 +42,7 @@ final class ProfileButtonSectionView: UIView {
     private let joinedLabel: UILabel = {
         let label = UILabel()
         label.text = "Hangout\njoined"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -52,7 +52,7 @@ final class ProfileButtonSectionView: UIView {
     private let madeLabel: UILabel = {
         let label = UILabel()
         label.text = "Hangout\nmade"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -62,7 +62,7 @@ final class ProfileButtonSectionView: UIView {
     private let cancelledLabel: UILabel = {
         let label = UILabel()
         label.text = "Hangout\ncancelled"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -71,21 +71,21 @@ final class ProfileButtonSectionView: UIView {
     
     private let numOfjoinedLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 15.0)
         return label
     }()
     
     private let numOfMadeLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 15.0)
         return label
     }()
     
     private let numOfCancelledLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 15.0)
         return label
     }()
@@ -133,8 +133,8 @@ final class ProfileButtonSectionView: UIView {
     }
     
     private func configure() {
-        self.backgroundColor = UIColor(named: "bappy_lightgray")
-        yellowView.backgroundColor = UIColor(named: "bappy_yellow")
+        self.backgroundColor = .bappyLightgray
+        yellowView.backgroundColor = .bappyYellow
         numOfjoinedLabel.text = "0"
         numOfMadeLabel.text = "0"
         numOfCancelledLabel.text = "0"

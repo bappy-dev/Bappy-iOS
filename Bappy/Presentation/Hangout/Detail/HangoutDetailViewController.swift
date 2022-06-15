@@ -34,26 +34,21 @@ final class HangoutDetailViewController: UIViewController {
     
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Edit",
-                attributes: [
-                    .foregroundColor: UIColor.white,
-                    .font: UIFont.roboto(size: 18.0)
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Edit",
+            font: .roboto(size: 18.0),
+            color: .white
+        )
         return button
     }()
     
     private lazy var joinButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor(named: "bappy_yellow")
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "JOIN",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 18.0, family: .Medium)
-                ]), for: .normal)
+        button.backgroundColor = .bappyYellow
+        button.setBappyTitle(
+            title: "JOIN",
+            font: .roboto(size: 18.0, family: .Medium)
+        )
         button.layer.cornerRadius = 29.5
         button.addBappyShadow()
         button.addTarget(self, action: #selector(joinButtonHandler), for: .touchUpInside)

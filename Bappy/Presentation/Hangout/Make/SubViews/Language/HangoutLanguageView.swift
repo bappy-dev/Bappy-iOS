@@ -27,7 +27,7 @@ final class HangoutLanguageView: UIView {
         let label = UILabel()
         label.text = "Choose\na language"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -37,10 +37,10 @@ final class HangoutLanguageView: UIView {
         let imageView = UIImageView(image: UIImage(named: "make_language"))
         let containerView = UIView()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the language",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+            attributes: [.foregroundColor: UIColor.bappyGray])
         containerView.frame = CGRect(x: 0, y: 0, width: 25.0, height: 15.0)
         containerView.addSubview(imageView)
         textField.leftView = containerView

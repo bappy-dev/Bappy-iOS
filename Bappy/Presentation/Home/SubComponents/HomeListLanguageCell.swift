@@ -26,7 +26,7 @@ final class HomeListLanguageCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            languageLabel.backgroundColor = isSelected ? UIColor(named: "bappy_yellow") : UIColor(named: "bappy_lightgray")
+            languageLabel.backgroundColor = isSelected ? .bappyYellow : .bappyLightgray
         }
     }
     
@@ -41,9 +41,9 @@ final class HomeListLanguageCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .roboto(size: 18.0)
         label.textAlignment = .center
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.layer.cornerRadius = 16.0
-        label.backgroundColor = UIColor(named: "bappy_lightgray")
+        label.backgroundColor = .bappyLightgray
         label.clipsToBounds = true
         return label
     }()

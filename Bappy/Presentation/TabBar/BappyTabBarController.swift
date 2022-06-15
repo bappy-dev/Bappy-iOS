@@ -41,7 +41,7 @@ final class BappyTabBarController: UITabBarController {
     private let homeLabel: UILabel = {
         let label = UILabel()
         label.text = "HOME"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 10.0)
         return label
     }()
@@ -57,7 +57,7 @@ final class BappyTabBarController: UITabBarController {
     private let profileLabel: UILabel = {
         let label = UILabel()
         label.text = "PROFILE"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 10.0)
         return label
     }()

@@ -40,7 +40,7 @@ final class HangoutMakeTimeView: UIView {
         let label = UILabel()
         label.text = "Choose a time\nto meet"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -55,20 +55,18 @@ final class HangoutMakeTimeView: UIView {
     private lazy var dateTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.addTarget(self, action: #selector(dateTextFieldDidBeginEditing), for: .editingDidBegin)
         return textField
     }()
     
     private lazy var dateDoneButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Done",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_yellow")!,
-                    .font: UIFont.roboto(size: 14.0, family: .Medium)
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Done",
+            font: .roboto(size: 14.0, family: .Medium),
+            color: .bappyYellow
+        )
         button.addTarget(self, action: #selector(dateDoneButtonHandler), for: .touchUpInside)
         button.isHidden = true
         button.backgroundColor = .white
@@ -85,20 +83,18 @@ final class HangoutMakeTimeView: UIView {
     private lazy var timeTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.addTarget(self, action: #selector(timeTextFieldDidBeginEditing), for: .editingDidBegin)
         return textField
     }()
     
     private lazy var timeDoneButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Done",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_yellow")!,
-                    .font: UIFont.roboto(size: 14.0, family: .Medium)
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Done",
+            font: .roboto(size: 14.0, family: .Medium),
+            color: .bappyYellow
+        )
         button.addTarget(self, action: #selector(timeDoneButtonHandler), for: .touchUpInside)
         button.isHidden = true
         button.backgroundColor = .white
@@ -241,7 +237,7 @@ final class HangoutMakeTimeView: UIView {
     
     private func configure() {
         self.backgroundColor = .white
-        dividingView.backgroundColor = UIColor(named: "bappy_yellow")
+        dividingView.backgroundColor = .bappyYellow
         scrollView.isScrollEnabled = false
         
         let date = Date() + 60 * 70

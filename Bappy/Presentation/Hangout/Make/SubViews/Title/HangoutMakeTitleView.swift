@@ -24,7 +24,7 @@ final class HangoutMakeTitleView: UIView {
         let label = UILabel()
         label.text = "Write the title\nof Hangout"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -32,10 +32,10 @@ final class HangoutMakeTitleView: UIView {
     private lazy var titleTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the hangout title",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+            attributes: [.foregroundColor: UIColor.bappyGray])
         textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
         textField.delegate = self
         return textField
@@ -51,7 +51,7 @@ final class HangoutMakeTitleView: UIView {
     private let ruleDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0)
-        label.textColor = UIColor(named: "bappy_coral")
+        label.textColor = .bappyCoral
         label.isHidden = true
         return label
     }()

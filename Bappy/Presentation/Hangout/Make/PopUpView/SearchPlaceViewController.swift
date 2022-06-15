@@ -41,12 +41,11 @@ final class SearchPlaceViewController: UIViewController {
     
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Close",
-                attributes: [
-                    .font: UIFont.roboto(size: 18.0, family: .Medium),
-                    .foregroundColor: UIColor(named: "bappy_yellow")!]), for: .normal)
+        button.setBappyTitle(
+            title: "Close",
+            font: .roboto(size: 18.0, family: .Medium),
+            color: .bappyYellow
+        )
         button.addTarget(self, action: #selector(closeButtonHandler), for: .touchUpInside)
         return button
     }()
@@ -54,7 +53,7 @@ final class SearchPlaceViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 22.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Select place"
         return label
     }()
@@ -64,10 +63,10 @@ final class SearchPlaceViewController: UIViewController {
         let imageView = UIImageView(image: UIImage(named: "search"))
         let containerView = UIView()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Search for a place",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+            attributes: [.foregroundColor: UIColor.bappyGray])
         containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 14.0)
         containerView.addSubview(imageView)
         textField.leftView = containerView
@@ -226,7 +225,7 @@ final class SearchPlaceViewController: UIViewController {
     }
     
     private func layout() {
-        searchBackgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
+        searchBackgroundView.backgroundColor = .bappyLightgray
         searchBackgroundView.layer.cornerRadius = 17.5
         
         view.addSubview(dimmedView)

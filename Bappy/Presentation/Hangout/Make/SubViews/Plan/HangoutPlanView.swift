@@ -18,7 +18,7 @@ final class HangoutPlanView: UIView {
         let label = UILabel()
         label.text = "Write a\nHangout plan"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -27,7 +27,7 @@ final class HangoutPlanView: UIView {
         let textView = UITextView()
         textView.backgroundColor = .clear
         textView.font = .roboto(size: 16.0)
-        textView.textColor = UIColor(named: "bappy_brown")
+        textView.textColor = .bappyBrown
         textView.textAlignment = .left
         textView.delegate = self
         return textView
@@ -44,7 +44,7 @@ final class HangoutPlanView: UIView {
     
     private let planBackgroundView: UIView = {
         let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
+        backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 12.0
         return backgroundView
     }()
@@ -52,7 +52,7 @@ final class HangoutPlanView: UIView {
     private let ruleDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0)
-        label.textColor = UIColor(named: "bappy_coral")
+        label.textColor = .bappyCoral
         label.isHidden = true
         return label
     }()

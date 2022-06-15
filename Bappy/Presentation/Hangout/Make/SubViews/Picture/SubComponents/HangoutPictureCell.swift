@@ -33,7 +33,7 @@ final class HangoutPictureCell: UICollectionViewCell {
 
     private let pictureImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = UIColor(named: "bappy_lightgray")
+        imageView.backgroundColor = .bappyLightgray
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12.0
         imageView.clipsToBounds = true
@@ -83,7 +83,7 @@ final class HangoutPictureCell: UICollectionViewCell {
     
     private func configure() {
         contentView.backgroundColor = .white
-        containerView.backgroundColor = UIColor(named: "bappy_lightgray")
+        containerView.backgroundColor = .bappyLightgray
         containerView.layer.cornerRadius = 12.0
         containerView.clipsToBounds = false
     }

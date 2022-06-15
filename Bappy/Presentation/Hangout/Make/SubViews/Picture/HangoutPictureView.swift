@@ -33,14 +33,14 @@ final class HangoutPictureView: UIView {
         let label = UILabel()
         label.text = "Add a picture\nof the place"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
     
     private lazy var pictureButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(named: "bappy_lightgray")
+        button.backgroundColor = .bappyLightgray
         button.imageView?.contentMode = .scaleAspectFill
         button.addTarget(self, action: #selector(pictureButtonHandler), for: .touchUpInside)
         return button

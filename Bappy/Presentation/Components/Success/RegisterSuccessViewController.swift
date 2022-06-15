@@ -22,7 +22,7 @@ final class RegisterSuccessViewController: UIViewController {
         let label = UILabel()
         label.font = .roboto(size: 24.0, family: .Medium)
         label.text = "Success login"
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.textColor = .bappyYellow
         label.isHidden = true
         return label
     }()

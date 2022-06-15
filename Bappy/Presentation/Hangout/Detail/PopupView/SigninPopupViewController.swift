@@ -36,7 +36,7 @@ final class SigninPopupViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Please sign in to join!"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 24.0, family: .Medium)
         label.textAlignment = .center
         return label
@@ -51,14 +51,11 @@ final class SigninPopupViewController: UIViewController {
     
     private let signinButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Go to sign-in!",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 20.0, family: .Bold)
-                ]), for: .normal)
-        button.backgroundColor = UIColor(named: "bappy_yellow")
+        button.setBappyTitle(
+            title: "Go to sign-in!",
+            font: .roboto(size: 20.0, family: .Bold)
+        )
+        button.backgroundColor = .bappyYellow
         button.layer.cornerRadius = 21.0
         return button
     }()
@@ -69,7 +66,7 @@ final class SigninPopupViewController: UIViewController {
         let image = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
         imageView.image = image
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = UIColor(named: "bappy_brown")
+        imageView.tintColor = .bappyBrown
         return imageView
     }()
     

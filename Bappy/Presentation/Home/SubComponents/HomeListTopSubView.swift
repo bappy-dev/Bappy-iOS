@@ -31,13 +31,10 @@ final class HomeListTopSubView: UIView {
     
     private let sortingOrderButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Newest",
-                attributes: [
-                    .font: UIFont.roboto(size: 18.0),
-                    .foregroundColor: UIColor(named: "bappy_brown")!
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Newest",
+            font: .roboto(size: 18.0)
+        )
         return button
     }()
     
@@ -74,7 +71,7 @@ final class HomeListTopSubView: UIView {
         
         let localeButtonImage = UIImage(systemName: "arrowtriangle.down.fill")
         let localeButtonImageView = UIImageView(image: localeButtonImage)
-        localeButtonImageView.tintColor = UIColor(named: "bappy_yellow")
+        localeButtonImageView.tintColor = .bappyYellow
         localeButtonImageView.contentMode = .scaleToFill
         
         self.addSubview(hDividingView1)

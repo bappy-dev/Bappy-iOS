@@ -38,14 +38,11 @@ final class ReportViewController: UIViewController {
 
     private let reportButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor(named: "bappy_yellow")
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "REPORT",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 18.0, family: .Medium)
-                ]), for: .normal)
+        button.backgroundColor = .bappyYellow
+        button.setBappyTitle(
+            title: "REPORT",
+            font: .roboto(size: 18.0, family: .Medium)
+        )
         button.layer.cornerRadius = 11.5
         button.addBappyShadow()
         return button

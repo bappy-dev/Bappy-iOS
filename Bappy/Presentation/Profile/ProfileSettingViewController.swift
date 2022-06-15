@@ -15,7 +15,7 @@ final class ProfileSettingViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Setting"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 36.0, family: .Bold)
         return label
     }()

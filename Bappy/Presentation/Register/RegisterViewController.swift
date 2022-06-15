@@ -194,7 +194,8 @@ extension RegisterViewController {
         viewModel.output.showCompleteView
             .emit(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                let viewController = RegisterCompletedViewController()
+                let viewModel = self.viewModel.subViewModels.completedViewModel
+                let viewController = RegisterCompletedViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
                 self.present(viewController, animated: false, completion: nil)
             })

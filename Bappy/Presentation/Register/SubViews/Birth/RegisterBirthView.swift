@@ -19,7 +19,7 @@ final class RegisterBirthView: UIView {
         let label = UILabel()
         label.text = "When\nwere you born"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -27,7 +27,7 @@ final class RegisterBirthView: UIView {
     private lazy var birthTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.addTarget(self, action: #selector(showBirthPicker), for: .editingDidBegin)
         return textField
     }()

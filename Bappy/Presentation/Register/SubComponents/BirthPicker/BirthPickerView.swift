@@ -22,15 +22,15 @@ final class BirthPickerView: UIView {
     
     private let doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Done",
-                attributes: [
-                    .font: UIFont.roboto(size: 18.0, family: .Medium),
-                    .foregroundColor: UIColor(named: "bappy_brown")!
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Done",
+            font: .roboto(size: 18.0, family: .Medium)
+        )
         return button
     }()
+    
+    private let topGradientView = BirthPickerGradientView(position: .top)
+    private let bottomGradientView = BirthPickerGradientView(position: .bottom)
     
     // MARK: Lifecycle
     init(viewModel: BirthPickerViewModel) {
@@ -65,22 +65,46 @@ final class BirthPickerView: UIView {
         birthStackView.spacing = 0
         birthStackView.distribution = .fillEqually
         
-        self.addSubview(selectView)
+        let clipView = UIView()
+        clipView.clipsToBounds = true
+        clipView.backgroundColor = .white
+        
+        self.addSubview(clipView)
+        clipView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(40.0)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        clipView.addSubview(selectView)
         selectView.snp.makeConstraints {
             $0.height.equalTo(38.0)
+            $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(15.0)
             $0.trailing.equalToSuperview().inset(7.0)
         }
         
-        self.addSubview(birthStackView)
+        clipView.addSubview(birthStackView)
         birthStackView.snp.makeConstraints {
+            $0.height.equalTo(2000.0)
             $0.centerY.equalTo(selectView)
             $0.leading.trailing.equalToSuperview()
         }
         
+        clipView.addSubview(topGradientView)
+        topGradientView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(60.0)
+        }
+        
+        clipView.addSubview(bottomGradientView)
+        bottomGradientView.snp.makeConstraints {
+            $0.bottom.leading.trailing.equalToSuperview()
+            $0.height.equalTo(60.0)
+        }
+        
         self.addSubview(doneButton)
         doneButton.snp.makeConstraints {
-            $0.top.equalTo(birthStackView.snp.bottom)
+            $0.top.equalTo(clipView.snp.bottom).offset(10.0)
             $0.centerX.bottom.equalToSuperview()
             $0.height.equalTo(50.0)
         }
@@ -146,11 +170,11 @@ extension BirthPickerView {
         viewModel.output.shouldHide
             .emit(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                UIView.transition(with: self,
-                                  duration: 0.3,
-                                  options: .transitionCrossDissolve) {
-                    self.isHidden = true
-                }
+                UIView.transition(
+                    with: self,
+                    duration: 0.3,
+                    options: .transitionCrossDissolve
+                ) { self.isHidden = true }
             })
             .disposed(by: disposeBag)
     }

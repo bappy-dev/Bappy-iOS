@@ -31,7 +31,7 @@ final class RegisterCompletedViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Account completed!"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 28.0, family: .Bold)
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
@@ -48,21 +48,18 @@ final class RegisterCompletedViewController: UIViewController {
     private let captionLabel: UILabel = {
         let label = UILabel()
         label.text = "Wanna fill in your bio?"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 16.0)
         return label
     }()
     
     private let okButton: UIButton = {
         let button = UIButton()
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Okay!",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 24.0, family: .Medium)
-                ]), for: .normal)
-        button.backgroundColor = UIColor(named: "bappy_yellow")
+        button.setBappyTitle(
+            title: "Okay!",
+            font: .roboto(size: 24.0, family: .Medium),
+            color: .bappyYellow
+        )
         button.layer.cornerRadius = 21.0
         return button
     }()
@@ -73,7 +70,7 @@ final class RegisterCompletedViewController: UIViewController {
         let image = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
         imageView.image = image
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = UIColor(named: "bappy_brown")
+        imageView.tintColor = .bappyBrown
         return imageView
     }()
     
@@ -83,16 +80,12 @@ final class RegisterCompletedViewController: UIViewController {
         let image = UIImage(systemName: "chevron.forward")
         button.setImage(image, for: .normal)
         button.setPreferredSymbolConfiguration(configuration, forImageIn: .normal)
-        button.tintColor = UIColor(named: "bappy_brown")
         button.semanticContentAttribute = .forceRightToLeft
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Maybe later ",
-                attributes: [
-                    .font: UIFont.roboto(size: 13.0, family: .Light),
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Maybe later ",
+            font: .roboto(size: 13.0, family: .Light),
+            hasUnderline: true
+        )
         return button
     }()
     

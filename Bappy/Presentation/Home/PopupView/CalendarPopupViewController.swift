@@ -34,7 +34,7 @@ final class CalendarPopupViewController: UIViewController {
     
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
-        datePicker.tintColor = UIColor(named: "bappy_yellow")
+        datePicker.tintColor = .bappyYellow
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "en")

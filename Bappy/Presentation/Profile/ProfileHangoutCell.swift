@@ -23,7 +23,7 @@ final class ProfileHangoutCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 22.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.lineBreakMode = .byTruncatingTail
         label.text = "Who wants to go eat?"
         return label
@@ -46,7 +46,7 @@ final class ProfileHangoutCell: UITableViewCell {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 15.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.lineBreakMode = .byTruncatingTail
         label.text = "03. Mar. 19:00"
         return label
@@ -55,7 +55,7 @@ final class ProfileHangoutCell: UITableViewCell {
     private let placeLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 15.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.lineBreakMode = .byTruncatingTail
         label.text = "Pusan University"
         return label

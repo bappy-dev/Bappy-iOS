@@ -24,7 +24,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor(named: "bappy_lightgray")
+        tableView.backgroundColor = .bappyLightgray
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: reuseIdentifier)

@@ -18,14 +18,14 @@ final class TitleTopView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 25.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     
     private let subTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 12.0)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     
@@ -45,7 +45,7 @@ final class TitleTopView: UIView {
     
     // MARK: Helpers
     private func configure() {
-        self.backgroundColor = UIColor(named: "bappy_yellow")
+        self.backgroundColor = .bappyYellow
         self.addBappyShadow()
         
         titleView.backgroundColor = .white

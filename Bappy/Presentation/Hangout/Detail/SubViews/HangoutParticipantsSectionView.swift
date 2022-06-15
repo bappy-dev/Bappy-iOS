@@ -16,7 +16,7 @@ final class HangoutParticipantsSectionView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Medium)
         label.text = "Who Join?"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     
@@ -24,7 +24,7 @@ final class HangoutParticipantsSectionView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 16.0)
         label.text = "1 in 5"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     

@@ -54,7 +54,7 @@ final class ReportTypeDropdownView: UIView {
     
     // MARK: Helpers
     private func configure() {
-        self.backgroundColor = UIColor(named: "bappy_lightgray")
+        self.backgroundColor = .bappyLightgray
         self.layer.cornerRadius = 23.0
         self.addBappyShadow()
         self.isHidden = true

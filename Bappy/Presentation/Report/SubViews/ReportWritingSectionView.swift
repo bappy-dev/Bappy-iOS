@@ -14,7 +14,7 @@ final class ReportWritingSectionView: UIView {
     private let reportingTypeCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "I am reporting because..."
         return label
     }()
@@ -23,13 +23,13 @@ final class ReportWritingSectionView: UIView {
         let label = UILabel()
         label.text = "*"
         label.font = .roboto(size: 18.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.textColor = .bappyYellow
         return label
     }()
     
     private let reportingTypeBackgroundView: UIView = {
         let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
+        backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 11.5
         return backgroundView
     }()
@@ -54,7 +54,7 @@ final class ReportWritingSectionView: UIView {
     private let reportingDetailCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Write More"
         return label
     }()
@@ -62,7 +62,7 @@ final class ReportWritingSectionView: UIView {
     
     private let reportingDetailBackgroundView: UIView = {
         let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
+        backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 11.5
         return backgroundView
     }()

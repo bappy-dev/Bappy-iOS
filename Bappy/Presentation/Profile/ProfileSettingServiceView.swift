@@ -27,7 +27,7 @@ final class ProfileSettingServiceView: UIView {
     private let serviceLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Customer Service"
         return label
     }()
@@ -42,27 +42,19 @@ final class ProfileSettingServiceView: UIView {
     
     private lazy var deleteAccountButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Delete Account",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 16.0),
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Delete Account",
+            hasUnderline: true
+        )
         return button
     }()
     
     private lazy var logoutButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Logout",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 16.0),
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Logout",
+            hasUnderline: true
+        )
         button.addTarget(self, action: #selector(logoutButtonHandler), for: .touchUpInside)
         return button
     }()
@@ -93,7 +85,7 @@ final class ProfileSettingServiceView: UIView {
     
     private func layout() {
         let dividingView = UIView()
-        dividingView.backgroundColor = UIColor(named: "bappy_brown")
+        dividingView.backgroundColor = .bappyBrown
         
         self.addSubview(serviceImageView)
         serviceImageView.snp.makeConstraints {

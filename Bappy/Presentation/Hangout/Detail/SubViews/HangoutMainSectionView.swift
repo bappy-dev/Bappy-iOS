@@ -20,7 +20,7 @@ final class HangoutMainSectionView: UIView {
     private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 32.0, family: .Bold)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         return textField
     }()
     
@@ -34,7 +34,7 @@ final class HangoutMainSectionView: UIView {
     private let timeTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 20.0, family: .Medium)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         return textField
     }()
     
@@ -48,7 +48,7 @@ final class HangoutMainSectionView: UIView {
     private let languageTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 20.0, family: .Medium)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         return textField
     }()
     
@@ -62,7 +62,7 @@ final class HangoutMainSectionView: UIView {
     private let placeTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 20.0, family: .Medium)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         return textField
     }()
     
@@ -78,15 +78,11 @@ final class HangoutMainSectionView: UIView {
         let image = UIImage(named: "detail_arrow")
         button.setImage(image, for: .normal)
         button.semanticContentAttribute = .forceRightToLeft
-        button.tintColor = UIColor(named: "bappy_brown")
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Go Openchat   ",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 20.0, family: .Medium),
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Go Openchat   ",
+            font: .roboto(size: 20.0, family: .Medium),
+            hasUnderline: true
+        )
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(openOpenchatURL), for: .touchUpInside)
         return button

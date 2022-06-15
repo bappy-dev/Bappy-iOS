@@ -18,7 +18,7 @@ final class HangoutOpenchatView: UIView {
         let label = UILabel()
         label.text = "Make\nKakao Openchat"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -26,10 +26,10 @@ final class HangoutOpenchatView: UIView {
     private lazy var openchatTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 14.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the URL",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+            attributes: [.foregroundColor: UIColor.bappyGray])
         textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
         return textField
     }()
@@ -43,21 +43,19 @@ final class HangoutOpenchatView: UIView {
     
     private let guideButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Openchat guide",
-                attributes: [
-                    .foregroundColor: UIColor.black.withAlphaComponent(0.33),
-                    .font: UIFont.roboto(size: 10.0),
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Openchat guide",
+            font: .roboto(size: 10.0),
+            color: .black.withAlphaComponent(0.33),
+            hasUnderline: true
+        )
         return button
     }()
     
     private let ruleDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0)
-        label.textColor = UIColor(named: "bappy_coral")
+        label.textColor = .bappyCoral
         label.isHidden = true
         return label
     }()

@@ -42,24 +42,19 @@ extension Reactive where Base: SelectionButton {
     var isSelected: Binder<Bool> {
         return Binder(self.base) { button, isSelected in
             if isSelected {
-                button.setAttributedTitle(
-                    NSAttributedString(
-                        string: base.title,
-                        attributes: [
-                            .font: UIFont.roboto(size: 16.0, family: .Medium),
-                            .foregroundColor: UIColor(named: "bappy_brown")!
-                        ]), for: .normal)
-                button.backgroundColor = UIColor(named: "bappy_yellow")
+                button.setBappyTitle(
+                    title: base.title,
+                    font: .roboto(size: 16.0, family: .Medium)
+                )
+                button.backgroundColor = .bappyYellow
                 button.clipsToBounds = false
             } else {
-                button.setAttributedTitle(
-                    NSAttributedString(
-                        string: base.title,
-                        attributes: [
-                            .font: UIFont.roboto(size: 16.0, family: .Medium),
-                            .foregroundColor: UIColor(named: "bappy_gray")!
-                        ]), for: .normal)
-                button.backgroundColor = UIColor(named: "bappy_lightgray")
+                button.setBappyTitle(
+                    title: base.title,
+                    font: .roboto(size: 16.0, family: .Medium),
+                    color: .bappyGray
+                )
+                button.backgroundColor = .bappyLightgray
                 button.clipsToBounds = true
             }
         }

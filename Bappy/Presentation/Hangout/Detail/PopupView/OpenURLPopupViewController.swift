@@ -36,7 +36,7 @@ final class OpenURLPopupViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Open map app"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 30.0, family: .Medium)
         label.textAlignment = .center
         return label

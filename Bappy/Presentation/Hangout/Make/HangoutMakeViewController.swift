@@ -277,7 +277,7 @@ extension HangoutMakeViewController: SelectLanguageViewControllerDelegate {
 extension HangoutMakeViewController: HangoutPictureViewDelegate {
     func addPhoto() {
         var config = YPImagePickerConfiguration()
-        config.colors.tintColor = UIColor(named: "bappy_yellow")!
+        config.colors.tintColor = .bappyYellow
         config.shouldSaveNewPicturesToAlbum = false
         config.showsPhotoFilters = false
         config.showsCrop = .rectangle(ratio: 390.0/333.0)

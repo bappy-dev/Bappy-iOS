@@ -21,7 +21,7 @@ final class RegisterGenderView: UIView {
         let label = UILabel()
         label.text = "What's\nyour gender"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()

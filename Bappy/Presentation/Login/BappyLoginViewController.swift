@@ -38,13 +38,11 @@ final class BappyLoginViewController: UIViewController {
         button.layer.cornerRadius = 24.0
         button.backgroundColor = .white
         button.setImage(UIImage(named: "login_google"), for: .normal)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Sign in with Google",
-                attributes: [
-                    .font: UIFont.roboto(size: 18.0, family: .Bold),
-                    .foregroundColor: UIColor(named: "bappy_gray")!
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Sign in with Google",
+            font: .roboto(size: 18.0, family: .Bold),
+            color: .bappyGray
+        )
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(googleButtonHandler), for: .touchUpInside)
         button.addBappyShadow()
@@ -56,13 +54,11 @@ final class BappyLoginViewController: UIViewController {
         button.layer.cornerRadius = 24.0
         button.backgroundColor = UIColor(red: 24.0/255.0, green: 119.0/255.0, blue: 242.0/255.0, alpha: 1.0)
         button.setImage(UIImage(named: "login_facebook"), for: .normal)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Sign in with Facebook",
-                attributes: [
-                    .font: UIFont.roboto(size: 18.0, family: .Bold),
-                    .foregroundColor: UIColor.white
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Sign in with Facebook",
+            font: .roboto(size: 18.0, family: .Bold),
+            color: .white
+        )
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(facebookLoginButtonHandler), for: .touchUpInside)
         button.addBappyShadow()
@@ -74,13 +70,11 @@ final class BappyLoginViewController: UIViewController {
         button.layer.cornerRadius = 24.0
         button.backgroundColor = .black
         button.setImage(UIImage(named: "login_apple"), for: .normal)
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Sign in with Apple",
-                attributes: [
-                    .font: UIFont.roboto(size: 18.0, family: .Bold),
-                    .foregroundColor: UIColor.white
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Sign in with Apple",
+            font: .roboto(size: 18.0, family: .Bold),
+            color: .white
+        )
         button.adjustsImageWhenHighlighted = false
         button.addTarget(self, action: #selector(appleLoginButtonHandler), for: .touchUpInside)
         button.addBappyShadow()
@@ -93,16 +87,13 @@ final class BappyLoginViewController: UIViewController {
         let image = UIImage(systemName: "chevron.backward")
         button.setImage(image, for: .normal)
         button.setPreferredSymbolConfiguration(configuration, forImageIn: .normal)
-        button.tintColor = .white
         button.semanticContentAttribute = .forceRightToLeft
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "Login Skip  ",
-                attributes: [
-                    .font: UIFont.roboto(size: 16.0, family: .Bold),
-                    .foregroundColor: UIColor.white,
-                    .underlineStyle: NSUnderlineStyle.single.rawValue
-                ]), for: .normal)
+        button.setBappyTitle(
+            title: "Login Skip  ",
+            font: .roboto(size: 16.0, family: .Bold),
+            color: .white,
+            hasUnderline: true
+        )
         button.addTarget(self, action: #selector(skipButtonHandler), for: .touchUpInside)
         return button
     }()
@@ -157,7 +148,7 @@ final class BappyLoginViewController: UIViewController {
     }
     
     private func configure() {
-        view.backgroundColor = UIColor(named: "bappy_yellow")
+        view.backgroundColor = .bappyYellow
     }
     
     private func layout() {
@@ -195,11 +186,55 @@ final class BappyLoginViewController: UIViewController {
             $0.height.equalTo(44.0)
         }
     }
+    
+    private func showRegisterView() {
+        let yearList = Array(1931...Date.thisYear-17)
+            .map { String($0) }
+        let monthList = Array(1...12)
+            .map { String($0) }
+            .map { ($0.count == 1) ? "0\($0)" : $0 }
+        let dayList = Array(1...31)
+            .map { String($0) }
+            .map { ($0.count == 1) ? "0\($0)" : $0 }
+        let country = Country(code: "KR", name: "South Korea")
+        let countries = NSLocale.isoCountryCodes
+            .map { NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: $0]) }
+            .map { countryCode -> Country in
+                let code = String(countryCode[countryCode.index(after: countryCode.startIndex)...])
+                let name = NSLocale(localeIdentifier: "en_UK")
+                    .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
+                return Country(code: code, name: name)
+            }
+        
+        let dependency = RegisterViewModel.Dependency(
+            page: 0,
+            numOfPage: 4,
+            isButtonEnabled: false,
+            nameDependency: .init(
+                name: "",
+                minimumLength: 3,
+                maximumLength: 30),
+            birthDependency: .init(
+                year: "2000",
+                month: "06",
+                day: "15",
+                yearList: yearList,
+                monthList: monthList,
+                dayList: dayList),
+            country: country,
+            selectnationalityDependency: .init(
+                country: country,
+                countries: countries)
+        )
+        let viewModel = RegisterViewModel(dependency: dependency)
+        let viewController = RegisterViewController(viewModel: viewModel)
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
 }
 
 // MARK: - Sign In Guest Mode
 extension BappyLoginViewController {
-    func signInAnonymously() {
+    private func signInAnonymously() {
         Auth.auth().signInAnonymously { authResult, error in
             if let error = error {
                 print("ERROR: \(error.localizedDescription)")
@@ -225,7 +260,7 @@ extension BappyLoginViewController {
 
 // MARK: - Firebase Sign In
 extension BappyLoginViewController {
-    func signInWithFirebase(with credential: AuthCredential) {
+    private func signInWithFirebase(with credential: AuthCredential) {
         ProgressHUD.show(interaction: false)
         Auth.auth().signIn(with: credential) { [weak self] authResult, error in
             guard let self = self else { return }
@@ -248,47 +283,7 @@ extension BappyLoginViewController {
                     sceneDelegate.switchRootViewToMainView(animated: true)
                 } else {
                     // Not resisterd in Backend
-                    let yearList = Array(1931...Date.thisYear-17)
-                        .map { String($0) }
-                    let monthList = Array(1...12)
-                        .map { String($0) }
-                        .map { ($0.count == 1) ? "0\($0)" : $0 }
-                    let dayList = Array(1...31)
-                        .map { String($0) }
-                        .map { ($0.count == 1) ? "0\($0)" : $0 }
-                    let country = Country(code: "KR", name: "South Korea")
-                    let countries = NSLocale.isoCountryCodes
-                        .map { NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: $0]) }
-                        .map { countryCode -> Country in
-                            let code = String(countryCode[countryCode.index(after: countryCode.startIndex)...])
-                            let name = NSLocale(localeIdentifier: "en_UK")
-                                .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
-                            return Country(code: code, name: name)
-                        }
-                    
-                    let dependency = RegisterViewModel.Dependency(
-                        page: 0,
-                        numOfPage: 4,
-                        isButtonEnabled: false,
-                        nameDependency: .init(
-                            name: "",
-                            minimumLength: 3,
-                            maximumLength: 30),
-                        birthDependency: .init(
-                            year: "2000",
-                            month: "06",
-                            day: "15",
-                            yearList: yearList,
-                            monthList: monthList,
-                            dayList: dayList),
-                        country: country,
-                        selectnationalityDependency: .init(
-                            country: country,
-                            countries: countries)
-                    )
-                    let viewModel = RegisterViewModel(dependency: dependency)
-                    let viewController = RegisterViewController(viewModel: viewModel)
-                    self.navigationController?.pushViewController(viewController, animated: true)
+                    self.showRegisterView()
                 }
             }
         }
@@ -297,7 +292,7 @@ extension BappyLoginViewController {
 
 // MARK: - Google Sign In
 extension BappyLoginViewController {
-    func startSignInWithGoogleFlow() {
+    private func startSignInWithGoogleFlow() {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         let config = GIDConfiguration(clientID: clientID)
         
@@ -320,7 +315,7 @@ extension BappyLoginViewController {
 
 // MARK: - Facebook Sign In
 extension BappyLoginViewController {
-    func startSignInWithFacebookFlow() {
+    private func startSignInWithFacebookFlow() {
         let loginManager = LoginManager()
         loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
             guard let self = self else { return }
@@ -344,7 +339,7 @@ extension BappyLoginViewController {
 
 // MARK: - Apple Sign In
 extension BappyLoginViewController {
-    func startSignInWithAppleFlow() {
+    private func startSignInWithAppleFlow() {
         let nonce = randomNonceString()
         currentNonce = nonce
         let appleIDProvider = ASAuthorizationAppleIDProvider()

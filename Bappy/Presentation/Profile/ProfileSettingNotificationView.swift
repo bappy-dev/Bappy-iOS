@@ -21,7 +21,7 @@ final class ProfileSettingNotificationView: UIView {
     private let notificationtLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.text = "Notification"
         return label
     }()
@@ -36,7 +36,7 @@ final class ProfileSettingNotificationView: UIView {
     private let myHangoutLabel: UILabel = {
         let label = UILabel()
         label.text = "My Hangout"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 16.0, family: .Medium)
         return label
     }()
@@ -44,7 +44,7 @@ final class ProfileSettingNotificationView: UIView {
     private let myHangoutCaptionLabel: UILabel = {
         let label = UILabel()
         label.text = "New join, New hearts, Hangout alarm"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 13.0)
         return label
     }()
@@ -59,7 +59,7 @@ final class ProfileSettingNotificationView: UIView {
     private let newHangoutLabel: UILabel = {
         let label = UILabel()
         label.text = "New Hangout"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 16.0, family: .Medium)
         return label
     }()
@@ -67,7 +67,7 @@ final class ProfileSettingNotificationView: UIView {
     private let newHangoutCaptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Hangout post"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.font = .roboto(size: 13.0)
         return label
     }()

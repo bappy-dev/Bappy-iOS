@@ -22,14 +22,14 @@ final class HangoutPlanSectionView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Medium)
         label.text = "Hangout Plan"
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     
     private let planTextView: UITextView = {
         let textView = UITextView()
         textView.font = .roboto(size: 15.0, family: .Light)
-        textView.textColor = UIColor(named: "bappy_brown")
+        textView.textColor = .bappyBrown
         textView.textAlignment = .justified
         textView.backgroundColor = .clear
         textView.isScrollEnabled = false
@@ -53,7 +53,7 @@ final class HangoutPlanSectionView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
+        backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 20.0
         
         planTextView.text = "Hey guys, this is LIly. I want to go on a picnic. This Sat urday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Any one wanna join?"

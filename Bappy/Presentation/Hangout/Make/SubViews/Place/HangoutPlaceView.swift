@@ -27,7 +27,7 @@ final class HangoutPlaceView: UIView {
         let label = UILabel()
         label.text = "Write the place\nto meet"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -37,12 +37,11 @@ final class HangoutPlaceView: UIView {
         let imageView = UIImageView(image: UIImage(named: "place"))
         let containerView = UIView()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the place",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!,
-                         .font: UIFont.roboto(size: 16.0)
-                        ])
+            attributes: [.foregroundColor: UIColor.bappyGray,
+                         .font: UIFont.roboto(size: 16.0)])
         containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 18.0)
         containerView.addSubview(imageView)
         textField.leftView = containerView

@@ -30,8 +30,8 @@ final class ProgressBarView: UIView {
     
     // MARK: Helpers
     private func configure() {
-        self.backgroundColor = UIColor(named: "bappy_lightgray")
-        yellowView.backgroundColor = UIColor(named: "bappy_yellow")
+        self.backgroundColor = .bappyLightgray
+        yellowView.backgroundColor = .bappyYellow
     }
     
     private func layout() {

@@ -30,13 +30,13 @@ final class BappyTimeView: UIView {
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
-        datePicker.tintColor = UIColor(named: "bappy_yellow")
+        datePicker.tintColor = .bappyYellow
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .time
         datePicker.locale = Locale(identifier: "en")
         datePicker.timeZone = TimeZone(identifier: TimeZone.current.identifier)
         datePicker.minuteInterval = 10
-        datePicker.setValue(UIColor(named: "bappy_brown"), forKey: "textColor")
+        datePicker.setValue(UIColor.bappyBrown, forKey: "textColor")
         datePicker.subviews[0].subviews[1].backgroundColor = .clear
         datePicker.addTarget(self, action: #selector(datePickerDidBeginEdting), for: .editingDidBegin)
         return datePicker

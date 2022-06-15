@@ -22,7 +22,7 @@ final class CountryCell: UITableViewCell {
     private let countryLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 15.0)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     

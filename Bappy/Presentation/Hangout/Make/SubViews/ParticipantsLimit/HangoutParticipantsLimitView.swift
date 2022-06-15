@@ -17,7 +17,7 @@ final class HangoutParticipantsLimitView: UIView {
         let label = UILabel()
         label.text = "How\nmany people?"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
@@ -26,7 +26,7 @@ final class HangoutParticipantsLimitView: UIView {
         let label = UILabel()
         label.text = "4"
         label.font = .roboto(size: 65.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         return label
     }()
     

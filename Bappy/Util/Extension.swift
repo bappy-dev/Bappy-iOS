@@ -85,3 +85,28 @@ extension String {
         return String(s)
     }
 }
+
+extension UIButton {
+    func setBappyTitle(title: String, font: UIFont = .roboto(size: 16.0, family: .Regular), color: UIColor = .bappyBrown, hasUnderline: Bool = false) {
+        var attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: color
+        ]
+        
+        if hasUnderline {
+            attributes.updateValue(NSUnderlineStyle.single.rawValue, forKey: .underlineStyle)
+            self.tintColor = color
+        }
+        
+        let attributedString = NSAttributedString(string: title, attributes: attributes)
+        self.setAttributedTitle(attributedString, for: .normal)
+    }
+}
+
+extension UIColor {
+    static var bappyYellow: UIColor { UIColor(named: "bappy_yellow") ?? .clear }
+    static var bappyBrown: UIColor { UIColor(named: "bappy_brown") ?? .clear }
+    static var bappyGray: UIColor { UIColor(named: "bappy_gray") ?? .clear }
+    static var bappyLightgray: UIColor { UIColor(named: "bappy_lightgray") ?? .clear }
+    static var bappyCoral: UIColor { UIColor(named: "bappy_coral") ?? .clear }
+}

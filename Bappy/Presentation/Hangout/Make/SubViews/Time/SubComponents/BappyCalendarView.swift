@@ -15,7 +15,7 @@ final class BappyCalendarView: UIView {
     
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
-        datePicker.tintColor = UIColor(named: "bappy_yellow")
+        datePicker.tintColor = .bappyYellow
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "en")
@@ -45,7 +45,7 @@ final class BappyCalendarView: UIView {
     
     private func layout() {
         let dividingView = UIView()
-        dividingView.backgroundColor = UIColor(named: "bappy_yellow")
+        dividingView.backgroundColor = .bappyYellow
         
         self.addSubview(dividingView)
         dividingView.snp.makeConstraints {
