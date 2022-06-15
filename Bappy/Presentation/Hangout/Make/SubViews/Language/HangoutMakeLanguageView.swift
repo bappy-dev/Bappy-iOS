@@ -1,5 +1,5 @@
 //
-//  HangoutLanguageView.swift
+//  HangoutMakeLanguageView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/31.
@@ -7,15 +7,20 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-protocol HangoutLanguageViewDelegate: AnyObject {
+protocol HangoutMakeLanguageViewDelegate: AnyObject {
     func showSelectLanguageView()
 }
 
-final class HangoutLanguageView: UIView {
+final class HangoutMakeLanguageView: UIView {
     
     // MARK: Properties
-    weak var delegate: HangoutLanguageViewDelegate?
+    private let viewModel: HangoutMakeLanguageViewModel
+    private let disposeBag = DisposeBag()
+    
+    weak var delegate: HangoutMakeLanguageViewDelegate?
     var language: String? {
         didSet {
             guard let language = language else { return }
@@ -56,8 +61,9 @@ final class HangoutLanguageView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakeLanguageViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()

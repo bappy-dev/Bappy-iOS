@@ -23,7 +23,6 @@ final class RegisterViewModel: ViewModelType {
     }
     
     struct Dependency {
-        var page: Int
         var numOfPage: Int
         var isButtonEnabled: Bool
         var nameDependency: RegisterNameViewModel.Dependency
@@ -99,7 +98,7 @@ final class RegisterViewModel: ViewModelType {
         )
         
         // Streams
-        let page$ = BehaviorSubject<Int>(value: dependency.page)
+        let page$ = BehaviorSubject<Int>(value: 0)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         
         let shouldKeyboardHide = Observable

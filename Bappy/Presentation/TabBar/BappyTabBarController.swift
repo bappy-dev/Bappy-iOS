@@ -119,7 +119,16 @@ final class BappyTabBarController: UITabBarController {
     @objc
     private func writeButtonHandler() {
         let dependency = HangoutMakeViewModel.Dependency(
-            numOfPage: 9
+            numOfPage: 9,
+            categoryDependency: .init(),
+            titleDependency: .init(),
+            timeDependency: .init(),
+            placeDependency: .init(),
+            pictureDependency: .init(),
+            planDependency: .init(),
+            languageDependency: .init(),
+            openchatDependency: .init(),
+            limitDependency: .init()
         )
         let viewModel = HangoutMakeViewModel(dependency: dependency)
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)

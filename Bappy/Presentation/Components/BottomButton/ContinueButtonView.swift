@@ -10,18 +10,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-protocol ContinueButtonViewDelegate: AnyObject {
-    func continueButtonTapped()
-}
-
 final class ContinueButtonView: UIView {
     
     // MARK: Properties
     private let viewModel: ContinueButtonViewModel
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: ContinueButtonViewDelegate?
- 
     
     private let continueButton: UIButton = {
         let button = UIButton()
@@ -34,7 +27,7 @@ final class ContinueButtonView: UIView {
     }()
     
     // MARK: Lifecycle
-    init(viewModel: ContinueButtonViewModel = ContinueButtonViewModel()) {
+    init(viewModel: ContinueButtonViewModel) {
         self.viewModel = viewModel
         super.init(frame: .zero)
         

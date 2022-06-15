@@ -1,5 +1,5 @@
 //
-//  HangoutOpenchatView.swift
+//  HangoutMakeOpenchatView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/31.
@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class HangoutOpenchatView: UIView {
+final class HangoutMakeOpenchatView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutMakeOpenchatViewModel
+    private let disposeBag = DisposeBag()
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
@@ -60,8 +65,9 @@ final class HangoutOpenchatView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakeOpenchatViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()

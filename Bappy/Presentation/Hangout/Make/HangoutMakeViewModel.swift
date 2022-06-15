@@ -12,10 +12,29 @@ import RxCocoa
 final class HangoutMakeViewModel: ViewModelType {
     
     struct SubViewModels {
+        let categoryViewModel: HangoutMakeCategoryViewModel
+        let titleViewModel: HangoutMakeTitleViewModel
+        let timeViewModel: HangoutMakeTimeViewModel
+        let placeViewModel: HangoutMakePlaceViewModel
+        let pictureViewModel: HangoutMakePictureViewModel
+        let planViewModel: HangoutMakePlanViewModel
+        let languageViewModel: HangoutMakeLanguageViewModel
+        let openchatViewModel: HangoutMakeOpenchatViewModel
+        let limitViewModel: HangoutMakeLimitViewModel
+        let continueButtonViewModel: ContinueButtonViewModel
     }
     
     struct Dependency {
         var numOfPage: Int
+        var categoryDependency: HangoutMakeCategoryViewModel.Dependency
+        var titleDependency: HangoutMakeTitleViewModel.Dependency
+        var timeDependency: HangoutMakeTimeViewModel.Dependency
+        var placeDependency: HangoutMakePlaceViewModel.Dependency
+        var pictureDependency: HangoutMakePictureViewModel.Dependency
+        var planDependency: HangoutMakePlanViewModel.Dependency
+        var languageDependency: HangoutMakeLanguageViewModel.Dependency
+        var openchatDependency: HangoutMakeOpenchatViewModel.Dependency
+        var limitDependency: HangoutMakeLimitViewModel.Dependency
     }
     
     struct Input {
@@ -23,14 +42,35 @@ final class HangoutMakeViewModel: ViewModelType {
         var numOfPage: AnyObserver<Int>
         var continueButtonTapped: AnyObserver<Void>
         var backButtonTapped: AnyObserver<Void>
+        var viewDidAppear: AnyObserver<Bool>
+        var keyboardWithButtonHeight: AnyObserver<CGFloat>
+        var categories: AnyObserver<[HangoutCategory: Bool]>
+        var title: AnyObserver<String>
+        var time: AnyObserver<String>
+//        var place: AnyObserver<Map>
+//        var picture: AnyObserver<UIImage>
+        var plan: AnyObserver<String>
+        var language: AnyObserver<String>
+        var openchat: AnyObserver<String>
+//        var limit: AnyObserver<Int>
+        var isCategoriesValid: AnyObserver<Bool>
+        var isTitleValid: AnyObserver<Bool>
+        var isTimeValid: AnyObserver<Bool>
+        var isPlaceValid: AnyObserver<Bool>
+        var isPictureValid: AnyObserver<Bool>
+        var isPlanValid: AnyObserver<Bool>
+        var isLanguageValid: AnyObserver<Bool>
+        var isOpenchatValid: AnyObserver<Bool>
+        var isLimitValid: AnyObserver<Bool>
     }
     
     struct Output {
-//        var shouldKeyboardHide: Signal<Void>
+        var shouldKeyboardHide: Signal<Void>
         var pageContentOffset: Driver<CGPoint>
         var progression: Driver<CGFloat>
+        var initProgression: Signal<CGFloat>
         var popView: Signal<Void>
-//        var isContinueButtonEnabled: Signal<Bool>
+        var isContinueButtonEnabled: Signal<Bool>
         var keyboardWithButtonHeight: Signal<CGFloat>
     }
     
@@ -41,29 +81,60 @@ final class HangoutMakeViewModel: ViewModelType {
     
     let subViewModels: SubViewModels
     
-    private let page$: BehaviorSubject<Int>
+    private let page$ = BehaviorSubject<Int>(value: 0)
     private let numOfPage$: BehaviorSubject<Int>
     private let continueButtonTapped$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
+    private let viewDidAppear$ = PublishSubject<Bool>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
+    private let categories$ = BehaviorSubject<[HangoutCategory: Bool]>(value: [:])
+    private let title$ = BehaviorSubject<String>(value: "")
+    private let time$ = BehaviorSubject<String>(value: "")
+//    private let place$: BehaviorSubject<Map>
+//    private let picture$: BehaviorSubject<UIImage>
+    private let plan$ = BehaviorSubject<String>(value: "")
+    private let language$ = BehaviorSubject<String>(value: "")
+    private let openchat$ = BehaviorSubject<String>(value: "")
+//    private let limit$: BehaviorSubject<Int>
+    private let isCategoriesValid$ = BehaviorSubject<Bool>(value: false)
+    private let isTitleValid$ = BehaviorSubject<Bool>(value: false)
+    private let isTimeValid$ = BehaviorSubject<Bool>(value: false)
+    private let isPlaceValid$ = BehaviorSubject<Bool>(value: false)
+    private let isPictureValid$ = BehaviorSubject<Bool>(value: false)
+    private let isPlanValid$ = BehaviorSubject<Bool>(value: false)
+    private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
+    private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
+    private let isLimitValid$ = BehaviorSubject<Bool>(value: false)
     
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
+            categoryViewModel: HangoutMakeCategoryViewModel(dependency: dependency.categoryDependency),
+            titleViewModel: HangoutMakeTitleViewModel(dependency: dependency.titleDependency),
+            timeViewModel: HangoutMakeTimeViewModel(dependency: dependency.timeDependency),
+            placeViewModel: HangoutMakePlaceViewModel(dependency: dependency.placeDependency),
+            pictureViewModel: HangoutMakePictureViewModel(dependency: dependency.pictureDependency),
+            planViewModel: HangoutMakePlanViewModel(dependency: dependency.planDependency),
+            languageViewModel: HangoutMakeLanguageViewModel(dependency: dependency.languageDependency),
+            openchatViewModel: HangoutMakeOpenchatViewModel(dependency: dependency.openchatDependency),
+            limitViewModel: HangoutMakeLimitViewModel(dependency: dependency.limitDependency),
+            continueButtonViewModel: ContinueButtonViewModel()
         )
         
         // Streams
-        let page$ = BehaviorSubject<Int>(value: 0)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         
-//        let shouldKeyboardHide = Observable
-//            .merge(continueButtonTapped$, backButtonTapped$, nationalityTextFieldTapped$)
-//            .asSignal(onErrorJustReturn: Void())
+        let shouldKeyboardHide = Observable
+            .merge(continueButtonTapped$, backButtonTapped$)
+            .asSignal(onErrorJustReturn: Void())
         let pageContentOffset = page$.map(getContentOffset)
             .asDriver(onErrorJustReturn: .zero)
         let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
                                                 resultSelector: getProgression)
             .asDriver(onErrorJustReturn: .zero)
+        let initProgression = viewDidAppear$
+            .withLatestFrom(progression)
+            .asSignal(onErrorJustReturn: 0)
         let backButtonTappedWithPage = backButtonTapped$
             .withLatestFrom(page$)
             .share()
@@ -75,11 +146,21 @@ final class HangoutMakeViewModel: ViewModelType {
         let continueButtonTappedWithPage = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
             .share()
-//        let isContinueButtonEnabled = Observable
-//            .combineLatest(page$, isNameValid$, isGenderValid$, isBirthValid$, isNationalityValid$)
-//            .map(shouldButtonEnabled)
-//            .distinctUntilChanged()
-//            .asSignal(onErrorJustReturn: false)
+        let isContinueButtonEnabled = Observable
+            .merge(
+                Observable.combineLatest(
+                    page$.filter { $0 >= 0 && $0 <= 4 },
+                    isCategoriesValid$, isTitleValid$, isTimeValid$, isPlaceValid$, isPictureValid$,
+                    resultSelector: shouldButtonEnabledWithFirst
+                ),
+                Observable.combineLatest(
+                    page$.filter { $0 >= 5 && $0 <= 8 },
+                    isCategoriesValid$, isPlanValid$, isLanguageValid$, isOpenchatValid$,
+                    resultSelector: shouldButtonEnabledWithSecond
+                )
+            )
+            .distinctUntilChanged()
+            .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         
@@ -88,21 +169,40 @@ final class HangoutMakeViewModel: ViewModelType {
             page: page$.asObserver(),
             numOfPage: numOfPage$.asObserver(),
             continueButtonTapped: continueButtonTapped$.asObserver(),
-            backButtonTapped: backButtonTapped$.asObserver()
-//            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver()
+            backButtonTapped: backButtonTapped$.asObserver(),
+            viewDidAppear: viewDidAppear$.asObserver(),
+            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver(),
+            categories: categories$.asObserver(),
+            title: title$.asObserver(),
+            time: time$.asObserver(),
+//            place: <#T##AnyObserver<Map>#>.asObserver(),
+//            picture: <#T##AnyObserver<UIImage>#>.asObserver(),
+            plan: plan$.asObserver(),
+            language: language$.asObserver(),
+            openchat: openchat$.asObserver(),
+//            limit: <#T##AnyObserver<Int>#>.asObserver(),
+            isCategoriesValid: isCategoriesValid$.asObserver(),
+            isTitleValid: isTitleValid$.asObserver(),
+            isTimeValid: isTimeValid$.asObserver(),
+            isPlaceValid: isPlaceValid$.asObserver(),
+            isPictureValid: isPictureValid$.asObserver(),
+            isPlanValid: isPlanValid$.asObserver(),
+            isLanguageValid: isLanguageValid$.asObserver(),
+            isOpenchatValid: isOpenchatValid$.asObserver(),
+            isLimitValid: isLimitValid$.asObserver()
         )
         
         self.output = Output(
-//            shouldKeyboardHide: shouldKeyboardHide,
+            shouldKeyboardHide: shouldKeyboardHide,
             pageContentOffset: pageContentOffset,
             progression: progression,
+            initProgression: initProgression,
             popView: popView,
-//            isContinueButtonEnabled: isContinueButtonEnabled,
+            isContinueButtonEnabled: isContinueButtonEnabled,
             keyboardWithButtonHeight: keyboardWithButtonHeight
         )
         
-        // Binding
-        self.page$ = page$
+        // Bindind
         self.numOfPage$ = numOfPage$
         
         continueButtonTappedWithPage
@@ -117,59 +217,19 @@ final class HangoutMakeViewModel: ViewModelType {
             .bind(to: page$)
             .disposed(by: disposeBag)
         
-        // NameView
-//        keyboardWithButtonHeight
-//            .emit(to: subViewModels.nameViewModel.input.keyboardWithButtonHeight)
-//            .disposed(by: disposeBag)
-        
-//        subViewModels.nameViewModel.output.modifiedName
-//            .emit(to: name$)
-//            .disposed(by: disposeBag)
-        
-//        subViewModels.nameViewModel.output.isValid
-//            .drive(isNameValid$)
-//            .disposed(by: disposeBag)
-        
-        // GenderView
-//        subViewModels.genderViewModel.output.gender
-//            .emit(to: gender$)
-//            .disposed(by: disposeBag)
-        
-//        subViewModels.genderViewModel.output.isValid
-//            .drive(isGenderValid$)
-//            .disposed(by: disposeBag)
-        
-        // BirthView
-//        subViewModels.birthViewModel.output.isValid
-//            .drive(isBirthValid$)
-//            .disposed(by: disposeBag)
-        
-        // NationalityView
-//        country
-//            .emit(to: subViewModels.nationalityViewModel.input.country)
-//            .disposed(by: disposeBag)
-        
-//        subViewModels.nationalityViewModel.output.textFieldTapped
-//            .emit(to: nationalityTextFieldTapped$)
-//            .disposed(by: disposeBag)
-        
-//        subViewModels.nationalityViewModel.output.isValid
-//            .drive(isNationalityValid$)
-//            .disposed(by: disposeBag)
+        // CategoryView
+        subViewModels.categoryViewModel.output.isValid
+            .drive(isCategoriesValid$)
+            .disposed(by: disposeBag)
         
         // ContinueButton
-//        output.isContinueButtonEnabled
-//            .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)
-//            .disposed(by: disposeBag)
+        output.isContinueButtonEnabled
+            .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)
+            .disposed(by: disposeBag)
         
-//        subViewModels.continueButtonViewModel.output.continueButtonTapped
-//            .emit(to: continueButtonTapped$)
-//            .disposed(by: disposeBag)
-        
-        // SelectNationalityView
-//        subViewModels.selectNationalityViewModel.output.country
-//            .emit(to: country$)
-//            .disposed(by: disposeBag)
+        subViewModels.continueButtonViewModel.output.continueButtonTapped
+            .emit(to: continueButtonTapped$)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -182,13 +242,21 @@ private func getProgression(currentPage: Int, numOfPage: Int) -> CGFloat {
     return CGFloat(currentPage + 1) / CGFloat(numOfPage)
 }
 
-private func shouldButtonEnabled(page: Int, isNameValid: Bool, isGenderValid: Bool, isBirthValid: Bool, isNationalityValid: Bool) -> Bool {
+private func shouldButtonEnabledWithFirst(page: Int, isCategoryValid: Bool, isTitleValid: Bool, isTimeValid: Bool, isPlaceValid: Bool, isPictureValid: Bool) -> Bool {
     switch page {
-    case 0: return isNameValid
-    case 1: return isGenderValid
-    case 2: return isBirthValid
-    case 3: return isNationalityValid
-    default: return false
-    }
+    case 0: return isCategoryValid
+    case 1: return isTitleValid
+    case 2: return isTimeValid
+    case 3: return isPlaceValid
+    case 4: return isPictureValid
+    default: return false}
 }
 
+private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLanguageValid: Bool, isOpenchatValid: Bool, isLimitValid: Bool) -> Bool {
+    switch page {
+    case 5: return isPlanValid
+    case 6: return isLanguageValid
+    case 7: return isOpenchatValid
+    case 8: return isLimitValid
+    default: return false}
+}

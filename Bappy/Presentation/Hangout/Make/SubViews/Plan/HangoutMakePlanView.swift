@@ -1,5 +1,5 @@
 //
-//  HangoutPlanView.swift
+//  HangoutMakePlanView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/31.
@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class HangoutPlanView: UIView {
+final class HangoutMakePlanView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutMakePlanViewModel
+    private let disposeBag = DisposeBag()
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
@@ -58,12 +63,12 @@ final class HangoutPlanView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakePlanViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
-        addTapGestureOnScrollView()
     }
     
     required init?(coder: NSCoder) {
@@ -152,7 +157,7 @@ final class HangoutPlanView: UIView {
     }
 }
 
-extension HangoutPlanView: UITextViewDelegate {
+extension HangoutMakePlanView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         print("DEBUG: didChange")
         ruleDescriptionLabel.isHidden = (textView.text.count >= 14)

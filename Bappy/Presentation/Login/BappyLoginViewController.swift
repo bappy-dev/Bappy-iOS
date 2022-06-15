@@ -207,7 +207,6 @@ final class BappyLoginViewController: UIViewController {
             }
         
         let dependency = RegisterViewModel.Dependency(
-            page: 0,
             numOfPage: 4,
             isButtonEnabled: false,
             nameDependency: .init(

@@ -1,5 +1,5 @@
 //
-//  HangoutParticipantsLimitView.swift
+//  HangoutMakeLimitView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/31.
@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class HangoutParticipantsLimitView: UIView {
+final class HangoutMakeLimitView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutMakeLimitViewModel
+    private let disposeBag = DisposeBag()
+    
     private var number: Int = 4
     
     private let limitCaptionLabel: UILabel = {
@@ -51,8 +56,9 @@ final class HangoutParticipantsLimitView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakeLimitViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()

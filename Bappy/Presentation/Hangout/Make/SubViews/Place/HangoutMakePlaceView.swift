@@ -1,5 +1,5 @@
 //
-//  HangoutPlaceView.swift
+//  HangoutMakePlaceView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/30.
@@ -7,15 +7,20 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-protocol HangoutPlaceViewDelegate: AnyObject {
+protocol HangoutMakePlaceViewDelegate: AnyObject {
     func showSearchPlaceView()
 }
 
-final class HangoutPlaceView: UIView {
+final class HangoutMakePlaceView: UIView {
     
     // MARK: Properties
-    weak var delegate: HangoutPlaceViewDelegate?
+    private let viewModel: HangoutMakePlaceViewModel
+    private let disposeBag = DisposeBag()
+    
+    weak var delegate: HangoutMakePlaceViewDelegate?
     var map: Map? {
         didSet {
             guard let place = map?.name, let address = map?.address else { return }
@@ -57,8 +62,9 @@ final class HangoutPlaceView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakePlaceViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()

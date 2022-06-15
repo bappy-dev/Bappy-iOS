@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 protocol HangoutMakeTitleViewDelegate: AnyObject {
     func isTitleValid(_ valid: Bool)
@@ -15,6 +17,9 @@ protocol HangoutMakeTitleViewDelegate: AnyObject {
 final class HangoutMakeTitleView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutMakeTitleViewModel
+    private let disposeBag = DisposeBag()
+    
     weak var delegate: HangoutMakeTitleViewDelegate?
     
     private let scrollView = UIScrollView()
@@ -56,8 +61,9 @@ final class HangoutMakeTitleView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakeTitleViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()

@@ -1,5 +1,5 @@
 //
-//  HangoutPictureView.swift
+//  HangoutMakePictureView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/31.
@@ -7,16 +7,21 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-protocol HangoutPictureViewDelegate: AnyObject {
+protocol HangoutMakePictureViewDelegate: AnyObject {
     func addPhoto()
 }
 
 private let reuseIdentifier = "HangoutPictureCell"
-final class HangoutPictureView: UIView {
+final class HangoutMakePictureView: UIView {
     
     // MARK: Properties
-    weak var delegate: HangoutPictureViewDelegate?
+    private let viewModel: HangoutMakePictureViewModel
+    private let disposeBag = DisposeBag()
+    
+    weak var delegate: HangoutMakePictureViewDelegate?
     
     var selectedImage: UIImage? {
         didSet {
@@ -54,8 +59,9 @@ final class HangoutPictureView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakePictureViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()

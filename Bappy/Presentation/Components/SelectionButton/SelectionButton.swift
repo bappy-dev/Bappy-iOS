@@ -33,6 +33,14 @@ final class SelectionButton: UIButton {
         self.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 1.0
+        // 임시
+        self.setBappyTitle(
+            title: title,
+            font: .roboto(size: 16.0, family: .Medium),
+            color: .bappyGray
+        )
+        self.backgroundColor = .bappyLightgray
+        self.clipsToBounds = true
     }
 }
 

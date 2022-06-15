@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import MapKit
+import RxSwift
+import RxCocoa
 
 protocol HangoutMakeTimeViewDelegate: AnyObject {
     func isTimeValid(_ valid: Bool)
@@ -16,6 +18,9 @@ protocol HangoutMakeTimeViewDelegate: AnyObject {
 final class HangoutMakeTimeView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutMakeTimeViewModel
+    private let disposeBag = DisposeBag()
+    
     weak var delegate: HangoutMakeTimeViewDelegate?
     
     private var shouldShowDateView: Bool = false {
@@ -106,9 +111,10 @@ final class HangoutMakeTimeView: UIView {
     private let dividingView = UIView()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
+    init(viewModel: HangoutMakeTimeViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        
         configure()
         layout()
     }
