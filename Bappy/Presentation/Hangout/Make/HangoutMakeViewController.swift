@@ -64,7 +64,6 @@ final class HangoutMakeViewController: UIViewController {
         configure()
         layout()
         bind()
-        addKeyboardObserver()
         addTapGestureOnScrollView()
     }
 
@@ -84,11 +83,8 @@ final class HangoutMakeViewController: UIViewController {
         view.endEditing(true)
     }
 
-    // MARK: Actions
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
+    // MARK: Helpers
+    private func updateButtonPostion(keyboardHeight: CGFloat) {
         let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
         UIView.animate(withDuration: 0.4) {
@@ -97,22 +93,11 @@ final class HangoutMakeViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
-        
-        let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
-        titleView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
-        planView.updateTextViewPosition(bottomButtonHeight: bottomButtonHeight)
-        openchatView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
     }
-
-    // MARK: Helpers
+    
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
-    }
-
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     private func configure() {
@@ -121,7 +106,6 @@ final class HangoutMakeViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        titleView.delegate = self
         timeView.delegate = self
         placeView.delegate = self
         pictureView.delegate = self
@@ -258,13 +242,20 @@ extension HangoutMakeViewController {
                 self?.dismiss(animated: true)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - HangoutMakeTitleViewDelegate
-extension HangoutMakeViewController: HangoutMakeTitleViewDelegate {
-    func isTitleValid(_ valid: Bool) {
-//        continueButtonView.isEnabled = valid
+        
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] height in
+                self?.updateButtonPostion(keyboardHeight: height)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .map { [weak self] height in
+                return height + (self?.continueButtonView.frame.height ?? 0)
+            }
+            .drive(viewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
     }
 }
 

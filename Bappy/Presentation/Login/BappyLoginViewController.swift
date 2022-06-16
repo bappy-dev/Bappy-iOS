@@ -210,7 +210,6 @@ final class BappyLoginViewController: UIViewController {
             numOfPage: 4,
             isButtonEnabled: false,
             nameDependency: .init(
-                name: "",
                 minimumLength: 3,
                 maximumLength: 30),
             birthDependency: .init(

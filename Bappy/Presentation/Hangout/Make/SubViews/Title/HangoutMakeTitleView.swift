@@ -10,17 +10,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-protocol HangoutMakeTitleViewDelegate: AnyObject {
-    func isTitleValid(_ valid: Bool)
-}
-
 final class HangoutMakeTitleView: UIView {
     
     // MARK: Properties
     private let viewModel: HangoutMakeTitleViewModel
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: HangoutMakeTitleViewDelegate?
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -34,15 +28,13 @@ final class HangoutMakeTitleView: UIView {
         return label
     }()
     
-    private lazy var titleTextField: UITextField = {
+    private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the hangout title",
             attributes: [.foregroundColor: UIColor.bappyGray])
-        textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
-        textField.delegate = self
         return textField
     }()
     
@@ -67,31 +59,21 @@ final class HangoutMakeTitleView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Methods
-    func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
-        guard titleTextField.isFirstResponder else { return }
+    // MARK: Helpers
+    private func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
         let labelPosition = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
         let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
         let offset = CGPoint(x: 0, y: y)
         scrollView.setContentOffset(offset, animated: true)
     }
     
-    // MARK: Actions
-    @objc
-    private func textFieldEditingHandler(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        let isValid = (text.count >= 10)
-        ruleDescriptionLabel.isHidden = isValid
-        delegate?.isTitleValid(isValid)
-    }
-    
-    // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
         ruleDescriptionLabel.text = "Enter 10-20 characters long"
@@ -139,11 +121,29 @@ final class HangoutMakeTitleView: UIView {
     }
 }
 
-// MARK: - UITextFieldDelegate
-extension HangoutMakeTitleView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let maxLength: Int = 20
-        guard let text = textField.text, text.count + string.count <= maxLength else { return false }
-        return true
+// MARK: - Bind
+extension HangoutMakeTitleView {
+    private func bind() {
+        titleTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        titleTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.modifiedText
+            .emit(to: titleTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideRule
+            .emit(to: ruleDescriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.keyboardWithButtonHeight
+            .emit(onNext: { [weak self] height in
+                self?.updateTextFieldPosition(bottomButtonHeight: height)
+            })
+            .disposed(by: disposeBag)
     }
 }

@@ -11,15 +11,12 @@ import RxCocoa
 
 final class RegisterNameViewModel: ViewModelType {
     struct Dependency {
-        var name: String
         var minimumLength: Int
         var maximumLength: Int
     }
     
     struct Input {
         var name: AnyObserver<String>
-        var minimumLength: AnyObserver<Int>
-        var maximumLength: AnyObserver<Int>
         var editingDidBegin: AnyObserver<Void>
         var keyboardWithButtonHeight: AnyObserver<CGFloat>
     }
@@ -36,17 +33,16 @@ final class RegisterNameViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let name$: BehaviorSubject<String>
+    private let name$ = BehaviorSubject<String>(value: "")
     private let minimumLength$: BehaviorSubject<Int>
     private let maximumLength$: BehaviorSubject<Int>
     private let editingDidBegin$ = PublishSubject<Void>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     
-    init(dependency: Dependency = Dependency(name: "", minimumLength: 0, maximumLength: 0)) {
+    init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
-        let name$ = BehaviorSubject<String>(value: dependency.name)
         let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
@@ -59,8 +55,7 @@ final class RegisterNameViewModel: ViewModelType {
             .withLatestFrom(maximumLength$, resultSelector: removeExcessString)
             .asSignal(onErrorJustReturn: "")
         let shouldHideRule = Observable
-            .combineLatest(editingDidBegin$, isNameValid)
-            .map { $1 }
+            .combineLatest(editingDidBegin$, isNameValid) { $1 }
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
@@ -69,8 +64,6 @@ final class RegisterNameViewModel: ViewModelType {
         // Input & Output
         self.input = Input(
             name: name$.asObserver(),
-            minimumLength: minimumLength$.asObserver(),
-            maximumLength: maximumLength$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
             keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver()
         )
@@ -82,7 +75,6 @@ final class RegisterNameViewModel: ViewModelType {
         )
         
         // Binding
-        self.name$ = name$
         self.minimumLength$ = minimumLength$
         self.maximumLength$ = maximumLength$
     }

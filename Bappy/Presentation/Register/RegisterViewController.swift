@@ -65,6 +65,17 @@ final class RegisterViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func updateButtonPostion(keyboardHeight: CGFloat) {
+        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
+
+        UIView.animate(withDuration: 0.4) {
+            self.continueButtonView.snp.updateConstraints {
+                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
@@ -196,23 +207,14 @@ extension RegisterViewController {
         
         RxKeyboard.instance.visibleHeight
             .skip(1)
-            .drive(onNext: { [weak self] keyboardHeight in
-                guard let self = self else { return }
-                let bottomPadding = self.view.safeAreaInsets.bottom
-                let defaultOffset = (keyboardHeight != 0) ? bottomPadding : bottomPadding * 2.0 / 3.0
-
-                UIView.animate(withDuration: 0.4) {
-                    self.continueButtonView.snp.updateConstraints {
-                        $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(defaultOffset - keyboardHeight)
-                    }
-                    self.view.layoutIfNeeded()
-                }
+            .drive(onNext: { [weak self] height in
+                self?.updateButtonPostion(keyboardHeight: height)
             })
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
-            .map { [weak self] keyboardHeight in
-                return keyboardHeight + (self?.continueButtonView.frame.height ?? 0)
+            .map { [weak self] height in
+                return height + (self?.continueButtonView.frame.height ?? 0)
             }
             .drive(viewModel.input.keyboardWithButtonHeight)
             .disposed(by: disposeBag)

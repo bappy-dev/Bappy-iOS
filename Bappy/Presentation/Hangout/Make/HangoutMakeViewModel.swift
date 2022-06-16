@@ -47,12 +47,12 @@ final class HangoutMakeViewModel: ViewModelType {
         var categories: AnyObserver<[HangoutCategory: Bool]>
         var title: AnyObserver<String>
         var time: AnyObserver<String>
-//        var place: AnyObserver<Map>
-//        var picture: AnyObserver<UIImage>
+        var place: AnyObserver<Map?>
+        var picture: AnyObserver<UIImage?>
         var plan: AnyObserver<String>
         var language: AnyObserver<String>
         var openchat: AnyObserver<String>
-//        var limit: AnyObserver<Int>
+        var limit: AnyObserver<Int?>
         var isCategoriesValid: AnyObserver<Bool>
         var isTitleValid: AnyObserver<Bool>
         var isTimeValid: AnyObserver<Bool>
@@ -90,12 +90,12 @@ final class HangoutMakeViewModel: ViewModelType {
     private let categories$ = BehaviorSubject<[HangoutCategory: Bool]>(value: [:])
     private let title$ = BehaviorSubject<String>(value: "")
     private let time$ = BehaviorSubject<String>(value: "")
-//    private let place$: BehaviorSubject<Map>
-//    private let picture$: BehaviorSubject<UIImage>
+    private let place$ = BehaviorSubject<Map?>(value: nil)
+    private let picture$ = BehaviorSubject<UIImage?>(value: nil)
     private let plan$ = BehaviorSubject<String>(value: "")
     private let language$ = BehaviorSubject<String>(value: "")
     private let openchat$ = BehaviorSubject<String>(value: "")
-//    private let limit$: BehaviorSubject<Int>
+    private let limit$ = BehaviorSubject<Int?>(value: nil)
     private let isCategoriesValid$ = BehaviorSubject<Bool>(value: false)
     private let isTitleValid$ = BehaviorSubject<Bool>(value: false)
     private let isTimeValid$ = BehaviorSubject<Bool>(value: false)
@@ -175,12 +175,12 @@ final class HangoutMakeViewModel: ViewModelType {
             categories: categories$.asObserver(),
             title: title$.asObserver(),
             time: time$.asObserver(),
-//            place: <#T##AnyObserver<Map>#>.asObserver(),
-//            picture: <#T##AnyObserver<UIImage>#>.asObserver(),
+            place: place$.asObserver(),
+            picture: picture$.asObserver(),
             plan: plan$.asObserver(),
             language: language$.asObserver(),
             openchat: openchat$.asObserver(),
-//            limit: <#T##AnyObserver<Int>#>.asObserver(),
+            limit: limit$.asObserver(),
             isCategoriesValid: isCategoriesValid$.asObserver(),
             isTitleValid: isTitleValid$.asObserver(),
             isTimeValid: isTimeValid$.asObserver(),
@@ -220,6 +220,15 @@ final class HangoutMakeViewModel: ViewModelType {
         // CategoryView
         subViewModels.categoryViewModel.output.isValid
             .drive(isCategoriesValid$)
+            .disposed(by: disposeBag)
+        
+        // TitleView
+        keyboardWithButtonHeight
+            .emit(to: subViewModels.titleViewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
+        
+        subViewModels.titleViewModel.output.isValid
+            .drive(isTitleValid$)
             .disposed(by: disposeBag)
         
         // ContinueButton

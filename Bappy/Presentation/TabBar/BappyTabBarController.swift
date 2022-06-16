@@ -121,7 +121,9 @@ final class BappyTabBarController: UITabBarController {
         let dependency = HangoutMakeViewModel.Dependency(
             numOfPage: 9,
             categoryDependency: .init(),
-            titleDependency: .init(),
+            titleDependency: .init(
+                minimumLength: 10,
+                maximumLength: 20),
             timeDependency: .init(),
             placeDependency: .init(),
             pictureDependency: .init(),

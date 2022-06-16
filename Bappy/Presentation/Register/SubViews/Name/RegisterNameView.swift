@@ -132,7 +132,6 @@ extension RegisterNameView {
             .disposed(by: disposeBag)
         
         nameTextField.rx.controlEvent(.editingDidBegin)
-            .map { _ in }
             .bind(to: viewModel.input.editingDidBegin)
             .disposed(by: disposeBag)
         
