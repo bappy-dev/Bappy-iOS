@@ -140,3 +140,11 @@ extension RxSwift.Reactive where Base: UIViewController {
             .map { $0.first as? Bool ?? false }
     }
 }
+
+extension Reactive where Base: UIDatePicker {
+    var resignFirstResponder: Binder<Void> {
+        return Binder(self.base) { datePicker, _ in
+            _ = datePicker.resignFirstResponder()
+        }
+    }
+}

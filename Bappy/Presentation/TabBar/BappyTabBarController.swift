@@ -124,7 +124,11 @@ final class BappyTabBarController: UITabBarController {
             titleDependency: .init(
                 minimumLength: 10,
                 maximumLength: 20),
-            timeDependency: .init(),
+            timeDependency: .init(
+                minimumDate: (Date() + 60 * 60).roundUpUnitDigitOfMinutes(),
+                dateFormat: "M.d (E)",
+                timeFormat: "a h:mm"
+            ),
             placeDependency: .init(),
             pictureDependency: .init(),
             planDependency: .init(),

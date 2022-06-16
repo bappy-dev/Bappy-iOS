@@ -46,7 +46,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var keyboardWithButtonHeight: AnyObserver<CGFloat>
         var categories: AnyObserver<[HangoutCategory: Bool]>
         var title: AnyObserver<String>
-        var time: AnyObserver<String>
+        var date: AnyObserver<Date?>
         var place: AnyObserver<Map?>
         var picture: AnyObserver<UIImage?>
         var plan: AnyObserver<String>
@@ -78,7 +78,6 @@ final class HangoutMakeViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-    
     let subViewModels: SubViewModels
     
     private let page$ = BehaviorSubject<Int>(value: 0)
@@ -89,7 +88,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     private let categories$ = BehaviorSubject<[HangoutCategory: Bool]>(value: [:])
     private let title$ = BehaviorSubject<String>(value: "")
-    private let time$ = BehaviorSubject<String>(value: "")
+    private let date$ = BehaviorSubject<Date?>(value: nil)
     private let place$ = BehaviorSubject<Map?>(value: nil)
     private let picture$ = BehaviorSubject<UIImage?>(value: nil)
     private let plan$ = BehaviorSubject<String>(value: "")
@@ -174,7 +173,7 @@ final class HangoutMakeViewModel: ViewModelType {
             keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver(),
             categories: categories$.asObserver(),
             title: title$.asObserver(),
-            time: time$.asObserver(),
+            date: date$.asObserver(),
             place: place$.asObserver(),
             picture: picture$.asObserver(),
             plan: plan$.asObserver(),
@@ -217,18 +216,27 @@ final class HangoutMakeViewModel: ViewModelType {
             .bind(to: page$)
             .disposed(by: disposeBag)
         
-        // CategoryView
+        // Child(Category)
         subViewModels.categoryViewModel.output.isValid
             .drive(isCategoriesValid$)
             .disposed(by: disposeBag)
         
-        // TitleView
+        // Child(Title)
         keyboardWithButtonHeight
             .emit(to: subViewModels.titleViewModel.input.keyboardWithButtonHeight)
             .disposed(by: disposeBag)
         
         subViewModels.titleViewModel.output.isValid
             .drive(isTitleValid$)
+            .disposed(by: disposeBag)
+        
+        // Child(Time)
+        subViewModels.timeViewModel.output.date
+            .drive(date$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.timeViewModel.output.isValid
+            .emit(to: isTimeValid$)
             .disposed(by: disposeBag)
         
         // ContinueButton

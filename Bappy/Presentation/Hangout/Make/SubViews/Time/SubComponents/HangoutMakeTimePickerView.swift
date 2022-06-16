@@ -1,5 +1,5 @@
 //
-//  BappyTimeView.swift
+//  HangoutMakeTimePickerView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/30.
@@ -7,28 +7,16 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-final class BappyTimeView: UIView {
+final class HangoutMakeTimePickerView: UIView {
     
     //MARK: Properties
-    var date: Date? {
-        didSet {
-            guard let date = date else { return }
-            datePicker.minimumDate = date.isSameDate(with: Date()) ? (Date() + 60 * 60).roundUpUnitDigitOfMinutes() : nil
-        }
-    }
+    private let viewModel: HangoutMakeTimePickerViewModel
+    private let disposBag = DisposeBag()
     
-    var selectedTime: String {
-        var time = datePicker.date.toString(dateFormat: "a h:mm")
-        let startIndex = time.startIndex
-        time.insert(".", at: time.index(startIndex, offsetBy: 1))
-        time.insert(".", at: time.index(startIndex, offsetBy: 3))
-        _ = time.removeLast()
-        time.append("0")
-        return time
-    }
-    
-    private lazy var datePicker: UIDatePicker = {
+    private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.tintColor = .bappyYellow
         datePicker.preferredDatePickerStyle = .wheels
@@ -38,26 +26,21 @@ final class BappyTimeView: UIView {
         datePicker.minuteInterval = 10
         datePicker.setValue(UIColor.bappyBrown, forKey: "textColor")
         datePicker.subviews[0].subviews[1].backgroundColor = .clear
-        datePicker.addTarget(self, action: #selector(datePickerDidBeginEdting), for: .editingDidBegin)
         return datePicker
     }()
    
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        layout()
+    init(viewModel: HangoutMakeTimePickerViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        
         configure()
+        layout()
+        bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func datePickerDidBeginEdting(_ datePicker: UIDatePicker) {
-        datePicker.resignFirstResponder()
     }
 
     // MARK: Helpers
@@ -85,5 +68,35 @@ final class BappyTimeView: UIView {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(datePicker.snp.width).multipliedBy(216.0/292.0)
         }
+    }
+}
+
+// MARK: Bind
+extension HangoutMakeTimePickerView {
+    private func bind() {
+        datePicker.rx.date
+//            .skip(1)
+            .bind(to: viewModel.input.date)
+            .disposed(by: disposBag)
+        
+        datePicker.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposBag)
+        
+        viewModel.output.minimumDate
+            .drive(datePicker.rx.minimumDate)
+            .disposed(by: disposBag)
+        
+        viewModel.output.initDate
+            .drive(datePicker.rx.date)
+            .disposed(by: disposBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: datePicker.rx.resignFirstResponder)
+            .disposed(by: disposBag)
+        
+        viewModel.output.calendarDate
+            .emit(to: datePicker.rx.date)
+            .disposed(by: disposBag)
     }
 }

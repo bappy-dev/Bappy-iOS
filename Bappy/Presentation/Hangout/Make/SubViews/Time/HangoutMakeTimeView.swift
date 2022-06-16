@@ -7,39 +7,14 @@
 
 import UIKit
 import SnapKit
-import MapKit
 import RxSwift
 import RxCocoa
-
-protocol HangoutMakeTimeViewDelegate: AnyObject {
-    func isTimeValid(_ valid: Bool)
-}
 
 final class HangoutMakeTimeView: UIView {
     
     // MARK: Properties
     private let viewModel: HangoutMakeTimeViewModel
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: HangoutMakeTimeViewDelegate?
-    
-    private var shouldShowDateView: Bool = false {
-        didSet {
-            dateDoneButton.isHidden = !shouldShowDateView
-            if shouldShowDateView { showDateView() }
-            else { hideDateView() }
-        }
-    }
-    private var shouldShowTimeView: Bool = false {
-        didSet {
-            timeDoneButton.isHidden = !shouldShowTimeView
-            if shouldShowTimeView { showTimeView() }
-            else { hideTimeView() }
-        }
-    }
-    
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
     
     private let timeCaptionLabel: UILabel = {
         let label = UILabel()
@@ -49,126 +24,56 @@ final class HangoutMakeTimeView: UIView {
         label.numberOfLines = 2
         return label
     }()
-
-    private let dateImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "make_date_off")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
     
-    private lazy var dateTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = .roboto(size: 16.0)
-        textField.textColor = .bappyBrown
-        textField.addTarget(self, action: #selector(dateTextFieldDidBeginEditing), for: .editingDidBegin)
-        return textField
-    }()
-    
-    private lazy var dateDoneButton: UIButton = {
+    private let dateDoneButton: UIButton = {
         let button = UIButton()
         button.setBappyTitle(
             title: "Done",
             font: .roboto(size: 14.0, family: .Medium),
-            color: .bappyYellow
-        )
-        button.addTarget(self, action: #selector(dateDoneButtonHandler), for: .touchUpInside)
+            color: .bappyYellow)
         button.isHidden = true
         button.backgroundColor = .white
         return button
     }()
     
-    private let timeImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "make_time_off")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private lazy var timeTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = .roboto(size: 16.0)
-        textField.textColor = .bappyBrown
-        textField.addTarget(self, action: #selector(timeTextFieldDidBeginEditing), for: .editingDidBegin)
-        return textField
-    }()
-    
-    private lazy var timeDoneButton: UIButton = {
+    private let timeDoneButton: UIButton = {
         let button = UIButton()
         button.setBappyTitle(
             title: "Done",
             font: .roboto(size: 14.0, family: .Medium),
-            color: .bappyYellow
-        )
-        button.addTarget(self, action: #selector(timeDoneButtonHandler), for: .touchUpInside)
+            color: .bappyYellow)
         button.isHidden = true
         button.backgroundColor = .white
         return button
     }()
     
-    private let calendarView = BappyCalendarView()
-    private let timeView = BappyTimeView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    private let dateImageView = UIImageView()
+    private let dateTextField = UITextField()
+    private let timeImageView = UIImageView()
+    private let timeTextField = UITextField()
+    private let calendarView: HangoutMakeCalendarPickerView
+    private let timeView: HangoutMakeTimePickerView
     private let dividingView = UIView()
     
     // MARK: Lifecycle
     init(viewModel: HangoutMakeTimeViewModel) {
+        let calendarViewModel = viewModel.subViewModels.calendarPickerViewModel
+        let timeViewModel = viewModel.subViewModels.timePickerViewModel
+        
         self.viewModel = viewModel
+        self.calendarView = HangoutMakeCalendarPickerView(viewModel: calendarViewModel)
+        self.timeView = HangoutMakeTimePickerView(viewModel: timeViewModel)
         super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func dateTextFieldDidBeginEditing(_ textField: UITextField) {
-        textField.resignFirstResponder()
-        guard !shouldShowDateView else { return }
-        shouldShowDateView = true
-        if shouldShowTimeView {
-            shouldShowTimeView = false
-        }
-        timeTextField.text = ""
-        timeImageView.image = UIImage(named: "make_time_off")
-        delegate?.isTimeValid(false)
-    }
-    
-    @objc
-    private func timeTextFieldDidBeginEditing(_ textField: UITextField) {
-        textField.resignFirstResponder()
-        guard !shouldShowTimeView, let text = dateTextField.text, !text.isEmpty else { return }
-        shouldShowTimeView = true
-        if shouldShowDateView {
-            shouldShowDateView = false
-        }
-    }
-    
-    @objc
-    private func dateDoneButtonHandler() {
-        guard shouldShowDateView else { return }
-        shouldShowDateView = false
-        shouldShowTimeView = true
-        if let text = dateTextField.text, text.isEmpty {
-            dateImageView.image = UIImage(named: "make_date_on")
-        }
-
-        dateTextField.text = calendarView.date.toString(dateFormat: "M.d (E)")
-        timeView.date = calendarView.date
-    }
-    
-    @objc
-    private func timeDoneButtonHandler() {
-        guard shouldShowTimeView else { return }
-        shouldShowTimeView = false
-        if let text = timeTextField.text, text.isEmpty {
-            timeImageView.image = UIImage(named: "make_time_on")
-            delegate?.isTimeValid(true)
-        }
-        timeTextField.text = timeView.selectedTime
     }
 
     // MARK: Helpers
@@ -241,29 +146,36 @@ final class HangoutMakeTimeView: UIView {
         }
     }
     
+    private func initCalendarDate(_ date: String) {
+        dateTextField.text = date
+        dateTextField.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
+        dateImageView.image = UIImage(named: "make_date_off")
+    }
+    
+    private func initTimeDate(_ date: String) {
+        timeTextField.text = date
+        timeTextField.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
+        timeImageView.image = UIImage(named: "make_time_off")
+    }
+    
+    private func setValidCalendarState() {
+        dateTextField.textColor = .bappyBrown
+        dateImageView.image = UIImage(named: "make_date_on")
+    }
+    
+    private func setValidTimeState() {
+        timeTextField.textColor = .bappyBrown
+        timeImageView.image = UIImage(named: "make_time_on")
+    }
+    
     private func configure() {
         self.backgroundColor = .white
         dividingView.backgroundColor = .bappyYellow
         scrollView.isScrollEnabled = false
-        
-        let date = Date() + 60 * 70
-        let datePlaceholder = date.toString(dateFormat: "M.d (E)")
-        var timePlaceholder = date.toString(dateFormat: "a h:mm")
-        let startIndex = timePlaceholder.startIndex
-        timePlaceholder.insert(".", at: timePlaceholder.index(startIndex, offsetBy: 1))
-        timePlaceholder.insert(".", at: timePlaceholder.index(startIndex, offsetBy: 3))
-        _ = timePlaceholder.removeLast()
-        timePlaceholder.append("0")
-        dateTextField.attributedPlaceholder = NSAttributedString(
-            string: datePlaceholder,
-            attributes: [
-                .foregroundColor: UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0),
-                .font: UIFont.roboto(size: 16.0)])
-        timeTextField.attributedPlaceholder = NSAttributedString(
-            string: timePlaceholder,
-            attributes: [
-                .foregroundColor: UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0),
-                .font: UIFont.roboto(size: 16.0)])
+        dateTextField.font = .roboto(size: 16.0)
+        timeTextField.font = .roboto(size: 16.0)
+        dateImageView.contentMode = .scaleAspectFit
+        timeImageView.contentMode = .scaleAspectFit
     }
     
     private func layout() {
@@ -360,5 +272,78 @@ final class HangoutMakeTimeView: UIView {
             $0.leading.trailing.equalTo(dividingView)
             $0.height.equalTo(0)
         }
+    }
+}
+
+// MARK: - Bind
+extension HangoutMakeTimeView {
+    private func bind() {
+        dateTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.dateEditingDidBegin)
+            .disposed(by: disposeBag)
+        
+        timeTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.timeEditingDidBegin)
+            .disposed(by: disposeBag)
+        
+        dateDoneButton.rx.tap
+            .bind(to: viewModel.input.dateDoneButtonTapped)
+            .disposed(by: disposeBag)
+        
+        timeDoneButton.rx.tap
+            .bind(to: viewModel.input.timeDoneButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dateDoneButtonTapped
+            .emit(onNext: { [weak self] _ in self?.setValidCalendarState() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.timeDoneButtonTapped
+            .emit(onNext: { [weak self] _ in self?.setValidTimeState() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboardFromDate
+            .emit(to: dateTextField.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboardFormTime
+            .emit(to: timeTextField.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldShowDateView
+            .distinctUntilChanged()
+            .drive(onNext: { [weak self] shouldShow in
+                self?.dateDoneButton.isHidden = !shouldShow
+                if shouldShow { self?.showDateView() }
+                else { self?.hideDateView() }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldShowTimeView
+            .distinctUntilChanged()
+            .drive(onNext: { [weak self] shouldShow in
+                self?.timeDoneButton.isHidden = !shouldShow
+                if shouldShow { self?.showTimeView() }
+                else { self?.hideTimeView() }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.initCalendarDate
+            .drive(onNext: { [weak self] date in
+                self?.initCalendarDate(date) })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.initTimeDate
+            .drive(onNext: { [weak self] date in
+                self?.initTimeDate(date) })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.calendarText
+            .drive(dateTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.timeText
+            .drive(timeTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }

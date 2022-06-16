@@ -106,7 +106,6 @@ final class HangoutMakeViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        timeView.delegate = self
         placeView.delegate = self
         pictureView.delegate = self
         languageView.delegate = self
@@ -258,14 +257,6 @@ extension HangoutMakeViewController {
             .disposed(by: disposeBag)
     }
 }
-
-// MARK: - HangoutMakeTimeViewDelegate
-extension HangoutMakeViewController: HangoutMakeTimeViewDelegate {
-    func isTimeValid(_ valid: Bool) {
-//        continueButtonView.isEnabled = valid
-    }
-}
-
 
 // MARK: - HangoutPlaceViewDelegate
 extension HangoutMakeViewController: HangoutMakePlaceViewDelegate {

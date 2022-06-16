@@ -66,7 +66,6 @@ final class RegisterViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-    
     let subViewModels: SubViewModels
     
     private let page$: BehaviorSubject<Int>
