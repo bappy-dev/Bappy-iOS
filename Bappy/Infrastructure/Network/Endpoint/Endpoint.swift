@@ -9,7 +9,7 @@ import Foundation
 
 protocol RequestResponsable: Requestable, Responsable {}
 
-class Endpoint<R>: RequestResponsable {
+final class Endpoint<R>: RequestResponsable {
     typealias Response = R
     
     var baseURL: String

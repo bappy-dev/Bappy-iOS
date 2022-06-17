@@ -232,6 +232,7 @@ final class HangoutMakeViewModel: ViewModelType {
         
         // Child(Time)
         subViewModels.timeViewModel.output.date
+            .distinctUntilChanged()
             .drive(date$)
             .disposed(by: disposeBag)
         

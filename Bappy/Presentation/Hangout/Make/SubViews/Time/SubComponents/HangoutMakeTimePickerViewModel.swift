@@ -20,7 +20,7 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
         var editingDidBegin: AnyObserver<Void> // <-> View
         var calendarDate: AnyObserver<Date?> // <-> Parent
         var doneButtonTapped: AnyObserver<Void> // <-> Parent
-        var initialized: AnyObserver<Void> // <-> Parent
+        var initialized: AnyObserver<Date> // <-> Parent
     }
     
     struct Output {
@@ -41,7 +41,7 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
     private let editingDidBegin$ = PublishSubject<Void>()
     private let calendarDate$: BehaviorSubject<Date?>
     private let doneButtonTapped$ = PublishSubject<Void>()
-    private let initialized$ = PublishSubject<Void>()
+    private let initialized$: BehaviorSubject<Date>
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -50,11 +50,11 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
         let minimumDate$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         let date$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         let calendarDate$ = BehaviorSubject<Date?>(value: nil)
+        let initialized$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         
         let minimumDate = minimumDate$
             .asDriver(onErrorJustReturn: dependency.minimumDate)
         let initDate = initialized$
-            .withLatestFrom(minimumDate$)
             .asDriver(onErrorJustReturn: dependency.minimumDate)
         let dismissKeyboard = editingDidBegin$
             .asSignal(onErrorJustReturn: Void())
@@ -89,5 +89,14 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
         self.minimumDate$ = minimumDate$
         self.date$ = date$
         self.calendarDate$ = calendarDate$
+        self.initialized$ = initialized$
+        
+        calendarDate
+            .emit(to: date$)
+            .disposed(by: disposeBag)
+        
+        initDate
+            .drive(date$)
+            .disposed(by: disposeBag)
     }
 }

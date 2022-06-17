@@ -75,7 +75,6 @@ final class HangoutMakeTimePickerView: UIView {
 extension HangoutMakeTimePickerView {
     private func bind() {
         datePicker.rx.date
-//            .skip(1)
             .bind(to: viewModel.input.date)
             .disposed(by: disposBag)
         

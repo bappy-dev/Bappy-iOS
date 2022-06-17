@@ -20,7 +20,6 @@ struct MapsResponseDTO: Decodable {
 
 extension MapsResponseDTO {
     struct MapDTO: Decodable {
-        
         let id: String
         let name: String
         let iconURL: String
@@ -35,9 +34,7 @@ extension MapsResponseDTO {
             case geometry
         }
     }
-}
-
-extension MapsResponseDTO {
+    
     struct GeometryDTO: Decodable {
         let location: LocationDTO
         
@@ -45,9 +42,7 @@ extension MapsResponseDTO {
             case location
         }
     }
-}
-
-extension MapsResponseDTO {
+    
     struct LocationDTO: Decodable {
         let latitude: CGFloat
         let longitude: CGFloat

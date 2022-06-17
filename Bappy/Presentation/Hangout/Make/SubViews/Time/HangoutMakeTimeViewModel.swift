@@ -192,7 +192,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         dateEditingDidBegin$.map { _ in true }
-            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(100), scheduler: MainScheduler.instance) // TimePicker를 먼저 Hide하도록 지연
             .bind(to: shouldShowDateView$)
             .disposed(by: disposeBag)
         
@@ -201,7 +201,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         dateDoneButtonTapped$.map { _ in true }
-            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(100), scheduler: MainScheduler.instance) // CalendarPicker를 먼저 Hide하도록 지연
             .bind(to: shouldShowTimeView$)
             .disposed(by: disposeBag)
         
@@ -242,6 +242,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
         
         initTimeDate
             .map { _ in }
+            .withLatestFrom(calendarDate) { $1 ?? dependency.minimumDate}
             .drive(subViewModels.timePickerViewModel.input.initialized)
             .disposed(by: disposeBag)
         

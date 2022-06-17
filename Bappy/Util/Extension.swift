@@ -117,7 +117,7 @@ extension UIColor {
     static var bappyCoral: UIColor { UIColor(named: "bappy_coral") ?? .clear }
 }
 
-// MARK: - Binder
+// MARK: - Reactive
 extension Reactive where Base: UIScrollView {
     var setContentOffset: Binder<CGPoint> {
         return Binder(self.base) { scrollView, offset in
@@ -135,9 +135,21 @@ extension Reactive where Base: UIView {
 }
 
 extension RxSwift.Reactive where Base: UIViewController {
-    public var viewDidAppear: Observable<Bool> {
+    var viewDidAppear: Observable<Bool> {
         return methodInvoked(#selector(UIViewController.viewDidAppear))
             .map { $0.first as? Bool ?? false }
+    }
+    
+    var showProgress: Binder<Bool> {
+        return Binder(self.base) { view, isUserInteractionEnabled in
+            ProgressHUD.show(interaction: isUserInteractionEnabled)
+        }
+    }
+    
+    var dismissProgress: Binder<Void> {
+        return Binder(self.base) { view, _ in
+            ProgressHUD.dismiss()
+        }
     }
 }
 

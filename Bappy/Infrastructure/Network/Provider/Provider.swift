@@ -13,7 +13,7 @@ protocol Provider {
     func request(_ url: URL, completion: @escaping(Result<Data, Error>) -> ())
 }
 
-class ProviderImpl: Provider {
+final class ProviderImpl: Provider {
     let session: URLSessionable
     init(session: URLSessionable = URLSession.shared) {
         self.session = session
