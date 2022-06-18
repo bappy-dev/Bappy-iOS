@@ -277,7 +277,7 @@ public class ProgressHUD: UIView {
 	convenience private init() {
 
 		self.init(frame: UIScreen.main.bounds)
-		self.alpha = 0
+        self.alpha = 0
 	}
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------
@@ -350,13 +350,13 @@ public class ProgressHUD: UIView {
 
 		if (toolbarHUD == nil) {
 			toolbarHUD = UIToolbar(frame: CGRect.zero)
-			toolbarHUD?.isTranslucent = true
+			toolbarHUD?.isTranslucent = false
 			toolbarHUD?.clipsToBounds = true
 			toolbarHUD?.layer.cornerRadius = 10
 			toolbarHUD?.layer.masksToBounds = true
 			viewBackground?.addSubview(toolbarHUD!)
 		}
-
+        toolbarHUD?.barTintColor = colorHUD
 		toolbarHUD?.backgroundColor = colorHUD
 	}
 
@@ -404,7 +404,7 @@ public class ProgressHUD: UIView {
 		staticImageView?.removeFromSuperview()
 
 		if (viewAnimation == nil) {
-			viewAnimation = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+			viewAnimation = UIView(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
 		}
 
 		if (viewAnimation?.superview == nil) {
@@ -653,7 +653,7 @@ public class ProgressHUD: UIView {
 		animation.repeatCount = HUGE
 		animation.isRemovedOnCompletion = false
 
-		let path = UIBezierPath(arcCenter: CGPoint(x: radius/2, y: radius/2), radius: radius/2, startAngle: 0, endAngle: 2 * .pi, clockwise: false)
+        let path = UIBezierPath(arcCenter: CGPoint(x: radius/2.2, y: radius/2.2), radius: radius/2.2, startAngle: 0, endAngle: 2 * .pi, clockwise: false)
 
 		for i in 0..<3 {
 			let layer = CAShapeLayer()

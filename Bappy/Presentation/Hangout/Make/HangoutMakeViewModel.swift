@@ -21,6 +21,7 @@ final class HangoutMakeViewModel: ViewModelType {
         let languageViewModel: HangoutMakeLanguageViewModel
         let openchatViewModel: HangoutMakeOpenchatViewModel
         let limitViewModel: HangoutMakeLimitViewModel
+        let searchPlaceViewModel: SearchPlaceViewModel
         let continueButtonViewModel: ContinueButtonViewModel
     }
     
@@ -35,6 +36,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var languageDependency: HangoutMakeLanguageViewModel.Dependency
         var openchatDependency: HangoutMakeOpenchatViewModel.Dependency
         var limitDependency: HangoutMakeLimitViewModel.Dependency
+        var searchPlaceDependency: SearchPlaceViewModel.Dependency
     }
     
     struct Input {
@@ -117,6 +119,7 @@ final class HangoutMakeViewModel: ViewModelType {
             languageViewModel: HangoutMakeLanguageViewModel(dependency: dependency.languageDependency),
             openchatViewModel: HangoutMakeOpenchatViewModel(dependency: dependency.openchatDependency),
             limitViewModel: HangoutMakeLimitViewModel(dependency: dependency.limitDependency),
+            searchPlaceViewModel: SearchPlaceViewModel(dependency: dependency.searchPlaceDependency),
             continueButtonViewModel: ContinueButtonViewModel()
         )
         

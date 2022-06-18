@@ -7,20 +7,15 @@
 
 import UIKit
 import SnapKit
-
-protocol SearchPlaceViewControllerDelegate: AnyObject {
-    func getSelectedMap(_ map: Map)
-}
+import RxSwift
+import RxCocoa
 
 private let reuseIdentifier = "SearchPlaceCell"
 final class SearchPlaceViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: SearchPlaceViewControllerDelegate?
-    
-    private var searchedText: String = ""
-    private var mapList = [Map]()
-    private var nextPageToken: String?
+    private let viewModel: SearchPlaceViewModel
+    private let disposBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
     private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
@@ -39,14 +34,13 @@ final class SearchPlaceViewController: UIViewController {
         return view
     }()
     
-    private lazy var closeButton: UIButton = {
+    private let closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBappyTitle(
             title: "Close",
             font: .roboto(size: 18.0, family: .Medium),
             color: .bappyYellow
         )
-        button.addTarget(self, action: #selector(closeButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -58,7 +52,7 @@ final class SearchPlaceViewController: UIViewController {
         return label
     }()
     
-    private lazy var searchTextField: UITextField = {
+    private let searchTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "search"))
         let containerView = UIView()
@@ -72,18 +66,14 @@ final class SearchPlaceViewController: UIViewController {
         textField.leftView = containerView
         textField.leftViewMode = .unlessEditing
         textField.returnKeyType = .search
-        textField.delegate = self
         return textField
     }()
     
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(SearchPlaceCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
-        tableView.prefetchDataSource = self
         tableView.keyboardDismissMode = .interactive
         return tableView
     }()
@@ -91,15 +81,18 @@ final class SearchPlaceViewController: UIViewController {
     private let searchBackgroundView = UIView()
     private let noResultView = NoResultView()
     
-    private let provider = ProviderImpl()
-    
     // MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init(viewModel: SearchPlaceViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
-        addKeyboardObserver()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -112,51 +105,11 @@ final class SearchPlaceViewController: UIViewController {
         }
     }
     
-    // MARK: API
-    private func searchGoogleMap(key: String , query: String, language: String = "en") {
-        let requestDTO = MapsRequestDTO(key: key, query: query, language: language)
-        let endpoint = APIEndpoints.searchGoogleMapList(with: requestDTO)
-        
-        ProgressHUD.show(interaction: false)
-        provider.request(with: endpoint) { [weak self] result in
-            ProgressHUD.dismiss()
-            switch result {
-            case .success(let responseDTO):
-                self?.addMaps(with: responseDTO)
-            case .failure(let error):
-                print("ERROR: \(error)")
-            }
-        }
-    }
-    
-    private func searchNextGoogleMap(key: String , pageToken: String, language: String = "en") {
-        let requestDTO = MapsNextRequestDTO(key: key, pagetoken: pageToken, language: language)
-        let endpoint = APIEndpoints.searchGoogleMapNextList(with: requestDTO)
-        
-        ProgressHUD.show()
-        provider.request(with: endpoint) { [weak self] result in
-            ProgressHUD.dismiss()
-            switch result {
-            case .success(let responseDTO):
-                self?.addMaps(with: responseDTO)
-            case .failure(let error):
-                print("ERROR: \(error)")
-            }
-        }
-    }
-    
     // MARK: Events
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
         searchTextField.resignFirstResponder()
-    }
-    
-    // MARK: Actions
-    @objc
-    private func closeButtonHandler() {
-        searchTextField.resignFirstResponder()
-        animateDismissView()
     }
     
     // MARK: Animations
@@ -192,32 +145,7 @@ final class SearchPlaceViewController: UIViewController {
         }
     }
     
-    // MARK: Actions
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
-        self.tableView.contentInset.bottom = keyboardHeight
-        self.tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
-    }
-    
-    // MARK: Helpers    
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    private func addMaps(with mapsResponseDTO: MapsResponseDTO) {
-        let mapPage = mapsResponseDTO.toDomain()
-        nextPageToken = mapPage.nextPageToken
-        mapList += mapPage.maps
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.noResultView.isHidden = !self.mapList.isEmpty
-            self.tableView.reloadData()
-        }
-    }
-    
+    // MARK: Helpers
     private func configure() {
         view.backgroundColor = .clear
         tableView.backgroundView = noResultView
@@ -276,55 +204,67 @@ final class SearchPlaceViewController: UIViewController {
         }
     }
 }
-// MARK: - UITableViewDataSource
-extension SearchPlaceViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return mapList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! SearchPlaceCell
-        cell.setupCell(with: mapList[indexPath.row])
-        return cell
-    }
-}
 
-// MARK: - UITableViewDelegate
-extension SearchPlaceViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        delegate?.getSelectedMap(mapList[indexPath.row])
-        animateDismissView()
-    }
-}
-
-// MARK: - UITableViewDataSourcePrefetching
-extension SearchPlaceViewController: UITableViewDataSourcePrefetching {
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        guard let pageToken = nextPageToken else { return }
-        let rows = indexPaths.map { $0.row + 1 }
-        let key = Bundle.main.googleMapAPIKey
-        if rows.contains(mapList.count) {
-            nextPageToken = nil
-            searchNextGoogleMap(key: key, pageToken: pageToken)
-        }
-    }
-}
-
-
-// MARK: - UITextFieldDelegate
-extension SearchPlaceViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard let text = textField.text,
-              !text.isEmpty,
-              text.lowercased() != searchedText.lowercased()
-        else { return false }
-        textField.resignFirstResponder()
-        searchedText = text
-        nextPageToken = nil
-        mapList = []
-        let key = Bundle.main.googleMapAPIKey
-        searchGoogleMap(key: key, query: text)
-        return true
+// MARK: - Bind
+extension SearchPlaceViewController {
+    private func bind() {
+        searchTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposBag)
+        
+        // textFieldShouldReturn Delegate와 중복사용시 오류 발생 가능
+        searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposBag)
+        
+        tableView.rx.prefetchRows
+            .bind(to: viewModel.input.prefetchRows)
+            .disposed(by: disposBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposBag)
+        
+        closeButton.rx.tap
+            .bind(to: viewModel.input.closeButtonTapped)
+            .disposed(by: disposBag)
+        
+        viewModel.output.maps
+            .drive(tableView.rx.items) { tableView, row, map in
+                let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: IndexPath(row: row, section: 0)) as! SearchPlaceCell
+                cell.setupCell(with: map)
+                return cell
+            }
+            .disposed(by: disposBag)
+        
+        viewModel.output.shouldHideNoResultView
+            .skip(1)
+            .emit(to: noResultView.rx.isHidden)
+            .disposed(by: disposBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposBag)
+        
+        viewModel.output.dismissView
+            .emit(onNext: { [weak self] _ in
+                self?.animateDismissView()
+            })
+            .disposed(by: disposBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.show)
+            .disposed(by: disposBag)
+        
+        viewModel.output.dismissLoader
+            .emit(to: ProgressHUD.rx.dismiss)
+            .disposed(by: disposBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                self?.tableView.contentInset.bottom = height
+                self?.tableView.verticalScrollIndicatorInsets.bottom = height
+            }).disposed(by: disposBag)
+        
     }
 }

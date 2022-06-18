@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol Provider {
     func request<R: Decodable, E: RequestResponsable>(with endpoint: E, completion: @escaping(Result<R, Error>) -> Void) where E.Response == R
@@ -13,8 +14,26 @@ protocol Provider {
     func request(_ url: URL, completion: @escaping(Result<Data, Error>) -> ())
 }
 
-final class ProviderImpl: Provider {
+extension Provider {
+    func request<R: Decodable, E: RequestResponsable>(with endpoint: E) -> Single<Result<R, Error>> where E.Response == R {
+        print("DEBUG: request -> Single<Result>")
+        return Single<Result<R, Error>>.create { single in
+            request(with: endpoint) { result in
+                switch result {
+                case .success(let data):
+                    single(.success(.success(data)))
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+}
+
+final class BappyProvider: Provider {
     let session: URLSessionable
+    
     init(session: URLSessionable = URLSession.shared) {
         self.session = session
     }

@@ -70,8 +70,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 extension SceneDelegate {
     private func setProgressHUDStyle() {
-        ProgressHUD.colorBackground = .black.withAlphaComponent(0.05)
-        ProgressHUD.colorHUD = .white
+        ProgressHUD.animationType = .horizontalCirclesPulse
+        ProgressHUD.colorBackground = .bappyYellow
+        ProgressHUD.colorHUD = .bappyYellow
         ProgressHUD.colorAnimation = .bappyBrown
     }
 }

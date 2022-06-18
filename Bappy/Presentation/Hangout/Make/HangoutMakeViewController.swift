@@ -262,17 +262,10 @@ extension HangoutMakeViewController {
 extension HangoutMakeViewController: HangoutMakePlaceViewDelegate {
     func showSearchPlaceView() {
         view.endEditing(true) // 임시
-        let viewController = SearchPlaceViewController()
+        let viewModel = viewModel.subViewModels.searchPlaceViewModel
+        let viewController = SearchPlaceViewController(viewModel: viewModel)
         viewController.modalPresentationStyle = .overCurrentContext
-        viewController.delegate = self
         present(viewController, animated: false, completion: nil)
-    }
-}
-
-// MARK: - SearchPlaceViewControllerDelegate
-extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
-    func getSelectedMap(_ map: Map) {
-        placeView.map = map
     }
 }
 

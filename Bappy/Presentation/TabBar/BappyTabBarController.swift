@@ -134,7 +134,10 @@ final class BappyTabBarController: UITabBarController {
             planDependency: .init(),
             languageDependency: .init(),
             openchatDependency: .init(),
-            limitDependency: .init()
+            limitDependency: .init(),
+            searchPlaceDependency: .init(
+                key: Bundle.main.googleMapAPIKey,
+                language: "en")
         )
         let viewModel = HangoutMakeViewModel(dependency: dependency)
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)
