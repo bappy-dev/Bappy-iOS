@@ -10,23 +10,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-protocol HangoutMakePlaceViewDelegate: AnyObject {
-    func showSearchPlaceView()
-}
-
 final class HangoutMakePlaceView: UIView {
     
     // MARK: Properties
     private let viewModel: HangoutMakePlaceViewModel
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: HangoutMakePlaceViewDelegate?
-    var map: Map? {
-        didSet {
-            guard let place = map?.name, let address = map?.address else { return }
-            placeTextField.text = "\(place)(\(address))"
-        }
-    }
     
     private let placeCaptionLabel: UILabel = {
         let label = UILabel()
@@ -37,7 +25,7 @@ final class HangoutMakePlaceView: UIView {
         return label
     }()
     
-    private lazy var placeTextField: UITextField = {
+    private let placeTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "place"))
         let containerView = UIView()
@@ -51,7 +39,6 @@ final class HangoutMakePlaceView: UIView {
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.addTarget(self, action: #selector(placeTextFieldHandler), for: .editingDidBegin)
         return textField
     }()
     
@@ -68,16 +55,11 @@ final class HangoutMakePlaceView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func placeTextFieldHandler(_ textField: UITextField) {
-        delegate?.showSearchPlaceView()
     }
     
     // MARK: Helpers
@@ -104,5 +86,22 @@ final class HangoutMakePlaceView: UIView {
             $0.height.equalTo(2.0)
             $0.top.equalTo(placeTextField.snp.bottom).offset(7.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension HangoutMakePlaceView {
+    private func bind() {
+        placeTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.endEditing
+            .emit(to: placeTextField.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.text
+            .emit(to: placeTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }

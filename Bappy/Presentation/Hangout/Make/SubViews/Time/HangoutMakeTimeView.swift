@@ -29,7 +29,7 @@ final class HangoutMakeTimeView: UIView {
         let button = UIButton()
         button.setBappyTitle(
             title: "Done",
-            font: .roboto(size: 14.0, family: .Medium),
+            font: .roboto(size: 16.0, family: .Bold),
             color: .bappyYellow)
         button.isHidden = true
         button.backgroundColor = .white
@@ -40,7 +40,7 @@ final class HangoutMakeTimeView: UIView {
         let button = UIButton()
         button.setBappyTitle(
             title: "Done",
-            font: .roboto(size: 14.0, family: .Medium),
+            font: .roboto(size: 16.0, family: .Bold),
             color: .bappyYellow)
         button.isHidden = true
         button.backgroundColor = .white

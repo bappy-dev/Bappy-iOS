@@ -58,7 +58,7 @@ final class SearchPlaceCell: UITableViewCell {
         contentView.addSubview(placeImageView)
         placeImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(6.8)
-            $0.leading.equalToSuperview().inset(3.0)
+            $0.leading.equalToSuperview().inset(23.0)
             $0.width.equalTo(13.0)
             $0.height.equalTo(18.0)
         }

@@ -72,7 +72,6 @@ extension SceneDelegate {
     private func setProgressHUDStyle() {
         ProgressHUD.animationType = .horizontalCirclesPulse
         ProgressHUD.colorBackground = .bappyYellow
-        ProgressHUD.colorHUD = .bappyYellow
         ProgressHUD.colorAnimation = .bappyBrown
     }
 }

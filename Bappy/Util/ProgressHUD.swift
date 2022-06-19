@@ -350,14 +350,15 @@ public class ProgressHUD: UIView {
 
 		if (toolbarHUD == nil) {
 			toolbarHUD = UIToolbar(frame: CGRect.zero)
-			toolbarHUD?.isTranslucent = false
+			toolbarHUD?.isTranslucent = true
 			toolbarHUD?.clipsToBounds = true
 			toolbarHUD?.layer.cornerRadius = 10
 			toolbarHUD?.layer.masksToBounds = true
 			viewBackground?.addSubview(toolbarHUD!)
 		}
-        toolbarHUD?.barTintColor = colorHUD
-		toolbarHUD?.backgroundColor = colorHUD
+        
+        toolbarHUD?.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+        toolbarHUD?.backgroundColor = .clear
 	}
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------

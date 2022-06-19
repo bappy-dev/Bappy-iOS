@@ -9,7 +9,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+protocol SearchPlaceViewModelDelegate: AnyObject {
+    func mapSelected(map: Map)
+}
+
 final class SearchPlaceViewModel: ViewModelType {
+    weak var delegate: SearchPlaceViewModelDelegate?
     
     struct Dependency {
         var key: String
@@ -19,6 +24,7 @@ final class SearchPlaceViewModel: ViewModelType {
     struct Input {
         var text: AnyObserver<String> // <-> View
         var searchButtonClicked: AnyObserver<Void> // <-> View
+        var willDisplayIndex: AnyObserver<IndexPath> // <-> View
         var prefetchRows: AnyObserver<[IndexPath]> // <-> View
         var itemSelected: AnyObserver<IndexPath> // <-> View
         var closeButtonTapped: AnyObserver<Void> // <-> View
@@ -29,9 +35,9 @@ final class SearchPlaceViewModel: ViewModelType {
         var shouldHideNoResultView: Signal<Bool> // <-> View
         var dismissKeyboard: Signal<Void> // <-> View
         var dismissView: Signal<Void> // <-> View
-        var showLoader: Signal<Bool> // <-> View
+        var showLoader: Signal<Void> // <-> View
         var dismissLoader: Signal<Void> // <-> View
-        var selectedMap: Signal<Map?> // <-> Parent
+        var shouldSpinnerAnimating: Driver<Bool> // <-> View
     }
     
     let dependency: Dependency
@@ -45,14 +51,16 @@ final class SearchPlaceViewModel: ViewModelType {
     private let maps$ = BehaviorSubject<[Map]>(value: [])
     private let nextPageToken$ = BehaviorSubject<String?>(value: nil)
     private let usedPageToken$ = BehaviorSubject<[String?]>(value: [])
+    private let isCommunicating$ = BehaviorSubject<Bool>(value: false)
     
     private let text$ = BehaviorSubject<String>(value: "")
     private let searchButtonClicked$ = PublishSubject<Void>()
+    private let willDisplayIndex$ = PublishSubject<IndexPath>()
     private let prefetchRows$ = PublishSubject<[IndexPath]>()
     private let itemSelected$ = PublishSubject<IndexPath>()
     private let closeButtonTapped$ = PublishSubject<Void>()
     
-    private let showLoader$ = PublishSubject<Bool>()
+    private let showLoader$ = PublishSubject<Void>()
     private let dismissLoader$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
@@ -65,8 +73,8 @@ final class SearchPlaceViewModel: ViewModelType {
         
         let maps = maps$
             .asDriver(onErrorJustReturn: [])
-        let shouldHideNoResultView = maps$
-            .map { !$0.isEmpty }
+        let shouldHideNoResultView = Observable
+            .combineLatest(maps$, isCommunicating$) { !$0.isEmpty || $1 }
             .asSignal(onErrorJustReturn: true)
         let dismissKeyboard = Observable
             .merge(
@@ -81,16 +89,17 @@ final class SearchPlaceViewModel: ViewModelType {
                 closeButtonTapped$
             )
             .asSignal(onErrorJustReturn: Void())
-        let showLoader = showLoader$.asSignal(onErrorJustReturn: false)
+        let showLoader = showLoader$.asSignal(onErrorJustReturn: Void())
         let dismissLoader = dismissLoader$.asSignal(onErrorJustReturn: Void())
-        let selectedMap = itemSelected$
-            .withLatestFrom(maps$) { $1[$0.row] }
-            .asSignal(onErrorJustReturn: nil)
+        let shouldSpinnerAnimating = nextPageToken$
+            .map { $0 != nil }
+            .asDriver(onErrorJustReturn: false)
         
         // Input & Output
         self.input = Input(
             text: text$.asObserver(),
             searchButtonClicked: searchButtonClicked$.asObserver(),
+            willDisplayIndex: willDisplayIndex$.asObserver(),
             prefetchRows: prefetchRows$.asObserver(),
             itemSelected: itemSelected$.asObserver(),
             closeButtonTapped: closeButtonTapped$.asObserver()
@@ -103,50 +112,53 @@ final class SearchPlaceViewModel: ViewModelType {
             dismissView: dismissView,
             showLoader: showLoader,
             dismissLoader: dismissLoader,
-            selectedMap: selectedMap
+            shouldSpinnerAnimating: shouldSpinnerAnimating
         )
         
         // Binding
         self.key$ = key$
         self.language$ = language$
         
-        let endPointForNew = searchButtonClicked$
+        let startForNew = searchButtonClicked$
             .withLatestFrom(Observable.combineLatest(key$, text$, language$))
             .distinctUntilChanged { $0.1 == $1.1 }
-            .map { MapsRequestDTO(key: $0.0, query: $0.1, language: $0.2) }
-            .map(APIEndpoints.searchGoogleMapList)
             .share()
         
-        let endPointForExtra = prefetchRows$
-            .map { $0.map { $0.row + 1 } }
-            .withLatestFrom(maps$) { ($0, $1) }
-            .filter { $0.0.contains($0.1.count) }
-            .withLatestFrom(
-                Observable.combineLatest(
+        // prefetchRows에 현재 maps.count가 포함 && pageToken이 존재 && usedPageToken에 포함 X && 통신중 X
+        let startForExtra = prefetchRows$
+            .withLatestFrom(maps$) { indexPaths, maps in
+                indexPaths.map { $0.row + 1}.contains(maps.count) }
+            .withLatestFrom(isCommunicating$) { ($0, $1) }
+            .filter { $0.0 && !$0.1 }
+            .withLatestFrom(Observable.combineLatest(
                     key$, nextPageToken$.compactMap { $0 }, language$
-                )
-            )
+            ))
             .withLatestFrom(usedPageToken$) { ($0, $1) }
             .filter { !$1.contains($0.1) }
             .map { $0.0 }
-            .map { MapsNextRequestDTO(key: $0.0, pagetoken: $0.1, language: $0.2) }
-            .map(APIEndpoints.searchGoogleMapNextList)
             .share()
         
-        endPointForNew
-            .map { _ in false }
-            .bind(to: showLoader$)
-            .disposed(by: disposeBag)
-        
-        endPointForExtra
+        Observable
+            .merge(startForNew, startForExtra)
             .map { _ in true }
-            .bind(to: showLoader$)
+            .bind(to: isCommunicating$)
             .disposed(by: disposeBag)
         
-        endPointForNew
-            .map { _ in [String?]() }
-            .bind(to: usedPageToken$)
-            .disposed(by: disposeBag)
+        let endPointForNew = startForNew
+            .map { MapsRequestDTO(key: $0.0, query: $0.1, language: $0.2) }
+            .map(APIEndpoints.searchGoogleMapList)
+            .do { [weak self] _ in
+                self?.showLoader$.onNext(Void())
+                self?.usedPageToken$.onNext([])
+                self?.maps$.onNext([])
+            }
+        
+        // pageToken 발급 후 등록하기 까지 딜레이가 있어서 debounce 추가
+        let endPointForExtra = startForExtra
+            .map { MapsNextRequestDTO(key: $0.0, pagetoken: $0.1, language: $0.2) }
+            .map(APIEndpoints.searchGoogleMapNextList)
+            .debounce(.milliseconds(1200), scheduler: MainScheduler.instance)
+            .share()
         
         endPointForExtra
             .withLatestFrom(nextPageToken$)
@@ -154,45 +166,27 @@ final class SearchPlaceViewModel: ViewModelType {
             .bind(to: usedPageToken$)
             .disposed(by: disposeBag)
         
-        
         let result = Observable
             .merge(endPointForNew, endPointForExtra)
+            .do { [weak self] _ in self?.isCommunicating$.onNext(true) }
             .map(provider.request)
             .flatMap { $0 }
+            .do { [weak self] _ in
+                self?.dismissLoader$.onNext(Void())
+                self?.isCommunicating$.onNext(false)
+            }
             .share()
-        
-        result
-            .map { _ in }
-            .bind(to: dismissLoader$)
-            .disposed(by: disposeBag)
         
         let value = result
             .compactMap(getValue)
+            .share()
         
         let error = result
             .compactMap(getError)
         
-        let valueWithNextPageToken = value
-            .withLatestFrom(nextPageToken$) { ($0, $1) }
-            .share()
-        
-        let newMap = valueWithNextPageToken
-            .filter { $0.1 == nil }
-            .map { $0.0 }
+        value
             .map(getMapPage)
             .map { $0.maps }
-        
-        let extraMap = valueWithNextPageToken
-            .filter { $0.1 != nil }
-            .map { $0.0 }
-            .map(getMapPage)
-            .map { $0.maps }
-        
-        newMap
-            .bind(to: maps$)
-            .disposed(by: disposeBag)
-        
-        extraMap
             .withLatestFrom(maps$) { $1 + $0 }
             .bind(to: maps$)
             .disposed(by: disposeBag)
@@ -205,6 +199,13 @@ final class SearchPlaceViewModel: ViewModelType {
         
         error
             .bind(onNext: { print("ERROR: \($0)")})
+            .disposed(by: disposeBag)
+        
+        itemSelected$
+            .withLatestFrom(maps$) { $1[$0.row] }
+            .bind(onNext: { [weak self] map in
+                self?.delegate?.mapSelected(map: map)
+            })
             .disposed(by: disposeBag)
     }
 }

@@ -49,7 +49,7 @@ final class HomeListViewController: UIViewController {
         tableView.refreshControl = UIRefreshControl()
         let refreshControl = self.tableView.refreshControl
         refreshControl?.backgroundColor = .white
-        refreshControl?.tintColor = .bappyYellow
+        refreshControl?.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
     

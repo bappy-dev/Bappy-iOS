@@ -106,7 +106,6 @@ final class HangoutMakeViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        placeView.delegate = self
         pictureView.delegate = self
         languageView.delegate = self
     }
@@ -242,6 +241,14 @@ extension HangoutMakeViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showSearchView
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = SearchPlaceViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
         RxKeyboard.instance.visibleHeight
             .skip(1)
             .drive(onNext: { [weak self] height in
@@ -255,17 +262,6 @@ extension HangoutMakeViewController {
             }
             .drive(viewModel.input.keyboardWithButtonHeight)
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - HangoutPlaceViewDelegate
-extension HangoutMakeViewController: HangoutMakePlaceViewDelegate {
-    func showSearchPlaceView() {
-        view.endEditing(true) // 임시
-        let viewModel = viewModel.subViewModels.searchPlaceViewModel
-        let viewController = SearchPlaceViewController(viewModel: viewModel)
-        viewController.modalPresentationStyle = .overCurrentContext
-        present(viewController, animated: false, completion: nil)
     }
 }
 

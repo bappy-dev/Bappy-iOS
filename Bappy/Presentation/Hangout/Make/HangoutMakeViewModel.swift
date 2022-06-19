@@ -21,7 +21,6 @@ final class HangoutMakeViewModel: ViewModelType {
         let languageViewModel: HangoutMakeLanguageViewModel
         let openchatViewModel: HangoutMakeOpenchatViewModel
         let limitViewModel: HangoutMakeLimitViewModel
-        let searchPlaceViewModel: SearchPlaceViewModel
         let continueButtonViewModel: ContinueButtonViewModel
     }
     
@@ -40,8 +39,6 @@ final class HangoutMakeViewModel: ViewModelType {
     }
     
     struct Input {
-        var page: AnyObserver<Int>
-        var numOfPage: AnyObserver<Int>
         var continueButtonTapped: AnyObserver<Void>
         var backButtonTapped: AnyObserver<Void>
         var viewDidAppear: AnyObserver<Bool>
@@ -64,6 +61,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var isLanguageValid: AnyObserver<Bool>
         var isOpenchatValid: AnyObserver<Bool>
         var isLimitValid: AnyObserver<Bool>
+        var showSearchView: AnyObserver<SearchPlaceViewModel>
     }
     
     struct Output {
@@ -74,6 +72,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var popView: Signal<Void>
         var isContinueButtonEnabled: Signal<Bool>
         var keyboardWithButtonHeight: Signal<CGFloat>
+        var showSearchView: Signal<SearchPlaceViewModel>
     }
     
     let dependency: Dependency
@@ -106,6 +105,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
     private let isLimitValid$ = BehaviorSubject<Bool>(value: false)
+    private let showSearchView$ = PublishSubject<SearchPlaceViewModel>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -119,7 +119,6 @@ final class HangoutMakeViewModel: ViewModelType {
             languageViewModel: HangoutMakeLanguageViewModel(dependency: dependency.languageDependency),
             openchatViewModel: HangoutMakeOpenchatViewModel(dependency: dependency.openchatDependency),
             limitViewModel: HangoutMakeLimitViewModel(dependency: dependency.limitDependency),
-            searchPlaceViewModel: SearchPlaceViewModel(dependency: dependency.searchPlaceDependency),
             continueButtonViewModel: ContinueButtonViewModel()
         )
         
@@ -165,11 +164,11 @@ final class HangoutMakeViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
+        let showSearchView = showSearchView$
+            .asSignal(onErrorJustReturn: SearchPlaceViewModel(dependency: dependency.searchPlaceDependency))
         
         // Input & Output
         self.input = Input(
-            page: page$.asObserver(),
-            numOfPage: numOfPage$.asObserver(),
             continueButtonTapped: continueButtonTapped$.asObserver(),
             backButtonTapped: backButtonTapped$.asObserver(),
             viewDidAppear: viewDidAppear$.asObserver(),
@@ -191,7 +190,8 @@ final class HangoutMakeViewModel: ViewModelType {
             isPlanValid: isPlanValid$.asObserver(),
             isLanguageValid: isLanguageValid$.asObserver(),
             isOpenchatValid: isOpenchatValid$.asObserver(),
-            isLimitValid: isLimitValid$.asObserver()
+            isLimitValid: isLimitValid$.asObserver(),
+            showSearchView: showSearchView$.asObserver()
         )
         
         self.output = Output(
@@ -201,7 +201,8 @@ final class HangoutMakeViewModel: ViewModelType {
             initProgression: initProgression,
             popView: popView,
             isContinueButtonEnabled: isContinueButtonEnabled,
-            keyboardWithButtonHeight: keyboardWithButtonHeight
+            keyboardWithButtonHeight: keyboardWithButtonHeight,
+            showSearchView: showSearchView
         )
         
         // Bindind
@@ -243,6 +244,26 @@ final class HangoutMakeViewModel: ViewModelType {
             .emit(to: isTimeValid$)
             .disposed(by: disposeBag)
         
+        // Child(Place)
+        place$
+            .compactMap { $0 }
+            .bind(to: subViewModels.placeViewModel.input.map)
+            .disposed(by: disposeBag)
+        
+        subViewModels.placeViewModel.output.showSearchView
+            .map { _ -> SearchPlaceViewModel in
+                let dependency = dependency.searchPlaceDependency
+                let viewModel = SearchPlaceViewModel(dependency: dependency)
+                viewModel.delegate = self
+                return viewModel
+            }
+            .emit(to: showSearchView$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.placeViewModel.output.isValid
+            .emit(to: isPlaceValid$)
+            .disposed(by: disposeBag)
+        
         // ContinueButton
         output.isContinueButtonEnabled
             .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)
@@ -251,6 +272,7 @@ final class HangoutMakeViewModel: ViewModelType {
         subViewModels.continueButtonViewModel.output.continueButtonTapped
             .emit(to: continueButtonTapped$)
             .disposed(by: disposeBag)
+            
     }
 }
 
@@ -280,4 +302,10 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
     case 7: return isOpenchatValid
     case 8: return isLimitValid
     default: return false}
+}
+
+extension HangoutMakeViewModel: SearchPlaceViewModelDelegate {
+    func mapSelected(map: Map) {
+        place$.onNext(map)
+    }
 }

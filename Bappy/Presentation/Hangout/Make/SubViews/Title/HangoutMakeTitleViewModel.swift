@@ -33,6 +33,8 @@ final class HangoutMakeTitleViewModel: ViewModelType {
     let input: Input
     let output: Output
     
+    private let modifiedText$ = BehaviorSubject<String>(value: "")
+    
     private let text$ = BehaviorSubject<String>(value: "")
     private let editingDidBegin$ = PublishSubject<Void>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
@@ -46,12 +48,10 @@ final class HangoutMakeTitleViewModel: ViewModelType {
         let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
-        let modifiedText = text$
-            .distinctUntilChanged()
-            .withLatestFrom(maximumLength$, resultSelector: removeExcessString)
+        let modifiedText = modifiedText$
             .asSignal(onErrorJustReturn: "")
         
-        let isTitleValid = text$
+        let isTitleValid = modifiedText$
             .withLatestFrom(
                 Observable
                     .combineLatest(minimumLength$, maximumLength$),
@@ -85,8 +85,10 @@ final class HangoutMakeTitleViewModel: ViewModelType {
         self.minimumLength$ = minimumLength$
         self.maximumLength$ = maximumLength$
         
-        modifiedText
-            .emit(to: text$)
+        text$
+            .distinctUntilChanged()
+            .withLatestFrom(maximumLength$, resultSelector: removeExcessString)
+            .bind(to: modifiedText$)
             .disposed(by: disposeBag)
     }
 }

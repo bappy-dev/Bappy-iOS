@@ -52,10 +52,22 @@ extension Reactive where Base: UIDatePicker {
     }
 }
 
+extension Reactive where Base: UIActivityIndicatorView {
+    var shouldAnimate: Binder<Bool> {
+        return Binder(self.base) { spinner, animate in
+            if animate { spinner.startAnimating() }
+            else { spinner.stopAnimating() }
+        }
+    }
+}
+
 extension Reactive where Base: ProgressHUD {
-    public static var show: Binder<Bool> {
-        return Binder(UIApplication.shared) { _, interaction in
-            ProgressHUD.show(interaction: interaction)
+    public static var show: Binder<Void> {
+        return Binder(UIApplication.shared) { _, _ in
+            ProgressHUD.animationType = .horizontalCirclesPulse
+            ProgressHUD.colorBackground = .black.withAlphaComponent(0.1)
+            ProgressHUD.colorAnimation = .bappyBrown
+            ProgressHUD.show(interaction: false)
         }
     }
     

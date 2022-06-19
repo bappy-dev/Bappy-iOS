@@ -39,8 +39,7 @@ final class SearchPlaceViewController: UIViewController {
         button.setBappyTitle(
             title: "Close",
             font: .roboto(size: 18.0, family: .Medium),
-            color: .bappyYellow
-        )
+            color: .bappyYellow)
         return button
     }()
     
@@ -73,11 +72,12 @@ final class SearchPlaceViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(SearchPlaceCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
+        tableView.separatorInset = .init(top: 0, left: 20.0, bottom: 0, right: 20.0)
         tableView.keyboardDismissMode = .interactive
         return tableView
     }()
     
+    private let bottomSpinner = UIActivityIndicatorView(style: .medium)
     private let searchBackgroundView = UIView()
     private let noResultView = NoResultView()
     
@@ -100,8 +100,8 @@ final class SearchPlaceViewController: UIViewController {
         
         animateShowDimmedView()
         animatePresentContainer()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
-            self?.searchTextField.becomeFirstResponder()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.searchTextField.becomeFirstResponder()
         }
     }
     
@@ -150,11 +150,16 @@ final class SearchPlaceViewController: UIViewController {
         view.backgroundColor = .clear
         tableView.backgroundView = noResultView
         noResultView.isHidden = true
+        bottomSpinner.hidesWhenStopped = true
+        tableView.tableFooterView = bottomSpinner
+        bottomSpinner.startAnimating()
     }
     
     private func layout() {
         searchBackgroundView.backgroundColor = .bappyLightgray
         searchBackgroundView.layer.cornerRadius = 17.5
+        
+        bottomSpinner.frame.size.height = 44.0
         
         view.addSubview(dimmedView)
         dimmedView.snp.makeConstraints {
@@ -198,7 +203,7 @@ final class SearchPlaceViewController: UIViewController {
         containerView.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBackgroundView.snp.bottom).offset(15.0)
-            $0.leading.equalToSuperview().inset(42.0)
+            $0.leading.equalToSuperview().inset(21.0)
             $0.trailing.equalToSuperview().inset(21.0)
             $0.bottom.equalToSuperview().inset(10.0)
         }
@@ -212,9 +217,13 @@ extension SearchPlaceViewController {
             .bind(to: viewModel.input.text)
             .disposed(by: disposBag)
         
-        // textFieldShouldReturn Delegate와 중복사용시 오류 발생 가능
         searchTextField.rx.controlEvent(.editingDidEndOnExit)
             .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposBag)
+        
+        tableView.rx.willDisplayCell
+            .map { $0.indexPath }
+            .bind(to: viewModel.input.willDisplayIndex)
             .disposed(by: disposBag)
         
         tableView.rx.prefetchRows
@@ -231,7 +240,10 @@ extension SearchPlaceViewController {
         
         viewModel.output.maps
             .drive(tableView.rx.items) { tableView, row, map in
-                let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: IndexPath(row: row, section: 0)) as! SearchPlaceCell
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: IndexPath(row: row, section: 0)
+                ) as! SearchPlaceCell
                 cell.setupCell(with: map)
                 return cell
             }
@@ -239,6 +251,7 @@ extension SearchPlaceViewController {
         
         viewModel.output.shouldHideNoResultView
             .skip(1)
+            .distinctUntilChanged()
             .emit(to: noResultView.rx.isHidden)
             .disposed(by: disposBag)
         
@@ -260,11 +273,15 @@ extension SearchPlaceViewController {
             .emit(to: ProgressHUD.rx.dismiss)
             .disposed(by: disposBag)
         
+        viewModel.output.shouldSpinnerAnimating
+            .distinctUntilChanged()
+            .drive(bottomSpinner.rx.isAnimating)
+            .disposed(by: disposBag)
+        
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
                 self?.tableView.contentInset.bottom = height
                 self?.tableView.verticalScrollIndicatorInsets.bottom = height
             }).disposed(by: disposBag)
-        
     }
 }
