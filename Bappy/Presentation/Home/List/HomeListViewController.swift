@@ -55,6 +55,7 @@ final class HomeListViewController: UIViewController {
     
     private func configure() {
         view.backgroundColor = .white
+        topView.delegate = self
     }
     
     private func layout() {
@@ -99,5 +100,22 @@ extension HomeListViewController: HangoutCellDelegate {
         let viewController = HangoutDetailViewController()
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+// MARK: - HomeListTopViewDelegate
+extension HomeListViewController: HomeListTopViewDelegate {
+    func localeButtonTapped() {
+        //
+    }
+    
+    func searchButtonTapped() {
+        let viewController = HomeSearchViewController()
+        viewController.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func filterButtonTapped() {
+        //
     }
 }
