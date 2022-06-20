@@ -94,4 +94,9 @@ extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
             fatalError("Failed sign out")
         }
     }
+    
+    func serviceButtonTapped() {
+        let viewController = CustomerServiceViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
 }

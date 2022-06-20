@@ -10,6 +10,7 @@ import SnapKit
 
 protocol ProfileSettingServiceViewDelegate: AnyObject {
     func logoutButtonTapped()
+    func serviceButtonTapped()
 }
 
 final class ProfileSettingServiceView: UIView {
@@ -36,7 +37,7 @@ final class ProfileSettingServiceView: UIView {
         let button = UIButton()
         button.setImage(UIImage(named: "forward"), for: .normal)
         button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-//        button.addTarget(self, action: #selector(toggleSwitch), for: .touchUpInside)
+        button.addTarget(self, action: #selector(serviceButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -76,6 +77,11 @@ final class ProfileSettingServiceView: UIView {
     @objc
     private func logoutButtonHandler() {
         delegate?.logoutButtonTapped()
+    }
+    
+    @objc
+    private func serviceButtonHandler() {
+        delegate?.serviceButtonTapped()
     }
     
     // MARK: Helpers
