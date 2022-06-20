@@ -45,7 +45,6 @@ final class SelectionButton: UIButton {
 }
 
 // MARK: - Binder
-// MainScheduler에서 수행, Observer only -> 값을 주입할 수 있지만, 값을 관찰할 수 없음
 extension Reactive where Base: SelectionButton {
     var isSelected: Binder<Bool> {
         return Binder(self.base) { button, isSelected in

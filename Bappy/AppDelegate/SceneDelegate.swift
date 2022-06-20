@@ -26,14 +26,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             switchRootViewToSignInView()
             return
         }
-        
+
         // Check Guest Mode
         guard !user.isAnonymous else {
             print("DEBUG: Anonymous user signs in")
             switchRootViewToMainView()
             return
         }
-        
+
         // Check registerd Firebase, but not in Backend
         guard let displayName = user.displayName, displayName == user.uid else {
             do { try Auth.auth().signOut() }
@@ -41,7 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             switchRootViewToSignInView()
             return
         }
-        
+
         // Sign In Registerd User
         switchRootViewToMainView()
         
@@ -60,8 +60,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let viewController = HangoutMakeViewController()
 //        let rootViewController = UINavigationController(rootViewController: viewController)
         
-        // 로그인
-//        let rootViewController = BappyLoginViewController()
+        // 상세 프로필
+//        let rootViewController = ProfileDetailViewController()
         
 //        window?.rootViewController = rootViewController
 //        window?.makeKeyAndVisible()

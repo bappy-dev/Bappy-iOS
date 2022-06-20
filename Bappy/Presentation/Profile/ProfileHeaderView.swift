@@ -73,7 +73,7 @@ final class ProfileHeaderView: UIView {
     // MARK: Actions
     @objc
     private func didTapProfileButton() {
-        print("DEBUG: didTapProfileButton..")
+        delegate?.moreButtonDidTap()
     }
     
     // MARK: Helpers

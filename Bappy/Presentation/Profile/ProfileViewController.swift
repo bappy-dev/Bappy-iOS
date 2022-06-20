@@ -84,6 +84,7 @@ final class ProfileViewController: UIViewController {
         
         tableView.tableHeaderView = headerView
         headerView.frame.size.height = 352.0
+        headerView.delegate = self
     }
     
     private func layout() {
@@ -127,5 +128,14 @@ extension ProfileViewController: UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let scrolledOffset = scrollView.contentOffset.y
         if scrolledOffset < 0 { scrollView.contentOffset.y = 0 }
+    }
+}
+
+// MARK: - ProfileHeaderViewDelegate
+extension ProfileViewController: ProfileHeaderViewDelegate {
+    func moreButtonDidTap() {
+        let viewController = ProfileDetailViewController()
+        viewController.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
