@@ -37,14 +37,14 @@ final class HangoutCell: UITableViewCell {
     
     private let timeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "home_time")
+        imageView.image = UIImage(named: "cell_time")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "home_location")
+        imageView.image = UIImage(named: "cell_location")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -70,7 +70,7 @@ final class HangoutCell: UITableViewCell {
     
     private let participantsImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "home_participants")
+        imageView.image = UIImage(named: "cell_participants")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -86,7 +86,7 @@ final class HangoutCell: UITableViewCell {
     
     private lazy var moreButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "home_more"), for: .normal)
+        button.setImage(UIImage(named: "cell_more"), for: .normal)
         button.addTarget(self, action: #selector(moreButtonHandler), for: .touchUpInside)
         return button
     }()

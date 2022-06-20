@@ -8,15 +8,11 @@
 import UIKit
 import SnapKit
 
-protocol HomeListTopSubViewDelegate: AnyObject {
-    
-}
-private let reuseIdentifier = "HomeListLanguageCell"
+private let reuseIdentifier = "HomeListCategoryCell"
 final class HomeListTopSubView: UIView {
     
     // MARK: Properties
-    weak var delegate: HomeListTopSubViewDelegate?
-    private var languageList = ["All", "English", "Korean"]
+    private var categoryList = ["All", "Travel", "Study", "Sports", "Food", "Drinks", "Cook", "Cultural Activities", "Volunteer", "Practice Language", "Crafting"]
     
     private lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -24,7 +20,7 @@ final class HomeListTopSubView: UIView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(HomeListLanguageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(HomeListCategoryCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
@@ -53,7 +49,7 @@ final class HomeListTopSubView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        collectionView.selectItem(at: IndexPath(item: 1, section: 0), animated: false, scrollPosition: .top) // 임시
+        collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top) // 임시
     }
     
     // MARK: Helpers
@@ -109,7 +105,6 @@ final class HomeListTopSubView: UIView {
         sortingOrderButton.snp.makeConstraints {
             $0.centerY.equalTo(vDividingView)
             $0.leading.equalTo(vDividingView).offset(17.5)
-//            $0.trailing.equalTo(hDividingView1)
         }
         
         sortingOrderButton.addSubview(localeButtonImageView)
@@ -124,32 +119,21 @@ final class HomeListTopSubView: UIView {
 // MARK: - UICollectionViewDataSource
 extension HomeListTopSubView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return languageList.count + 1
+        return categoryList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! HomeListLanguageCell
-        cell.isFirstCell = (indexPath.item == 0)
-        if indexPath.item > 0 {
-            cell.langauge = languageList[indexPath.item - 1]
-        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! HomeListCategoryCell
+        cell.category = categoryList[indexPath.item]
         return cell
     }
 }
 
-extension HomeListTopSubView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! HomeListLanguageCell
-    }
-}
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension HomeListTopSubView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat =
-        (indexPath.item == 0)
-        ? 28.0
-        : CGFloat(languageList[indexPath.item - 1].count) * 8.0 + 36.0
+        let width: CGFloat = CGFloat(categoryList[indexPath.item].count) * 8.0 + 36.0
         let height: CGFloat = 43.0
         return .init(width: width, height: height)    }
     

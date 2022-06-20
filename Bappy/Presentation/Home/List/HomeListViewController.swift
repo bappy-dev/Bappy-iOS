@@ -55,7 +55,6 @@ final class HomeListViewController: UIViewController {
     
     private func configure() {
         view.backgroundColor = .white
-        topView.delegate = self
     }
     
     private func layout() {
@@ -100,22 +99,5 @@ extension HomeListViewController: HangoutCellDelegate {
         let viewController = HangoutDetailViewController()
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
-// MARK: - HomeListTopViewDelegate
-extension HomeListViewController: HomeListTopViewDelegate {
-    func showDateFilterView() {
-        let popupView = CalendarPopupViewController()
-        popupView.modalPresentationStyle = .overCurrentContext
-        tabBarController?.present(popupView, animated: false)
-    }
-    
-    func showWriteView() {
-//        let rootViewController = HangoutMakeViewController()
-//        let viewController = UINavigationController(rootViewController: rootViewController)
-//        viewController.modalPresentationStyle = .fullScreen
-//        viewController.navigationBar.isHidden = true
-//        present(viewController, animated: true)
     }
 }
