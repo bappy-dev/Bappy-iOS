@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import YPImagePicker
 
 extension Reactive where Base: UIScrollView {
     var setContentOffset: Binder<CGPoint> {
@@ -74,6 +75,18 @@ extension Reactive where Base: ProgressHUD {
     public static var dismiss: Binder<Void> {
         return Binder(UIApplication.shared) { _, _ in
             ProgressHUD.dismiss()
+        }
+    }
+}
+
+extension YPImagePicker {
+    public var didFinishPicking: Observable<(items: [YPMediaItem], cancelled: Bool)>  {
+        return Observable<(items: [YPMediaItem], cancelled: Bool)>.create { [weak self] observer in
+            self?.didFinishPicking { items, cancelled in
+                observer.onNext((items: items, cancelled: cancelled))
+                observer.onCompleted()
+            }
+            return Disposables.create()
         }
     }
 }

@@ -73,6 +73,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var isContinueButtonEnabled: Signal<Bool>
         var keyboardWithButtonHeight: Signal<CGFloat>
         var showSearchView: Signal<SearchPlaceViewModel>
+        var showImagePicker: Signal<Void>
     }
     
     let dependency: Dependency
@@ -106,6 +107,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
     private let isLimitValid$ = BehaviorSubject<Bool>(value: false)
     private let showSearchView$ = PublishSubject<SearchPlaceViewModel>()
+    private let showImagePicker$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -156,7 +158,7 @@ final class HangoutMakeViewModel: ViewModelType {
                 ),
                 Observable.combineLatest(
                     page$.filter { $0 >= 5 && $0 <= 8 },
-                    isCategoriesValid$, isPlanValid$, isLanguageValid$, isOpenchatValid$,
+                    isPlanValid$, isLanguageValid$, isOpenchatValid$, isLimitValid$,
                     resultSelector: shouldButtonEnabledWithSecond
                 )
             )
@@ -166,6 +168,8 @@ final class HangoutMakeViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: 0)
         let showSearchView = showSearchView$
             .asSignal(onErrorJustReturn: SearchPlaceViewModel(dependency: dependency.searchPlaceDependency))
+        let showImagePicker = showImagePicker$
+            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
@@ -202,7 +206,8 @@ final class HangoutMakeViewModel: ViewModelType {
             popView: popView,
             isContinueButtonEnabled: isContinueButtonEnabled,
             keyboardWithButtonHeight: keyboardWithButtonHeight,
-            showSearchView: showSearchView
+            showSearchView: showSearchView,
+            showImagePicker: showImagePicker
         )
         
         // Bindind
@@ -262,6 +267,20 @@ final class HangoutMakeViewModel: ViewModelType {
         
         subViewModels.placeViewModel.output.isValid
             .emit(to: isPlaceValid$)
+            .disposed(by: disposeBag)
+        
+        // Child(Picture)
+        picture$
+            .compactMap { $0 }
+            .bind(to: subViewModels.pictureViewModel.input.picture)
+            .disposed(by: disposeBag)
+        
+        subViewModels.pictureViewModel.output.pictureButtonTapped
+            .emit(to: showImagePicker$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.pictureViewModel.output.isValid
+            .emit(to: isPictureValid$)
             .disposed(by: disposeBag)
         
         // ContinueButton

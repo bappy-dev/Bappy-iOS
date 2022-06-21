@@ -18,8 +18,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.backgroundColor = .white
         window?.tintColor = .bappyGray
         
-        setProgressHUDStyle()
-        
         // Check Sign In State
         guard let user = Auth.auth().currentUser else {
             print("DEBUG: No user signed in")
@@ -65,14 +63,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
 //        window?.rootViewController = rootViewController
 //        window?.makeKeyAndVisible()
-    }
-}
-
-extension SceneDelegate {
-    private func setProgressHUDStyle() {
-        ProgressHUD.animationType = .horizontalCirclesPulse
-        ProgressHUD.colorBackground = .bappyYellow
-        ProgressHUD.colorAnimation = .bappyBrown
     }
 }
 

@@ -119,7 +119,7 @@ final class BappyLoginViewController: UIViewController {
     // MARK: Actions
     @objc
     private func skipButtonHandler() {
-        ProgressHUD.show(interaction: false)
+        showProgessHUD()
         signInAnonymously()
     }
     
@@ -139,12 +139,20 @@ final class BappyLoginViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func showProgessHUD() {
+        ProgressHUD.animationType = .horizontalCirclesPulse
+        ProgressHUD.colorBackground = .bappyYellow
+        ProgressHUD.colorAnimation = .bappyBrown
+        ProgressHUD.show(interaction: false)
+    }
+    
     private func setButtonImageInset() {
         for button in [googleLoginButton, facebookLoginButton, appleLoginButton] {
             guard let titleWidth = button.titleLabel?.frame.width else { return }
             let inset = (button.frame.width - titleWidth) / 2 - 30.0
             button.imageEdgeInsets = .init(top: 0, left: -inset, bottom: 0, right: inset)
         }
+        
     }
     
     private func configure() {
@@ -259,7 +267,7 @@ extension BappyLoginViewController {
 // MARK: - Firebase Sign In
 extension BappyLoginViewController {
     private func signInWithFirebase(with credential: AuthCredential) {
-        ProgressHUD.show(interaction: false)
+        showProgessHUD()
         Auth.auth().signIn(with: credential) { [weak self] authResult, error in
             guard let self = self else { return }
             if let error = error {

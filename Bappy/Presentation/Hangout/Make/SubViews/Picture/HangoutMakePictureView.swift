@@ -10,29 +10,12 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-protocol HangoutMakePictureViewDelegate: AnyObject {
-    func addPhoto()
-}
-
 private let reuseIdentifier = "HangoutPictureCell"
 final class HangoutMakePictureView: UIView {
     
     // MARK: Properties
     private let viewModel: HangoutMakePictureViewModel
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: HangoutMakePictureViewDelegate?
-    
-    var selectedImage: UIImage? {
-        didSet {
-            guard let selectedImage = selectedImage else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.addPictureImageView.isHidden = true
-                self.pictureButton.setImage(selectedImage, for: .normal)
-            }
-        }
-    }
     
     private let pictureCaptionLabel: UILabel = {
         let label = UILabel()
@@ -43,11 +26,10 @@ final class HangoutMakePictureView: UIView {
         return label
     }()
     
-    private lazy var pictureButton: UIButton = {
+    private let pictureButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .bappyLightgray
         button.imageView?.contentMode = .scaleAspectFill
-        button.addTarget(self, action: #selector(pictureButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -65,16 +47,11 @@ final class HangoutMakePictureView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func pictureButtonHandler() {
-        delegate?.addPhoto()
     }
     
     // MARK: Helpers
@@ -103,5 +80,23 @@ final class HangoutMakePictureView: UIView {
             $0.width.equalTo(28.0)
             $0.height.equalTo(22.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension HangoutMakePictureView {
+    private func bind() {
+        pictureButton.rx.tap
+            .bind(to: viewModel.input.pictureButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.picture
+            .compactMap { $0 }
+            .emit(to: pictureButton.rx.image(for: .normal))
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hideDefaultImage
+            .emit(to: addPictureImageView.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }

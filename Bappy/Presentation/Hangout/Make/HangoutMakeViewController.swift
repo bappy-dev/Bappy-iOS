@@ -16,8 +16,6 @@ final class HangoutMakeViewController: UIViewController {
     // MARK: Properties
     private let viewModel: HangoutMakeViewModel
     private let disposeBag = DisposeBag()
-    private var selectedImage: UIImage? { didSet { pictureView.selectedImage = self.selectedImage } }
-    private var numberOfImages = 0
     
     private let backButton = UIButton()
     private let progressBarView = ProgressBarView()
@@ -99,6 +97,25 @@ final class HangoutMakeViewController: UIViewController {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
     }
+    
+    private func configureImagePicker() -> YPImagePicker {
+        var config = YPImagePickerConfiguration()
+        config.colors.tintColor = .bappyYellow
+        config.shouldSaveNewPicturesToAlbum = false
+        config.showsPhotoFilters = false
+        config.showsCrop = .rectangle(ratio: 390.0/333.0)
+        config.showsCropGridOverlay = true
+        config.library.mediaType = .photo
+        config.wordings.libraryTitle = "Gallery"
+        config.wordings.cameraTitle = "Camera"
+        config.wordings.next = "Select"
+        config.wordings.save = "Done"
+        config.startOnScreen = .library
+        config.library.maxNumberOfItems = 1
+        config.library.minNumberOfItems = 1
+        config.library.spacingBetweenItems = 2.0
+        return YPImagePicker(configuration: config)
+    }
 
     private func configure() {
         view.backgroundColor = .white
@@ -106,7 +123,6 @@ final class HangoutMakeViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        pictureView.delegate = self
         languageView.delegate = self
     }
     
@@ -249,6 +265,27 @@ extension HangoutMakeViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showImagePicker
+            .emit(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                let picker = self.configureImagePicker()
+                picker.didFinishPicking
+                    .subscribe { items, cancelled in
+                        guard !cancelled else {
+                            picker.dismiss(animated: true)
+                            return
+                        }
+                        if let photo = items.singlePhoto {
+                            self.viewModel.input.picture.onNext(photo.modifiedImage)
+                        }
+                        picker.dismiss(animated: true)
+                    }
+                    .disposed(by: self.disposeBag)
+                    
+                self.present(picker, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
         RxKeyboard.instance.visibleHeight
             .skip(1)
             .drive(onNext: { [weak self] height in
@@ -269,40 +306,6 @@ extension HangoutMakeViewController {
 extension HangoutMakeViewController: SelectLanguageViewControllerDelegate {
     func getSelectedLanguage(_ language: String) {
         languageView.language = language
-    }
-}
-
-// MARK: - HangoutPictureViewDelegate
-extension HangoutMakeViewController: HangoutMakePictureViewDelegate {
-    func addPhoto() {
-        var config = YPImagePickerConfiguration()
-        config.colors.tintColor = .bappyYellow
-        config.shouldSaveNewPicturesToAlbum = false
-        config.showsPhotoFilters = false
-        config.showsCrop = .rectangle(ratio: 390.0/333.0)
-        config.showsCropGridOverlay = true
-        config.library.mediaType = .photo
-        config.wordings.libraryTitle = "Gallery"
-        config.wordings.cameraTitle = "Camera"
-        config.wordings.next = "Select"
-        config.wordings.save = "Done"
-        config.startOnScreen = .library
-        config.library.maxNumberOfItems = 1
-        config.library.minNumberOfItems = 1
-        config.library.spacingBetweenItems = 2.0
-        let picker = YPImagePicker(configuration: config)
-        
-        picker.didFinishPicking { [weak self, unowned picker] items, cancelled in
-            guard !cancelled else {
-                picker.dismiss(animated: true)
-                return
-            }
-            if let photo = items.singlePhoto {
-                self?.selectedImage = photo.modifiedImage
-            }
-            picker.dismiss(animated: true)
-        }
-        present(picker, animated: true)
     }
 }
 
