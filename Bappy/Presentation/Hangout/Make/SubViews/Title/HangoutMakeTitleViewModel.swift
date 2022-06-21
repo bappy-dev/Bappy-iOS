@@ -23,9 +23,9 @@ final class HangoutMakeTitleViewModel: ViewModelType {
     
     struct Output {
         var modifiedText: Signal<String> // <-> View
-        var isValid: Driver<Bool> // <-> Parent
         var shouldHideRule: Signal<Bool> // <-> View
         var keyboardWithButtonHeight: Signal<CGFloat> // <-> View
+        var isValid: Signal<Bool> // <-> Parent
     }
     
     let dependency: Dependency
@@ -60,7 +60,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
             .share()
         let isValid = isTitleValid
             .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
+            .asSignal(onErrorJustReturn: false)
         let shouldHideRule = Observable
             .combineLatest(editingDidBegin$, isTitleValid) { $1 }
             .asSignal(onErrorJustReturn: false)
@@ -76,9 +76,9 @@ final class HangoutMakeTitleViewModel: ViewModelType {
         
         self.output = Output(
             modifiedText: modifiedText,
-            isValid: isValid,
             shouldHideRule: shouldHideRule,
-            keyboardWithButtonHeight: keyboardWithButtonHeight
+            keyboardWithButtonHeight: keyboardWithButtonHeight,
+            isValid: isValid
         )
         
         // Binding

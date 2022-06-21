@@ -244,7 +244,7 @@ final class HangoutMakeViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         subViewModels.titleViewModel.output.isValid
-            .drive(isTitleValid$)
+            .emit(to: isTitleValid$)
             .disposed(by: disposeBag)
         
         // Child(Time)
@@ -317,6 +317,15 @@ final class HangoutMakeViewModel: ViewModelType {
         
         subViewModels.languageViewModel.output.isValid
             .emit(to: isLanguageValid$)
+            .disposed(by: disposeBag)
+        
+        // Child(Openchat)
+        keyboardWithButtonHeight
+            .emit(to: subViewModels.openchatViewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
+        
+        subViewModels.openchatViewModel.output.isValid
+            .emit(to: isOpenchatValid$)
             .disposed(by: disposeBag)
         
         // ContinueButton

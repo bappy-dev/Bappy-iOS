@@ -28,14 +28,13 @@ final class HangoutMakeOpenchatView: UIView {
         return label
     }()
     
-    private lazy var openchatTextField: UITextField = {
+    private let openchatTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 14.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the URL",
             attributes: [.foregroundColor: UIColor.bappyGray])
-        textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
         return textField
     }()
     
@@ -71,6 +70,7 @@ final class HangoutMakeOpenchatView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -79,20 +79,10 @@ final class HangoutMakeOpenchatView: UIView {
     
     // MARK: Methods
     func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
-        guard openchatTextField.isFirstResponder else { return }
         let labelPosition = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
         let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
         let offset = CGPoint(x: 0, y: y)
         scrollView.setContentOffset(offset, animated: true)
-    }
-    
-    // MARK: Actions
-    @objc
-    private func textFieldEditingHandler(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        let isValid = text.hasPrefix("https://open.kakao.com/o/") && (text.count == 33)
-        ruleDescriptionLabel.isHidden = isValid
-//        delegate?.isTitleValid(isValid)
     }
     
     // MARK: Helpers
@@ -146,5 +136,28 @@ final class HangoutMakeOpenchatView: UIView {
             $0.top.equalTo(underlinedView.snp.bottom).offset(10.0)
             $0.leading.equalTo(underlinedView).offset(5.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension HangoutMakeOpenchatView {
+    private func bind() {
+        openchatTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        openchatTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideRule
+            .emit(to: ruleDescriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.keyboardWithButtonHeight
+            .emit(onNext: { [weak self] height in
+                self?.updateTextFieldPosition(bottomButtonHeight: height)
+            })
+            .disposed(by: disposeBag)
     }
 }

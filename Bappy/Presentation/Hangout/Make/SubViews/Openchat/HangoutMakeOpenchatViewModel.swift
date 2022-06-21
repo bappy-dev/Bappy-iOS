@@ -12,25 +12,58 @@ import RxCocoa
 final class HangoutMakeOpenchatViewModel: ViewModelType {
     struct Dependency {}
     
-    struct Input {}
+    struct Input {
+        var text: AnyObserver<String> // <-> View
+        var editingDidBegin: AnyObserver<Void> // <-> View
+        var keyboardWithButtonHeight: AnyObserver<CGFloat> // <-> Parent
+    }
     
-    struct Output {}
+    struct Output {
+        var shouldHideRule: Signal<Bool> // <-> View
+        var keyboardWithButtonHeight: Signal<CGFloat> // <-> View
+        var isValid: Signal<Bool> // <-> Parent
+    }
     
     let dependency: Dependency
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
     
+    private let text$ = BehaviorSubject<String>(value: "")
+    private let editingDidBegin$ = PublishSubject<Void>()
+    private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
+    
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
+        let isOpenchatValid = text$
+            .map(validation)
+            .share()
+        let shouldHideRule = isOpenchatValid
+            .asSignal(onErrorJustReturn: false)
+        let keyboardWithButtonHeight = keyboardWithButtonHeight$
+            .asSignal(onErrorJustReturn: 0)
+        let isValid = isOpenchatValid
+            .distinctUntilChanged()
+            .asSignal(onErrorJustReturn: false)
         
         // Input & Output
-        self.input = Input()
-        self.output = Output()
+        self.input = Input(
+            text: text$.asObserver(),
+            editingDidBegin: editingDidBegin$.asObserver(),
+            keyboardWithButtonHeight: keyboardWithButtonHeight$.asObserver()
+        )
         
-        // Binding
-
+        self.output = Output(
+            shouldHideRule: shouldHideRule,
+            keyboardWithButtonHeight: keyboardWithButtonHeight,
+            isValid: isValid
+        )
     }
+}
+
+private func validation(text: String) -> Bool {
+    return text.hasPrefix("https://open.kakao.com/o/") &&
+    (text.count == 33)
 }
