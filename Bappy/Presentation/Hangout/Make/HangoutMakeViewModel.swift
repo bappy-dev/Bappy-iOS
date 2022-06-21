@@ -36,6 +36,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var openchatDependency: HangoutMakeOpenchatViewModel.Dependency
         var limitDependency: HangoutMakeLimitViewModel.Dependency
         var searchPlaceDependency: SearchPlaceViewModel.Dependency
+        var selectLanguageDependecy: SelectLanguageViewModel.Dependency
     }
     
     struct Input {
@@ -49,7 +50,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var place: AnyObserver<Map?>
         var picture: AnyObserver<UIImage?>
         var plan: AnyObserver<String>
-        var language: AnyObserver<String>
+        var language: AnyObserver<Language>
         var openchat: AnyObserver<String>
         var limit: AnyObserver<Int?>
         var isCategoriesValid: AnyObserver<Bool>
@@ -61,7 +62,8 @@ final class HangoutMakeViewModel: ViewModelType {
         var isLanguageValid: AnyObserver<Bool>
         var isOpenchatValid: AnyObserver<Bool>
         var isLimitValid: AnyObserver<Bool>
-        var showSearchView: AnyObserver<SearchPlaceViewModel>
+        var showSearchPlaceView: AnyObserver<SearchPlaceViewModel>
+        var showSelectLanguageView: AnyObserver<SelectLanguageViewModel>
     }
     
     struct Output {
@@ -72,8 +74,9 @@ final class HangoutMakeViewModel: ViewModelType {
         var popView: Signal<Void>
         var isContinueButtonEnabled: Signal<Bool>
         var keyboardWithButtonHeight: Signal<CGFloat>
-        var showSearchView: Signal<SearchPlaceViewModel>
+        var showSearchPlaceView: Signal<SearchPlaceViewModel>
         var showImagePicker: Signal<Void>
+        var showSelectLanguageView: Signal<SelectLanguageViewModel>
     }
     
     let dependency: Dependency
@@ -94,7 +97,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let place$ = BehaviorSubject<Map?>(value: nil)
     private let picture$ = BehaviorSubject<UIImage?>(value: nil)
     private let plan$ = BehaviorSubject<String>(value: "")
-    private let language$ = BehaviorSubject<String>(value: "")
+    private let language$ = BehaviorSubject<Language>(value: "")
     private let openchat$ = BehaviorSubject<String>(value: "")
     private let limit$ = BehaviorSubject<Int?>(value: nil)
     private let isCategoriesValid$ = BehaviorSubject<Bool>(value: false)
@@ -106,8 +109,9 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
     private let isLimitValid$ = BehaviorSubject<Bool>(value: false)
-    private let showSearchView$ = PublishSubject<SearchPlaceViewModel>()
+    private let showSearchPlaceView$ = PublishSubject<SearchPlaceViewModel>()
     private let showImagePicker$ = PublishSubject<Void>()
+    private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -166,10 +170,12 @@ final class HangoutMakeViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
-        let showSearchView = showSearchView$
+        let showSearchPlaceView = showSearchPlaceView$
             .asSignal(onErrorJustReturn: SearchPlaceViewModel(dependency: dependency.searchPlaceDependency))
         let showImagePicker = showImagePicker$
             .asSignal(onErrorJustReturn: Void())
+        let showSelectLanguageView = showSelectLanguageView$
+            .asSignal(onErrorJustReturn: SelectLanguageViewModel(dependency: dependency.selectLanguageDependecy))
         
         // Input & Output
         self.input = Input(
@@ -195,7 +201,8 @@ final class HangoutMakeViewModel: ViewModelType {
             isLanguageValid: isLanguageValid$.asObserver(),
             isOpenchatValid: isOpenchatValid$.asObserver(),
             isLimitValid: isLimitValid$.asObserver(),
-            showSearchView: showSearchView$.asObserver()
+            showSearchPlaceView: showSearchPlaceView$.asObserver(),
+            showSelectLanguageView: showSelectLanguageView$.asObserver()
         )
         
         self.output = Output(
@@ -206,8 +213,9 @@ final class HangoutMakeViewModel: ViewModelType {
             popView: popView,
             isContinueButtonEnabled: isContinueButtonEnabled,
             keyboardWithButtonHeight: keyboardWithButtonHeight,
-            showSearchView: showSearchView,
-            showImagePicker: showImagePicker
+            showSearchPlaceView: showSearchPlaceView,
+            showImagePicker: showImagePicker,
+            showSelectLanguageView: showSelectLanguageView
         )
         
         // Bindind
@@ -255,14 +263,14 @@ final class HangoutMakeViewModel: ViewModelType {
             .bind(to: subViewModels.placeViewModel.input.map)
             .disposed(by: disposeBag)
         
-        subViewModels.placeViewModel.output.showSearchView
+        subViewModels.placeViewModel.output.showSearchPlaceView
             .map { _ -> SearchPlaceViewModel in
                 let dependency = dependency.searchPlaceDependency
                 let viewModel = SearchPlaceViewModel(dependency: dependency)
                 viewModel.delegate = self
                 return viewModel
             }
-            .emit(to: showSearchView$)
+            .emit(to: showSearchPlaceView$)
             .disposed(by: disposeBag)
         
         subViewModels.placeViewModel.output.isValid
@@ -290,6 +298,25 @@ final class HangoutMakeViewModel: ViewModelType {
         
         subViewModels.planViewModel.output.isValid
             .emit(to: isPlanValid$)
+            .disposed(by: disposeBag)
+        
+        // Child(Language)
+        language$
+            .bind(to: subViewModels.languageViewModel.input.language)
+            .disposed(by: disposeBag)
+        
+        subViewModels.languageViewModel.output.showSelectLanguageView
+            .map { _ -> SelectLanguageViewModel in
+                let dependency = dependency.selectLanguageDependecy
+                let viewModel = SelectLanguageViewModel(dependency: dependency)
+                viewModel.delegate = self
+                return viewModel
+            }
+            .emit(to: showSelectLanguageView$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.languageViewModel.output.isValid
+            .emit(to: isLanguageValid$)
             .disposed(by: disposeBag)
         
         // ContinueButton
@@ -332,8 +359,16 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
     default: return false}
 }
 
+// MARK: - SearchPlaceViewModelDelegate
 extension HangoutMakeViewModel: SearchPlaceViewModelDelegate {
     func mapSelected(map: Map) {
         place$.onNext(map)
+    }
+}
+
+// MARK: - SelectLanguageViewModelDelegate
+extension HangoutMakeViewModel: SelectLanguageViewModelDelegate {    
+    func languageSelected(language: Language) {
+        language$.onNext(language)
     }
 }

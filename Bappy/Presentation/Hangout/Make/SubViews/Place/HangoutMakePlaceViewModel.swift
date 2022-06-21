@@ -20,7 +20,7 @@ final class HangoutMakePlaceViewModel: ViewModelType {
     struct Output {
         var endEditing: Signal<Void> // <-> View
         var text: Signal<String> // <-> View
-        var showSearchView: Signal<Void> // <-> Parent
+        var showSearchPlaceView: Signal<Void> // <-> Parent
         var isValid: Signal<Bool> // <-> Parent
     }
     
@@ -42,7 +42,7 @@ final class HangoutMakePlaceViewModel: ViewModelType {
         let text = map$
             .map { "\($0.name)(\($0.address))" }
             .asSignal(onErrorJustReturn: "")
-        let showSearchView = endEditing.skip(1)
+        let showSearchPlaceView = endEditing.skip(1)
         let isValid = map$
             .map { _ in true }
             .asSignal(onErrorJustReturn: false)
@@ -56,7 +56,7 @@ final class HangoutMakePlaceViewModel: ViewModelType {
         self.output = Output(
             endEditing: endEditing,
             text: text,
-            showSearchView: showSearchView,
+            showSearchPlaceView: showSearchPlaceView,
             isValid: isValid
         )
     }

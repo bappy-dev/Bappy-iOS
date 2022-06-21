@@ -10,6 +10,7 @@ import Foundation
 enum Gender: String { case male, female, other }
 enum UserState { case normal, anonymous, notRegistered, abuser }
 enum Persnoality: String { case spontaneous, planning, talkative, shy, empathatic, calm, polite }
+typealias Language = String
 
 struct User: Equatable, Identifiable {
     typealias Identifier = String
@@ -28,7 +29,7 @@ struct User: Equatable, Identifiable {
     
     let introduce: String?
     let affiliation: String?
-    let languages: [String]?
+    let languages: [Language]?
     let personalities: [Persnoality]?
     let interests: [HangoutCategory]?
     

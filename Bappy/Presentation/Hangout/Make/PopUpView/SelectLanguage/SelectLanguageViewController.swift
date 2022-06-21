@@ -7,26 +7,15 @@
 
 import UIKit
 import SnapKit
-
-protocol SelectLanguageViewControllerDelegate: AnyObject {
-    func getSelectedLanguage(_ language: String)
-}
+import RxSwift
+import RxCocoa
 
 private let reuseIdentifier = "SelectLanguageCell"
 final class SelectLanguageViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: SelectLanguageViewControllerDelegate?
-    private let languageList = [
-        "Arabic", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew",
-        "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"
-    ]
-    private var searchedLanguageList: [String] = [] {
-        didSet {
-            noResultView.isHidden = !searchedLanguageList.isEmpty
-            self.tableView.reloadData()
-        }
-    }
+    private let viewModel: SelectLanguageViewModel
+    private let disposeBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
     private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
@@ -45,14 +34,13 @@ final class SelectLanguageViewController: UIViewController {
         return view
     }()
     
-    private lazy var closeButton: UIButton = {
+    private let closeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBappyTitle(
             title: "Close",
             font: .roboto(size: 18.0, family: .Medium),
             color: .bappyYellow
         )
-        button.addTarget(self, action: #selector(closeButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -64,7 +52,7 @@ final class SelectLanguageViewController: UIViewController {
         return label
     }()
     
-    private lazy var searchTextField: UITextField = {
+    private let searchTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "search"))
         let containerView = UIView()
@@ -77,14 +65,11 @@ final class SelectLanguageViewController: UIViewController {
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .unlessEditing
-        textField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
         return textField
     }()
     
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = 41.5
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
@@ -95,12 +80,17 @@ final class SelectLanguageViewController: UIViewController {
     private let noResultView = NoResultView()
     
     // MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init(viewModel: SelectLanguageViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
-        addKeyboardObserver()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -151,40 +141,9 @@ final class SelectLanguageViewController: UIViewController {
         searchTextField.resignFirstResponder()
     }
     
-    // MARK: Actions
-    @objc
-    private func closeButtonHandler() {
-        animateDismissView()
-    }
-    
-    @objc
-    private func textFieldEditingChanged(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        if text.isEmpty {
-            searchedLanguageList = languageList
-        } else {
-            searchedLanguageList = languageList
-                .filter { $0.lowercased().contains(text.lowercased()) }
-        }
-    }
-    
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
-        self.tableView.contentInset.bottom = keyboardHeight
-        self.tableView.verticalScrollIndicatorInsets.bottom = keyboardHeight
-    }
-    
     // MARK: Helpers
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
     private func configure() {
         view.backgroundColor = .clear
-        searchedLanguageList = languageList
         tableView.backgroundView = noResultView
         noResultView.isHidden = true
     }
@@ -242,27 +201,59 @@ final class SelectLanguageViewController: UIViewController {
         }
     }
 }
-// MARK: - UITableViewDataSource
-extension SelectLanguageViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchedLanguageList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
-        cell.textLabel?.text = searchedLanguageList[indexPath.row]
-        cell.textLabel?.textColor = .bappyBrown
-        cell.textLabel?.font = .roboto(size: 14.0)
-        return cell
-    }
-}
 
-// MARK: - UITableViewDelegate
-extension SelectLanguageViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        delegate?.getSelectedLanguage(searchedLanguageList[indexPath.row])
-        searchTextField.resignFirstResponder()
-        animateDismissView()
+// MARK: - Bind
+extension SelectLanguageViewController {
+    private func bind() {
+        searchTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposeBag)
+        
+        closeButton.rx.tap
+            .bind(to: viewModel.input.closeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.filteredlanguages
+            .drive(tableView.rx.items) { tableView, row, language in
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: IndexPath(row: row, section: 0)
+                )
+                cell.textLabel?.text = language
+                cell.textLabel?.textColor = .bappyBrown
+                cell.textLabel?.font = .roboto(size: 14.0)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideNoResultView
+            .skip(1)
+            .distinctUntilChanged()
+            .emit(to: noResultView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissView
+            .emit(onNext: { [weak self] _ in
+                self?.animateDismissView()
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                self?.tableView.contentInset.bottom = height
+                self?.tableView.verticalScrollIndicatorInsets.bottom = height
+            }).disposed(by: disposeBag)
     }
 }

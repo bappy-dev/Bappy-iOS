@@ -123,7 +123,6 @@ final class HangoutMakeViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        languageView.delegate = self
     }
     
     private func layout() {
@@ -257,7 +256,7 @@ extension HangoutMakeViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.showSearchView
+        viewModel.output.showSearchPlaceView
             .emit(onNext: { [weak self] viewModel in
                 let viewController = SearchPlaceViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
@@ -286,6 +285,14 @@ extension HangoutMakeViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showSelectLanguageView
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = SelectLanguageViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false)
+            })
+            .disposed(by: disposeBag)
+        
         RxKeyboard.instance.visibleHeight
             .skip(1)
             .drive(onNext: { [weak self] height in
@@ -302,20 +309,3 @@ extension HangoutMakeViewController {
     }
 }
 
-// MARK: - SearchPlaceViewControllerDelegate
-extension HangoutMakeViewController: SelectLanguageViewControllerDelegate {
-    func getSelectedLanguage(_ language: String) {
-        languageView.language = language
-    }
-}
-
-// MARK: - HangoutLanguageViewDelegate
-extension HangoutMakeViewController: HangoutMakeLanguageViewDelegate {
-    func showSelectLanguageView() {
-        view.endEditing(true) // 임시
-        let viewController = SelectLanguageViewController()
-        viewController.modalPresentationStyle = .overCurrentContext
-        viewController.delegate = self
-        present(viewController, animated: false, completion: nil)
-    }
-}

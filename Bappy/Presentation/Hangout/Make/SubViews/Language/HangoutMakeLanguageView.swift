@@ -10,23 +10,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-protocol HangoutMakeLanguageViewDelegate: AnyObject {
-    func showSelectLanguageView()
-}
-
 final class HangoutMakeLanguageView: UIView {
     
     // MARK: Properties
     private let viewModel: HangoutMakeLanguageViewModel
     private let disposeBag = DisposeBag()
-    
-    weak var delegate: HangoutMakeLanguageViewDelegate?
-    var language: String? {
-        didSet {
-            guard let language = language else { return }
-            languageTextField.text = language
-        }
-    }
     
     private let languageCaptionLabel: UILabel = {
         let label = UILabel()
@@ -37,7 +25,7 @@ final class HangoutMakeLanguageView: UIView {
         return label
     }()
 
-    private lazy var languageTextField: UITextField = {
+    private let languageTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "make_language"))
         let containerView = UIView()
@@ -50,7 +38,6 @@ final class HangoutMakeLanguageView: UIView {
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.addTarget(self, action: #selector(languageTextFieldHandler), for: .editingDidBegin)
         return textField
     }()
     
@@ -67,16 +54,11 @@ final class HangoutMakeLanguageView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func languageTextFieldHandler(_ textField: UITextField) {
-        delegate?.showSelectLanguageView()
     }
     
     // MARK: Helpers
@@ -106,3 +88,21 @@ final class HangoutMakeLanguageView: UIView {
         }
     }
 }
+
+// MARK: - Bind
+extension HangoutMakeLanguageView {
+    private func bind() {
+        languageTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.text
+            .emit(to: languageTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: languageTextField.rx.endEditing)
+            .disposed(by: disposeBag)
+    }
+}
+ 

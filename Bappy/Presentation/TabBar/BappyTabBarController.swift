@@ -135,12 +135,18 @@ final class BappyTabBarController: UITabBarController {
                 minimumLength: 14,
                 maximumLength: 200
             ),
-            languageDependency: .init(),
+            languageDependency: .init(language: "English"),
             openchatDependency: .init(),
             limitDependency: .init(),
             searchPlaceDependency: .init(
                 key: Bundle.main.googleMapAPIKey,
-                language: "en")
+                language: "en"),
+            selectLanguageDependecy: .init(
+                languages: [
+                    "Arabic", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew",
+                    "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"
+                ]
+            )
         )
         let viewModel = HangoutMakeViewModel(dependency: dependency)
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)

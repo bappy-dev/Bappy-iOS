@@ -15,7 +15,7 @@ final class SearchPlaceViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: SearchPlaceViewModel
-    private let disposBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
     private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
@@ -215,28 +215,28 @@ extension SearchPlaceViewController {
     private func bind() {
         searchTextField.rx.text.orEmpty
             .bind(to: viewModel.input.text)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         searchTextField.rx.controlEvent(.editingDidEndOnExit)
             .bind(to: viewModel.input.searchButtonClicked)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         tableView.rx.willDisplayCell
             .map { $0.indexPath }
             .bind(to: viewModel.input.willDisplayIndex)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         tableView.rx.prefetchRows
             .bind(to: viewModel.input.prefetchRows)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         tableView.rx.itemSelected
             .bind(to: viewModel.input.itemSelected)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         closeButton.rx.tap
             .bind(to: viewModel.input.closeButtonTapped)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.maps
             .drive(tableView.rx.items) { tableView, row, map in
@@ -247,41 +247,41 @@ extension SearchPlaceViewController {
                 cell.setupCell(with: map)
                 return cell
             }
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.shouldHideNoResultView
             .skip(1)
             .distinctUntilChanged()
             .emit(to: noResultView.rx.isHidden)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.dismissKeyboard
             .emit(to: view.rx.endEditing)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.dismissView
             .emit(onNext: { [weak self] _ in
                 self?.animateDismissView()
             })
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.showLoader
             .emit(to: ProgressHUD.rx.show)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.dismissLoader
             .emit(to: ProgressHUD.rx.dismiss)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.shouldSpinnerAnimating
             .distinctUntilChanged()
             .drive(bottomSpinner.rx.isAnimating)
-            .disposed(by: disposBag)
+            .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
                 self?.tableView.contentInset.bottom = height
                 self?.tableView.verticalScrollIndicatorInsets.bottom = height
-            }).disposed(by: disposBag)
+            }).disposed(by: disposeBag)
     }
 }
