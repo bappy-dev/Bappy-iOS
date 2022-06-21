@@ -131,7 +131,10 @@ final class BappyTabBarController: UITabBarController {
             ),
             placeDependency: .init(),
             pictureDependency: .init(),
-            planDependency: .init(),
+            planDependency: .init(
+                minimumLength: 14,
+                maximumLength: 200
+            ),
             languageDependency: .init(),
             openchatDependency: .init(),
             limitDependency: .init(),

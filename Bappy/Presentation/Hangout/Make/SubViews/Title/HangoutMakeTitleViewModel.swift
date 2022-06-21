@@ -16,16 +16,16 @@ final class HangoutMakeTitleViewModel: ViewModelType {
     }
     
     struct Input {
-        var text: AnyObserver<String>
-        var editingDidBegin: AnyObserver<Void>
-        var keyboardWithButtonHeight: AnyObserver<CGFloat>
+        var text: AnyObserver<String> // <-> View
+        var editingDidBegin: AnyObserver<Void> // <-> View
+        var keyboardWithButtonHeight: AnyObserver<CGFloat> // <-> Parent
     }
     
     struct Output {
-        var modifiedText: Signal<String>
-        var isValid: Driver<Bool>
-        var shouldHideRule: Signal<Bool>
-        var keyboardWithButtonHeight: Signal<CGFloat>
+        var modifiedText: Signal<String> // <-> View
+        var isValid: Driver<Bool> // <-> Parent
+        var shouldHideRule: Signal<Bool> // <-> View
+        var keyboardWithButtonHeight: Signal<CGFloat> // <-> View
     }
     
     let dependency: Dependency

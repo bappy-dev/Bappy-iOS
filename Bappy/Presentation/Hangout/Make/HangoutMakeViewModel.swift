@@ -283,6 +283,15 @@ final class HangoutMakeViewModel: ViewModelType {
             .emit(to: isPictureValid$)
             .disposed(by: disposeBag)
         
+        // Child(Plan)
+        keyboardWithButtonHeight
+            .emit(to: subViewModels.planViewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
+        
+        subViewModels.planViewModel.output.isValid
+            .emit(to: isPlanValid$)
+            .disposed(by: disposeBag)
+        
         // ContinueButton
         output.isContinueButtonEnabled
             .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)

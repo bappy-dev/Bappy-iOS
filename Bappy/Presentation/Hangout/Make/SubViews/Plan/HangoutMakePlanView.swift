@@ -28,13 +28,12 @@ final class HangoutMakePlanView: UIView {
         return label
     }()
     
-    private lazy var planTextView: UITextView = {
+    private let planTextView: UITextView = {
         let textView = UITextView()
         textView.backgroundColor = .clear
         textView.font = .roboto(size: 16.0)
         textView.textColor = .bappyBrown
         textView.textAlignment = .left
-        textView.delegate = self
         return textView
     }()
     
@@ -62,6 +61,14 @@ final class HangoutMakePlanView: UIView {
         return label
     }()
     
+    private let countLabel: UILabel = {
+        let label = UILabel()
+        label.font = .roboto(size: 12.0)
+        label.textColor = .bappyGray
+        label.textAlignment = .right
+        return label
+    }()
+    
     // MARK: Lifecycle
     init(viewModel: HangoutMakePlanViewModel) {
         self.viewModel = viewModel
@@ -69,6 +76,7 @@ final class HangoutMakePlanView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -76,27 +84,20 @@ final class HangoutMakePlanView: UIView {
     }
     
     // MARK: Actions
-    @objc
-    private func didTextChange() {
-        planPlaceholderLabel.isHidden = !planTextView.text.isEmpty
-    }
     
     @objc
     private func touchesScrollView() {
         planTextView.resignFirstResponder()
     }
     
-    // MARK: Methods
-    func updateTextViewPosition(bottomButtonHeight: CGFloat) {
-        guard planTextView.isFirstResponder else { return }
+    // MARK: Helpers
+    private func updateTextViewPosition(bottomButtonHeight: CGFloat) {
         let labelPostion = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
         let y = (bottomButtonHeight > labelPostion) ? bottomButtonHeight - labelPostion + 5.0 : 0
         let offset = CGPoint(x: 0, y: y)
         scrollView.setContentOffset(offset, animated: true)
-        
     }
     
-    // MARK: Helpers
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
@@ -105,7 +106,6 @@ final class HangoutMakePlanView: UIView {
     private func configure() {
         self.backgroundColor = .white
         ruleDescriptionLabel.text = "Enter at least 14 characters"
-        NotificationCenter.default.addObserver(self, selector: #selector(didTextChange), name: UITextView.textDidChangeNotification, object: nil)
     }
     
     private func layout() {
@@ -118,7 +118,6 @@ final class HangoutMakePlanView: UIView {
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalToSuperview()
-//            $0.height.equalTo(1000.0)
         }
         
         contentView.addSubview(planCaptionLabel)
@@ -151,16 +150,49 @@ final class HangoutMakePlanView: UIView {
         
         contentView.addSubview(ruleDescriptionLabel)
         ruleDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(planBackgroundView.snp.bottom)
+            $0.top.equalTo(planBackgroundView.snp.bottom).offset(3.0)
             $0.leading.equalTo(planBackgroundView)
+        }
+        
+        contentView.addSubview(countLabel)
+        countLabel.snp.makeConstraints {
+            $0.top.equalTo(planBackgroundView.snp.bottom).offset(3.0)
+            $0.trailing.equalTo(planBackgroundView).offset(-4.0)
         }
     }
 }
 
-extension HangoutMakePlanView: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        print("DEBUG: didChange")
-        ruleDescriptionLabel.isHidden = (textView.text.count >= 14)
-        print("DEBUG: isHidden \(ruleDescriptionLabel.isHidden)")
+// MARK: - Bind
+extension HangoutMakePlanView {
+    private func bind() {
+        planTextView.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        planTextView.rx.didBeginEditing
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.modifiedText
+            .emit(to: planTextView.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.keyboardWithButtonHeight
+            .emit(onNext: { [weak self] height in
+                self?.updateTextViewPosition(bottomButtonHeight: height)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHidePlaceholder
+            .emit(to: planPlaceholderLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideRule
+            .emit(to: ruleDescriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.countInfo
+            .drive(countLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }
