@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import MessageUI
 
 final class CustomerServiceViewController: UIViewController {
     
@@ -65,11 +66,96 @@ final class CustomerServiceViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
+    @objc
+    private func emailButtonHandler() {
+        if MFMailComposeViewController.canSendMail() {
+            guard let info = Bundle.main.infoDictionary,
+                  let appVersion = info["CFBundleShortVersionString"] as? String else { return }
+            let osVersion = UIDevice.current.systemVersion
+            let device = getModel()
+            
+            let numOfDot = Int((UIScreen.main.bounds.width - 20.0) / 8.8)
+            let dottedLine = String.init(repeating: "-", count: numOfDot)
+            
+            let message = """
+- Please fill out the information
+below to understand the exact inquiry!
+
+
+1. Issue situation:
+
+
+2. Details:
+
+
+- OS version: iOS \(osVersion)
+- App version: iOS \(appVersion)
+- Device: \(device)
+
+
+If you attach a screenshot of your inquiry,
+we can check it quickly.
+
+
+
+\(dottedLine)
+
+
+Bappy can collect and use personal information and
+contact information included in the inquiry. However,
+this information will only be processed for answer
+purposes. For more information, please refer to the
+personal information processing policy on the
+Bappy app's My Page
+"""
+            
+            let viewController = MFMailComposeViewController()
+            viewController.mailComposeDelegate = self
+            
+            viewController.setToRecipients(["newrience@gmail.com"])
+            viewController.setSubject("[Bappy] Inquiries & Suggestions")
+            viewController.setMessageBody(message, isHTML: false)
+            viewController.view.tintColor = .systemBlue
+            
+            self.present(viewController, animated: true)
+        } else {
+            // Alert
+        }
+    }
+    
+    @objc
+    private func instaButtonHandler() {
+        if let url = URL(string: "https://instagram.com/bappy_korea?utm_medium=copy_link") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
+    @objc
+    private func kakaoButtonHandler() {
+        if let url = URL(string: "http://pf.kakao.com/_xbxlRxjb/chat") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
     // MARK: Helpers
+    private func getModel() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let model = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return model
+    }
+    
     private func configure() {
         view.backgroundColor = .white
         bappyImageView.image = UIImage(named: "bappy_service")
         descriptionLabel.text = "We profoundly appreciate your feedback. Please don’t hesitate.\nAlso, feel free to ask us if you have any difficulty, using our app."
+        emailButton.addTarget(self, action: #selector(emailButtonHandler), for: .touchUpInside)
+        instaButton.addTarget(self, action: #selector(instaButtonHandler), for: .touchUpInside)
+        kakaoButton.addTarget(self, action: #selector(kakaoButtonHandler), for: .touchUpInside)
     }
     
     private func layout() {
@@ -137,5 +223,12 @@ final class CustomerServiceViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(54.0)
             $0.bottom.equalToSuperview().inset(40.0)
         }
+    }
+}
+
+// MARK: - MFMailComposeViewControllerDelegate
+extension CustomerServiceViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
     }
 }

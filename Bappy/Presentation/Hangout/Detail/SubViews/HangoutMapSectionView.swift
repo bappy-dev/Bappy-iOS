@@ -27,14 +27,6 @@ final class HangoutMapSectionView: UIView {
         return button
     }()
     
-//    private let mapImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.layer.cornerRadius = 14.0
-//        imageView.clipsToBounds = true
-//        imageView.contentMode = .scaleAspectFill
-//        return imageView
-//    }()
-    
     private let placeLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 12.0, family: .Bold)
