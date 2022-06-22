@@ -108,7 +108,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isPlanValid$ = BehaviorSubject<Bool>(value: false)
     private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
-    private let isLimitValid$ = BehaviorSubject<Bool>(value: false)
+    private let isLimitValid$ = BehaviorSubject<Bool>(value: true)
     private let showSearchPlaceView$ = PublishSubject<SearchPlaceViewModel>()
     private let showImagePicker$ = PublishSubject<Void>()
     private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel>()

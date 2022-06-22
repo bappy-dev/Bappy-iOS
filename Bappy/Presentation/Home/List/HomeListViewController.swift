@@ -106,7 +106,10 @@ extension HomeListViewController: HangoutCellDelegate {
 // MARK: - HomeListTopViewDelegate
 extension HomeListViewController: HomeListTopViewDelegate {
     func localeButtonTapped() {
-        //
+        guard let tabBarController = tabBarController else { return }
+        let viewController = HomeLocaleViewController()
+        viewController.modalPresentationStyle = .overCurrentContext
+        tabBarController.present(viewController, animated: false)
     }
     
     func searchButtonTapped() {
