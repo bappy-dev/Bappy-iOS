@@ -7,10 +7,14 @@
 
 import UIKit
 
+enum HangoutState: String { case available, closed, expired }
+
 struct Hangout: Equatable, Identifiable {
     typealias Identifier = String
+    typealias Info = (id: String, imageURL: URL?)
     
     let id: Identifier
+    let state: HangoutState
     
     let title: String
     let meetTime: String
@@ -19,8 +23,8 @@ struct Hangout: Equatable, Identifiable {
     let plan: String
     let limitNumber: Int
     
-    let latitude: CGFloat
-    let longitude: CGFloat
+    let latitude: CGFloat //
+    let longitude: CGFloat //
     
     let postImageURL: URL?
     let openchatURL: URL?
@@ -28,7 +32,12 @@ struct Hangout: Equatable, Identifiable {
     let googleMapURL: URL?
     let kakaoMapURL: URL?
     
-    let participantIDs: [String]
+    let participantIDs: [Info]
+    let userHasLiked: Bool
+    
+    static func == (lhs: Hangout, rhs: Hangout) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 struct HangoutPage: Equatable {

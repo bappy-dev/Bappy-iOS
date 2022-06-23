@@ -20,13 +20,14 @@ struct User: Equatable, Identifiable {
     let state: UserState
     
     // Optional
-    let profileURL: URL?
+    let isUserUsingGPS: Bool?
     
     let name: String?
     let gender: Gender?
     let birth: String?
     let nationality: Country?
     
+    let profileURL: URL?
     let introduce: String?
     let affiliation: String?
     let languages: [Language]?

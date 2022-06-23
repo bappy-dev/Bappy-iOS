@@ -47,7 +47,7 @@ final class SearchPlaceViewController: UIViewController {
         let label = UILabel()
         label.font = .roboto(size: 22.0, family: .Bold)
         label.textColor = .bappyBrown
-        label.text = "Select place"
+        label.text = "Search place"
         return label
     }()
     

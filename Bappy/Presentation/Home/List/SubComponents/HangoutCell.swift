@@ -23,6 +23,7 @@ final class HangoutCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .bappyLightgray
         return imageView
     }()
     
@@ -31,7 +32,6 @@ final class HangoutCell: UITableViewCell {
         label.font = .roboto(size: 32.0, family: .Bold)
         label.textColor = .white
         label.lineBreakMode = .byTruncatingTail
-        label.text = "Who wants to go eat?"
         return label
     }()
     
@@ -53,7 +53,6 @@ final class HangoutCell: UITableViewCell {
         let label = UILabel()
         label.font = .roboto(size: 17.0, family: .Medium)
         label.textColor = .white
-        label.text = "03. Mar. 19:00"
         label.addBappyShadow()
         return label
     }()
@@ -63,7 +62,6 @@ final class HangoutCell: UITableViewCell {
         label.font = .roboto(size: 17.0, family: .Medium)
         label.textColor = .white
         label.lineBreakMode = .byTruncatingTail
-        label.text = "Pusan University"
         label.addBappyShadow()
         return label
     }()
@@ -75,14 +73,7 @@ final class HangoutCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var likeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "heart"), for: .normal)
-        button.setImage(UIImage(named: "heart_fill"), for: .selected)
-        button.imageEdgeInsets = UIEdgeInsets(top: 8.5, left: 6.2, bottom: 8.5, right: 6.2)
-        button.addTarget(self, action: #selector(toggleLikeButton), for: .touchUpInside)
-        return button
-    }()
+    private let likeButton = BappyLikeButton()
     
     private lazy var moreButton: UIButton = {
         let button = UIButton()
@@ -98,6 +89,14 @@ final class HangoutCell: UITableViewCell {
         return transparentView
     }()
     
+    private let disabledImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .center
+        imageView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
+        
+        return imageView
+    }()
+    
     // MARK: Lifecycle    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -111,12 +110,12 @@ final class HangoutCell: UITableViewCell {
     }
     
     // MARK: Actions
-    @objc
-    private func toggleLikeButton(_ button: UIButton) {
-        button.isSelected = !button.isSelected
-        let normalImage = button.isSelected ? UIImage(named: "heart_fill") : UIImage(named: "heart")
-        button.setImage(normalImage, for: .normal)
-    }
+//    @objc
+//    private func toggleLikeButton(_ button: UIButton) {
+//        button.isSelected = !button.isSelected
+//        let normalImage = button.isSelected ? UIImage(named: "heart_fill") : UIImage(named: "heart")
+//        button.setImage(normalImage, for: .normal)
+//    }
     
     @objc func moreButtonHandler(_ button: UIButton) {
         guard let indexPath = indexPath else { return }
@@ -126,7 +125,6 @@ final class HangoutCell: UITableViewCell {
     // MARK: Helpers
     private func configure() {
         contentView.backgroundColor = .white
-        postImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE2_URL))
     }
     
     private func layout() {
@@ -152,19 +150,20 @@ final class HangoutCell: UITableViewCell {
         
         transparentView.addSubview(timeImageView)
         timeImageView.snp.makeConstraints {
-            $0.leading.equalTo(titleLabel).offset(3.0)
+            $0.top.equalToSuperview().inset(56.3)
+            $0.leading.equalToSuperview().inset(23.3)
             $0.width.height.equalTo(16.8)
         }
         
         transparentView.addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
             $0.leading.equalTo(timeImageView.snp.trailing).offset(5.0)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(7.0)
             $0.centerY.equalTo(timeImageView)
         }
         
         transparentView.addSubview(placeImageView)
         placeImageView.snp.makeConstraints {
+            $0.top.equalTo(timeImageView.snp.bottom).offset(7.4)
             $0.centerX.equalTo(timeImageView)
             $0.width.equalTo(15.0)
             $0.height.equalTo(18.0)
@@ -173,7 +172,6 @@ final class HangoutCell: UITableViewCell {
         transparentView.addSubview(placeLabel)
         placeLabel.snp.makeConstraints {
             $0.leading.equalTo(timeLabel)
-            $0.top.equalTo(timeLabel.snp.bottom).offset(3.0)
             $0.centerY.equalTo(placeImageView)
         }
         
@@ -198,6 +196,27 @@ final class HangoutCell: UITableViewCell {
             $0.top.equalToSuperview().inset(5.0)
             $0.trailing.equalToSuperview().inset(4.0)
             $0.width.height.equalTo(44.0)
+        }
+        
+        contentView.addSubview(disabledImageView)
+        disabledImageView.snp.makeConstraints {
+            $0.edges.equalTo(postImageView)
+        }
+    }
+}
+
+// MARK: - Methods
+extension HangoutCell {
+    func bind(with hangout: Hangout) {
+        titleLabel.text = hangout.title
+        timeLabel.text = hangout.meetTime
+        placeLabel.text = hangout.placeName
+        postImageView.kf.setImage(with: hangout.postImageURL)
+        likeButton.isSelected = hangout.userHasLiked
+        
+        disabledImageView.isHidden = hangout.state == .available
+        if hangout.state != .available {
+            disabledImageView.image = UIImage(named: "hangout_\(hangout.state.rawValue)")
         }
     }
 }

@@ -35,7 +35,7 @@ final class HangoutImageCell: UICollectionViewCell {
     // MARK: Helpers
     private func configure() {
         contentView.backgroundColor = .white
-        hangoutImageView.kf.setImage(with: URL(string: EXAPMLE_IMAGE3_URL))
+        hangoutImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE3_URL))
     }
     
     private func layout() {

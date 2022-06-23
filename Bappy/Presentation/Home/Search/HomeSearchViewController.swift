@@ -28,7 +28,7 @@ final class HomeSearchViewController: UIViewController {
         textField.font = .roboto(size: 16.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Search for hangout",
+            string: "Search for hangouts",
             attributes: [.foregroundColor: UIColor.bappyGray])
         containerView.frame = CGRect(x: 0, y: 0, width: 20.0, height: 14.0)
         containerView.addSubview(imageView)

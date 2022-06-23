@@ -89,7 +89,7 @@ final class ProfileHangoutCell: UITableViewCell {
         frameView.backgroundColor = .white
         frameView.layer.cornerRadius = 9.0
         
-        postImageView.kf.setImage(with: URL(string: EXAPMLE_IMAGE3_URL))
+        postImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE3_URL))
     }
     
     private func layout() {
