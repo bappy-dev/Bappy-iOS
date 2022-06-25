@@ -8,10 +8,15 @@
 import UIKit
 import SnapKit
 
+protocol HomeListTopSubViewDelegate: AnyObject {
+    func sortingOrderButtonTapped()
+}
+
 private let reuseIdentifier = "HomeListCategoryCell"
 final class HomeListTopSubView: UIView {
     
     // MARK: Properties
+    weak var delegate: HomeListTopSubViewDelegate?
     private var categoryList = ["All", "Travel", "Study", "Sports", "Food", "Drinks", "Cook", "Cultural Activities", "Volunteer", "Practice Language", "Crafting"]
     
     private lazy var collectionView: UICollectionView = {
@@ -25,12 +30,13 @@ final class HomeListTopSubView: UIView {
         return collectionView
     }()
     
-    private let sortingOrderButton: UIButton = {
+    private lazy var sortingOrderButton: UIButton = {
         let button = UIButton()
         button.setBappyTitle(
             title: "Newest",
             font: .roboto(size: 18.0)
         )
+        button.addTarget(self, action: #selector(sortingOrderButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -50,6 +56,12 @@ final class HomeListTopSubView: UIView {
         super.layoutSubviews()
         
         collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top) // 임시
+    }
+    
+    // MARK: Actions
+    @objc
+    private func sortingOrderButtonHandler() {
+        delegate?.sortingOrderButtonTapped()
     }
     
     // MARK: Helpers

@@ -16,8 +16,6 @@ final class HangoutMakeLimitView: UIView {
     private let viewModel: HangoutMakeLimitViewModel
     private let disposeBag = DisposeBag()
     
-    private var number: Int = 4
-    
     private let limitCaptionLabel: UILabel = {
         let label = UILabel()
         label.text = "How\nmany people?"
@@ -29,27 +27,16 @@ final class HangoutMakeLimitView: UIView {
     
     private let numberLabel: UILabel = {
         let label = UILabel()
-        label.text = "4"
         label.font = .roboto(size: 65.0, family: .Bold)
         label.textColor = .bappyBrown
         return label
     }()
     
-    private lazy var minusButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(minusButtonHandler), for: .touchUpInside)
-        return button
-    }()
+    private let minusButton = UIButton()
+    private let plusButton = UIButton()
     
-    private lazy var plusButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(plusButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
-    private let discriptionLabel: UILabel = {
+    private let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Participants Limit  4 ~ 10"
         label.font = .roboto(size: 15.0, family: .Regular)
         label.textColor = .black.withAlphaComponent(0.33)
         return label
@@ -62,42 +49,29 @@ final class HangoutMakeLimitView: UIView {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func minusButtonHandler() {
-        number -= 1
-        numberLabel.text = "\(number)"
-        updateButtonState()
-    }
-    
-    @objc
-    private func plusButtonHandler() {
-        number += 1
-        numberLabel.text = "\(number)"
-        updateButtonState()
-    }
-    
     // MARK: Helpers
-    private func updateButtonState() {
-        let minusButtonImage = (number == 4) ? UIImage(named: "make_minus_off") : UIImage(named: "make_minus_on")
+    private func updateMinusButtonState(isEnabled: Bool) {
+        let minusButtonImage = isEnabled ? UIImage(named: "make_minus_on") : UIImage(named: "make_minus_off")
         minusButton.setImage(minusButtonImage, for: .normal)
-        minusButton.isEnabled = !(number == 4)
-        
-        let plusButtonImage = (number == 10) ? UIImage(named: "make_plus_off") : UIImage(named: "make_plus_on")
+        minusButton.isEnabled = isEnabled
+    }
+    
+    private func updatePlusButtonState(isEnabled: Bool) {
+        let plusButtonImage = isEnabled ? UIImage(named: "make_plus_on") : UIImage(named: "make_plus_off")
         plusButton.setImage(plusButtonImage, for: .normal)
-        plusButton.isEnabled = !(number == 10)
+        plusButton.isEnabled = isEnabled
         
     }
     
     private func configure() {
         self.backgroundColor = .white
-        updateButtonState()
     }
     
     private func layout() {
@@ -127,10 +101,43 @@ final class HangoutMakeLimitView: UIView {
             $0.centerX.equalToSuperview().offset(80.0)
         }
         
-        self.addSubview(discriptionLabel)
-        discriptionLabel.snp.makeConstraints {
+        self.addSubview(descriptionLabel)
+        descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(numberLabel.snp.bottom).offset(15.0)
             $0.centerX.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension HangoutMakeLimitView {
+    private func bind() {
+        minusButton.rx.tap
+            .bind(to: viewModel.input.minusButtonTapped)
+            .disposed(by: disposeBag)
+        
+        plusButton.rx.tap
+            .bind(to: viewModel.input.plusButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.numberText
+            .emit(to: numberLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.description
+            .emit(to: descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isMinusButtonEnabled
+            .emit(onNext: { [weak self] isEnabled in
+                self?.updateMinusButtonState(isEnabled: isEnabled)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isPlusButtonEnabled
+            .emit(onNext: { [weak self] isEnabled in
+                self?.updatePlusButtonState(isEnabled: isEnabled)
+            })
+            .disposed(by: disposeBag)
     }
 }

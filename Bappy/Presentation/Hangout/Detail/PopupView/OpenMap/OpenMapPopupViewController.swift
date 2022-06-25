@@ -1,5 +1,5 @@
 //
-//  OpenURLPopupViewController.swift
+//  OpenMapPopupViewController.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/06.
@@ -7,15 +7,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-protocol OpenURLPopupViewControllerDelegate: AnyObject {
-    
-}
-
-final class OpenURLPopupViewController: UIViewController {
+final class OpenMapPopupViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: OpenURLPopupViewControllerDelegate?
+    private let viewModel: OpenMapPopupViewModel
+    private let disposBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
     
@@ -27,11 +26,7 @@ final class OpenURLPopupViewController: UIViewController {
         return view
     }()
     
-    private lazy var dimmedView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }()
+    private let dimmedView = UIView()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -42,26 +37,21 @@ final class OpenURLPopupViewController: UIViewController {
         return label
     }()
     
-    private lazy var googleMapButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "googlemap_icon"), for: .normal)
-        button.addTarget(self, action: #selector(openGoogleMapURL), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var kakaoMapButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "kakaomap_icon"), for: .normal)
-        button.addTarget(self, action: #selector(openKakaoMapURL), for: .touchUpInside)
-        return button
-    }()
+    private let googleMapButton = UIButton()
+    private let kakaoMapButton = UIButton()
     
     // MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init(viewModel: OpenMapPopupViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -78,6 +68,7 @@ final class OpenURLPopupViewController: UIViewController {
     
     // MARK: Animations
     private func animateShowDimmedView() {
+        dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.maxDimmedAlpha
@@ -105,25 +96,12 @@ final class OpenURLPopupViewController: UIViewController {
         }
     }
     
-    // MARK: Actions
-    @objc
-    private func openGoogleMapURL() {
-        if let url = URL(string: "https://www.google.com/maps/dir/?api=1&destination=PNU+maingate&destination_place_id=ChIJddvJ8eqTaDURk21no4Umdvo") {
-            UIApplication.shared.open(url, options: [:])
-        }
-    }
-    
-    @objc
-    private func openKakaoMapURL() {
-        if let url = URL(string: "https://map.kakao.com/link/to/abcdefu,37.402056,127.108212") {
-            UIApplication.shared.open(url, options: [:])
-        }
-    }
-    
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .clear
         containerView.addBappyShadow(shadowOffsetHeight: 2.0)
+        googleMapButton.setImage(UIImage(named: "googlemap_icon"), for: .normal)
+        kakaoMapButton.setImage(UIImage(named: "kakaomap_icon"), for: .normal)
     }
     
     private func layout() {
@@ -156,5 +134,30 @@ final class OpenURLPopupViewController: UIViewController {
             $0.height.equalTo(117.0)
             $0.bottom.equalToSuperview().inset(27.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension OpenMapPopupViewController {
+    private func bind() {
+        googleMapButton.rx.tap
+            .bind(to: viewModel.input.googleMapButtonTapped)
+            .disposed(by: disposBag)
+        
+        kakaoMapButton.rx.tap
+            .bind(to: viewModel.input.kakaoMapButtonTapped)
+            .disposed(by: disposBag)
+        
+        viewModel.output.openGoogleMap
+            .emit(onNext: { url in
+                if let url = url { UIApplication.shared.open(url) }
+            })
+            .disposed(by: disposBag)
+        
+        viewModel.output.openKakaoMap
+            .emit(onNext: { url in
+                if let url = url { UIApplication.shared.open(url) }
+            })
+            .disposed(by: disposBag)
     }
 }

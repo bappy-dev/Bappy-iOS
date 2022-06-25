@@ -26,7 +26,7 @@ final class RegisterCompletedViewController: UIViewController {
         return view
     }()
     
-    private lazy var dimmedView = UIView()
+    private let dimmedView = UIView()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -124,6 +124,7 @@ final class RegisterCompletedViewController: UIViewController {
     
     // MARK: Animations
     private func animateShowDimmedView() {
+        dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.maxDimmedAlpha
@@ -155,7 +156,6 @@ final class RegisterCompletedViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .clear
         containerView.addBappyShadow(shadowOffsetHeight: 2.0)
-        dimmedView.backgroundColor = .black
     }
     
     private func layout() {

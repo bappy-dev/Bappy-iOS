@@ -18,14 +18,17 @@ final class HomeListViewController: UIViewController {
             id: "abc", state: .available, title: "Who wants to go eat?",
             meetTime: "03. Mar. 19:00", language: "English",
             placeName: "Pusan University",
-            plan: "Hey guys, this is LIly. I want to go on a picnic. This Sat urday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
+            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
             limitNumber: 5, latitude: 35.2342279, longitude: 129.0860221,
             postImageURL: URL(string: EXAMPLE_IMAGE1_URL),
             openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
             mapImageURL: URL(string: EXAMPLE_MAP_URL),
             googleMapURL: URL(string: "https://www.google.com/maps/dir/?api=1&destination=PNU+maingate&destination_place_id=ChIJddvJ8eqTaDURk21no4Umdvo"),
             kakaoMapURL: URL(string: "https://map.kakao.com/link/to/abcdefu,37.402056,127.108212"),
-            participantIDs: [(id: "qwer", imageURL: nil)],
+            participantIDs: [
+                (id: "abc", imageURL: nil),
+                (id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
+            ],
             userHasLiked: true),
         Hangout(
             id: "def", state: .expired, title: "Who wants to go eat?",
@@ -38,7 +41,7 @@ final class HomeListViewController: UIViewController {
             mapImageURL: URL(string: EXAMPLE_MAP_URL),
             googleMapURL: URL(string: "https://www.google.com/maps/dir/?api=1&destination=PNU+maingate&destination_place_id=ChIJddvJ8eqTaDURk21no4Umdvo"),
             kakaoMapURL: URL(string: "https://map.kakao.com/link/to/abcdefu,37.402056,127.108212"),
-            participantIDs: [(id: "qwer", imageURL: nil)],
+            participantIDs: [(id: "def", imageURL: nil)],
             userHasLiked: false),
         Hangout(
             id: "hij", state: .closed, title: "Who wants to go eat?",
@@ -177,6 +180,7 @@ final class HomeListViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .white
         topView.delegate = self
+        topSubView.delegate = self
     }
     
     private func layout() {
@@ -219,7 +223,14 @@ extension HomeListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension HomeListViewController: HangoutCellDelegate {
     func showDetailView(_ indexPath: IndexPath) {
-        let viewController = HangoutDetailViewController()
+        let dependency: HangoutDetailViewModel.Dependency = .init(
+            currentUser: User(id: "abc", state: .anonymous),
+            hangout: hangoutList[indexPath.row],
+            postImage: nil,
+            mapImage: nil
+        )
+        let viewModel = HangoutDetailViewModel(dependency: dependency)
+        let viewController = HangoutDetailViewController(viewModel: viewModel)
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
     }
@@ -242,5 +253,18 @@ extension HomeListViewController: HomeListTopViewDelegate {
     
     func filterButtonTapped() {
         //
+    }
+}
+
+// MARK: - HomeListTopSubViewDelegate
+extension HomeListViewController: HomeListTopSubViewDelegate {
+    func sortingOrderButtonTapped() {
+        let point: CGPoint = .init(
+            x: topSubView.frame.maxX - 7.0,
+            y: topSubView.frame.maxY - 12.0
+        )
+        let viewController = SortingOrderViewController(upperRightPoint: point)
+        viewController.modalPresentationStyle = .overCurrentContext
+        tabBarController?.present(viewController, animated: true)
     }
 }

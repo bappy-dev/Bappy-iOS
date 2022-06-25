@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class HangoutPlanSectionView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutPlanSectionViewModel
+    private let disposeBag = DisposeBag()
+    
     private let planImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_plan")
@@ -33,17 +38,20 @@ final class HangoutPlanSectionView: UIView {
         textView.textAlignment = .justified
         textView.backgroundColor = .clear
         textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = false
         return textView
     }()
     
     private let backgroundView = UIView()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutPlanSectionViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -55,8 +63,6 @@ final class HangoutPlanSectionView: UIView {
         self.backgroundColor = .white
         backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 20.0
-        
-        planTextView.text = "Hey guys, this is LIly. I want to go on a picnic. This Sat urday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Any one wanna join?"
     }
     
     private func layout() {
@@ -88,5 +94,14 @@ final class HangoutPlanSectionView: UIView {
             $0.leading.equalToSuperview().inset(19.0)
             $0.trailing.equalToSuperview().inset(21.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension HangoutPlanSectionView {
+    private func bind() {
+        viewModel.output.planText
+            .emit(to: planTextView.rx.text)
+            .disposed(by: disposeBag)
     }
 }

@@ -17,22 +17,22 @@ struct User: Equatable, Identifiable {
     
     // Required
     let id: Identifier // UUID
-    let state: UserState
+    var state: UserState
     
     // Optional
-    let isUserUsingGPS: Bool?
+    var isUserUsingGPS: Bool?
     
-    let name: String?
-    let gender: Gender?
-    let birth: String?
-    let nationality: Country?
+    var name: String?
+    var gender: Gender?
+    var birth: String?
+    var nationality: Country?
     
-    let profileURL: URL?
-    let introduce: String?
-    let affiliation: String?
-    let languages: [Language]?
-    let personalities: [Persnoality]?
-    let interests: [HangoutCategory]?
+    var profileURL: URL?
+    var introduce: String?
+    var affiliation: String?
+    var languages: [Language]?
+    var personalities: [Persnoality]?
+    var interests: [HangoutCategory]?
     
     static func == (lhs: User, rhs: User) -> Bool {
         lhs.id == rhs.id

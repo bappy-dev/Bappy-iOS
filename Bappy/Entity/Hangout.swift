@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum HangoutState: String { case available, closed, expired }
+enum HangoutState: String { case available, closed, expired, preview }
 
 struct Hangout: Equatable, Identifiable {
     typealias Identifier = String

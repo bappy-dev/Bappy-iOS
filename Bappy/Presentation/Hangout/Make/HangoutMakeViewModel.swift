@@ -328,6 +328,11 @@ final class HangoutMakeViewModel: ViewModelType {
             .emit(to: isOpenchatValid$)
             .disposed(by: disposeBag)
         
+        // Child(Limit)
+        subViewModels.limitViewModel.output.limit
+            .emit(to: limit$)
+            .disposed(by: disposeBag)
+        
         // ContinueButton
         output.isContinueButtonEnabled
             .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)

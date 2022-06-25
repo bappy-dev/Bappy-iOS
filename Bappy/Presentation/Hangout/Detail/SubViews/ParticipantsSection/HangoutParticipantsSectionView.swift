@@ -7,11 +7,16 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 private let reuseIdentifier = "ParticipantImageCell"
 final class HangoutParticipantsSectionView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutParticipantsSectionViewModel
+    private let disposeBag = DisposeBag()
+    
     private let joinCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Medium)
@@ -23,7 +28,6 @@ final class HangoutParticipantsSectionView: UIView {
     private let numOfParticipantsLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 16.0)
-        label.text = "1 in 5"
         label.textColor = .bappyBrown
         return label
     }()
@@ -31,27 +35,23 @@ final class HangoutParticipantsSectionView: UIView {
     private lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
+        flowLayout.minimumLineSpacing = 22.0
+        flowLayout.itemSize = .init(width: 48.0, height: 48.0)
+        flowLayout.sectionInset = .init(top: 0, left: 33.0, bottom: 0, right: 0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(ParticipantImageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        collectionView.dataSource = self
-        collectionView.delegate = self
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
     
-    private let reportButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "detail_report"), for: .normal)
-        button.imageEdgeInsets = .init(top: 12.5, left: 13.0, bottom: 12.5, right: 13.0)
-        return button
-    }()
-    
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutParticipantsSectionViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -70,13 +70,6 @@ final class HangoutParticipantsSectionView: UIView {
             $0.leading.equalToSuperview().inset(27.0)
         }
         
-        self.addSubview(reportButton)
-        reportButton.snp.makeConstraints {
-            $0.leading.equalTo(joinCaptionLabel.snp.trailing).offset(-3.0)
-            $0.centerY.equalTo(joinCaptionLabel)
-            $0.width.height.equalTo(44.0)
-        }
-        
         self.addSubview(numOfParticipantsLabel)
         numOfParticipantsLabel.snp.makeConstraints {
             $0.bottom.equalTo(joinCaptionLabel)
@@ -93,30 +86,22 @@ final class HangoutParticipantsSectionView: UIView {
     }
 }
 
-// MARK: UICollectionViewDataSource
-extension HangoutParticipantsSectionView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ParticipantImageCell
-        cell.size = .medium
-        return cell
-    }
-}
-
-// MARK: UICollectionViewDelegateFlowLayout
-extension HangoutParticipantsSectionView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 22.0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 48.0, height: 48.0)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .init(top: 0, left: 33.0, bottom: 0, right: 0)
+// MARK: - Bind
+extension HangoutParticipantsSectionView {
+    private func bind() {
+        viewModel.output.limitNumberText
+            .emit(to: numOfParticipantsLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.participantIDs
+            .drive(collectionView.rx.items) { collectionView, item, element in
+                let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: reuseIdentifier,
+                    for: IndexPath(item: item, section: 0))
+                as! ParticipantImageCell
+                cell.bind(with: element.imageURL)
+                return cell
+            }
+            .disposed(by: disposeBag)
     }
 }

@@ -84,17 +84,15 @@ final class HomeListTopView: UIView {
         self.addSubview(filterButton)
         filterButton.snp.makeConstraints {
             $0.centerY.equalTo(localeButton)
-            $0.trailing.equalToSuperview().inset(10.0)
-            $0.width.equalTo(40.0)
-            $0.height.equalTo(44.0)
+            $0.trailing.equalToSuperview().inset(8.0)
+            $0.width.height.equalTo(44.0)
         }
         
         self.addSubview(searchButton)
         searchButton.snp.makeConstraints {
             $0.centerY.equalTo(localeButton)
             $0.trailing.equalTo(filterButton.snp.leading)
-            $0.width.equalTo(40.0)
-            $0.height.equalTo(44.0)
+            $0.width.height.equalTo(44.0)
         }
     }
 }

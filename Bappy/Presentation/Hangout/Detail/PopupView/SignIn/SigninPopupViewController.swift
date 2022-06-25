@@ -7,16 +7,11 @@
 
 import UIKit
 import SnapKit
-
-protocol SigninPopupViewControllerDelegate: AnyObject {
-    
-}
+import FirebaseAuth
 
 final class SigninPopupViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: SigninPopupViewControllerDelegate?
-    
     private let maxDimmedAlpha: CGFloat = 0.3
     
     private lazy var containerView: UIView = {
@@ -27,11 +22,7 @@ final class SigninPopupViewController: UIViewController {
         return view
     }()
     
-    private lazy var dimmedView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }()
+    private let dimmedView = UIView()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -49,7 +40,7 @@ final class SigninPopupViewController: UIViewController {
         return imageView
     }()
     
-    private let signinButton: UIButton = {
+    private lazy var signinButton: UIButton = {
         let button = UIButton()
         button.setBappyTitle(
             title: "Go to sign-in!",
@@ -57,6 +48,7 @@ final class SigninPopupViewController: UIViewController {
         )
         button.backgroundColor = .bappyYellow
         button.layer.cornerRadius = 21.0
+        button.addTarget(self, action: #selector(signinButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -92,6 +84,7 @@ final class SigninPopupViewController: UIViewController {
     
     // MARK: Animations
     private func animateShowDimmedView() {
+        dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.maxDimmedAlpha
@@ -116,6 +109,18 @@ final class SigninPopupViewController: UIViewController {
             self.dimmedView.alpha = 0
         } completion: { _ in
             self.dismiss(animated: false)
+        }
+    }
+    
+    // MARK: Actions
+    @objc
+    private func signinButtonHandler() {
+        do {
+            try Auth.auth().signOut()
+            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+            sceneDelegate.switchRootViewToSignInView(animated: true)
+        } catch {
+            fatalError("Failed sign out")
         }
     }
     

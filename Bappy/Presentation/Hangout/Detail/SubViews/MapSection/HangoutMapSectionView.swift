@@ -8,22 +8,20 @@
 import UIKit
 import SnapKit
 import Kingfisher
-
-protocol HangoutMapSectionViewDelegate: AnyObject {
-    func showOpenURLView()
-}
+import RxSwift
+import RxCocoa
 
 final class HangoutMapSectionView: UIView {
     
     // MARK: Properties
-    weak var delegate: HangoutMapSectionViewDelegate?
-    
-    private lazy var mapButton: UIButton = {
+    private let viewModel: HangoutMapSectionViewModel
+    private let disposeBag = DisposeBag()
+
+    private let mapButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 14.0
         button.clipsToBounds = true
         button.adjustsImageWhenHighlighted = false
-        button.addTarget(self, action: #selector(openMapURL), for: .touchUpInside)
         return button
     }()
     
@@ -38,28 +36,22 @@ final class HangoutMapSectionView: UIView {
     private let backgroundView = UIView()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMapSectionViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func openMapURL(_ button: UIButton) {
-        delegate?.showOpenURLView()
-    }
-    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        mapButton.kf.setImage(with: URL(string: EXAMPLE_MAP_URL), for: .normal)
-        placeLabel.text = "PNU maingate"
         backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 15.0
         backgroundView.addBappyShadow(shadowOffsetHeight: 1.0)
@@ -86,3 +78,27 @@ final class HangoutMapSectionView: UIView {
         }
     }
 }
+
+// MARK: - Bind
+extension HangoutMapSectionView {
+    private func bind() {
+        mapButton.rx.tap
+            .bind(to: viewModel.input.mapButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.placeName
+            .drive(placeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.mapImageURL
+            .emit(onNext: { [weak self] url in
+                self?.mapButton.kf.setImage(with: url, for: .normal)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.mapImage
+            .emit(to: mapButton.rx.image(for: .normal))
+            .disposed(by: disposeBag)
+    }
+}
+ 

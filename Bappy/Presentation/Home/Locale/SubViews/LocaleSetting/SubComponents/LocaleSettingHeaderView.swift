@@ -25,7 +25,7 @@ final class LocaleSettingHeaderView: UIView {
         let label = UILabel()
         label.text = "Set to Current Location"
         label.textColor = .bappyBrown
-        label.font = .roboto(size: 15.0, family: .Medium)
+        label.font = .roboto(size: 16.0, family: .Medium)
         return label
     }()
     
@@ -52,11 +52,15 @@ final class LocaleSettingHeaderView: UIView {
     private func configure() {
         self.backgroundColor = .clear
         currentLocaleButton.backgroundColor = .white
-        currentLocaleButton.addBappyShadow(shadowOffsetHeight: 1.0)
         selectedImageView.isHidden = true
     }
     
     private func layout() {
+        let topSeparatorView = UIView()
+        let bottomSeparatorView = UIView()
+        topSeparatorView.backgroundColor = .black.withAlphaComponent(0.2)
+        bottomSeparatorView.backgroundColor = .black.withAlphaComponent(0.2)
+        
         self.addSubview(currentLocaleButton)
         currentLocaleButton.snp.makeConstraints {
             $0.centerY.leading.trailing.equalToSuperview()
@@ -82,6 +86,20 @@ final class LocaleSettingHeaderView: UIView {
             $0.centerY.equalToSuperview()
             $0.width.equalTo(18.0)
             $0.height.equalTo(14.0)
+        }
+        
+        self.addSubview(topSeparatorView)
+        topSeparatorView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(currentLocaleButton.snp.top)
+            $0.height.equalTo(1.0/3.0)
+        }
+        
+        self.addSubview(bottomSeparatorView)
+        bottomSeparatorView.snp.makeConstraints {
+            $0.top.equalTo(currentLocaleButton.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(1.0/3.0)
         }
     }
 }

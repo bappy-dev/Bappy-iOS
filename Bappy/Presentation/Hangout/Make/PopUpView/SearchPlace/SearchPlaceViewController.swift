@@ -28,11 +28,7 @@ final class SearchPlaceViewController: UIViewController {
         return view
     }()
     
-    private lazy var dimmedView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }()
+    private let dimmedView = UIView()
     
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
@@ -114,6 +110,7 @@ final class SearchPlaceViewController: UIViewController {
     
     // MARK: Animations
     private func animateShowDimmedView() {
+        dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.maxDimmedAlpha

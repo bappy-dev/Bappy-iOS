@@ -7,62 +7,56 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class HangoutDetailViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: HangoutDetailViewModel
+    private let disposeBag = DisposeBag()
+    
     private let titleTopView = TitleTopView(title: "Hangout", subTitle: "Detail page")
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    private let imageSectionView = HangoutImageSectionView()
-    private let mainSectionView = HangoutMainSectionView()
-    private let mapSectionView = HangoutMapSectionView()
-    private let planSectionView = HangoutPlanSectionView()
-    private let participantsSectionView = HangoutParticipantsSectionView()
+    private let imageSectionView: HangoutImageSectionView
+    private let mainSectionView: HangoutMainSectionView
+    private let mapSectionView: HangoutMapSectionView
+    private let planSectionView: HangoutPlanSectionView
+    private let participantsSectionView: HangoutParticipantsSectionView
     
-    private lazy var backButton: UIButton = {
+    private let hangoutButton = HangoutButton()
+    
+    private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
         button.setImage(image, for: .normal)
         button.tintColor = .white
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
         return button
     }()
-    
-    private let editButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setBappyTitle(
-            title: "Edit",
-            font: .roboto(size: 18.0),
-            color: .white
-        )
-        return button
-    }()
-    
-    private lazy var joinButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = .bappyYellow
-        button.setBappyTitle(
-            title: "JOIN",
-            font: .roboto(size: 18.0, family: .Medium)
-        )
-        button.layer.cornerRadius = 29.5
-        button.addBappyShadow()
-        button.addTarget(self, action: #selector(joinButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
     
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(viewModel: HangoutDetailViewModel) {
+        let imageSectionViewModel = viewModel.subViewModels.imageSectionViewModel
+        let mainSectionViewModel = viewModel.subViewModels.mainSectionViewModel
+        let mapSectionViewModel = viewModel.subViewModels.mapSectionViewModel
+        let planSectionViewModel = viewModel.subViewModels.planSectionViewModel
+        let participantsSectionViewModel = viewModel.subViewModels.participantsSectionViewModel
+        
+        self.viewModel = viewModel
+        self.imageSectionView = HangoutImageSectionView(viewModel: imageSectionViewModel)
+        self.mainSectionView = HangoutMainSectionView(viewModel: mainSectionViewModel)
+        self.mapSectionView = HangoutMapSectionView(viewModel: mapSectionViewModel)
+        self.planSectionView = HangoutPlanSectionView(viewModel: planSectionViewModel)
+        self.participantsSectionView = HangoutParticipantsSectionView(viewModel: participantsSectionViewModel)
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
-        addKeyboardObserver()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -81,30 +75,11 @@ final class HangoutDetailViewController: UIViewController {
         setStatusBarStyle(statusBarStyle: .darkContent)
     }
     
-    // MARK: Actions
-    @objc
-    private func backButtonHandler() {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    @objc
-    private func joinButtonHandler() {
+    // MARK: Helpers
+    private func showSigninPopupView() {
         let popupView = SigninPopupViewController()
         popupView.modalPresentationStyle = .overCurrentContext
         present(popupView, animated: false)
-    }
-    
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
-        self.scrollView.contentInset.bottom = keyboardHeight
-    }
-    
-    // MARK: Helpers
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
@@ -116,9 +91,6 @@ final class HangoutDetailViewController: UIViewController {
         view.backgroundColor = .white
         scrollView.keyboardDismissMode = .interactive
         scrollView.contentInsetAdjustmentBehavior = .never
-        scrollView.delegate = self
-        mainSectionView.delegate = self
-        mapSectionView.delegate = self
     }
     
     private func layout() {
@@ -163,12 +135,10 @@ final class HangoutDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
         }
         
-        contentView.addSubview(joinButton)
-        joinButton.snp.makeConstraints {
+        contentView.addSubview(hangoutButton)
+        hangoutButton.snp.makeConstraints {
             $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(215.0)
-            $0.height.equalTo(59.0)
             $0.bottom.equalToSuperview().inset(61.0)
         }
         
@@ -185,39 +155,49 @@ final class HangoutDetailViewController: UIViewController {
             $0.leading.equalToSuperview().inset(7.3)
             $0.width.height.equalTo(44.0)
         }
+    }
+}
+// MARK: - Bind
+extension HangoutDetailViewController {
+    private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
         
-        titleTopView.addSubview(editButton)
-        editButton.snp.makeConstraints {
-            $0.centerY.equalTo(backButton)
-            $0.trailing.equalToSuperview().inset(18.5)
-            $0.width.height.equalTo(44.0)
-        }
-    }
-}
-
-// MARK: - HangoutMainSectionViewDelegate
-extension HangoutDetailViewController: HangoutMainSectionViewDelegate {
-    func didTapReportButton() {
-        let viewController = ReportViewController()
-        self.navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
-// MARK: - HangoutMapSectionViewDelegate
-extension HangoutDetailViewController: HangoutMapSectionViewDelegate {
-    func showOpenURLView() {
-        let popupView = OpenURLPopupViewController()
-        popupView.modalPresentationStyle = .overCurrentContext
-        present(popupView, animated: false)
-    }
-}
-
-// MARK: - UIScrollViewDelegate
-extension HangoutDetailViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let scrolledOffset = scrollView.contentOffset.y
-        guard scrolledOffset <= 0 else { return }
-        let imageHeight: CGFloat = imageSectionView.frame.height
-        imageSectionView.updateImageHeight(imageHeight - scrolledOffset)
+        hangoutButton.rx.tap
+            .bind(to: viewModel.input.hangoutButtonTapped)
+            .disposed(by: disposeBag)
+        
+        scrollView.rx.didScroll
+            .withLatestFrom(scrollView.rx.contentOffset)
+            .map { $0.y }
+            .filter { $0 <= 0 }
+            .map { self.imageSectionView.frame.height - $0 }
+            .bind(to: viewModel.input.imageHeight)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showOpenMapView
+            .emit(onNext: { [weak self] viewModel in
+                let popupView = OpenMapPopupViewController(viewModel: viewModel)
+                popupView.modalPresentationStyle = .overCurrentContext
+                self?.present(popupView, animated: false)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hangoutButtonState
+            .emit(to: hangoutButton.rx.hangoutState)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSigninPopupView
+            .emit(onNext: { [weak self] _ in
+                self?.showSigninPopupView()
+            })
+            .disposed(by: disposeBag)
     }
 }

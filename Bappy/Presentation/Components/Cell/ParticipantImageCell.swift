@@ -7,18 +7,11 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class ParticipantImageCell: UICollectionViewCell {
     
     // MARK: Properties
-    enum Size: String {
-        case medium, small
-    }
-    
-    var size: Size = .small {
-        didSet { configure() }
-    }
-    
     private let participantImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
@@ -40,8 +33,7 @@ final class ParticipantImageCell: UICollectionViewCell {
 
     // MARK: Helpers
     private func configure() {
-        participantImageView.layer.cornerRadius = size == .small ? 9.0 : 24.0
-        participantImageView.image = UIImage(named: "no_profile_\(size.rawValue.first!)")
+        participantImageView.layer.cornerRadius = 24.0
     }
     
     private func layout() {
@@ -49,5 +41,12 @@ final class ParticipantImageCell: UICollectionViewCell {
         participantImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension ParticipantImageCell {
+    func bind(with profileImageURL: URL?) {
+        participantImageView.kf.setImage(with: profileImageURL, placeholder: UIImage(named: "hangout_no_profile"))
     }
 }

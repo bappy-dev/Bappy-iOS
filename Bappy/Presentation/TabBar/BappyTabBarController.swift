@@ -127,26 +127,24 @@ final class BappyTabBarController: UITabBarController {
             timeDependency: .init(
                 minimumDate: (Date() + 60 * 60).roundUpUnitDigitOfMinutes(),
                 dateFormat: "M.d (E)",
-                timeFormat: "a h:mm"
-            ),
+                timeFormat: "a h:mm"),
             placeDependency: .init(),
             pictureDependency: .init(),
             planDependency: .init(
                 minimumLength: 14,
-                maximumLength: 200
-            ),
+                maximumLength: 200),
             languageDependency: .init(language: "English"),
             openchatDependency: .init(),
-            limitDependency: .init(),
+            limitDependency: .init(
+                minimumNumber: 4,
+                maximumNumber: 10),
             searchPlaceDependency: .init(
                 key: Bundle.main.googleMapAPIKey,
                 language: "en"),
             selectLanguageDependecy: .init(
                 languages: [
                     "Arabic", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew",
-                    "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"
-                ]
-            )
+                    "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"])
         )
         let viewModel = HangoutMakeViewModel(dependency: dependency)
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)

@@ -28,7 +28,7 @@ final class SelectNationalityViewController: UIViewController {
         return view
     }()
     
-    private lazy var dimmedView = UIView()
+    private let dimmedView = UIView()
     
     private let closeButton: UIButton = {
         let button = UIButton(type: .system)
@@ -98,6 +98,7 @@ final class SelectNationalityViewController: UIViewController {
     
     // MARK: Animations
     private func animateShowDimmedView() {
+        dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.maxDimmedAlpha
@@ -141,7 +142,6 @@ final class SelectNationalityViewController: UIViewController {
     private func configure() {
         view.backgroundColor = .clear
         tableView.backgroundView = noResultView
-        dimmedView.backgroundColor = .black
     }
     
     private func layout() {

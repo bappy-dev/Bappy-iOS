@@ -67,7 +67,7 @@ final class LocaleSettingViewController: UIViewController {
     }()
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(LocaleSettingCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self

@@ -8,11 +8,15 @@
 import UIKit
 import SnapKit
 import Kingfisher
+import RxSwift
+import RxCocoa
 
-private let reuseIdentifier = "HangoutImageCell"
 final class HangoutImageSectionView: UIView {
     
     // MARK: Properties
+    private let viewModel: HangoutImageSectionViewModel
+    private let disposeBag = DisposeBag()
+    
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -20,39 +24,32 @@ final class HangoutImageSectionView: UIView {
         return imageView
     }()
     
-    private lazy var likeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "heart"), for: .normal)
-        button.setImage(UIImage(named: "heart_fill"), for: .selected)
-        button.imageEdgeInsets = UIEdgeInsets(top: 8.5, left: 6.2, bottom: 8.5, right: 6.2)
-        button.addTarget(self, action: #selector(toggleLikeButton), for: .touchUpInside)
-        return button
-    }()
+    private let likeButton = BappyLikeButton()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutImageSectionViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func toggleLikeButton(_ button: UIButton) {
-        button.isSelected = !button.isSelected
-        let normalImage = button.isSelected ? UIImage(named: "heart_fill") : UIImage(named: "heart")
-        button.setImage(normalImage, for: .normal)
+    // MARK: Helpers
+    private func updateImageHeight(_ hegiht: CGFloat) {
+        postImageView.snp.remakeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(hegiht)
+        }
     }
     
-    // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        postImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE2_URL))
     }
     
     private func layout() {
@@ -71,11 +68,27 @@ final class HangoutImageSectionView: UIView {
     }
 }
 
+// MARK: - Bind
 extension HangoutImageSectionView {
-    func updateImageHeight(_ hegiht: CGFloat) {
-        postImageView.snp.remakeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(hegiht)
-        }
+    private func bind() {
+        viewModel.output.imageURL
+            .emit(onNext: { [weak self] url in
+                self?.postImageView.kf.setImage(with: url)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.image
+            .emit(to: postImageView.rx.image)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.userHasLiked
+            .drive(likeButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.imageHeight
+            .emit(onNext: { [weak self] height in
+                self?.updateImageHeight(height)
+            })
+            .disposed(by: disposeBag)
     }
 }
