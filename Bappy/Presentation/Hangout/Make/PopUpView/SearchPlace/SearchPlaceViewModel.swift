@@ -44,6 +44,7 @@ final class SearchPlaceViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
+    let repository: GoogleMapsRepository
     let provider: Provider
     
     private let key$: BehaviorSubject<String>
@@ -66,6 +67,7 @@ final class SearchPlaceViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.provider = BappyProvider()
+        self.repository = DefaultGoogleMapsRepository()
         
         // Streams
         let key$ = BehaviorSubject<String>(value: dependency.key)
@@ -122,9 +124,16 @@ final class SearchPlaceViewModel: ViewModelType {
         let startForNew = searchButtonClicked$
             .withLatestFrom(Observable.combineLatest(key$, text$, language$))
             .distinctUntilChanged { $0.1 == $1.1 }
+            .do { [weak self] _ in
+                self?.isCommunicating$.onNext(true)
+                self?.showLoader$.onNext(Void())
+                self?.usedPageToken$.onNext([])
+                self?.maps$.onNext([])
+            }
             .share()
         
         // prefetchRows에 현재 maps.count가 포함 && pageToken이 존재 && usedPageToken에 포함 X && 통신중 X
+        // pageToken 발급 후 등록하기 까지 딜레이가 있어서 debounce 추가
         let startForExtra = prefetchRows$
             .withLatestFrom(maps$) { indexPaths, maps in
                 indexPaths.map { $0.row + 1}.contains(maps.count) }
@@ -136,40 +145,21 @@ final class SearchPlaceViewModel: ViewModelType {
             .withLatestFrom(usedPageToken$) { ($0, $1) }
             .filter { !$1.contains($0.1) }
             .map { $0.0 }
-            .share()
-        
-        Observable
-            .merge(startForNew, startForExtra)
-            .map { _ in true }
-            .bind(to: isCommunicating$)
-            .disposed(by: disposeBag)
-        
-        let endPointForNew = startForNew
-            .map { MapsRequestDTO(key: $0.0, query: $0.1, language: $0.2) }
-            .map(APIEndpoints.searchGoogleMapList)
-            .do { [weak self] _ in
-                self?.showLoader$.onNext(Void())
-                self?.usedPageToken$.onNext([])
-                self?.maps$.onNext([])
-            }
-        
-        // pageToken 발급 후 등록하기 까지 딜레이가 있어서 debounce 추가
-        let endPointForExtra = startForExtra
-            .map { MapsNextRequestDTO(key: $0.0, pagetoken: $0.1, language: $0.2) }
-            .map(APIEndpoints.searchGoogleMapNextList)
+            .do { [weak self] _ in self?.isCommunicating$.onNext(true) }
             .debounce(.milliseconds(1200), scheduler: MainScheduler.instance)
             .share()
         
-        endPointForExtra
+        startForExtra
             .withLatestFrom(nextPageToken$)
             .withLatestFrom(usedPageToken$) { $1 + [$0] }
             .bind(to: usedPageToken$)
             .disposed(by: disposeBag)
         
         let result = Observable
-            .merge(endPointForNew, endPointForExtra)
-            .do { [weak self] _ in self?.isCommunicating$.onNext(true) }
-            .map(provider.request)
+            .merge(
+                startForNew.map(repository.fetchMapPage),
+                startForExtra.map(repository.fetchNextMapPage)
+            )
             .flatMap { $0 }
             .do { [weak self] _ in
                 self?.dismissLoader$.onNext(Void())
@@ -185,14 +175,12 @@ final class SearchPlaceViewModel: ViewModelType {
             .compactMap(getError)
         
         value
-            .map(getMapPage)
             .map { $0.maps }
             .withLatestFrom(maps$) { $1 + $0 }
             .bind(to: maps$)
             .disposed(by: disposeBag)
         
         value
-            .map(getMapPage)
             .map { $0.nextPageToken }
             .bind(to: nextPageToken$)
             .disposed(by: disposeBag)
@@ -210,16 +198,12 @@ final class SearchPlaceViewModel: ViewModelType {
     }
 }
 
-private func getValue(_ result: Result<Endpoint<MapsResponseDTO>.Response, Error>) -> Endpoint<MapsResponseDTO>.Response? {
+private func getValue(_ result: Result<MapPage, Error>) -> MapPage? {
     guard case .success(let value) = result else { return nil }
     return value
 }
 
-private func getError(_ result: Result<Endpoint<MapsResponseDTO>.Response, Error>) -> String? {
+private func getError(_ result: Result<MapPage, Error>) -> String? {
     guard case .failure(let error) = result else { return nil }
     return error.localizedDescription
-}
-
-private func getMapPage(response: Endpoint<MapsResponseDTO>.Response) -> MapPage {
-    return response.toDomain()
 }
