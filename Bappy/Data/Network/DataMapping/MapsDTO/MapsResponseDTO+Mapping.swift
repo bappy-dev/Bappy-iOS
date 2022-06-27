@@ -61,8 +61,10 @@ extension MapsResponseDTO {
                 Map(id: $0.id,
                    name: $0.name,
                    address: $0.address,
-                   latitude: $0.geometry.location.latitude,
-                   longitude: $0.geometry.location.longitude,
+                    coordinates: .init(
+                        latitude: $0.geometry.location.latitude,
+                        longitude: $0.geometry.location.longitude
+                    ),
                    iconURL: URL(string: $0.iconURL))
             }
         return .init(nextPageToken: nextPageToken,

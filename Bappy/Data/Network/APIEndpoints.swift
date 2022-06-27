@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/08.
 //
 
-import Foundation
+import UIKit
 
 struct APIEndpoints {
     static func searchGoogleMapList(with mapsRequestDTO: MapsRequestDTO) -> Endpoint<MapsResponseDTO> {
@@ -22,5 +22,13 @@ struct APIEndpoints {
             path: "maps/api/place/textsearch/json?",
             method: .get,
             queryParameters: mapsRequestDTO)
+    }
+    
+    static func getGoogleMapImage(with mapImageRequestDTO: MapImageRequestDTO) -> Endpoint<Data> {
+        return Endpoint(
+            baseURL: "https://maps.googleapis.com/",
+            path: "maps/api/staticmap?",
+            method: .get,
+            queryParameters: mapImageRequestDTO)
     }
 }

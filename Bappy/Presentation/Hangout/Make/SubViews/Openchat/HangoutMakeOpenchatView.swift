@@ -35,6 +35,9 @@ final class HangoutMakeOpenchatView: UIView {
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the URL",
             attributes: [.foregroundColor: UIColor.bappyGray])
+        textField.keyboardType = .URL
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         return textField
     }()
     

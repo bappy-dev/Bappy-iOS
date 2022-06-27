@@ -15,10 +15,13 @@ struct Map: Equatable, Identifiable {
     let name: String
     let address: String
     
-    let latitude: CGFloat
-    let longitude: CGFloat
+    let coordinates: Coordinates
     
     let iconURL: URL?
+    
+    static func == (lhs: Map, rhs: Map) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct MapPage: Equatable {

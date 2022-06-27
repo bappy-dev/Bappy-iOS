@@ -37,6 +37,13 @@ final class HangoutDetailViewModel: ViewModelType {
             case .available: return isUserParticipating ? .cancel : .join
             }
         }
+        
+        init(currentUser: User, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
+            self.currentUser = currentUser
+            self.hangout = hangout
+            self.postImage = postImage
+            self.mapImage = mapImage
+        }
     }
     
     struct Input {

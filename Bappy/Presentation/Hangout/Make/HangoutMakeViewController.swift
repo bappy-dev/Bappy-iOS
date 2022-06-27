@@ -293,6 +293,14 @@ extension HangoutMakeViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showHangoutPreview
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] viewModel in
+                let viewController = HangoutDetailViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
         RxKeyboard.instance.visibleHeight
             .skip(1)
             .drive(onNext: { [weak self] height in

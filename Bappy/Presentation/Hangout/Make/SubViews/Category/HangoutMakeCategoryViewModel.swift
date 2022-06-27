@@ -13,33 +13,32 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
     struct Dependency {}
     
     struct Input {
-        var categories: AnyObserver<[HangoutCategory: Bool]>
-        var travelButtonTapped: AnyObserver<Void>
-        var studyButtonTapped: AnyObserver<Void>
-        var sportsButtonTapped: AnyObserver<Void>
-        var foodButtonTapped: AnyObserver<Void>
-        var drinksButtonTapped: AnyObserver<Void>
-        var cookButtonTapped: AnyObserver<Void>
-        var cultureButtonTapped: AnyObserver<Void>
-        var volunteerButtonTapped: AnyObserver<Void>
-        var languageButtonTapped: AnyObserver<Void>
-        var craftingButtonTapped: AnyObserver<Void>
+        var travelButtonTapped: AnyObserver<Void> // <-> View
+        var studyButtonTapped: AnyObserver<Void> // <-> View
+        var sportsButtonTapped: AnyObserver<Void> // <-> View
+        var foodButtonTapped: AnyObserver<Void> // <-> View
+        var drinksButtonTapped: AnyObserver<Void> // <-> View
+        var cookButtonTapped: AnyObserver<Void> // <-> View
+        var cultureButtonTapped: AnyObserver<Void> // <-> View
+        var volunteerButtonTapped: AnyObserver<Void> // <-> View
+        var languageButtonTapped: AnyObserver<Void> // <-> View
+        var craftingButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
-        var categories: Signal<[HangoutCategory]>
-        var isTravelButtonEnabled: Driver<Bool>
-        var isStudyButtonEnabled: Driver<Bool>
-        var isSportsButtonEnabled: Driver<Bool>
-        var isFoodButtonEnabled: Driver<Bool>
-        var isDrinksButtonEnabled: Driver<Bool>
-        var isCookButtonEnabled: Driver<Bool>
-        var isCultureButtonEnabled: Driver<Bool>
-        var isVolunteerButtonEnabled: Driver<Bool>
-        var isLanguageButtonEnabled: Driver<Bool>
-        var isCraftingButtonEnabled: Driver<Bool>
-        var shouldHideRule: Driver<Bool>
-        var isValid: Driver<Bool>
+        var categories: Signal<[HangoutCategory]> // <-> Parent
+        var isTravelButtonEnabled: Driver<Bool> // <-> View
+        var isStudyButtonEnabled: Driver<Bool> // <-> View
+        var isSportsButtonEnabled: Driver<Bool> // <-> View
+        var isFoodButtonEnabled: Driver<Bool> // <-> View
+        var isDrinksButtonEnabled: Driver<Bool> // <-> View
+        var isCookButtonEnabled: Driver<Bool> // <-> View
+        var isCultureButtonEnabled: Driver<Bool> // <-> View
+        var isVolunteerButtonEnabled: Driver<Bool> // <-> View
+        var isLanguageButtonEnabled: Driver<Bool> // <-> View
+        var isCraftingButtonEnabled: Driver<Bool> // <-> View
+        var shouldHideRule: Driver<Bool> // <-> View
+        var isValid: Driver<Bool> // <-> Parent
     }
     
     let dependency: Dependency
@@ -140,7 +139,6 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         
         // Input & Output
         self.input = Input(
-            categories: categories$.asObserver(),
             travelButtonTapped: travelButtonTapped$.asObserver(),
             studyButtonTapped: studyButtonTapped$.asObserver(),
             sportsButtonTapped: sportsButtonTapped$.asObserver(),

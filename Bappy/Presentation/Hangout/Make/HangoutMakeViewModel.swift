@@ -25,7 +25,9 @@ final class HangoutMakeViewModel: ViewModelType {
     }
     
     struct Dependency {
+        var currentUser: User
         var numOfPage: Int
+        var key: String
         var categoryDependency: HangoutMakeCategoryViewModel.Dependency
         var titleDependency: HangoutMakeTitleViewModel.Dependency
         var timeDependency: HangoutMakeTimeViewModel.Dependency
@@ -44,14 +46,14 @@ final class HangoutMakeViewModel: ViewModelType {
         var backButtonTapped: AnyObserver<Void>
         var viewDidAppear: AnyObserver<Bool>
         var keyboardWithButtonHeight: AnyObserver<CGFloat>
-        var categories: AnyObserver<[HangoutCategory: Bool]>
-        var title: AnyObserver<String>
+        var categories: AnyObserver<[HangoutCategory]?>
+        var title: AnyObserver<String?>
         var date: AnyObserver<Date?>
         var place: AnyObserver<Map?>
         var picture: AnyObserver<UIImage?>
-        var plan: AnyObserver<String>
-        var language: AnyObserver<Language>
-        var openchat: AnyObserver<String>
+        var plan: AnyObserver<String?>
+        var language: AnyObserver<Language?>
+        var openchat: AnyObserver<String?>
         var limit: AnyObserver<Int?>
         var isCategoriesValid: AnyObserver<Bool>
         var isTitleValid: AnyObserver<Bool>
@@ -77,6 +79,9 @@ final class HangoutMakeViewModel: ViewModelType {
         var showSearchPlaceView: Signal<SearchPlaceViewModel>
         var showImagePicker: Signal<Void>
         var showSelectLanguageView: Signal<SelectLanguageViewModel>
+        var showLoader: Signal<Void>
+        var dismissLoader: Signal<Void>
+        var showHangoutPreview: Observable<HangoutDetailViewModel>
     }
     
     let dependency: Dependency
@@ -84,21 +89,24 @@ final class HangoutMakeViewModel: ViewModelType {
     let input: Input
     let output: Output
     let subViewModels: SubViewModels
+    let repository: GoogleMapImageRepository
     
     private let page$ = BehaviorSubject<Int>(value: 0)
+    private let currentUser$: BehaviorSubject<User>
     private let numOfPage$: BehaviorSubject<Int>
+    private let key$: BehaviorSubject<String>
     private let continueButtonTapped$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
     private let viewDidAppear$ = PublishSubject<Bool>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
-    private let categories$ = BehaviorSubject<[HangoutCategory: Bool]>(value: [:])
-    private let title$ = BehaviorSubject<String>(value: "")
+    private let categories$ = BehaviorSubject<[HangoutCategory]?>(value: [])
+    private let title$ = BehaviorSubject<String?>(value: nil)
     private let date$ = BehaviorSubject<Date?>(value: nil)
     private let place$ = BehaviorSubject<Map?>(value: nil)
     private let picture$ = BehaviorSubject<UIImage?>(value: nil)
-    private let plan$ = BehaviorSubject<String>(value: "")
-    private let language$ = BehaviorSubject<Language>(value: "")
-    private let openchat$ = BehaviorSubject<String>(value: "")
+    private let plan$ = BehaviorSubject<String?>(value: nil)
+    private let language$ = BehaviorSubject<Language?>(value: nil)
+    private let openchat$ = BehaviorSubject<String?>(value: nil)
     private let limit$ = BehaviorSubject<Int?>(value: nil)
     private let isCategoriesValid$ = BehaviorSubject<Bool>(value: false)
     private let isTitleValid$ = BehaviorSubject<Bool>(value: false)
@@ -112,6 +120,8 @@ final class HangoutMakeViewModel: ViewModelType {
     private let showSearchPlaceView$ = PublishSubject<SearchPlaceViewModel>()
     private let showImagePicker$ = PublishSubject<Void>()
     private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel>()
+    private let showLoader$ = PublishSubject<Void>()
+    private let dismissLoader$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -127,9 +137,12 @@ final class HangoutMakeViewModel: ViewModelType {
             limitViewModel: HangoutMakeLimitViewModel(dependency: dependency.limitDependency),
             continueButtonViewModel: ContinueButtonViewModel()
         )
+        self.repository = DefaultGoogleMapImageRepository()
         
         // Streams
+        let currentUser$ = BehaviorSubject<User>(value: dependency.currentUser)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
+        let key$ = BehaviorSubject<String>(value: dependency.key)
         
         let shouldKeyboardHide = Observable
             .merge(continueButtonTapped$, backButtonTapped$)
@@ -176,6 +189,59 @@ final class HangoutMakeViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let showSelectLanguageView = showSelectLanguageView$
             .asSignal(onErrorJustReturn: SelectLanguageViewModel(dependency: dependency.selectLanguageDependecy))
+        let showLoader = showLoader$
+            .asSignal(onErrorJustReturn: Void())
+        let dismissLoader = dismissLoader$
+            .asSignal(onErrorJustReturn: Void())
+        let hangout = Observable
+            .combineLatest(
+                Observable.combineLatest(
+                    categories$.compactMap { $0 }.debug("categories"),
+                    title$.compactMap { $0 }.debug("title"),
+                    date$.compactMap { $0 }.debug("date"),
+                    place$.compactMap { $0 }.debug("place"),
+                    picture$.compactMap { $0 }.debug("picture")
+                ),
+                Observable.combineLatest(
+                    plan$.compactMap { $0 }.debug("plan"),
+                    language$.compactMap { $0 }.debug("language"),
+                    openchat$.compactMap { $0 }.debug("openchat"),
+                    limit$.compactMap { $0 }.debug("limit")
+                )
+            )
+            .map {
+                Hangout(
+                    id: "preview", state: .preview, title: $0.1,
+                    meetTime: $0.2.toString(dateFormat: "dd. MMM. HH:mm"), language: $1.1, placeID: $0.3.id, placeName: $0.3.name, plan: $1.0, limitNumber: $1.3, coordinates: $0.3.coordinates, postImageURL: nil, openchatURL: URL(string: $1.2), mapImageURL: nil, participantIDs: [.init(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL)], userHasLiked: false)
+            }
+            .share()
+        
+        let result = continueButtonTapped$
+            .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
+            .filter { $0.0 + 1 == $0.1 }
+            .withLatestFrom(
+                Observable.combineLatest(key$, place$.compactMap { $0 })
+            ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
+            .map(repository.fetchMapPage)
+            .flatMap { $0 }
+            .share()
+        
+        let value = result
+            .compactMap(getValue)
+            .share()
+        
+        let error = result
+            .compactMap(getError)
+        
+        error
+            .bind(onNext: { print("ERROR: \($0)")})
+            .disposed(by: disposeBag)
+        
+        let showHangoutPreview = value
+            .withLatestFrom(Observable.combineLatest(
+                currentUser$, hangout, picture$.compactMap { $0 }
+            )) { ($1.0, $1.1, $1.2, $0) }
+            .map(getHangoutDetailViewModel)
         
         // Input & Output
         self.input = Input(
@@ -215,11 +281,16 @@ final class HangoutMakeViewModel: ViewModelType {
             keyboardWithButtonHeight: keyboardWithButtonHeight,
             showSearchPlaceView: showSearchPlaceView,
             showImagePicker: showImagePicker,
-            showSelectLanguageView: showSelectLanguageView
+            showSelectLanguageView: showSelectLanguageView,
+            showLoader: showLoader,
+            dismissLoader: dismissLoader,
+            showHangoutPreview: showHangoutPreview
         )
         
         // Bindind
+        self.currentUser$ = currentUser$
         self.numOfPage$ = numOfPage$
+        self.key$ = key$
         
         continueButtonTappedWithPage
             .filter { $0.0 + 1 < $0.1 }
@@ -234,6 +305,10 @@ final class HangoutMakeViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // Child(Category)
+        subViewModels.categoryViewModel.output.categories
+            .emit(to: categories$)
+            .disposed(by: disposeBag)
+        
         subViewModels.categoryViewModel.output.isValid
             .drive(isCategoriesValid$)
             .disposed(by: disposeBag)
@@ -241,6 +316,10 @@ final class HangoutMakeViewModel: ViewModelType {
         // Child(Title)
         keyboardWithButtonHeight
             .emit(to: subViewModels.titleViewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
+        
+        subViewModels.titleViewModel.output.title
+            .emit(to: title$)
             .disposed(by: disposeBag)
         
         subViewModels.titleViewModel.output.isValid
@@ -296,12 +375,17 @@ final class HangoutMakeViewModel: ViewModelType {
             .emit(to: subViewModels.planViewModel.input.keyboardWithButtonHeight)
             .disposed(by: disposeBag)
         
+        subViewModels.planViewModel.output.plan
+            .emit(to: plan$)
+            .disposed(by: disposeBag)
+        
         subViewModels.planViewModel.output.isValid
             .emit(to: isPlanValid$)
             .disposed(by: disposeBag)
         
         // Child(Language)
         language$
+            .compactMap { $0 }
             .bind(to: subViewModels.languageViewModel.input.language)
             .disposed(by: disposeBag)
         
@@ -322,6 +406,10 @@ final class HangoutMakeViewModel: ViewModelType {
         // Child(Openchat)
         keyboardWithButtonHeight
             .emit(to: subViewModels.openchatViewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
+        
+        subViewModels.openchatViewModel.output.openchatText
+            .emit(to: openchat$)
             .disposed(by: disposeBag)
         
         subViewModels.openchatViewModel.output.isValid
@@ -371,6 +459,26 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
     case 7: return isOpenchatValid
     case 8: return isLimitValid
     default: return false}
+}
+
+private func getHangoutDetailViewModel(dependency: (user: User, hangout: Hangout, postImage: UIImage, mapImage: UIImage)) -> HangoutDetailViewModel {
+        let dependency = HangoutDetailViewModel.Dependency(
+            currentUser: dependency.user,
+            hangout: dependency.hangout,
+            postImage: dependency.postImage,
+            mapImage: dependency.mapImage
+        )
+        return HangoutDetailViewModel(dependency: dependency)
+}
+
+private func getValue(_ result: Result<UIImage?, Error>) -> UIImage? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
+
+private func getError(_ result: Result<UIImage?, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
 }
 
 // MARK: - SearchPlaceViewModelDelegate

@@ -27,6 +27,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
         var shouldHidePlaceholder: Signal<Bool> // <-> View
         var shouldHideRule: Signal<Bool> // <-> View
         var countInfo: Driver<String> // <-> View
+        var plan: Signal<String> // <-> Parent
         var isValid: Signal<Bool> // <-> Parent
     }
     
@@ -72,6 +73,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let countInfo = countInfo$
             .asDriver(onErrorJustReturn: "(0/\(dependency.maximumLength))")
+        let plan = modifiedText
         let isValid = isPlanValid
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
@@ -89,6 +91,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
             shouldHidePlaceholder: shouldHidePlaceholder,
             shouldHideRule: shouldHideRule,
             countInfo: countInfo,
+            plan: plan,
             isValid: isValid
         )
         

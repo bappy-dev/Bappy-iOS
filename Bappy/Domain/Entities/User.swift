@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/13.
 //
 
-import Foundation
+import UIKit
 
 enum Gender: String { case male, female, other }
 enum UserState { case normal, anonymous, notRegistered, abuser }
@@ -21,13 +21,14 @@ struct User: Equatable, Identifiable {
     
     // Optional
     var isUserUsingGPS: Bool?
+    var coordinates: Coordinates?
     
     var name: String?
     var gender: Gender?
     var birth: String?
     var nationality: Country?
     
-    var profileURL: URL?
+    var profileImageURL: URL?
     var introduce: String?
     var affiliation: String?
     var languages: [Language]?

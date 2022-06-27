@@ -25,6 +25,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
         var modifiedText: Signal<String> // <-> View
         var shouldHideRule: Signal<Bool> // <-> View
         var keyboardWithButtonHeight: Signal<CGFloat> // <-> View
+        var title: Signal<String> // <-> Parent
         var isValid: Signal<Bool> // <-> Parent
     }
     
@@ -58,6 +59,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
                 resultSelector: validation
             )
             .share()
+        let title = modifiedText
         let isValid = isTitleValid
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
@@ -78,6 +80,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
             modifiedText: modifiedText,
             shouldHideRule: shouldHideRule,
             keyboardWithButtonHeight: keyboardWithButtonHeight,
+            title: title,
             isValid: isValid
         )
         

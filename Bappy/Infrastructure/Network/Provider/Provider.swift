@@ -11,14 +11,43 @@ import RxSwift
 protocol Provider {
     func request<R: Decodable, E: RequestResponsable>(with endpoint: E, completion: @escaping(Result<R, Error>) -> Void) where E.Response == R
     
+    func request<E: RequestResponsable>(_ endpoint: E, completion: @escaping(Result<Data, Error>) -> Void)
+    
     func request(_ url: URL, completion: @escaping(Result<Data, Error>) -> ())
 }
 
 extension Provider {
     func request<R: Decodable, E: RequestResponsable>(with endpoint: E) -> Single<Result<R, Error>> where E.Response == R {
-        print("DEBUG: request -> Single<Result>")
         return Single<Result<R, Error>>.create { single in
-            request(with: endpoint) { result in
+            request(with: endpoint) { (result: Result<R, Error>) in
+                switch result {
+                case .success(let data):
+                    single(.success(.success(data)))
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func request<E: RequestResponsable>(_ endpoint: E) -> Single<Result<Data, Error>> {
+        return Single<Result<Data, Error>>.create { single in
+            request(endpoint) { (result: Result<Data, Error>) in
+                switch result {
+                case .success(let data):
+                    single(.success(.success(data)))
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func request(_ url: URL) -> Single<Result<Data, Error>> {
+        return Single<Result<Data, Error>>.create { single in
+            request(url) { result in
                 switch result {
                 case .success(let data):
                     single(.success(.success(data)))
@@ -49,6 +78,27 @@ final class BappyProvider: Provider {
                     switch result {
                     case .success(let data):
                         completion(self.decode(data: data))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            }.resume()
+            
+        } catch {
+            completion(.failure(NetworkError.urlRequest(error)))
+        }
+    }
+    
+    func request<E: RequestResponsable>(_ endpoint: E, completion: @escaping(Result<Data, Error>) -> Void) {
+        do {
+            let urlRequest = try endpoint.getURLRequest()
+            
+            session.dataTask(with: urlRequest) { [weak self] data, response, error in
+                self?.checkError(with: data, response, error) { result in
+                    
+                    switch result {
+                    case .success(let data):
+                        completion(.success(data))
                     case .failure(let error):
                         completion(.failure(error))
                     }

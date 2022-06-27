@@ -21,6 +21,7 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
     struct Output {
         var shouldHideRule: Signal<Bool> // <-> View
         var keyboardWithButtonHeight: Signal<CGFloat> // <-> View
+        var openchatText: Signal<String> // <-> Parent
         var isValid: Signal<Bool> // <-> Parent
     }
     
@@ -44,6 +45,9 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
+        let openchatText = text$
+            .filter(validation)
+            .asSignal(onErrorJustReturn: "")
         let isValid = isOpenchatValid
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
@@ -58,6 +62,7 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
         self.output = Output(
             shouldHideRule: shouldHideRule,
             keyboardWithButtonHeight: keyboardWithButtonHeight,
+            openchatText: openchatText,
             isValid: isValid
         )
     }
