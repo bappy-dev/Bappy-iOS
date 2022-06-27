@@ -222,7 +222,7 @@ final class HangoutMakeViewModel: ViewModelType {
             .withLatestFrom(
                 Observable.combineLatest(key$, place$.compactMap { $0 })
             ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
-            .map(repository.fetchMapPage)
+            .map(repository.fetchMapImage)
             .flatMap { $0 }
             .share()
         

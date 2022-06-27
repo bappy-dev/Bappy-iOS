@@ -20,6 +20,7 @@ final class HangoutMainSectionView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 32.0, family: .Bold)
         label.textColor = .bappyBrown
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     

@@ -9,5 +9,5 @@ import UIKit
 import RxSwift
 
 protocol GoogleMapImageRepository {
-    func fetchMapPage(param: (key: String, latitude: CGFloat, longitude: CGFloat)) -> Single<Result<UIImage?, Error>>
+    func fetchMapImage(param: (key: String, latitude: CGFloat, longitude: CGFloat)) -> Single<Result<UIImage?, Error>>
 }
