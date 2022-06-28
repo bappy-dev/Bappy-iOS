@@ -25,7 +25,7 @@ final class HangoutMakeViewModel: ViewModelType {
     }
     
     struct Dependency {
-        var currentUser: User
+        var currentUser: BappyUser
         var numOfPage: Int
         var key: String
         var categoryDependency: HangoutMakeCategoryViewModel.Dependency
@@ -92,7 +92,7 @@ final class HangoutMakeViewModel: ViewModelType {
     let repository: GoogleMapImageRepository
     
     private let page$ = BehaviorSubject<Int>(value: 0)
-    private let currentUser$: BehaviorSubject<User>
+    private let currentUser$: BehaviorSubject<BappyUser>
     private let numOfPage$: BehaviorSubject<Int>
     private let key$: BehaviorSubject<String>
     private let continueButtonTapped$ = PublishSubject<Void>()
@@ -140,7 +140,7 @@ final class HangoutMakeViewModel: ViewModelType {
         self.repository = DefaultGoogleMapImageRepository()
         
         // Streams
-        let currentUser$ = BehaviorSubject<User>(value: dependency.currentUser)
+        let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         let key$ = BehaviorSubject<String>(value: dependency.key)
         
@@ -461,7 +461,7 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
     default: return false}
 }
 
-private func getHangoutDetailViewModel(dependency: (user: User, hangout: Hangout, postImage: UIImage, mapImage: UIImage)) -> HangoutDetailViewModel {
+private func getHangoutDetailViewModel(dependency: (user: BappyUser, hangout: Hangout, postImage: UIImage, mapImage: UIImage)) -> HangoutDetailViewModel {
         let dependency = HangoutDetailViewModel.Dependency(
             currentUser: dependency.user,
             hangout: dependency.hangout,

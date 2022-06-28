@@ -7,36 +7,20 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class BappyTabBarController: UITabBarController {
     
     // MARK: Properties
-    private var isLayoutSet: Bool = false
-    private var isHomeButtonSelected: Bool = false {
-        didSet {
-            let image = isHomeButtonSelected
-            ? UIImage(named: "tab_home_selected")
-            : UIImage(named: "tab_home_unselected")
-            homeImageView.image = image
-        }
-    }
+    private let viewModel: BappyTabBarViewModel
+    private let disposeBag = DisposeBag()
     
-    private var isProfileButtonSelected: Bool = false {
-        didSet {
-            let image = isProfileButtonSelected
-            ? UIImage(named: "tab_profile_selected")
-            : UIImage(named: "tab_profile_unselected")
-            profileImageView.image = image
-        }
-    }
-    
-    private lazy var homeButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(homeButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
+    private let homeButton = UIButton()
+    private let profileButton = UIButton()
+    private let writeButton = UIButton()
     private let homeImageView = UIImageView()
+    private let profileImageView = UIImageView()
     
     private let homeLabel: UILabel = {
         let label = UILabel()
@@ -46,14 +30,6 @@ final class BappyTabBarController: UITabBarController {
         return label
     }()
     
-    private lazy var profileButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(profileButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
-    private let profileImageView = UIImageView()
-    
     private let profileLabel: UILabel = {
         let label = UILabel()
         label.text = "PROFILE"
@@ -62,93 +38,38 @@ final class BappyTabBarController: UITabBarController {
         return label
     }()
     
-    private lazy var writeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "tab_write"), for: .normal)
-        button.addTarget(self, action: #selector(writeButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
     // MARK: Lifecycle
-    init() {
+    init(viewModel: BappyTabBarViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
         configureViewController()
-        object_setClass(self.tabBar, BappyTabBar.self)
+        configure()
         layout()
+        bind()
+        object_setClass(self.tabBar, BappyTabBar.self)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        if !isLayoutSet {
-            bottomInset = view.safeAreaInsets.bottom
-            isLayoutSet = true
-        }
+    // MARK: Helpers
+    private func updateHomeButton(isSelected: Bool) {
+        let image = isSelected
+        ? UIImage(named: "tab_home_selected")
+        : UIImage(named: "tab_home_unselected")
+        homeImageView.image = image
     }
     
-    // MARK: Actions
-    @objc
-    private func homeButtonHandler() {
-        if isHomeButtonSelected, let navigationController = self.selectedViewController as? BappyNavigationViewController {
-            navigationController.popToRootViewController(animated: true)
-            return
-        }
-        
-        self.selectedIndex = 0
-        isHomeButtonSelected = true
-        isProfileButtonSelected = false
+    private func updateProfileButton(isSelected: Bool) {
+        let image = isSelected
+        ? UIImage(named: "tab_profile_selected")
+        : UIImage(named: "tab_profile_unselected")
+        profileImageView.image = image
     }
     
-    @objc
-    private func profileButtonHandler() {
-        if isProfileButtonSelected, let navigationController = self.selectedViewController as? BappyNavigationViewController {
-            navigationController.popToRootViewController(animated: true)
-            return
-        }
-        
-        self.selectedIndex = 1
-        isHomeButtonSelected = false
-        isProfileButtonSelected = true
-    }
-    
-    @objc
-    private func writeButtonHandler() {
-        let dependency = HangoutMakeViewModel.Dependency(
-            currentUser: .init(id: "abc", state: .normal),
-            numOfPage: 9,
-            key: Bundle.main.googleMapAPIKey,
-            categoryDependency: .init(),
-            titleDependency: .init(
-                minimumLength: 10,
-                maximumLength: 20),
-            timeDependency: .init(
-                minimumDate: (Date() + 60 * 60).roundUpUnitDigitOfMinutes(),
-                dateFormat: "M.d (E)",
-                timeFormat: "a h:mm"),
-            placeDependency: .init(),
-            pictureDependency: .init(),
-            planDependency: .init(
-                minimumLength: 14,
-                maximumLength: 200),
-            languageDependency: .init(language: "English"),
-            openchatDependency: .init(),
-            limitDependency: .init(
-                minimumNumber: 4,
-                maximumNumber: 10),
-            searchPlaceDependency: .init(
-                key: Bundle.main.googleMapAPIKey,
-                language: "en"),
-            selectLanguageDependecy: .init(
-                languages: [
-                    "Arabic", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew",
-                    "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"])
-        )
-        let viewModel = HangoutMakeViewModel(dependency: dependency)
+    private func showWriteView(viewModel: HangoutMakeViewModel) {
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)
         let viewController = UINavigationController(rootViewController: rootViewController)
         viewController.modalPresentationStyle = .fullScreen
@@ -156,7 +77,6 @@ final class BappyTabBarController: UITabBarController {
         present(viewController, animated: true)
     }
     
-    // MARK: Helpers
     private func configureViewController() {
         let homeListRootViewController = HomeListViewController()
         let homeListViewController = BappyNavigationViewController(rootViewController: homeListRootViewController)
@@ -167,10 +87,11 @@ final class BappyTabBarController: UITabBarController {
         profileViewController.navigationBar.isHidden = true
         
         viewControllers = [homeListViewController, profileViewController]
-        
+    }
+    
+    private func configure() {
+        writeButton.setImage(UIImage(named: "tab_write"), for: .normal)
         tabBar.backgroundColor = .white
-        isHomeButtonSelected = true
-        isProfileButtonSelected = false
     }
     
     private func layout() {
@@ -219,5 +140,57 @@ final class BappyTabBarController: UITabBarController {
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(48.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension BappyTabBarController {
+    private func bind() {
+        self.rx.viewWillLayoutSubviews
+            .take(1)
+            .map { self.view.safeAreaInsets.bottom }
+            .bind(onNext: { bottomInset = $0 })
+            .disposed(by: disposeBag)
+        
+        homeButton.rx.tap
+            .bind(to: viewModel.input.homeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        profileButton.rx.tap
+            .bind(to: viewModel.input.profileButtonTapped)
+            .disposed(by: disposeBag)
+        
+        writeButton.rx.tap
+            .bind(to: viewModel.input.writeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.seletedIndex
+            .drive(self.rx.selectedIndex)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isHomeButtonSelected
+            .drive(onNext: { [weak self] isSelected in
+                self?.updateHomeButton(isSelected: isSelected)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isProfileButtonSelected
+            .drive(onNext: { [weak self] isSelected in
+                self?.updateProfileButton(isSelected: isSelected)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popToSelectedRootView
+            .emit(onNext: {[weak self] _ in
+                let navigationController = self?.selectedViewController as? UINavigationController
+                navigationController?.popToRootViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showWriteView
+            .emit(onNext: {[weak self] viewModel in
+                self?.showWriteView(viewModel: viewModel)
+            })
+            .disposed(by: disposeBag)
     }
 }

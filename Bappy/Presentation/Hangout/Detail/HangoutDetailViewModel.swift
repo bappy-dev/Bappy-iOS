@@ -20,7 +20,7 @@ final class HangoutDetailViewModel: ViewModelType {
     }
     
     struct Dependency {
-        var currentUser: User
+        var currentUser: BappyUser
         var hangout: Hangout
         var postImage: UIImage?
         var mapImage: UIImage?
@@ -38,7 +38,7 @@ final class HangoutDetailViewModel: ViewModelType {
             }
         }
         
-        init(currentUser: User, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
+        init(currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
             self.currentUser = currentUser
             self.hangout = hangout
             self.postImage = postImage
@@ -69,7 +69,7 @@ final class HangoutDetailViewModel: ViewModelType {
     
     private let hangoutButtonState$: BehaviorSubject<HangoutButton.State>
     private let isUserParticipating$: BehaviorSubject<Bool>
-    private let currentUser$: BehaviorSubject<User>
+    private let currentUser$: BehaviorSubject<BappyUser>
     
     private let backButtonTapped$ = PublishSubject<Void>()
     private let hangoutButtonTapped$ = PublishSubject<Void>()
@@ -117,7 +117,7 @@ final class HangoutDetailViewModel: ViewModelType {
         // Streams
         let hangoutButtonState$ = BehaviorSubject<HangoutButton.State>(value: dependency.hangoutButtonState)
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
-        let currentUser$ = BehaviorSubject<User>(value: dependency.currentUser)
+        let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
         
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())

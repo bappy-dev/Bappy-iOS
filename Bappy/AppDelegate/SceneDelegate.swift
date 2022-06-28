@@ -7,10 +7,14 @@
 
 import UIKit
 import FirebaseAuth
+import RxSwift
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    
+    private let firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared
+    private let disposeBag = DisposeBag()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -18,13 +22,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.backgroundColor = .white
         window?.tintColor = .bappyGray
         
+        firebaseRepository.isUserSignedIn
+            .take(1)
+            .filter { !$0 }
+            .bind(onNext: { print("DEBUG:: \($0)") })
+            .disposed(by: disposeBag)
+        
+        firebaseRepository.isAnonymous
+            .take(1)
+            .filter { $0 }
+            .bind(onNext: { print("DEBUG:: \($0)") })
+            .disposed(by: disposeBag)
+        
         // Check Sign In State
         guard let user = Auth.auth().currentUser else {
+//            user.
             print("DEBUG: No user signed in")
             switchRootViewToSignInView()
             return
         }
-
+        
         // Check Guest Mode
         guard !user.isAnonymous else {
             print("DEBUG: Anonymous user signs in")
@@ -42,27 +59,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Sign In Registerd User
         switchRootViewToMainView()
-        
-        // 회원가입
-//        let viewController = RegisterViewController()
-//        let rootViewController = UINavigationController(rootViewController: viewController)
-//        rootViewController.navigationBar.isHidden = true
-        
-        // 회원가입 성공
-//        let rootViewController = RegisterSuccessViewController()
-        
-        // 메인탭
-//        let rootViewController = BappyTabBarController()
-        
-        // 행아웃 만들기
-//        let viewController = HangoutMakeViewController()
-//        let rootViewController = UINavigationController(rootViewController: viewController)
-        
-        // 상세 프로필
-//        let rootViewController = ProfileDetailViewController()
-        
-//        window?.rootViewController = rootViewController
-//        window?.makeKeyAndVisible()
     }
 }
 
@@ -89,7 +85,7 @@ extension SceneDelegate {
     }
     
     func switchRootViewToMainView(animated: Bool = false, completion: ((BappyTabBarController?) -> Void)? = nil) {
-        let viewController = BappyTabBarController()
+        let viewController = BappyTabBarController(viewModel: BappyTabBarViewModel(dependency: .init()))
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         guard let completion = completion else { return }

@@ -129,6 +129,16 @@ final class BappyProvider: Provider {
             return
         }
         
+        guard response.statusCode == 401 else {
+            completion(.failure(NetworkError.expiredToken))
+            return
+        }
+        
+        guard response.statusCode == 403 else {
+            completion(.failure(NetworkError.invalidToken))
+            return
+        }
+        
         guard (200...299).contains(response.statusCode) else {
             completion(.failure(NetworkError.invalidHttpStatusCode(response.statusCode)))
             return

@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  BappyUser.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/13.
@@ -12,7 +12,7 @@ enum UserState { case normal, anonymous, notRegistered, abuser }
 enum Persnoality: String { case spontaneous, planning, talkative, shy, empathatic, calm, polite }
 typealias Language = String
 
-struct User: Equatable, Identifiable {
+struct BappyUser: Equatable, Identifiable {
     typealias Identifier = String
     
     // Required
@@ -35,7 +35,7 @@ struct User: Equatable, Identifiable {
     var personalities: [Persnoality]?
     var interests: [HangoutCategory]?
     
-    static func == (lhs: User, rhs: User) -> Bool {
+    static func == (lhs: BappyUser, rhs: BappyUser) -> Bool {
         lhs.id == rhs.id
     }
 }

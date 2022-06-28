@@ -88,6 +88,16 @@ extension String {
         }
         return String(s)
     }
+    
+    func toAnotherDateFormat(from beforeDateFormat: String, to afterDateFormat: String) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en")
+        dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
+        dateFormatter.dateFormat = beforeDateFormat
+        let date = dateFormatter.date(from: self)
+        dateFormatter.dateFormat = afterDateFormat
+        return date.flatMap { dateFormatter.string(from: $0) }
+    }
 }
 
 // MARK: - UIButton

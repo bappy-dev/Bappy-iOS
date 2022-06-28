@@ -118,7 +118,7 @@ extension HomeListViewController: UITableViewDataSource {
 extension HomeListViewController: HangoutCellDelegate {
     func showDetailView(_ indexPath: IndexPath) {
         let dependency: HangoutDetailViewModel.Dependency = .init(
-            currentUser: User(id: "abc", state: .anonymous),
+            currentUser: BappyUser(id: "abc", state: .anonymous),
             hangout: hangoutList[indexPath.row],
             postImage: nil,
             mapImage: nil

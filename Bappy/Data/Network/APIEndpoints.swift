@@ -31,4 +31,13 @@ struct APIEndpoints {
             method: .get,
             queryParameters: mapImageRequestDTO)
     }
+    
+    static func getCurrentUser(token: String) -> Endpoint<CurrentUserResponseDTO> {
+        return Endpoint(
+            baseURL: "SERVER", // 임시
+            path: "auth/login",
+            method: .get,
+            headers: ["authorization": token]
+        )
+    }
 }

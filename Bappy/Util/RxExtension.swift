@@ -32,6 +32,11 @@ extension Reactive where Base: UIViewController {
             .map { $0.first as? Bool ?? false }
     }
     
+    var viewWillLayoutSubviews: Observable<Void> {
+        return methodInvoked(#selector(UIViewController.viewWillLayoutSubviews))
+            .map { _ in }
+    }
+    
     var showProgress: Binder<Bool> {
         return Binder(self.base) { view, isUserInteractionEnabled in
             ProgressHUD.show(interaction: isUserInteractionEnabled)
