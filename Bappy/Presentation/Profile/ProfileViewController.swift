@@ -7,14 +7,19 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 private let reuseIdentifier = "ProfileHangoutCell"
 
 final class ProfileViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: ProfileViewModel
+    private let disposBag = DisposeBag()
+    
     private var count: Int = 0
-    private let titleTopView = TitleTopView(title: "Profile", subTitle: "Setting")
+    private let titleTopView = TitleTopView(title: "Profile", subTitle: "Bappy user")
     private lazy var settingButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "profile_setting"), for: .normal)
@@ -36,11 +41,13 @@ final class ProfileViewController: UIViewController {
     private let headerView = ProfileHeaderView()
     
     // MARK: Lifecycle
-    init() {
+    init(viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -137,5 +144,12 @@ extension ProfileViewController: ProfileHeaderViewDelegate {
         let viewController = ProfileDetailViewController()
         viewController.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+// MARK: - Bind
+extension ProfileViewController {
+    private func bind() {
+        
     }
 }

@@ -62,18 +62,17 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     var isAnonymous: BehaviorSubject<Bool> { isAnonymous$ }
     var token: BehaviorSubject<String?> { token$ }
     
-    func getIDTokenForcingRefresh() -> Single<Result<String?, Error>> {
+    func getIDTokenForcingRefresh() -> Observable<Result<String?, Error>> {
         return user$
-            .asSingle()
-            .flatMap { user -> Single<Result<String?, Error>> in
-            return Single<Result<String?, Error>>.create { single in
+            .flatMap { user -> Observable<Result<String?, Error>> in
+            return Observable<Result<String?, Error>>.create { observer in
                 user?.getIDTokenForcingRefresh(true) { [weak self] idToken, error in
                     if let error = error {
-                        single(.failure(error))
+                        observer.onNext(.failure(error))
                         return
                     }
                     self?.token$.onNext(idToken)
-                    single(.success(.success(idToken)))
+                    observer.onNext(.success(idToken))
                 }
                 return Disposables.create()
             }
@@ -83,6 +82,19 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     func signIn(with credential: AuthCredential) -> Single<Result<AuthDataResult?, Error>> {
         return Single<Result<AuthDataResult?, Error>>.create { [weak self] single in
             self?.auth.signIn(with: credential) { authResult, error in
+                if let error = error {
+                    single(.failure(error))
+                    return
+                }
+                single(.success(.success(authResult)))
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func signInAnonymously() -> Single<Result<AuthDataResult?, Error>> {
+        return Single<Result<AuthDataResult?, Error>>.create { [weak self] single in
+            self?.auth.signInAnonymously { authResult, error in
                 if let error = error {
                     single(.failure(error))
                     return

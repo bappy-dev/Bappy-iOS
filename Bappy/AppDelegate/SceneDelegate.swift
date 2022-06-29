@@ -13,58 +13,34 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
+    private let currentUserRepository: CurrentUserRepository = DefaultCurrentUserRepository.shared
     private let firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared
     private let disposeBag = DisposeBag()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        let dependency = BappyInitialViewModel.Dependency(
+            currentUserRepository: currentUserRepository,
+            firebaseRepository: firebaseRepository
+        )
+        let viewModel = BappyInitialViewModel(dependency: dependency)
+        let viewControlelr = BappyInitialViewController(viewModel: viewModel)
+        
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .white
         window?.tintColor = .bappyGray
+        window?.rootViewController = viewControlelr
+        window?.makeKeyAndVisible()
         
-        firebaseRepository.isUserSignedIn
-            .take(1)
-            .filter { !$0 }
-            .bind(onNext: { print("DEBUG:: \($0)") })
-            .disposed(by: disposeBag)
-        
-        firebaseRepository.isAnonymous
-            .take(1)
-            .filter { $0 }
-            .bind(onNext: { print("DEBUG:: \($0)") })
-            .disposed(by: disposeBag)
-        
-        // Check Sign In State
-        guard let user = Auth.auth().currentUser else {
-//            user.
-            print("DEBUG: No user signed in")
-            switchRootViewToSignInView()
-            return
-        }
-        
-        // Check Guest Mode
-        guard !user.isAnonymous else {
-            print("DEBUG: Anonymous user signs in")
-            switchRootViewToMainView()
-            return
-        }
 
-        // Check registerd Firebase, but not in Backend
-        guard let displayName = user.displayName, displayName == user.uid else {
-            do { try Auth.auth().signOut() }
-            catch { fatalError("ERROR: Failed signOut") }
-            switchRootViewToSignInView()
-            return
-        }
-
-        // Sign In Registerd User
-        switchRootViewToMainView()
+        
     }
 }
 
 extension SceneDelegate {
-    func switchRootViewToSignInView(animated: Bool = false, completion: ((UINavigationController?) -> Void)? = nil) {
-        let naviRootViewController = BappyLoginViewController()
+    func switchRootViewToSignInView(viewModel: BappyLoginViewModel, animated: Bool = false, completion: ((UINavigationController?) -> Void)? = nil) {
+        let naviRootViewController = BappyLoginViewController(viewModel: viewModel)
         let viewController = UINavigationController(rootViewController: naviRootViewController)
         viewController.navigationBar.isHidden = true
         viewController.interactivePopGestureRecognizer?.isEnabled = false
@@ -84,8 +60,8 @@ extension SceneDelegate {
         }
     }
     
-    func switchRootViewToMainView(animated: Bool = false, completion: ((BappyTabBarController?) -> Void)? = nil) {
-        let viewController = BappyTabBarController(viewModel: BappyTabBarViewModel(dependency: .init()))
+    func switchRootViewToMainView(viewModel: BappyTabBarViewModel, animated: Bool = false, completion: ((BappyTabBarController?) -> Void)? = nil) {
+        let viewController = BappyTabBarController(viewModel: viewModel)
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         guard let completion = completion else { return }

@@ -88,8 +88,12 @@ extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
     func logoutButtonTapped() {
         do {
             try Auth.auth().signOut()
+            let dependency = BappyLoginViewModel.Dependency(
+                currentUserRepository: DefaultCurrentUserRepository.shared,
+                firebaseRepository: DefaultFirebaseRepository.shared
+            )
             guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-            sceneDelegate.switchRootViewToSignInView(animated: true)
+            sceneDelegate.switchRootViewToSignInView(viewModel: BappyLoginViewModel(dependency: dependency), animated: true)
         } catch {
             fatalError("Failed sign out")
         }

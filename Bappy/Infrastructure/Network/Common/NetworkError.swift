@@ -34,10 +34,12 @@ enum NetworkError: LocalizedError {
 }
 
 enum FirebaseError: LocalizedError {
+    case signInFailed
     case signOutFailed
     
     var errorDescription: String? {
         switch self {
+        case .signInFailed: return "Firebase SignIn에 실패했습니다."
         case .signOutFailed: return "Firebase SignOut에 실패했습니다."
         }
     }

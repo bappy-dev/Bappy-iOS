@@ -10,7 +10,16 @@ import RxSwift
 import RxCocoa
 
 final class BappyTabBarViewModel: ViewModelType {
+    
+    struct SubViewModels {
+        let homeListViewModel: HomeListViewModel
+        let profileViewModel: ProfileViewModel
+    }
+    
     struct Dependency {
+        var selectedIndex: Int
+        var profile: Profile
+        var currentUserRepository: CurrentUserRepository
         var writeViewModelDependency: HangoutMakeViewModel.Dependency {
             return .init(
                 currentUser: .init(id: "abc", state: .normal),
@@ -63,8 +72,9 @@ final class BappyTabBarViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
+    let subViewModels: SubViewModels
     
-    private let selectedIndex$ = BehaviorSubject<Int>(value: 0)
+    private let selectedIndex$: BehaviorSubject<Int>
     private let popToSelectedRootView$ = PublishSubject<Void>()
     
     private let homeButtonTapped$ = PublishSubject<Void>()
@@ -73,8 +83,17 @@ final class BappyTabBarViewModel: ViewModelType {
     
     init(dependency: Dependency) {
         self.dependency = dependency
+        self.subViewModels = SubViewModels(
+            homeListViewModel: HomeListViewModel(dependency: .init()),
+            profileViewModel: ProfileViewModel(dependency: .init(
+                profile: dependency.profile,
+                currentUserRepository: dependency.currentUserRepository
+            ))
+        )
         
         // Streams
+        let selectedIndex$ = BehaviorSubject<Int>(value: dependency.selectedIndex)
+        
         let selectedIndex = selectedIndex$
             .asDriver(onErrorJustReturn: 0)
         let isHomeButtonSelected = selectedIndex$
@@ -106,6 +125,8 @@ final class BappyTabBarViewModel: ViewModelType {
         )
         
         // Binding
+        self.selectedIndex$ = selectedIndex$
+        
         homeButtonTapped$
             .withLatestFrom(selectedIndex$)
             .do(onNext: { _ in self.selectedIndex$.onNext(0) })

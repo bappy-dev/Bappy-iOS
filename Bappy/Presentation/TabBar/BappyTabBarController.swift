@@ -43,7 +43,10 @@ final class BappyTabBarController: UITabBarController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
-        configureViewController()
+        let homeListViewModel = viewModel.subViewModels.homeListViewModel
+        let profileViewModel = viewModel.subViewModels.profileViewModel
+        
+        configureViewController(homeListViewModel: homeListViewModel, profileViewModel: profileViewModel)
         configure()
         layout()
         bind()
@@ -77,12 +80,12 @@ final class BappyTabBarController: UITabBarController {
         present(viewController, animated: true)
     }
     
-    private func configureViewController() {
-        let homeListRootViewController = HomeListViewController()
+    private func configureViewController(homeListViewModel: HomeListViewModel, profileViewModel: ProfileViewModel) {
+        let homeListRootViewController = HomeListViewController(viewModel: homeListViewModel)
         let homeListViewController = BappyNavigationViewController(rootViewController: homeListRootViewController)
         homeListViewController.navigationBar.isHidden = true
         
-        let profileRootViewController = ProfileViewController()
+        let profileRootViewController = ProfileViewController(viewModel: profileViewModel)
         let profileViewController = BappyNavigationViewController(rootViewController:  profileRootViewController)
         profileViewController.navigationBar.isHidden = true
         

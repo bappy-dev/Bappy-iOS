@@ -40,4 +40,14 @@ struct APIEndpoints {
             headers: ["authorization": token]
         )
     }
+    
+    static func getUserProfile(with userProfileRequestDTO: UserProfileRequestDTO, token: String) -> Endpoint<UserProfileResponseDTO> {
+        return Endpoint(
+            baseURL: "SERVER", // 임시
+            path: "auth/login",
+            method: .get,
+            queryParameters: userProfileRequestDTO,
+            headers: ["authorization": token]
+        )
+    }
 }

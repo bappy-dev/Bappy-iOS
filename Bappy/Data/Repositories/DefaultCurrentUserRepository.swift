@@ -23,17 +23,32 @@ extension DefaultCurrentUserRepository: CurrentUserRepository {
     var currentUser: BehaviorSubject<BappyUser?> { currentUser$ }
     
     func fetchCurrentUser(token: String) -> Single<Result<BappyUser, Error>> {
-        let endpoint = APIEndpoints.getCurrentUser(token: token)
-        return  provider.request(with: endpoint)
-            .map { [weak self] result -> Result<BappyUser, Error> in
-                switch result {
-                case .success(let responseDTO):
-                    let user = responseDTO.toDomain()
-                    self?.currentUser$.onNext(user)
-                    return .success(user)
-                case .failure(let error):
-                    return .failure(error)
-                }
-            }
+//        let endpoint = APIEndpoints.getCurrentUser(token: token)
+//        return  provider.request(with: endpoint)
+//            .map { [weak self] result -> Result<BappyUser, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    let user = responseDTO.toDomain()
+//                    self?.currentUser$.onNext(user)
+//                    return .success(user)
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        return Single<Result<BappyUser, Error>>.create { single in
+            let user = BappyUser(id: UUID().uuidString, state: .notRegistered)
+            self.currentUser$.onNext(user)
+            single(.success(.success(user)))
+            return Disposables.create()
+        }
+    }
+    
+    func fetchAnonymousUser() -> Single<BappyUser> {
+        return Single<BappyUser>.create { single in
+            let user = BappyUser(id: UUID().uuidString, state: .anonymous)
+            self.currentUser$.onNext(user)
+            single(.success(user))
+            return Disposables.create()
+        }
     }
 }

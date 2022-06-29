@@ -7,11 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 private let reuseIdentifier = "HangoutCell"
 final class HomeListViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: HomeListViewModel
+    private let disposeBag = DisposeBag()
     // 임시 변수
     private var hangoutList: [Hangout] = [
         Hangout(
@@ -29,6 +33,21 @@ final class HomeListViewController: UIViewController {
                 .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
             ],
             userHasLiked: true),
+        Hangout(
+            id: "def", state: .available, title: "Who wants to go eat?",
+            meetTime: "03. Mar. 19:00", language: "Korean",
+            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
+            placeName: "Pusan University",
+            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
+            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
+            postImageURL: URL(string: EXAMPLE_IMAGE2_URL),
+            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
+            mapImageURL: URL(string: EXAMPLE_MAP_URL),
+            participantIDs: [
+                .init(id: "abc", imageURL: nil),
+                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
+            ],
+            userHasLiked: true),
     ]
     private var hasShown: Bool = false
     
@@ -37,11 +56,13 @@ final class HomeListViewController: UIViewController {
     private let tableView = UITableView()
     
     // MARK: Lifecycle
-    init() {
+    init(viewModel: HomeListViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
         configureTableView()
         configureRefreshControl()
     }
@@ -160,5 +181,12 @@ extension HomeListViewController: HomeListTopSubViewDelegate {
         let viewController = SortingOrderViewController(upperRightPoint: point)
         viewController.modalPresentationStyle = .overCurrentContext
         tabBarController?.present(viewController, animated: true)
+    }
+}
+
+// MARK: - Bind
+extension HomeListViewController {
+    private func bind() {
+        
     }
 }

@@ -25,7 +25,7 @@ final class ProfileButtonSectionView: UIView {
     
     private lazy var cancelledButton: UIButton = {
         let button = UIButton()
-        button.addTarget(self, action: #selector(cancelledButtonHandler), for: .touchUpInside)
+        button.addTarget(self, action: #selector(likedButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -59,9 +59,9 @@ final class ProfileButtonSectionView: UIView {
         return label
     }()
     
-    private let cancelledLabel: UILabel = {
+    private let likedLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hangout\ncancelled"
+        label.text = "Hangout\nliked"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textAlignment = .center
@@ -83,7 +83,7 @@ final class ProfileButtonSectionView: UIView {
         return label
     }()
     
-    private let numOfCancelledLabel: UILabel = {
+    private let numOfLikedLabel: UILabel = {
         let label = UILabel()
         label.textColor = .bappyBrown
         label.font = .roboto(size: 15.0)
@@ -114,7 +114,7 @@ final class ProfileButtonSectionView: UIView {
     }
 
     @objc
-    private func cancelledButtonHandler() {
+    private func likedButtonHandler() {
         updateYellowBarLayout(index: 2)
     }
 
@@ -137,7 +137,7 @@ final class ProfileButtonSectionView: UIView {
         yellowView.backgroundColor = .bappyYellow
         numOfjoinedLabel.text = "0"
         numOfMadeLabel.text = "0"
-        numOfCancelledLabel.text = "0"
+        numOfLikedLabel.text = "0"
     }
 
     private func layout() {
@@ -184,14 +184,14 @@ final class ProfileButtonSectionView: UIView {
             $0.bottom.equalToSuperview().inset(7.0)
         }
         
-        cancelledButton.addSubview(cancelledLabel)
-        cancelledLabel.snp.makeConstraints {
+        cancelledButton.addSubview(likedLabel)
+        likedLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().inset(23.0)
         }
         
-        cancelledButton.addSubview(numOfCancelledLabel)
-        numOfCancelledLabel.snp.makeConstraints {
+        cancelledButton.addSubview(numOfLikedLabel)
+        numOfLikedLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(7.0)
         }

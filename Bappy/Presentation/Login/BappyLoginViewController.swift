@@ -13,11 +13,18 @@ import GoogleSignIn
 import FacebookLogin
 import AuthenticationServices
 import CryptoKit
+import RxSwift
+import RxCocoa
 
 final class BappyLoginViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: BappyLoginViewModel
+    private let disposeBag = DisposeBag()
+    
     private var currentNonce: String?
+    
+    private let appleCredential$ = PublishSubject<AuthCredential>()
     
     private let bappyImageView: UIImageView = {
         let imageView = UIImageView()
@@ -33,7 +40,7 @@ final class BappyLoginViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var googleLoginButton: UIButton = {
+    private let googleLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
         button.backgroundColor = .white
@@ -41,15 +48,13 @@ final class BappyLoginViewController: UIViewController {
         button.setBappyTitle(
             title: "Sign in with Google",
             font: .roboto(size: 18.0, family: .Bold),
-            color: .bappyGray
-        )
+            color: .bappyGray)
         button.adjustsImageWhenHighlighted = false
-        button.addTarget(self, action: #selector(googleButtonHandler), for: .touchUpInside)
         button.addBappyShadow()
         return button
     }()
     
-    private lazy var facebookLoginButton: UIButton = {
+    private let facebookLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
         button.backgroundColor = UIColor(red: 24.0/255.0, green: 119.0/255.0, blue: 242.0/255.0, alpha: 1.0)
@@ -57,15 +62,13 @@ final class BappyLoginViewController: UIViewController {
         button.setBappyTitle(
             title: "Sign in with Facebook",
             font: .roboto(size: 18.0, family: .Bold),
-            color: .white
-        )
+            color: .white)
         button.adjustsImageWhenHighlighted = false
-        button.addTarget(self, action: #selector(facebookLoginButtonHandler), for: .touchUpInside)
         button.addBappyShadow()
         return button
     }()
     
-    private lazy var appleLoginButton: UIButton = {
+    private let appleLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
         button.backgroundColor = .black
@@ -73,15 +76,13 @@ final class BappyLoginViewController: UIViewController {
         button.setBappyTitle(
             title: "Sign in with Apple",
             font: .roboto(size: 18.0, family: .Bold),
-            color: .white
-        )
+            color: .white)
         button.adjustsImageWhenHighlighted = false
-        button.addTarget(self, action: #selector(appleLoginButtonHandler), for: .touchUpInside)
         button.addBappyShadow()
         return button
     }()
     
-    private lazy var loginSkipButton: UIButton = {
+    private let loginSkipButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 16.0, weight: .medium)
         let image = UIImage(systemName: "chevron.backward")
@@ -92,18 +93,22 @@ final class BappyLoginViewController: UIViewController {
             title: "Login Skip  ",
             font: .roboto(size: 16.0, family: .Bold),
             color: .white,
-            hasUnderline: true
-        )
-        button.addTarget(self, action: #selector(skipButtonHandler), for: .touchUpInside)
+            hasUnderline: true)
         return button
     }()
     
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(viewModel: BappyLoginViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillLayoutSubviews() {
@@ -112,40 +117,7 @@ final class BappyLoginViewController: UIViewController {
         setButtonImageInset()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func skipButtonHandler() {
-        showProgessHUD()
-        signInAnonymously()
-    }
-    
-    @objc
-    private func googleButtonHandler() {
-        startSignInWithGoogleFlow()
-    }
-    
-    @objc
-    private func facebookLoginButtonHandler() {
-        startSignInWithFacebookFlow()
-    }
-    
-    @objc
-    private func appleLoginButtonHandler() {
-        startSignInWithAppleFlow()
-    }
-    
     // MARK: Helpers
-    private func showProgessHUD() {
-        ProgressHUD.animationType = .horizontalCirclesPulse
-        ProgressHUD.colorBackground = .bappyYellow
-        ProgressHUD.colorAnimation = .bappyBrown
-        ProgressHUD.show(interaction: false)
-    }
-    
     private func setButtonImageInset() {
         for button in [googleLoginButton, facebookLoginButton, appleLoginButton] {
             guard let titleWidth = button.titleLabel?.frame.width else { return }
@@ -160,7 +132,8 @@ final class BappyLoginViewController: UIViewController {
     }
     
     private func layout() {
-        let vStackView = UIStackView(arrangedSubviews: [googleLoginButton, facebookLoginButton, appleLoginButton])
+        let arrangedSubviews: [UIView] = [googleLoginButton, facebookLoginButton, appleLoginButton]
+        let vStackView = UIStackView(arrangedSubviews: arrangedSubviews)
         vStackView.axis = .vertical
         vStackView.spacing = 18.0
         vStackView.distribution = .fillEqually
@@ -194,150 +167,117 @@ final class BappyLoginViewController: UIViewController {
             $0.height.equalTo(44.0)
         }
     }
-    
-    private func showRegisterView() {
-        let yearList = Array(1931...Date.thisYear-17)
-            .map { String($0) }
-        let monthList = Array(1...12)
-            .map { String($0) }
-            .map { ($0.count == 1) ? "0\($0)" : $0 }
-        let dayList = Array(1...31)
-            .map { String($0) }
-            .map { ($0.count == 1) ? "0\($0)" : $0 }
-        let country = Country(code: "KR", name: "South Korea")
-        let countries = NSLocale.isoCountryCodes
-            .map { NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: $0]) }
-            .map { countryCode -> Country in
-                let code = String(countryCode[countryCode.index(after: countryCode.startIndex)...])
-                let name = NSLocale(localeIdentifier: "en_UK")
-                    .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
-                return Country(code: code, name: name)
-            }
+}
+
+// MARK: - Bind
+extension BappyLoginViewController {
+    private func bind() {
+        googleLoginButton.rx.tap
+            .flatMap(startSignInWithGoogleFlow)
+            .bind(to: viewModel.input.googleCredential)
+            .disposed(by: disposeBag)
         
-        let dependency = RegisterViewModel.Dependency(
-            numOfPage: 4,
-            isButtonEnabled: false,
-            nameDependency: .init(
-                minimumLength: 3,
-                maximumLength: 30),
-            birthDependency: .init(
-                year: "2000",
-                month: "06",
-                day: "15",
-                yearList: yearList,
-                monthList: monthList,
-                dayList: dayList),
-            country: country,
-            selectnationalityDependency: .init(
-                country: country,
-                countries: countries)
-        )
-        let viewModel = RegisterViewModel(dependency: dependency)
-        let viewController = RegisterViewController(viewModel: viewModel)
-        self.navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
-// MARK: - Sign In Guest Mode
-extension BappyLoginViewController {
-    private func signInAnonymously() {
-        Auth.auth().signInAnonymously { authResult, error in
-            if let error = error {
-                print("ERROR: \(error.localizedDescription)")
-                ProgressHUD.dismiss()
-                return
-            }
-            
-            guard let authResult = authResult else { return }
-            authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
-                ProgressHUD.dismiss()
-                if let error = error {
-                    print("ERROR: \(error.localizedDescription)")
-                    return
-                }
-                print("DEBUG: idToken \(idToken!)")
-            }
-            print("DEBUG: uid \(authResult.user.uid)")
-            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-            sceneDelegate.switchRootViewToMainView(animated: true)
-        }
-    }
-}
-
-// MARK: - Firebase Sign In
-extension BappyLoginViewController {
-    private func signInWithFirebase(with credential: AuthCredential) {
-        showProgessHUD()
-        Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-            guard let self = self else { return }
-            if let error = error {
-                print("ERROR: \(error.localizedDescription)")
-                return
-            }
-
-            guard let authResult = authResult else { return }
-            authResult.user.getIDTokenForcingRefresh(true) { idToken, error in
-                if let error = error {
-                    print("ERROR: \(error.localizedDescription)")
-                    return
-                }
-                ProgressHUD.dismiss()
-                
-                // Resisterd in Backend
-                if let displayName = authResult.user.displayName, displayName == authResult.user.uid {
-                    guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                    sceneDelegate.switchRootViewToMainView(animated: true)
-                } else {
-                    // Not resisterd in Backend
-                    self.showRegisterView()
-                }
-            }
-        }
+        facebookLoginButton.rx.tap
+            .flatMap(startSignInWithFacebookFlow)
+            .bind(to: viewModel.input.facebookCredential)
+            .disposed(by: disposeBag)
+        
+        appleLoginButton.rx.tap
+            .bind(onNext: { [weak self] _ in self?.startSignInWithAppleFlow()})
+            .disposed(by: disposeBag)
+        
+        appleCredential$
+            .bind(to: viewModel.input.appleCredential)
+            .disposed(by: disposeBag)
+        
+        loginSkipButton.rx.tap
+            .bind(to: viewModel.input.skipButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .distinctUntilChanged()
+            .emit(onNext: { show in
+                if show {
+                    ProgressHUD.animationType = .horizontalCirclesPulse
+                    ProgressHUD.colorBackground = .bappyYellow
+                    ProgressHUD.colorAnimation = .bappyBrown
+                    ProgressHUD.show(interaction: false)
+                } else { ProgressHUD.dismiss() }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.signIn
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { viewModel in
+                guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showRegisterView
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] viewModel in
+                let viewController = RegisterViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
 // MARK: - Google Sign In
 extension BappyLoginViewController {
-    private func startSignInWithGoogleFlow() {
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        let config = GIDConfiguration(clientID: clientID)
-        
-        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { [weak self] user, error in
-            guard let self = self else { return }
-            if let error = error {
-                print("ERROR: \(error.localizedDescription)")
-                return
+    private func startSignInWithGoogleFlow() -> Single<AuthCredential> {
+        return Single<AuthCredential>.create { [weak self] single in
+            
+            guard
+                let self = self,
+                let clientID = FirebaseApp.app()?.options.clientID
+            else {
+                single(.failure(FirebaseError.signInFailed))
+                return Disposables.create()
             }
+            let config = GIDConfiguration(clientID: clientID)
+            
+            GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    single(.failure(FirebaseError.signInFailed))
+                    return
+                }
 
-            guard let authentication = user?.authentication,
-                  let idToken = authentication.idToken else { return }
-            
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
-            
-            self.signInWithFirebase(with: credential)
+                guard let authentication = user?.authentication,
+                      let idToken = authentication.idToken else { return }
+                
+                let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
+                
+                single(.success(credential))
+            }
+            return Disposables.create()
         }
     }
 }
 
 // MARK: - Facebook Sign In
 extension BappyLoginViewController {
-    private func startSignInWithFacebookFlow() {
-        let loginManager = LoginManager()
-        loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
-            guard let self = self else { return }
-            if let error = error {
-                print("ERROR: \(error.localizedDescription)")
-                return
+    private func startSignInWithFacebookFlow() -> Single<AuthCredential> {
+        return Single<AuthCredential>.create { [weak self] single in
+            guard let self = self else { return Disposables.create() }
+            let loginManager = LoginManager()
+            loginManager.logIn(permissions: ["public_profile"], from: self) { result, error in
+                
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let result = result, !result.isCancelled else { return }
+                
+                guard let accessToken = AccessToken.current?.tokenString else { return }
+                let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+                
+                single(.success(credential))
             }
-            guard let result = result, !result.isCancelled else {
-                print("DEBUG: Facebook Sign In cancelled")
-                return
-            }
-            
-            guard let accessToken = AccessToken.current?.tokenString else { return }
-            let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
-            
-            self.signInWithFirebase(with: credential)
+            return Disposables.create()
         }
     }
 }
@@ -420,7 +360,7 @@ extension BappyLoginViewController: ASAuthorizationControllerDelegate {
 
             let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
 
-            self.signInWithFirebase(with: credential)
+            appleCredential$.onNext(credential)
         }
     }
 }

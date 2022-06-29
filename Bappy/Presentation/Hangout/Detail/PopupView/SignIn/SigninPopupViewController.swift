@@ -117,8 +117,8 @@ final class SigninPopupViewController: UIViewController {
     private func signinButtonHandler() {
         do {
             try Auth.auth().signOut()
-            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-            sceneDelegate.switchRootViewToSignInView(animated: true)
+//            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+//            sceneDelegate.switchRootViewToSignInView(animated: true)
         } catch {
             fatalError("Failed sign out")
         }

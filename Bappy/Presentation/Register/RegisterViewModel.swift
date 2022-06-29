@@ -12,6 +12,17 @@ import SwiftUI
 
 final class RegisterViewModel: ViewModelType {
     
+    struct Dependency {
+        let currentUserRepository: CurrentUserRepository
+        let firebaseRepository: FirebaseRepository
+        var numOfPage: Int
+        var isButtonEnabled: Bool
+        var nameDependency: RegisterNameViewModel.Dependency
+        var birthDependency: RegisterBirthViewModel.Dependency
+        var country: Country
+        var selectnationalityDependency: SelectNationalityViewModel.Dependency
+    }
+    
     struct SubViewModels {
         let nameViewModel: RegisterNameViewModel
         let genderViewModel: RegisterGenderViewModel
@@ -20,15 +31,6 @@ final class RegisterViewModel: ViewModelType {
         let continueButtonViewModel: ContinueButtonViewModel
         let selectNationalityViewModel: SelectNationalityViewModel
         let completedViewModel: RegisterCompletedViewModel
-    }
-    
-    struct Dependency {
-        var numOfPage: Int
-        var isButtonEnabled: Bool
-        var nameDependency: RegisterNameViewModel.Dependency
-        var birthDependency: RegisterBirthViewModel.Dependency
-        var country: Country
-        var selectnationalityDependency: SelectNationalityViewModel.Dependency
     }
     
     struct Input {
