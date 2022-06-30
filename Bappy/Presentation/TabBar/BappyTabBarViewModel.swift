@@ -11,15 +11,11 @@ import RxCocoa
 
 final class BappyTabBarViewModel: ViewModelType {
     
-    struct SubViewModels {
-        let homeListViewModel: HomeListViewModel
-        let profileViewModel: ProfileViewModel
-    }
-    
     struct Dependency {
         var selectedIndex: Int
-        var profile: Profile
-        var currentUserRepository: CurrentUserRepository
+        var user: BappyUser
+        var bappyAuthRepository: BappyAuthRepository
+        var firebaseRepository: FirebaseRepository
         var writeViewModelDependency: HangoutMakeViewModel.Dependency {
             return .init(
                 currentUser: .init(id: "abc", state: .normal),
@@ -54,6 +50,11 @@ final class BappyTabBarViewModel: ViewModelType {
         }
     }
     
+    struct SubViewModels {
+        let homeListViewModel: HomeListViewModel
+        let profileViewModel: ProfileViewModel
+    }
+    
     struct Input {
         var homeButtonTapped: AnyObserver<Void> // <-> View
         var profileButtonTapped: AnyObserver<Void> // <-> View
@@ -86,8 +87,8 @@ final class BappyTabBarViewModel: ViewModelType {
         self.subViewModels = SubViewModels(
             homeListViewModel: HomeListViewModel(dependency: .init()),
             profileViewModel: ProfileViewModel(dependency: .init(
-                profile: dependency.profile,
-                currentUserRepository: dependency.currentUserRepository
+                user: dependency.user,
+                bappyAuthRepository: dependency.bappyAuthRepository
             ))
         )
         

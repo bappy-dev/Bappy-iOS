@@ -45,7 +45,6 @@ final class SearchPlaceViewModel: ViewModelType {
     let input: Input
     let output: Output
     let repository: GoogleMapsRepository
-    let provider: Provider
     
     private let key$: BehaviorSubject<String>
     private let language$: BehaviorSubject<String>
@@ -66,7 +65,6 @@ final class SearchPlaceViewModel: ViewModelType {
     
     init(dependency: Dependency) {
         self.dependency = dependency
-        self.provider = BappyProvider()
         self.repository = DefaultGoogleMapsRepository()
         
         // Streams
@@ -160,6 +158,7 @@ final class SearchPlaceViewModel: ViewModelType {
                 startForNew.map(repository.fetchMapPage),
                 startForExtra.map(repository.fetchNextMapPage)
             )
+            .observe(on:MainScheduler.asyncInstance)
             .flatMap { $0 }
             .do { [weak self] _ in
                 self?.dismissLoader$.onNext(Void())

@@ -41,12 +41,22 @@ struct APIEndpoints {
         )
     }
     
-    static func getUserProfile(with userProfileRequestDTO: UserProfileRequestDTO, token: String) -> Endpoint<UserProfileResponseDTO> {
+    static func getBappyUser(with userProfileRequestDTO: BappyUserRequestDTO, token: String) -> Endpoint<BappyUserResponseDTO> {
         return Endpoint(
             baseURL: "SERVER", // 임시
             path: "auth/login",
             method: .get,
             queryParameters: userProfileRequestDTO,
+            headers: ["authorization": token]
+        )
+    }
+    
+    static func createUser(with createUserRequestDTO: CreateUserRequestDTO, token: String) -> Endpoint<CreateUserResponseDTO> {
+        return Endpoint(
+            baseURL: "SERVER", // 임시
+            path: "user",
+            method: .post,
+            bodyParameters: createUserRequestDTO,
             headers: ["authorization": token]
         )
     }

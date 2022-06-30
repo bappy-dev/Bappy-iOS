@@ -1,13 +1,13 @@
 //
-//  UserProfileResponseDTO+Mapping.swift
+//  CreateUserResponseDTO+Mapping.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/06/28.
+//  Created by 정동천 on 2022/06/29.
 //
 
 import Foundation
 
-struct BappyUserResponseDTO: Decodable {
+struct CreateUserResponseDTO: Decodable {
     
     let user: UserDTO
     
@@ -16,7 +16,7 @@ struct BappyUserResponseDTO: Decodable {
     }
 }
 
-extension BappyUserResponseDTO {
+extension CreateUserResponseDTO {
     struct UserDTO: Decodable {
         let id: String?
         let name: String?
@@ -48,7 +48,7 @@ extension BappyUserResponseDTO {
     }
 }
 
-extension BappyUserResponseDTO {
+extension CreateUserResponseDTO {
     func toDomain() -> BappyUser {
         return BappyUser(
             id: user.id ?? UUID().uuidString,

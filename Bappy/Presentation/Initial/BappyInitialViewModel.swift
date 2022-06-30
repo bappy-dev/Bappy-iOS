@@ -12,7 +12,7 @@ import RxCocoa
 final class BappyInitialViewModel: ViewModelType {
     
     struct Dependency {
-        let currentUserRepository: CurrentUserRepository
+        let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
     }
     
@@ -61,7 +61,7 @@ final class BappyInitialViewModel: ViewModelType {
             .map { _ -> BappyLoginViewModel in
                 print("DEBUG: Not Signed In")
                 let dependency = BappyLoginViewModel.Dependency(
-                    currentUserRepository: dependency.currentUserRepository,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
                     firebaseRepository: dependency.firebaseRepository)
                 return BappyLoginViewModel(dependency: dependency)
             }
@@ -73,17 +73,15 @@ final class BappyInitialViewModel: ViewModelType {
         isAnonymousUser$
             .filter { $0 }
             .map { _ in }
-            .flatMap(dependency.currentUserRepository.fetchAnonymousUser)
-            .map { element -> BappyTabBarViewModel in
+            .flatMap(dependency.bappyAuthRepository.fetchAnonymousUser)
+            .map { user -> BappyTabBarViewModel in
                 print("DEBUG: Sign In Guest Mode")
                 let dependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    profile: Profile(
-                        user: element,
-                        joinedHangouts: [],
-                        madeHangouts: [],
-                        likedHangouts: []),
-                    currentUserRepository: dependency.currentUserRepository)
+                    user: user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository
+                )
                 return BappyTabBarViewModel(dependency: dependency)
             }
             .bind(to: switchToMainView$)
@@ -106,7 +104,8 @@ final class BappyInitialViewModel: ViewModelType {
         let userResult = tokenResult
             .map(getToken)
             .compactMap { $0 }
-            .flatMap(dependency.currentUserRepository.fetchCurrentUser)
+            .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
+            .observe(on: MainScheduler.asyncInstance)
             .share()
     
         userResult
@@ -126,7 +125,7 @@ final class BappyInitialViewModel: ViewModelType {
             .flatMap(dependency.firebaseRepository.signOut)
             .map { _ -> BappyLoginViewModel in
                 let dependency = BappyLoginViewModel.Dependency(
-                    currentUserRepository: dependency.currentUserRepository,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
                     firebaseRepository: dependency.firebaseRepository)
                 return BappyLoginViewModel(dependency: dependency)
             }
@@ -139,13 +138,9 @@ final class BappyInitialViewModel: ViewModelType {
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    profile: Profile(
-                        user: user,
-                        joinedHangouts: [],
-                        madeHangouts: [],
-                        likedHangouts: []
-                    ),
-                    currentUserRepository: dependency.currentUserRepository
+                    user: user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository
                 )
                 return BappyTabBarViewModel(dependency: dependecy)
             }

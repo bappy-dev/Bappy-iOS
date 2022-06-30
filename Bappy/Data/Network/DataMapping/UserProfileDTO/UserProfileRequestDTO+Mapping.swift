@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct UserProfileRequestDTO: Encodable {
+struct BappyUserRequestDTO: Encodable {
     let id: String
 }

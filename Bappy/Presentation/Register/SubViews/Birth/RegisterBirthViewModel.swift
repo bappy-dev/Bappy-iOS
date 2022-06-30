@@ -26,12 +26,13 @@ final class RegisterBirthViewModel: ViewModelType {
     }
     
     struct Input {
-        var date: AnyObserver<String>
+        var date: AnyObserver<Date?> // <-> Child(Picker)
     }
     
     struct Output {
-        var date: Signal<String>
-        var isValid: Driver<Bool>
+        var date: Signal<String> // <-> View
+        var isValid: Driver<Bool> // <-> Parent
+        var selectedDate: PublishSubject<Date> // <-> Parent
     }
     
     let dependency: Dependency
@@ -41,7 +42,9 @@ final class RegisterBirthViewModel: ViewModelType {
         
     let subViewModels: SubViewModels
     
-    private let date$ = PublishSubject<String>()
+    private let date$ = PublishSubject<Date?>()
+    
+    private let selectedDate$ = PublishSubject<Date>()
     
     init(dependency: Dependency) {
         let subViewModel = SubViewModels(
@@ -61,18 +64,32 @@ final class RegisterBirthViewModel: ViewModelType {
         
         // Streams
         let date = date$
+            .compactMap { $0?.toString(dateFormat: "yyyy-MM-dd") }
             .asSignal(onErrorJustReturn: dependency.date)
         let isValid = date$
-            .map { !$0.isEmpty }
+            .map { $0 != nil }
             .asDriver(onErrorJustReturn: false)
         
         // Input & Output
-        self.input = Input(date: date$.asObserver())
-        self.output = Output(date: date, isValid: isValid)
+        self.input = Input(
+            date: date$.asObserver()
+        )
+        
+        self.output = Output(
+            date: date,
+            isValid: isValid,
+            selectedDate: selectedDate$
+        )
         
         // Binding        
         subViewModel.birthPickerViewModel.output.date
+            .compactMap { $0 }
             .emit(to: date$)
+            .disposed(by: disposeBag)
+        
+        subViewModel.birthPickerViewModel.output.date
+            .compactMap { $0 }
+            .emit(to: selectedDate$)
             .disposed(by: disposeBag)
     }
 }

@@ -10,7 +10,11 @@ import RxSwift
 import RxCocoa
 
 final class RegisterCompletedViewModel: ViewModelType {
-    struct Dependency {}
+    struct Dependency {
+        let user: BappyUser
+        let bappyAuthRepository: BappyAuthRepository
+        let firebaseRepository: FirebaseRepository
+    }
     
     struct Input {
         var okayButtonTapped: AnyObserver<Void>
@@ -18,8 +22,8 @@ final class RegisterCompletedViewModel: ViewModelType {
     }
     
     struct Output {
-        var okayButtonTapped: Signal<Void>
-        var laterButtonTapped: Signal<Void>
+        var switchToMainView: PublishSubject<BappyTabBarViewModel>
+        var moveToEditProfileView: PublishSubject<BappyTabBarViewModel>
     }
     
     let dependency: Dependency
@@ -30,14 +34,13 @@ final class RegisterCompletedViewModel: ViewModelType {
     private let okayButtonTapped$ = PublishSubject<Void>()
     private let laterButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency = Dependency()) {
+    private let switchToMainView$ = PublishSubject<BappyTabBarViewModel>()
+    private let moveToEditProfileView$ = PublishSubject<BappyTabBarViewModel>()
+    
+    init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
-        let okayButtonTapped = okayButtonTapped$
-            .asSignal(onErrorJustReturn: Void())
-        let laterButtonTapped = laterButtonTapped$
-            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
@@ -46,11 +49,35 @@ final class RegisterCompletedViewModel: ViewModelType {
         )
         
         self.output = Output(
-            okayButtonTapped: okayButtonTapped,
-            laterButtonTapped: laterButtonTapped
+            switchToMainView: switchToMainView$,
+            moveToEditProfileView: moveToEditProfileView$
         )
         
         // Binding
-
+        laterButtonTapped$
+            .map { _  -> BappyTabBarViewModel in
+                let dependency = BappyTabBarViewModel.Dependency(
+                    selectedIndex: 0,
+                    user: dependency.user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository
+                )
+                return BappyTabBarViewModel(dependency: dependency)
+            }
+            .bind(to: switchToMainView$)
+            .disposed(by: disposeBag)
+        
+        okayButtonTapped$
+            .map { _  -> BappyTabBarViewModel in
+                let dependency = BappyTabBarViewModel.Dependency(
+                    selectedIndex: 1,
+                    user: dependency.user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository
+                )
+                return BappyTabBarViewModel(dependency: dependency)
+            }
+            .bind(to: switchToMainView$)
+            .disposed(by: disposeBag)
     }
 }

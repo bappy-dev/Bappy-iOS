@@ -20,7 +20,7 @@ final class HomeListViewController: UIViewController {
     private var hangoutList: [Hangout] = [
         Hangout(
             id: "abc", state: .available, title: "Who wants to go eat?",
-            meetTime: "03. Mar. 19:00", language: "English",
+            meetTime: "01. JUL. 19:00", language: "English",
             placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
             placeName: "Pusan University",
             plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -35,12 +35,42 @@ final class HomeListViewController: UIViewController {
             userHasLiked: true),
         Hangout(
             id: "def", state: .available, title: "Who wants to go eat?",
-            meetTime: "03. Mar. 19:00", language: "Korean",
+            meetTime: "03. JUL. 18:00", language: "Korean",
             placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
             placeName: "Pusan University",
             plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
             limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
             postImageURL: URL(string: EXAMPLE_IMAGE2_URL),
+            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
+            mapImageURL: URL(string: EXAMPLE_MAP_URL),
+            participantIDs: [
+                .init(id: "abc", imageURL: nil),
+                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
+            ],
+            userHasLiked: false),
+        Hangout(
+            id: "def", state: .closed, title: "Who wants to go eat?",
+            meetTime: "02. JUL. 18:00", language: "English",
+            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
+            placeName: "Pusan University",
+            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
+            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
+            postImageURL: URL(string: EXAMPLE_IMAGE2_URL),
+            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
+            mapImageURL: URL(string: EXAMPLE_MAP_URL),
+            participantIDs: [
+                .init(id: "abc", imageURL: nil),
+                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE3_URL))
+            ],
+            userHasLiked: false),
+        Hangout(
+            id: "abc", state: .expired, title: "Who wants to go eat?",
+            meetTime: "01. JUL. 19:00", language: "English",
+            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
+            placeName: "Pusan University",
+            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
+            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
+            postImageURL: URL(string: EXAMPLE_IMAGE1_URL),
             openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
             mapImageURL: URL(string: EXAMPLE_MAP_URL),
             participantIDs: [

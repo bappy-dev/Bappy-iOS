@@ -14,7 +14,7 @@ final class BappyInitialViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: BappyInitialViewModel
-    private let disposBag = DisposeBag()
+    private let dispoesBag = DisposeBag()
     
     private let bappyImageView: UIImageView = {
         let imageView = UIImageView()
@@ -71,19 +71,21 @@ final class BappyInitialViewController: UIViewController {
 extension BappyInitialViewController {
     private func bind() {
         viewModel.output.switchToSignInView
+            .take(1)
             .observe(on: MainScheduler.instance)
             .bind(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToSignInView(viewModel: viewModel, animated: true)
             })
-            .disposed(by: disposBag)
+            .disposed(by: dispoesBag)
         
         viewModel.output.switchToMainView
+            .take(1)
             .observe(on: MainScheduler.instance)
             .bind(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
             })
-            .disposed(by: disposBag)
+            .disposed(by: dispoesBag)
     }
 }

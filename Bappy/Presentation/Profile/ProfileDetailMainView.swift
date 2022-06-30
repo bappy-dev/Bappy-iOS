@@ -23,7 +23,7 @@ final class ProfileDetailMainView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 16.0, family: .Bold)
         label.textColor = .bappyBrown
-        label.text = "Jessica 🇺🇸"
+        label.text = "Bappy 🇺🇸"
         return label
     }()
     
@@ -31,7 +31,7 @@ final class ProfileDetailMainView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 13.0)
         label.textColor = .bappyBrown
-        label.text = "Female / 2007.07.27"
+        label.text = "Other / 2000.01.01"
         return label
     }()
     

@@ -12,8 +12,8 @@ import RxCocoa
 final class ProfileViewModel: ViewModelType {
     
     struct Dependency {
-        let profile: Profile
-        let currentUserRepository: CurrentUserRepository
+        let user: BappyUser
+        let bappyAuthRepository: BappyAuthRepository
     }
     
     struct Input {
@@ -29,19 +29,19 @@ final class ProfileViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let profile$: BehaviorSubject<Profile>
+    private let user$: BehaviorSubject<BappyUser>
     private let currentUser$: BehaviorSubject<BappyUser?>
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
-        let profile$ = BehaviorSubject<Profile>(value: dependency.profile)
-        let currentUser$ = dependency.currentUserRepository.currentUser
+        let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
+        let currentUser$ = dependency.bappyAuthRepository.currentUser
         
         let hideSettingButton = Observable
-            .combineLatest(profile$, currentUser$.compactMap { $0 })
-            .map { $0.0.user != $0.1 }
+            .combineLatest(user$, currentUser$.compactMap { $0 })
+            .map { $0.0 != $0.1 }
             .startWith(true)
             .asSignal(onErrorJustReturn: true)
         
@@ -54,7 +54,7 @@ final class ProfileViewModel: ViewModelType {
         )
         
         // Bindind
-        self.profile$ = profile$
+        self.user$ = user$
         self.currentUser$ = currentUser$
     }
 }

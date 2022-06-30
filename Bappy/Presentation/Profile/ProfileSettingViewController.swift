@@ -89,7 +89,7 @@ extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
         do {
             try Auth.auth().signOut()
             let dependency = BappyLoginViewModel.Dependency(
-                currentUserRepository: DefaultCurrentUserRepository.shared,
+                bappyAuthRepository: DefaultBappyAuthRepository.shared,
                 firebaseRepository: DefaultFirebaseRepository.shared
             )
             guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }

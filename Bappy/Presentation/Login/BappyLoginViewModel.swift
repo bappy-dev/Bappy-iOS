@@ -13,7 +13,7 @@ import RxCocoa
 final class BappyLoginViewModel: ViewModelType {
     
     struct Dependency {
-        let currentUserRepository: CurrentUserRepository
+        let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
         var registerDependency: RegisterViewModel.Dependency {
             let yearList = Array(1931...Date.thisYear-17)
@@ -33,11 +33,11 @@ final class BappyLoginViewModel: ViewModelType {
                         .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
                     return Country(code: code, name: name)
                 }
-            let currentUserRepository = currentUserRepository
+            let bappyAuthRepository = bappyAuthRepository
             let firebaseRepository = firebaseRepository
             
             return RegisterViewModel.Dependency(
-                currentUserRepository: currentUserRepository,
+                bappyAuthRepository: bappyAuthRepository,
                 firebaseRepository: firebaseRepository,
                 numOfPage: 4,
                 isButtonEnabled: false,
@@ -135,7 +135,8 @@ final class BappyLoginViewModel: ViewModelType {
         
         let signInUserResult = tokenResult
             .compactMap(getToken)
-            .flatMap(dependency.currentUserRepository.fetchCurrentUser)
+            .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
+            .observe(on: MainScheduler.asyncInstance)
             .do { _ in self.showLoader$.onNext(false) }
             .share()
         
@@ -168,7 +169,7 @@ final class BappyLoginViewModel: ViewModelType {
         let anonymousUser = anonymousResult
             .map(getAuthResult)
             .compactMap { _ in }
-            .flatMap(dependency.currentUserRepository.fetchAnonymousUser)
+            .flatMap(dependency.bappyAuthRepository.fetchAnonymousUser)
         
         anonymousResult
             .map(getAuthError)
@@ -180,13 +181,9 @@ final class BappyLoginViewModel: ViewModelType {
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    profile: Profile(
-                        user: user,
-                        joinedHangouts: [],
-                        madeHangouts: [],
-                        likedHangouts: []
-                    ),
-                    currentUserRepository: dependency.currentUserRepository
+                    user: user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository
                 )
                 return BappyTabBarViewModel(dependency: dependecy)
             }

@@ -23,29 +23,21 @@ final class BirthPickerViewModel: ViewModelType {
     }
     
     struct Input {
-        var year: AnyObserver<String>
-        var month: AnyObserver<String>
-        var day: AnyObserver<String>
-        var yearList: AnyObserver<[String]> // 고정값
-        var monthList: AnyObserver<[String]> // 고정값
-        var dayList: AnyObserver<[String]> // 고정값
-        // View -> ViewModel
-        var selectedYearRow: AnyObserver<Int>
-        var selectedMonthRow: AnyObserver<Int>
-        var selectedDayRow: AnyObserver<Int>
-        var doneButtonTapped: AnyObserver<Void>
+        var selectedYearRow: AnyObserver<Int> // <-> View
+        var selectedMonthRow: AnyObserver<Int> // <-> View
+        var selectedDayRow: AnyObserver<Int> // <-> View
+        var doneButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
-        var date: Signal<String>
-        // ViewModel -> View
-        var yearList: Driver<[String]> // 고정값
-        var monthList: Driver<[String]> // 고정값
-        var dayList: Driver<[String]> // 고정값
-        var yearRow: BehaviorRelay<(row: Int, component: Int)>
-        var monthRow: BehaviorRelay<(row: Int, component: Int)>
-        var dayRow: BehaviorRelay<(row: Int, component: Int)>
-        var shouldHide: Signal<Void>
+        var date: Signal<Date?> // <-> Parent
+        var yearList: Driver<[String]> // <-> View
+        var monthList: Driver<[String]> // <-> View
+        var dayList: Driver<[String]> // <-> View
+        var yearRow: BehaviorRelay<(row: Int, component: Int)> // <-> View
+        var monthRow: BehaviorRelay<(row: Int, component: Int)> // <-> View
+        var dayRow: BehaviorRelay<(row: Int, component: Int)> // <-> View
+        var shouldHide: Signal<Void> // <-> View
     }
     
     let dependency: Dependency
@@ -81,7 +73,8 @@ final class BirthPickerViewModel: ViewModelType {
         let date = doneButtonTapped$
             .withLatestFrom(Observable.combineLatest(year$, month$, day$))
             .map { "\($0)-\($1)-\($2)" }
-            .asSignal(onErrorJustReturn: "\(dependency.year)-\(dependency.month)-\(dependency.day)")
+            .map { $0.toDate(format: "yyyy-MM-dd") }
+            .asSignal(onErrorJustReturn: nil)
         
         let selectedDate = Observable
             .combineLatest(
@@ -104,12 +97,6 @@ final class BirthPickerViewModel: ViewModelType {
 
         // Input & Output
         self.input = Input(
-            year: year$.asObserver(),
-            month: month$.asObserver(),
-            day: day$.asObserver(),
-            yearList: yearList$.asObserver(),
-            monthList: monthList$.asObserver(),
-            dayList: dayList$.asObserver(),
             selectedYearRow: selectedYearRow$.asObserver(),
             selectedMonthRow: selectedMonthRow$.asObserver(),
             selectedDayRow: selectedDayRow$.asObserver(),

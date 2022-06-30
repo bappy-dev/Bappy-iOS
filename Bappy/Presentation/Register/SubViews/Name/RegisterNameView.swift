@@ -35,6 +35,7 @@ final class RegisterNameView: UIView {
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter your name",
             attributes: [.foregroundColor: UIColor.bappyGray])
+        textField.autocorrectionType = .no
         return textField
     }()
     

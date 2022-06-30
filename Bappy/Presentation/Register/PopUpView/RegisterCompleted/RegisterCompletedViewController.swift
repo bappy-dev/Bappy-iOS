@@ -117,11 +117,6 @@ final class RegisterCompletedViewController: UIViewController {
         animatePresentContainer()
     }
     
-    // MARK: Events
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        animateDismissView()
-    }
-    
     // MARK: Animations
     private func animateShowDimmedView() {
         dimmedView.backgroundColor = .black
@@ -229,6 +224,31 @@ extension RegisterCompletedViewController {
         
         laterButton.rx.tap
             .bind(to: viewModel.input.laterButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.switchToMainView
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { viewModel in
+                guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.moveToEditProfileView
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { viewModel in
+                guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true, completion: { _ in print("DEBUG: com")} )
+//                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true) { tabBarController in
+//                    print("DEBUG: Completion")
+//                    guard let navigationController = tabBarController?.selectedViewController
+//                            as? UINavigationController else { return }
+//                    let viewController = ProfileDetailViewController()
+//                    viewController.hidesBottomBarWhenPushed = true
+//                    print("DEBUG: navi \(navigationController.viewControllers)")
+//                    navigationController.pushViewController(viewController, animated: false)
+//                }
+            })
             .disposed(by: disposeBag)
     }
 }

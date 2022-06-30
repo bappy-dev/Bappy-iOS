@@ -8,12 +8,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import SwiftUI
 
 final class RegisterViewModel: ViewModelType {
     
     struct Dependency {
-        let currentUserRepository: CurrentUserRepository
+        let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
         var numOfPage: Int
         var isButtonEnabled: Bool
@@ -30,38 +29,35 @@ final class RegisterViewModel: ViewModelType {
         let nationalityViewModel: RegisterNationalityViewModel
         let continueButtonViewModel: ContinueButtonViewModel
         let selectNationalityViewModel: SelectNationalityViewModel
-        let completedViewModel: RegisterCompletedViewModel
     }
     
     struct Input {
-        var page: AnyObserver<Int>
-        var numOfPage: AnyObserver<Int>
-        var continueButtonTapped: AnyObserver<Void>
-        var backButtonTapped: AnyObserver<Void>
-        var name: AnyObserver<String>
-        var gender: AnyObserver<Gender>
-        var birth: AnyObserver<String>
-        var country: AnyObserver<Country>
-        var isNameValid: AnyObserver<Bool>
-        var isGenderValid: AnyObserver<Bool>
-        var isBirthValid: AnyObserver<Bool>
-        var isNationalityValid: AnyObserver<Bool>
-        var keyboardWithButtonHeight: AnyObserver<CGFloat>
-        var nationalityTextFieldTapped: AnyObserver<Void>
-        var viewDidAppear: AnyObserver<Bool>
+        var continueButtonTapped: AnyObserver<Void> // <-> Child(continueButton)
+        var backButtonTapped: AnyObserver<Void> // <-> View
+        var name: AnyObserver<String?> // <-> Child(Name)
+        var gender: AnyObserver<Gender?> // <-> Child(Gender)
+        var birth: AnyObserver<Date?> // <-> Child(Birth)
+        var country: AnyObserver<Country?> // <-> Child(Country)
+        var isNameValid: AnyObserver<Bool> // <-> Child(Name)
+        var isGenderValid: AnyObserver<Bool> // <-> Child(Gender)
+        var isBirthValid: AnyObserver<Bool> // <-> Child(Birth)
+        var isNationalityValid: AnyObserver<Bool> // <-> Child(Country)
+        var keyboardWithButtonHeight: AnyObserver<CGFloat> // <-> View
+        var nationalityTextFieldTapped: AnyObserver<Void> // <-> Child(Country)
+        var viewDidAppear: AnyObserver<Bool> // <-> View
     }
     
     struct Output {
-        var shouldKeyboardHide: Signal<Void>
-        var pageContentOffset: Driver<CGPoint>
-        var progression: Driver<CGFloat>
-        var initProgression: Signal<CGFloat>
-        var popView: Signal<Void>
-        var showCompleteView: Signal<Void>
-        var isContinueButtonEnabled: Signal<Bool>
-        var keyboardWithButtonHeight: Signal<CGFloat>
-        var country: Signal<Country>
-        var showSelectNationalityView: Signal<Void>
+        var shouldKeyboardHide: Signal<Void> // <-> View
+        var pageContentOffset: Driver<CGPoint> // <-> View
+        var progression: Driver<CGFloat> // <-> View
+        var initProgression: Signal<CGFloat> // <-> View
+        var popView: Signal<Void> // <-> View
+        var showCompleteView: PublishSubject<RegisterCompletedViewModel> // <-> View
+        var isContinueButtonEnabled: Signal<Bool> // <-> Child(ContinueButton)
+        var keyboardWithButtonHeight: Signal<CGFloat> // <-> Child(Name)
+        var country: Signal<Country> // <-> Child(Country)
+        var showSelectNationalityView: Signal<Void> // <-> View
     }
     
     let dependency: Dependency
@@ -72,12 +68,14 @@ final class RegisterViewModel: ViewModelType {
     
     private let page$: BehaviorSubject<Int>
     private let numOfPage$: BehaviorSubject<Int>
+    private let showCompleteView$ = PublishSubject<RegisterCompletedViewModel>()
+    
     private let continueButtonTapped$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
-    private let name$ = PublishSubject<String>()
-    private let gender$ = PublishSubject<Gender>()
-    private let birth$ = PublishSubject<String>()
-    private let country$ = PublishSubject<Country>()
+    private let name$ = BehaviorSubject<String?>(value: nil)
+    private let gender$ = BehaviorSubject<Gender?>(value: nil)
+    private let birth$ = BehaviorSubject<Date?>(value: nil)
+    private let country$ = BehaviorSubject<Country?>(value: nil)
     private let isNameValid$ = BehaviorSubject<Bool>(value: false)
     private let isGenderValid$ = BehaviorSubject<Bool>(value: false)
     private let isBirthValid$ = BehaviorSubject<Bool>(value: false)
@@ -94,8 +92,7 @@ final class RegisterViewModel: ViewModelType {
             birthViewModel: RegisterBirthViewModel(dependency: dependency.birthDependency),
             nationalityViewModel: RegisterNationalityViewModel(dependency: .init(country: dependency.country)),
             continueButtonViewModel: ContinueButtonViewModel(),
-            selectNationalityViewModel: SelectNationalityViewModel(dependency: dependency.selectnationalityDependency),
-            completedViewModel: RegisterCompletedViewModel()
+            selectNationalityViewModel: SelectNationalityViewModel(dependency: dependency.selectnationalityDependency)
         )
         
         // Streams
@@ -124,11 +121,6 @@ final class RegisterViewModel: ViewModelType {
         let continueButtonTappedWithPage = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
             .share()
-        
-        let showCompleteView = continueButtonTappedWithPage
-            .filter { $0.0 + 1 == $0.1 }
-            .map { _ in }
-            .asSignal(onErrorJustReturn: Void())
         let isContinueButtonEnabled = Observable
             .combineLatest(page$, isNameValid$, isGenderValid$, isBirthValid$, isNationalityValid$)
             .map(shouldButtonEnabled)
@@ -137,14 +129,13 @@ final class RegisterViewModel: ViewModelType {
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         let country = country$
+            .compactMap { $0 }
             .asSignal(onErrorJustReturn: dependency.country)
         let showSelectNationalityView = nationalityTextFieldTapped$
             .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
-            page: page$.asObserver(),
-            numOfPage: numOfPage$.asObserver(),
             continueButtonTapped: continueButtonTapped$.asObserver(),
             backButtonTapped: backButtonTapped$.asObserver(),
             name: name$.asObserver(),
@@ -166,7 +157,7 @@ final class RegisterViewModel: ViewModelType {
             progression: progression,
             initProgression: initProgression,
             popView: popView,
-            showCompleteView: showCompleteView,
+            showCompleteView: showCompleteView$,
             isContinueButtonEnabled: isContinueButtonEnabled,
             keyboardWithButtonHeight: keyboardWithButtonHeight,
             country: country,
@@ -216,6 +207,10 @@ final class RegisterViewModel: ViewModelType {
             .drive(isBirthValid$)
             .disposed(by: disposeBag)
         
+        subViewModels.birthViewModel.output.selectedDate
+            .bind(to: birth$)
+            .disposed(by: disposeBag)
+        
         // NationalityView
         country
             .emit(to: subViewModels.nationalityViewModel.input.country)
@@ -242,6 +237,44 @@ final class RegisterViewModel: ViewModelType {
         subViewModels.selectNationalityViewModel.output.country
             .emit(to: country$)
             .disposed(by: disposeBag)
+        
+        // CompltedView
+        let result = continueButtonTappedWithPage
+            .filter { $0.0 + 1 == $0.1 }
+            .withLatestFrom(Observable.combineLatest(
+                name$.compactMap { $0 },
+                gender$.compactMap { $0 },
+                birth$.compactMap { $0 },
+                country$.compactMap { $0 }
+            ))
+            .withLatestFrom(dependency.firebaseRepository.token.compactMap { $0 }) {
+                dependency.bappyAuthRepository.createUser(
+                    name: $0.0, gender: $0.1.rawValue,
+                    birth: $0.2.toString(dateFormat: "yyyy.MM.dd"),
+                    country: "\($0.3.name)/\($0.3.code)",
+                    token: $1)
+            }
+            .flatMap { $0 }
+            .share()
+        
+        result
+            .compactMap(getUserError)
+            .bind(onNext: { print("ERROR: \($0)") })
+            .disposed(by: disposeBag)
+        
+        result
+            .compactMap(getUser)
+            .map { user -> RegisterCompletedViewModel in
+                let dependency = RegisterCompletedViewModel.Dependency(
+                    user: user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository
+                )
+                return RegisterCompletedViewModel(dependency: dependency)
+            }
+            .bind(to: showCompleteView$)
+            .disposed(by: disposeBag)
+        
     }
 }
 
@@ -262,4 +295,14 @@ private func shouldButtonEnabled(page: Int, isNameValid: Bool, isGenderValid: Bo
     case 3: return isNationalityValid
     default: return false
     }
+}
+
+private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
+
+private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
 }

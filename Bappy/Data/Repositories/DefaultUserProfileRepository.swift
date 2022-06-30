@@ -20,11 +20,11 @@ final class DefaultUserProfileRepository {
 
 extension DefaultUserProfileRepository: UserProfileRepository {
     
-    func fetchUserProfile(id: String, token: String) -> Single<Result<Profile, Error>> {
-        let requestDTO = UserProfileRequestDTO(id: id)
-        let endpoint = APIEndpoints.getUserProfile(with: requestDTO, token: token)
+    func fetchBappyUser(id: String, token: String) -> Single<Result<BappyUser, Error>> {
+        let requestDTO = BappyUserRequestDTO(id: id)
+        let endpoint = APIEndpoints.getBappyUser(with: requestDTO, token: token)
         return  provider.request(with: endpoint)
-            .map { result -> Result<Profile, Error> in
+            .map { result -> Result<BappyUser, Error> in
                 switch result {
                 case .success(let responseDTO):
                     let user = responseDTO.toDomain()
