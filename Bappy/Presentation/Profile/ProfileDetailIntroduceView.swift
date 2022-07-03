@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailIntroduceView: UIView {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailIntroduceViewModel
+    private let disposeBag = DisposeBag()
+    
     private let introduceImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "profile_introduce")
@@ -29,7 +34,7 @@ final class ProfileDetailIntroduceView: UIView {
         let textView = UITextView()
         textView.font = .roboto(size: 12.0, family: .Regular)
         textView.textColor = .bappyBrown
-        textView.textAlignment = .justified
+        textView.textAlignment = .center
         textView.backgroundColor = .clear
         textView.isEditable = false
         textView.isScrollEnabled = false
@@ -39,11 +44,13 @@ final class ProfileDetailIntroduceView: UIView {
     private let backgroundView = UIView()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileDetailIntroduceViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +62,6 @@ final class ProfileDetailIntroduceView: UIView {
         self.backgroundColor = .white
         backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 11.0
-        introduceTextView.text = "I love coffee."
     }
     
     private func layout() {
@@ -85,5 +91,14 @@ final class ProfileDetailIntroduceView: UIView {
             $0.top.bottom.equalToSuperview().inset(2.0)
             $0.leading.trailing.equalToSuperview().inset(10.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailIntroduceView {
+    private func bind() {
+        viewModel.output.introduce
+            .drive(introduceTextView.rx.text)
+            .disposed(by: disposeBag)
     }
 }

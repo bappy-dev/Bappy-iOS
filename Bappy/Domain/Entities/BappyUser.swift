@@ -7,9 +7,9 @@
 
 import UIKit
 
-enum Gender: String { case male, female, other }
+enum Gender: String { case Male, Female, Other }
 enum UserState { case normal, anonymous, notRegistered, abuser }
-enum Persnoality: String { case spontaneous, planning, talkative, shy, empathatic, calm, polite }
+enum Persnoality: String { case Spontaneous, Planning, Talkative, Shy, Empathatic, Calm, Polite }
 typealias Language = String
 
 struct BappyUser: Equatable, Identifiable {
@@ -25,7 +25,7 @@ struct BappyUser: Equatable, Identifiable {
     
     var name: String?
     var gender: Gender?
-    var birth: String?
+    var birth: Date?
     var nationality: Country?
     
     var profileImageURL: URL?
@@ -36,8 +36,8 @@ struct BappyUser: Equatable, Identifiable {
     var interests: [HangoutCategory]?
     
     var numOfJoinedHangouts: Int?
-    var madeHangouts: Int?
-    var likedHangouts: Int?
+    var numOfMadeHangouts: Int?
+    var numOfLikedHangouts: Int?
     
     static func == (lhs: BappyUser, rhs: BappyUser) -> Bool {
         lhs.id == rhs.id

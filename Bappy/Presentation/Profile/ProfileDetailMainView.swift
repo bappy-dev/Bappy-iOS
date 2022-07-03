@@ -7,41 +7,55 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailMainView: UIView {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailMainViewModel
+    private let disposeBag = DisposeBag()
+    
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "profile_default")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 29.5
         return imageView
     }()
     
-    private let nameAndFlagLabel: UILabel = {
+    private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .roboto(size: 16.0, family: .Bold)
+        label.font = .roboto(size: 20.0, family: .Bold)
         label.textColor = .bappyBrown
-        label.text = "Bappy 🇺🇸"
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    private let flagLabel: UILabel = {
+        let label = UILabel()
+        label.font = .roboto(size: 20.0, family: .Bold)
+        label.textColor = .bappyBrown
         return label
     }()
     
     private let genderAndBirthLabel: UILabel = {
         let label = UILabel()
-        label.font = .roboto(size: 13.0)
+        label.font = .roboto(size: 16.0)
         label.textColor = .bappyBrown
-        label.text = "Other / 2000.01.01"
         return label
     }()
     
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileDetailMainViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -53,12 +67,7 @@ final class ProfileDetailMainView: UIView {
         self.backgroundColor = .white
     }
     
-    private func layout() { 
-        let vStackView = UIStackView(arrangedSubviews: [nameAndFlagLabel, genderAndBirthLabel])
-        vStackView.axis = .vertical
-        vStackView.spacing = 3.0
-        vStackView.alignment = .center
-        
+    private func layout() {
         self.addSubview(profileImageView)
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(5.0)
@@ -67,11 +76,49 @@ final class ProfileDetailMainView: UIView {
             $0.bottom.equalToSuperview().inset(10.0)
         }
         
-        self.addSubview(vStackView)
-        vStackView.snp.makeConstraints {
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(24.0)
-            $0.centerY.equalTo(profileImageView)
+        self.addSubview(nameLabel)
+        nameLabel.snp.makeConstraints {
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(20.0)
+            $0.bottom.equalTo(profileImageView.snp.centerY)
+        }
+        
+        self.addSubview(flagLabel)
+        flagLabel.snp.makeConstraints {
+            $0.centerY.equalTo(nameLabel)
+            $0.leading.equalTo(nameLabel.snp.trailing).offset(3.0)
             $0.trailing.lessThanOrEqualToSuperview().inset(20.0)
         }
+        flagLabel.snp.contentCompressionResistanceHorizontalPriority = 751
+        
+        self.addSubview(genderAndBirthLabel)
+        genderAndBirthLabel.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(5.0)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(18.0)
+            $0.trailing.lessThanOrEqualToSuperview().inset(20.0)
+        }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailMainView {
+    private func bind() {
+        viewModel.output.profileImageURL
+            .drive(onNext: { [weak self] url in
+                let placeHolder = UIImage(named: "profile_default")
+                self?.profileImageView.kf.setImage(with: url, placeholder: placeHolder)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.name
+            .drive(nameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.flag
+            .drive(flagLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.genderAndBirth
+            .drive(genderAndBirthLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }

@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailLanguageView: UIView {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailLanguageViewModel
+    private let disposeBag = DisposeBag()
+    
     private let languageImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "profile_language")
@@ -39,11 +44,13 @@ final class ProfileDetailLanguageView: UIView {
     private let backgroundView = UIView()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileDetailLanguageViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +62,6 @@ final class ProfileDetailLanguageView: UIView {
         self.backgroundColor = .white
         backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 11.0
-        languageTextView.text = "Korean / English / Spanish"
     }
     
     private func layout() {
@@ -85,5 +91,14 @@ final class ProfileDetailLanguageView: UIView {
             $0.top.bottom.equalToSuperview().inset(2.0)
             $0.leading.trailing.equalToSuperview().inset(10.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailLanguageView {
+    private func bind() {
+        viewModel.output.languages
+            .drive(languageTextView.rx.text)
+            .disposed(by: disposeBag)
     }
 }

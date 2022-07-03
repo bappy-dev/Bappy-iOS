@@ -38,7 +38,7 @@ final class RegisterGenderViewModel: ViewModelType {
     private let femaleButtonTapped$ = PublishSubject<Void>()
     private let otherButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency = Dependency(gender: .other)) {
+    init(dependency: Dependency = Dependency(gender: .Other)) {
         self.dependency = dependency
         
         // Streams
@@ -69,32 +69,32 @@ final class RegisterGenderViewModel: ViewModelType {
         
         // Binding
         maleButtonTapped$
-            .map { Gender.male }
+            .map { Gender.Male }
             .bind(to: gender$)
             .disposed(by: disposeBag)
         
         femaleButtonTapped$
-            .map { Gender.female }
+            .map { Gender.Female }
             .bind(to: gender$)
             .disposed(by: disposeBag)
         
         otherButtonTapped$
-            .map { Gender.other }
+            .map { Gender.Other }
             .bind(to: gender$)
             .disposed(by: disposeBag)
         
         gender
-            .map { $0 == .male }
+            .map { $0 == .Male }
             .emit(to: isMaleSelected)
             .disposed(by: disposeBag)
         
         gender
-            .map { $0 == .female }
+            .map { $0 == .Female }
             .emit(to: isFemaleSelected)
             .disposed(by: disposeBag)
         
         gender
-            .map { $0 == .other }
+            .map { $0 == .Other }
             .emit(to: isOtherSelected)
             .disposed(by: disposeBag)
     }

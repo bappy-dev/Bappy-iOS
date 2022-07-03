@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailPersonalityView: UIView {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailPersonalityViewModel
+    private let disposeBag = DisposeBag()
+    
     private let personalityImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "profile_personality")
@@ -34,11 +39,13 @@ final class ProfileDetailPersonalityView: UIView {
     private let politeLabel = SelectionLabel(title: "Polite")
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileDetailPersonalityViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -99,5 +106,38 @@ final class ProfileDetailPersonalityView: UIView {
             $0.height.equalTo(141.0)
             $0.bottom.equalToSuperview().inset(10.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailPersonalityView {
+    private func bind() {
+        viewModel.output.spontaneous
+            .drive(spontaneousLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.planning
+            .drive(planningLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.talkative
+            .drive(talkativeLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.empathic
+            .drive(empathicLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shy
+            .drive(shyLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.calm
+            .drive(calmLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.polite
+            .drive(politeLabel.rx.isSelected)
+            .disposed(by: disposeBag)
     }
 }

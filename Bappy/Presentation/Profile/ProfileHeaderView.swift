@@ -7,19 +7,18 @@
 
 import UIKit
 import SnapKit
-
-protocol ProfileHeaderViewDelegate: AnyObject {
-    func moreButtonDidTap()
-}
+import Kingfisher
+import RxSwift
+import RxCocoa
 
 final class ProfileHeaderView: UIView {
     
     // MARK: Properties
-    weak var delegate: ProfileHeaderViewDelegate?
+    private let viewModel: ProfileHeaderViewModel
+    private let disposeBag = DisposeBag()
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "no_profile_l")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 45.5
         return imageView
@@ -29,7 +28,6 @@ final class ProfileHeaderView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
         label.textColor = .bappyBrown
-        label.text = "Bappy"
         return label
     }()
     
@@ -37,7 +35,6 @@ final class ProfileHeaderView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
         label.textColor = .bappyBrown
-        label.text = "🇺🇸"
         return label
     }()
     
@@ -45,40 +42,33 @@ final class ProfileHeaderView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 16.0)
         label.textColor = .bappyBrown
-        label.text = "Other / 2000.01.01"
         return label
     }()
     
-    private lazy var profileButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "profile_more"), for: .normal)
-        button.addTarget(self, action: #selector(didTapProfileButton), for: .touchUpInside)
-        return button
-    }()
+    private let profileButton = UIButton()
     
-    private let buttonSectionView = ProfileButtonSectionView()
+    private let buttonSectionView: ProfileButtonSectionView
     
     // MARK: Lifecycle
-    init() {
+    init(viewModel: ProfileHeaderViewModel) {
+        let buttonSectionViewModel = viewModel.subViewModels.buttonSectionViewModel
+        self.buttonSectionView = ProfileButtonSectionView(viewModel: buttonSectionViewModel)
+        self.viewModel = viewModel
         super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func didTapProfileButton() {
-        delegate?.moreButtonDidTap()
-    }
-    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
+        profileButton.setImage(UIImage(named: "profile_more"), for: .normal)
     }
     
     private func layout() {
@@ -118,5 +108,33 @@ final class ProfileHeaderView: UIView {
         buttonSectionView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileHeaderView {
+    private func bind() {
+        profileButton.rx.tap
+            .bind(to: viewModel.input.moreButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.profileImageURL
+            .drive(onNext: { [weak self] url in
+                let placeHolder = UIImage(named: "no_profile_l")
+                self?.profileImageView.kf.setImage(with: url, placeholder: placeHolder)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.name
+            .drive(nameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.flag
+            .drive(flagLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.genderAndBirth
+            .drive(genderAndBirthLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }

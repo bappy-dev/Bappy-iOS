@@ -56,7 +56,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
         }
     }
     
-    func createUser(name: String, gender: String, birth: String, country: String, token: String) -> Single<Result<BappyUser, Error>> {
+    func createUser(name: String, gender: String, birth: Date, country: String, token: String) -> Single<Result<BappyUser, Error>> {
 //        let requestDTO = CreateUserRequestDTO(
 //            userName: name,
 //            userGender: gender,
@@ -81,7 +81,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
                 id: UUID().uuidString,
                 state: .normal,
                 name: name,
-                gender: Gender(rawValue: gender) ?? .other,
+                gender: Gender(rawValue: gender) ?? .Other,
                 birth: birth,
                 nationality: Country(code: country[1], name: country[0])
                 )

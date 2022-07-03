@@ -32,12 +32,17 @@ final class HomeListTopSubView: UIView {
     
     private lazy var sortingOrderButton: UIButton = {
         let button = UIButton()
-        button.setBappyTitle(
-            title: "Newest",
-            font: .roboto(size: 18.0)
-        )
         button.addTarget(self, action: #selector(sortingOrderButtonHandler), for: .touchUpInside)
         return button
+    }()
+    
+    private let sortingOrderTitleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .bappyBrown
+        label.font = .roboto(size: 18.0)
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        return label
     }()
     
     // MARK: Lifecycle
@@ -67,6 +72,7 @@ final class HomeListTopSubView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
+        sortingOrderTitleLabel.text = "Many hearts"
     }
     
     private func layout() {
@@ -115,16 +121,25 @@ final class HomeListTopSubView: UIView {
         
         self.addSubview(sortingOrderButton)
         sortingOrderButton.snp.makeConstraints {
-            $0.centerY.equalTo(vDividingView)
-            $0.leading.equalTo(vDividingView).offset(17.5)
+            $0.top.equalTo(hDividingView1.snp.bottom)
+            $0.bottom.equalTo(hDividingView2.snp.top)
+            $0.leading.equalTo(vDividingView.snp.trailing)
+            $0.trailing.equalTo(hDividingView1)
         }
         
         sortingOrderButton.addSubview(localeButtonImageView)
         localeButtonImageView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(8.5)
+            $0.top.equalToSuperview().inset(18.0)
             $0.width.equalTo(12.0)
             $0.height.equalTo(12.0)
-            $0.trailing.equalToSuperview().inset(-18.0)
+            $0.trailing.equalToSuperview().inset(2.0)
+        }
+        
+        sortingOrderButton.addSubview(sortingOrderTitleLabel)
+        sortingOrderTitleLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(5.0)
+            $0.trailing.equalTo(localeButtonImageView.snp.leading).offset(-5.0)
         }
     }
 }

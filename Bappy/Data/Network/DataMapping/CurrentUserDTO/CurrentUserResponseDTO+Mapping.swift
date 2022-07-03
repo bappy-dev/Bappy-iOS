@@ -59,7 +59,7 @@ extension CurrentUserResponseDTO {
             coordinates: nil, // 임시
             name: user.name,
             gender: nil, // 임시
-            birth: user.birth,
+            birth: nil, // 임시
             nationality: nil, // 임시
             profileImageURL: user.profileImageURL.flatMap { URL(string: $0) },
             introduce: user.introduce,

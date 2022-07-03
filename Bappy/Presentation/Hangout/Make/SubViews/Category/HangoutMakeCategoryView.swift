@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 enum HangoutCategory: String {
-    case travel, study, sports, food, drinks, cook, culture, volunteer, language, crafting
+    case Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
 }
 
 final class HangoutMakeCategoryView: UIView {

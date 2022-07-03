@@ -13,5 +13,5 @@ protocol BappyAuthRepository {
     var currentUser: BehaviorSubject<BappyUser?> { get }
     func fetchCurrentUser(token: String) -> Single<Result<BappyUser, Error>>
     func fetchAnonymousUser() -> Single<BappyUser>
-    func createUser(name: String, gender: String, birth: String, country: String, token: String) -> Single<Result<BappyUser, Error>>
+    func createUser(name: String, gender: String, birth: Date, country: String, token: String) -> Single<Result<BappyUser, Error>>
 }

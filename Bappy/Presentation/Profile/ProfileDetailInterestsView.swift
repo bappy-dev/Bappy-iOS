@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailInterestsView: UIView {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailInterestsViewModel
+    private let disposeBag = DisposeBag()
+    
     private let interestsImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "profile_interests")
@@ -37,11 +42,13 @@ final class ProfileDetailInterestsView: UIView {
     private let craftingLabel = SelectionLabel(title: "Crafting")
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileDetailInterestsViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -113,5 +120,50 @@ final class ProfileDetailInterestsView: UIView {
         
         volunteerLabel.snp.makeConstraints { $0.width.equalToSuperview().dividedBy(2.5) }
         craftingLabel.snp.makeConstraints { $0.width.equalToSuperview().dividedBy(2.5) }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailInterestsView {
+    private func bind() {
+        viewModel.output.travel
+            .drive(travelLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.study
+            .drive(studyLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.sports
+            .drive(sportsLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.food
+            .drive(foodLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.drinks
+            .drive(drinksLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.cook
+            .drive(cookLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.culture
+            .drive(cultureLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.volunteer
+            .drive(volunteerLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.language
+            .drive(languageLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.crafting
+            .drive(craftingLabel.rx.isSelected)
+            .disposed(by: disposeBag)
     }
 }

@@ -8,10 +8,15 @@
 import UIKit
 import SnapKit
 import FirebaseAuth
+import RxSwift
+import RxCocoa
 
 final class ProfileSettingViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: ProfileSettingViewModel
+    private let disposeBag = DisposeBag()
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Setting"
@@ -32,11 +37,14 @@ final class ProfileSettingViewController: UIViewController {
     private let serviceView = ProfileSettingServiceView()
     
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    
+    init(viewModel: ProfileSettingViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
 
         configure()
         layout()
+        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -102,5 +110,12 @@ extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
     func serviceButtonTapped() {
         let viewController = CustomerServiceViewController()
         self.navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+// MARK: - Bind
+extension ProfileSettingViewController {
+    private func bind() {
+        
     }
 }

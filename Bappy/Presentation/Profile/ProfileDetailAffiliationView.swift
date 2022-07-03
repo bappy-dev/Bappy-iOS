@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailAffiliationView: UIView {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailAffiliationViewModel
+    private let disposeBag = DisposeBag()
+    
     private let affiliationImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "profile_affiliation")
@@ -39,11 +44,13 @@ final class ProfileDetailAffiliationView: UIView {
     private let backgroundView = UIView()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileDetailAffiliationViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +62,6 @@ final class ProfileDetailAffiliationView: UIView {
         self.backgroundColor = .white
         backgroundView.backgroundColor = .bappyLightgray
         backgroundView.layer.cornerRadius = 11.0
-        affiliationTextView.text = "I am in PNU!"
     }
     
     private func layout() {
@@ -86,5 +92,14 @@ final class ProfileDetailAffiliationView: UIView {
             $0.top.bottom.equalToSuperview().inset(2.0)
             $0.leading.trailing.equalToSuperview().inset(10.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailAffiliationView {
+    private func bind() {
+        viewModel.output.affiliation
+            .drive(affiliationTextView.rx.text)
+            .disposed(by: disposeBag)
     }
 }

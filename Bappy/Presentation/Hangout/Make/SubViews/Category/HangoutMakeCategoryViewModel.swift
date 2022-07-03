@@ -204,7 +204,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isTravelButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.travel] = isEnabled
+                newDict[.Travel] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -212,7 +212,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isStudyButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.study] = isEnabled
+                newDict[.Study] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -220,7 +220,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isSportsButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.sports] = isEnabled
+                newDict[.Sports] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -228,7 +228,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isFoodButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.food] = isEnabled
+                newDict[.Food] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -236,7 +236,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isDrinksButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.drinks] = isEnabled
+                newDict[.Drinks] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -244,7 +244,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isCookButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.cook] = isEnabled
+                newDict[.Cook] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -252,7 +252,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isCultureButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.culture] = isEnabled
+                newDict[.Culture] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -260,7 +260,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isVolunteerButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.volunteer] = isEnabled
+                newDict[.Volunteer] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -268,7 +268,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isLanguageButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.language] = isEnabled
+                newDict[.Language] = isEnabled
                 return newDict
             }
             .bind(to: categories$)
@@ -276,7 +276,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         isCraftingButtonEnabled$
             .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
                 var newDict = dict
-                newDict[.crafting] = isEnabled
+                newDict[.Crafting] = isEnabled
                 return newDict
             }
             .bind(to: categories$)

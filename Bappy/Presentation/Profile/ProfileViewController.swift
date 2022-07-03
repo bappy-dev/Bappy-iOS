@@ -11,37 +11,29 @@ import RxSwift
 import RxCocoa
 
 private let reuseIdentifier = "ProfileHangoutCell"
-
 final class ProfileViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: ProfileViewModel
-    private let disposBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
-    private var count: Int = 0
     private let titleTopView = TitleTopView(title: "Profile", subTitle: "Bappy user")
-    private lazy var settingButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "profile_setting"), for: .normal)
-        button.addTarget(self, action: #selector(settingButtonHandler), for: .touchUpInside)
-        return button
-    }()
+    private let headerView: ProfileHeaderView
+    private let settingButton = UIButton()
     
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .bappyLightgray
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = 157.0
         tableView.separatorStyle = .none
         return tableView
     }()
     
-    private let headerView = ProfileHeaderView()
-    
     // MARK: Lifecycle
     init(viewModel: ProfileViewModel) {
+        let headerViewModel = viewModel.subViewModels.headerViewModel
+        self.headerView = ProfileHeaderView(viewModel: headerViewModel)
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
@@ -58,26 +50,12 @@ final class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         
         setStatusBarStyle(statusBarStyle: .lightContent)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            guard let self = self else { return }
-            self.count = 10
-            self.tableView.reloadData()
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         setStatusBarStyle(statusBarStyle: .darkContent)
-    }
-    
-    // MARK: Actions
-    @objc
-    private func settingButtonHandler() {
-        let viewController = ProfileSettingViewController()
-        viewController.modalPresentationStyle = .fullScreen
-        viewController.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     // MARK: Helpers
@@ -91,7 +69,8 @@ final class ProfileViewController: UIViewController {
         
         tableView.tableHeaderView = headerView
         headerView.frame.size.height = 352.0
-        headerView.delegate = self
+        settingButton.setImage(UIImage(named: "profile_setting"), for: .normal)
+        settingButton.isHidden = true
     }
     
     private func layout() {
@@ -117,39 +96,54 @@ final class ProfileViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
-extension ProfileViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! ProfileHangoutCell
-        cell.selectionStyle = .none
-        return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension ProfileViewController: UITableViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let scrolledOffset = scrollView.contentOffset.y
-        if scrolledOffset < 0 { scrollView.contentOffset.y = 0 }
-    }
-}
-
-// MARK: - ProfileHeaderViewDelegate
-extension ProfileViewController: ProfileHeaderViewDelegate {
-    func moreButtonDidTap() {
-        let viewController = ProfileDetailViewController()
-        viewController.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
 // MARK: - Bind
 extension ProfileViewController {
     private func bind() {
+        tableView.rx.didScroll
+            .withLatestFrom(tableView.rx.contentOffset)
+            .observe(on: MainScheduler.asyncInstance)
+            .filter { $0.y < 0 }
+            .map { CGPoint(x: $0.x, y: 0) }
+            .bind(to: tableView.rx.contentOffset)
+            .disposed(by: disposeBag)
         
+        settingButton.rx.tap
+            .bind(to: viewModel.input.settingButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hangouts
+            .drive(tableView.rx.items) { tableView, row, item in
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: IndexPath(row: row, section: 0)
+                ) as! ProfileHangoutCell
+                cell.selectionStyle = .none
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSettingView
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] viewModel in
+                let viewController = ProfileSettingViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showDetailView
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] viewModel in
+                let viewController = ProfileDetailViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hideSettingButton
+            .emit(to: settingButton.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }

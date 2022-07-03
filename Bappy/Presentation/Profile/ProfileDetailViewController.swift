@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileDetailViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: ProfileDetailViewModel
+    private let disposeBag = DisposeBag()
+    
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
@@ -24,25 +29,40 @@ final class ProfileDetailViewController: UIViewController {
     private let editButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "profile_edit"), for: .normal)
-//        button.isHidden = true
+        button.isHidden = true
         return button
     }()
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let mainView = ProfileDetailMainView()
-    private let introduceView = ProfileDetailIntroduceView()
-    private let affiliationView = ProfileDetailAffiliationView()
-    private let languageView = ProfileDetailLanguageView()
-    private let personalityView = ProfileDetailPersonalityView()
-    private let interestsView = ProfileDetailInterestsView()
+    private let mainView: ProfileDetailMainView
+    private let introduceView: ProfileDetailIntroduceView
+    private let affiliationView: ProfileDetailAffiliationView
+    private let languageView: ProfileDetailLanguageView
+    private let personalityView: ProfileDetailPersonalityView
+    private let interestsView: ProfileDetailInterestsView
     
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(viewModel: ProfileDetailViewModel) {
+        let mainViewModel = viewModel.subViewModels.mainViewModel
+        let introduceViewModel = viewModel.subViewModels.introduceViewModel
+        let affiliationViewModel = viewModel.subViewModels.affiliationViewModel
+        let languageViewModel = viewModel.subViewModels.languageViewModel
+        let personalityViewModel = viewModel.subViewModels.personalityViewModel
+        let interestsViewModel = viewModel.subViewModels.interestsViewModel
+        self.mainView = ProfileDetailMainView(viewModel: mainViewModel)
+        self.introduceView = ProfileDetailIntroduceView(viewModel: introduceViewModel)
+        self.affiliationView = ProfileDetailAffiliationView(viewModel: affiliationViewModel)
+        self.languageView = ProfileDetailLanguageView(viewModel: languageViewModel)
+        self.personalityView = ProfileDetailPersonalityView(viewModel: personalityViewModel)
+        self.interestsView = ProfileDetailInterestsView(viewModel: interestsViewModel)
         
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -123,5 +143,18 @@ final class ProfileDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileDetailViewController {
+    private func bind() {
+        editButton.rx.tap
+            .bind(to: viewModel.input.editButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hideEditButton
+            .emit(to: editButton.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }

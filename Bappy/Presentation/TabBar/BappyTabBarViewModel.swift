@@ -88,7 +88,8 @@ final class BappyTabBarViewModel: ViewModelType {
             homeListViewModel: HomeListViewModel(dependency: .init()),
             profileViewModel: ProfileViewModel(dependency: .init(
                 user: dependency.user,
-                bappyAuthRepository: dependency.bappyAuthRepository
+                bappyAuthRepository: dependency.bappyAuthRepository,
+                firebaseRepository: dependency.firebaseRepository
             ))
         )
         

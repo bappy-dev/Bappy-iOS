@@ -7,29 +7,20 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileButtonSectionView: UIView {
     
     // MARK: Properties
-    private lazy var joinedButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(joinedButtonHandler), for: .touchUpInside)
-        return button
-    }()
+    private let viewModel: ProfileButtonSectionViewModel
+    private let disposeBag = DisposeBag()
     
-    private lazy var madeButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(madeButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var cancelledButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(likedButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
+    private let joinedButton = UIButton()
+    private let madeButton = UIButton()
+    private let likedButton = UIButton()
     private let yellowView = UIView()
+    
     private let hStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -91,31 +82,17 @@ final class ProfileButtonSectionView: UIView {
     }()
 
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
+    init(viewModel: ProfileButtonSectionViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        
         configure()
         layout()
+        bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: Actions
-    @objc
-    private func joinedButtonHandler() {
-        updateYellowBarLayout(index: 0)
-    }
-
-    @objc
-    private func madeButtonHandler() {
-        updateYellowBarLayout(index: 1)
-    }
-
-    @objc
-    private func likedButtonHandler() {
-        updateYellowBarLayout(index: 2)
     }
 
     // MARK: Helpers
@@ -135,15 +112,12 @@ final class ProfileButtonSectionView: UIView {
     private func configure() {
         self.backgroundColor = .bappyLightgray
         yellowView.backgroundColor = .bappyYellow
-        numOfjoinedLabel.text = "0"
-        numOfMadeLabel.text = "0"
-        numOfLikedLabel.text = "0"
     }
 
     private func layout() {
         hStackView.addArrangedSubview(joinedButton)
         hStackView.addArrangedSubview(madeButton)
-        hStackView.addArrangedSubview(cancelledButton)
+        hStackView.addArrangedSubview(likedButton)
         
         self.addSubview(yellowView)
         yellowView.snp.makeConstraints {
@@ -184,16 +158,52 @@ final class ProfileButtonSectionView: UIView {
             $0.bottom.equalToSuperview().inset(7.0)
         }
         
-        cancelledButton.addSubview(likedLabel)
+        likedButton.addSubview(likedLabel)
         likedLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().inset(23.0)
         }
         
-        cancelledButton.addSubview(numOfLikedLabel)
+        likedButton.addSubview(numOfLikedLabel)
         numOfLikedLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(7.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileButtonSectionView {
+    private func bind() {
+        joinedButton.rx.tap
+            .bind(to: viewModel.input.joinedButtonTapped)
+            .disposed(by: disposeBag)
+        
+        madeButton.rx.tap
+            .bind(to: viewModel.input.madeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        likedButton.rx.tap
+            .bind(to: viewModel.input.likedButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.numOfJoined
+            .drive(numOfjoinedLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.numOfMade
+            .drive(numOfMadeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.numOfLiked
+            .drive(numOfLikedLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.selectedIndex
+            .distinctUntilChanged()
+            .drive(onNext: { [weak self] index in
+                self?.updateYellowBarLayout(index: index)
+            })
+            .disposed(by: disposeBag)
     }
 }

@@ -250,7 +250,7 @@ final class RegisterViewModel: ViewModelType {
             .withLatestFrom(dependency.firebaseRepository.token.compactMap { $0 }) {
                 dependency.bappyAuthRepository.createUser(
                     name: $0.0, gender: $0.1.rawValue,
-                    birth: $0.2.toString(dateFormat: "yyyy.MM.dd"),
+                    birth: $0.2,
                     country: "\($0.3.name)/\($0.3.code)",
                     token: $1)
             }
