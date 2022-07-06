@@ -196,17 +196,17 @@ final class HangoutMakeViewModel: ViewModelType {
         let hangout = Observable
             .combineLatest(
                 Observable.combineLatest(
-                    categories$.compactMap { $0 }.debug("categories"),
-                    title$.compactMap { $0 }.debug("title"),
-                    date$.compactMap { $0 }.debug("date"),
-                    place$.compactMap { $0 }.debug("place"),
-                    picture$.compactMap { $0 }.debug("picture")
+                    categories$.compactMap { $0 },
+                    title$.compactMap { $0 },
+                    date$.compactMap { $0 },
+                    place$.compactMap { $0 },
+                    picture$.compactMap { $0 }
                 ),
                 Observable.combineLatest(
-                    plan$.compactMap { $0 }.debug("plan"),
-                    language$.compactMap { $0 }.debug("language"),
-                    openchat$.compactMap { $0 }.debug("openchat"),
-                    limit$.compactMap { $0 }.debug("limit")
+                    plan$.compactMap { $0 },
+                    language$.compactMap { $0 },
+                    openchat$.compactMap { $0 },
+                    limit$.compactMap { $0 }
                 )
             )
             .map {

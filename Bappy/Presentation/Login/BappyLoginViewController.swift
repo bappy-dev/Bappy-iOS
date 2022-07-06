@@ -233,7 +233,6 @@ extension BappyLoginViewController {
                 let self = self,
                 let clientID = FirebaseApp.app()?.options.clientID
             else {
-                single(.failure(FirebaseError.signInFailed))
                 return Disposables.create()
             }
             let config = GIDConfiguration(clientID: clientID)
@@ -241,7 +240,6 @@ extension BappyLoginViewController {
             GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
                 if let error = error {
                     print("ERROR: \(error.localizedDescription)")
-                    single(.failure(FirebaseError.signInFailed))
                     return
                 }
 
