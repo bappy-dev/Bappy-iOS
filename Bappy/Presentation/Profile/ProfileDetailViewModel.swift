@@ -27,11 +27,14 @@ final class ProfileDetailViewModel: ViewModelType {
     }
     
     struct Input {
+        var backButtonTapped: AnyObserver<Void> // <-> View
         var editButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
+        var popView: Signal<Void> // <-> View
         var hideEditButton: Signal<Bool> // <-> View
+        var showEditView: PublishSubject<ProfileEditViewModel> // <-> View
     }
     
     let dependency: Dependency
@@ -43,7 +46,9 @@ final class ProfileDetailViewModel: ViewModelType {
     private let user$: BehaviorSubject<BappyUser>
     private let currentUser$: BehaviorSubject<BappyUser?>
     
+    private let backButtonTapped$ = PublishSubject<Void>()
     private let editButtonTapped$ = PublishSubject<Void>()
+    private let showEditView$ = PublishSubject<ProfileEditViewModel>()
   
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -66,6 +71,8 @@ final class ProfileDetailViewModel: ViewModelType {
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         let currentUser$ = dependency.bappyAuthRepository.currentUser
         
+        let popView = backButtonTapped$
+            .asSignal(onErrorJustReturn: Void())
         let hideEditButton = Observable
             .combineLatest(user$, currentUser$.compactMap { $0 })
             .map { $0.0 != $0.1 }
@@ -74,15 +81,29 @@ final class ProfileDetailViewModel: ViewModelType {
         
         // Input & Output
         self.input = Input(
+            backButtonTapped: backButtonTapped$.asObserver(),
             editButtonTapped: editButtonTapped$.asObserver()
         )
         
         self.output = Output(
-            hideEditButton: hideEditButton
+            popView: popView,
+            hideEditButton: hideEditButton,
+            showEditView: showEditView$
         )
         
         // Bindind
         self.user$ = user$
         self.currentUser$ = currentUser$
+        
+        editButtonTapped$
+            .map { _ -> ProfileEditViewModel in
+                let dependency = ProfileEditViewModel.Dependency(
+                    user: dependency.user,
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository)
+                return .init(dependency: dependency)
+            }
+            .bind(to: showEditView$)
+            .disposed(by: disposeBag)
     }
 }

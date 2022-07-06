@@ -1,55 +1,63 @@
 //
-//  SelectLanguageViewModel.swift
+//  LanguageSearchViewModel.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/06/21.
+//  Created by 정동천 on 2022/07/05.
 //
 
 import UIKit
 import RxSwift
 import RxCocoa
 
-protocol SelectLanguageViewModelDelegate: AnyObject {
-    func languageSelected(language: Language)
+protocol LanguageSearchViewModelDelegate: AnyObject {
+    func selectedLanguage(_ language: Language)
 }
 
-final class SelectLanguageViewModel: ViewModelType {
-    weak var delegate: SelectLanguageViewModelDelegate?
-
+final class LanguageSearchViewModel: ViewModelType {
+    
+    weak var delegate: LanguageSearchViewModelDelegate?
+    
     struct Dependency {
-        var languages: [Language]
+        var languages: [Language] {
+            ["Arabic", "Catalan", "Chinese", "Croatian",
+             "Czech", "Danish", "Dutch", "English",
+             "Finnish", "French", "German", "Greek",
+             "Hebrew", "Hindi", "Hungarian", "Indonesian",
+             "Italian", "Japanese", "Korean", "Malay",
+             "Norwegian", "Polish", "Portuguese", "Romanian",
+             "Russian", "Slovak", "Spanish", "Swedish",
+             "Thai", "Turkish", "Ukrainian", "Vietnamese"]
+        }
     }
-
+    
     struct Input {
         var text: AnyObserver<String> // <-> View
         var searchButtonClicked: AnyObserver<Void> // <-> View
         var itemSelected: AnyObserver<IndexPath> // <-> View
-        var closeButtonTapped: AnyObserver<Void> // <-> View
     }
-
+    
     struct Output {
         var filteredlanguages: Driver<[Language]> // <-> View
         var shouldHideNoResultView: Signal<Bool> // <-> View
         var dismissKeyboard: Signal<Void> // <-> View
-        var dismissView: Signal<Void> // <-> View
+        var popView: Signal<Void> // <-> View
     }
-
+    
     let dependency: Dependency
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-
+    
     private let languages$: BehaviorSubject<[Language]>
     private let filteredlanguages$: BehaviorSubject<[Language]>
 
     private let text$ = BehaviorSubject<String>(value: "")
     private let searchButtonClicked$ = PublishSubject<Void>()
     private let itemSelected$ = PublishSubject<IndexPath>()
-    private let closeButtonTapped$ = PublishSubject<Void>()
-
+  
     init(dependency: Dependency) {
         self.dependency = dependency
-
+        
         // Streams
         let languages$ = BehaviorSubject<[Language]>(value: dependency.languages)
         let filteredlanguages$ = BehaviorSubject<[Language]>(value: dependency.languages)
@@ -59,36 +67,27 @@ final class SelectLanguageViewModel: ViewModelType {
         let shouldHideNoResultView = filteredlanguages
             .map { !$0.isEmpty }
             .asSignal(onErrorJustReturn: true)
-        let dismissKeyboard = Observable
-            .merge(
-                searchButtonClicked$,
-                itemSelected$.map { _ in },
-                closeButtonTapped$
-            )
+        let dismissKeyboard = searchButtonClicked$
             .asSignal(onErrorJustReturn: Void())
-        let dismissView = Observable
-            .merge(
-                itemSelected$.map { _ in },
-                closeButtonTapped$
-            )
+        let popView = itemSelected$
+            .map { _ in }
             .asSignal(onErrorJustReturn: Void())
 
         // Input & Output
         self.input = Input(
             text: text$.asObserver(),
             searchButtonClicked: searchButtonClicked$.asObserver(),
-            itemSelected: itemSelected$.asObserver(),
-            closeButtonTapped: closeButtonTapped$.asObserver()
+            itemSelected: itemSelected$.asObserver()
         )
-
+        
         self.output = Output(
             filteredlanguages: filteredlanguages,
             shouldHideNoResultView: shouldHideNoResultView,
             dismissKeyboard: dismissKeyboard,
-            dismissView: dismissView
+            popView: popView
         )
-
-        // Binding
+        
+        // Bindind
         self.languages$ = languages$
         self.filteredlanguages$ = filteredlanguages$
 
@@ -104,7 +103,7 @@ final class SelectLanguageViewModel: ViewModelType {
         itemSelected$
             .withLatestFrom(filteredlanguages$) { $1[$0.row] }
             .bind(onNext: { [weak self] language in
-                self?.delegate?.languageSelected(language: language)
+                self?.delegate?.selectedLanguage(language)
             })
             .disposed(by: disposeBag)
     }

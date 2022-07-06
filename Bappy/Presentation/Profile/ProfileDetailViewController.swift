@@ -16,13 +16,12 @@ final class ProfileDetailViewController: UIViewController {
     private let viewModel: ProfileDetailViewModel
     private let disposeBag = DisposeBag()
     
-    private lazy var backButton: UIButton = {
+    private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
         button.setImage(image, for: .normal)
         button.tintColor = .bappyBrown
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -67,12 +66,6 @@ final class ProfileDetailViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func backButtonHandler() {
-        self.navigationController?.popViewController(animated: true)
     }
     
     // MARK: Helpers
@@ -149,12 +142,31 @@ final class ProfileDetailViewController: UIViewController {
 // MARK: - Bind
 extension ProfileDetailViewController {
     private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
+        
         editButton.rx.tap
             .bind(to: viewModel.input.editButtonTapped)
             .disposed(by: disposeBag)
         
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.output.hideEditButton
             .emit(to: editButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showEditView
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] viewModel in
+                let viewController = ProfileEditViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .fullScreen
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }

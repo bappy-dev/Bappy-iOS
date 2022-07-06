@@ -13,6 +13,7 @@ final class SelectionButton: UIButton {
     
     // MARK: Properties
     let title: String
+    var font: UIFont = .roboto(size: 16.0, family: .Medium)
     
     // MARK: Lifecycle
     init(title: String) {
@@ -51,14 +52,14 @@ extension Reactive where Base: SelectionButton {
             if isSelected {
                 button.setBappyTitle(
                     title: base.title,
-                    font: .roboto(size: 16.0, family: .Medium)
+                    font: base.font
                 )
                 button.backgroundColor = .bappyYellow
                 button.clipsToBounds = false
             } else {
                 button.setBappyTitle(
                     title: base.title,
-                    font: .roboto(size: 16.0, family: .Medium),
+                    font: base.font,
                     color: .bappyGray
                 )
                 button.backgroundColor = .bappyLightgray
