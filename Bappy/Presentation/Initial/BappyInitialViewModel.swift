@@ -79,9 +79,7 @@ final class BappyInitialViewModel: ViewModelType {
                 let dependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
                     user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository
-                )
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return BappyTabBarViewModel(dependency: dependency)
             }
             .bind(to: switchToMainView$)
@@ -139,9 +137,7 @@ final class BappyInitialViewModel: ViewModelType {
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
                     user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository
-                )
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return BappyTabBarViewModel(dependency: dependecy)
             }
             .bind(to: switchToMainView$)

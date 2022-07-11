@@ -14,7 +14,6 @@ final class HomeListViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
         let hangoutRepository: HangoutRepository
         var locationRepository: LocationRepository
     }
@@ -151,10 +150,9 @@ final class HomeListViewModel: ViewModelType {
             .combineLatest(
                 currentUser$.compactMap { $0 },
                 sorting$,
-                category$,
-                dependency.firebaseRepository.token
+                category$
             )
-            .map { ("\($0.1.rawValue)", $0.3, $0.3, $0.3 ?? "") }
+            .map { ("\($0.1.rawValue)", "", "", "") }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
         

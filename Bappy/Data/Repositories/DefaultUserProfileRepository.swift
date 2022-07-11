@@ -22,7 +22,7 @@ extension DefaultUserProfileRepository: UserProfileRepository {
     
     func fetchBappyUser(id: String, token: String) -> Single<Result<BappyUser, Error>> {
         let requestDTO = BappyUserRequestDTO(id: id)
-        let endpoint = APIEndpoints.getBappyUser(with: requestDTO, token: token)
+        let endpoint = APIEndpoints.getBappyUser(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { result -> Result<BappyUser, Error> in
                 switch result {

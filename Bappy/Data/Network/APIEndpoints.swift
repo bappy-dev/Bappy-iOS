@@ -32,42 +32,34 @@ struct APIEndpoints {
             queryParameters: mapImageRequestDTO)
     }
     
-    static func getCurrentUser(token: String) -> Endpoint<CurrentUserResponseDTO> {
+    static func getCurrentUser() -> Endpoint<CurrentUserResponseDTO> {
+        return Endpoint(
+            baseURL: "SERVER", // 임시
+            path: "auth/login",
+            method: .get)
+    }
+    
+    static func getBappyUser(with userProfileRequestDTO: BappyUserRequestDTO) -> Endpoint<BappyUserResponseDTO> {
         return Endpoint(
             baseURL: "SERVER", // 임시
             path: "auth/login",
             method: .get,
-            headers: ["authorization": token]
-        )
+            queryParameters: userProfileRequestDTO)
     }
     
-    static func getBappyUser(with userProfileRequestDTO: BappyUserRequestDTO, token: String) -> Endpoint<BappyUserResponseDTO> {
-        return Endpoint(
-            baseURL: "SERVER", // 임시
-            path: "auth/login",
-            method: .get,
-            queryParameters: userProfileRequestDTO,
-            headers: ["authorization": token]
-        )
-    }
-    
-    static func createUser(with createUserRequestDTO: CreateUserRequestDTO, token: String) -> Endpoint<CreateUserResponseDTO> {
+    static func createUser(with createUserRequestDTO: CreateUserRequestDTO) -> Endpoint<CreateUserResponseDTO> {
         return Endpoint(
             baseURL: "SERVER", // 임시
             path: "user",
             method: .post,
-            bodyParameters: createUserRequestDTO,
-            headers: ["authorization": token]
-        )
+            bodyParameters: createUserRequestDTO)
     }
     
-    static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO, token: String) -> Endpoint<HangoutsResponseDTO> {
+    static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {
         return Endpoint(
             baseURL: "SERVER", // 임시
             path: "hangouts",
             method: .get,
-            queryParameters: hangoutsRequestDTO,
-            headers: ["authorization": token]
-        )
+            queryParameters: hangoutsRequestDTO)
     }
 }

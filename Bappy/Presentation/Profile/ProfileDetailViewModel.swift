@@ -14,7 +14,6 @@ final class ProfileDetailViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
     }
     
     struct SubViewModels {
@@ -99,8 +98,7 @@ final class ProfileDetailViewModel: ViewModelType {
             .map { _ -> ProfileEditViewModel in
                 let dependency = ProfileEditViewModel.Dependency(
                     user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository)
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return .init(dependency: dependency)
             }
             .bind(to: showEditView$)

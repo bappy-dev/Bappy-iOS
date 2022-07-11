@@ -15,6 +15,7 @@ protocol FirebaseRepository {
     var isAnonymous: BehaviorSubject<Bool> { get }
     var token: BehaviorSubject<String?> { get }
     
+    func getIDTokenForcingRefresh(completion: @escaping(Result<String?, Error>) -> Void)
     func getIDTokenForcingRefresh() -> Observable<Result<String?, Error>>
     func signIn(with credential: AuthCredential) -> Single<Result<AuthDataResult?, Error>>
     func signInAnonymously() -> Single<Result<AuthDataResult?, Error>>

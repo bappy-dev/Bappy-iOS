@@ -38,7 +38,6 @@ final class BappyLoginViewModel: ViewModelType {
             
             return RegisterViewModel.Dependency(
                 bappyAuthRepository: bappyAuthRepository,
-                firebaseRepository: firebaseRepository,
                 numOfPage: 4,
                 isButtonEnabled: false,
                 nameDependency: .init(
@@ -182,8 +181,7 @@ final class BappyLoginViewModel: ViewModelType {
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
                     user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository
+                    bappyAuthRepository: dependency.bappyAuthRepository
                 )
                 return BappyTabBarViewModel(dependency: dependecy)
             }

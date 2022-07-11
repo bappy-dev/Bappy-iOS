@@ -150,7 +150,7 @@ extension HomeListViewController {
     }
 }
 
-// MARK: - UITableViewDelegate
+// MARK: - HangoutCellDelegate
 extension HomeListViewController: HangoutCellDelegate {
     func moreButtonTapped(indexPath: IndexPath) {
         viewModel.input.moreButtonTapped.onNext(indexPath)

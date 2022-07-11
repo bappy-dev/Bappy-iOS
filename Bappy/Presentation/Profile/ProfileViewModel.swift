@@ -14,7 +14,6 @@ final class ProfileViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
     }
     
     struct SubViewModels {
@@ -102,8 +101,7 @@ final class ProfileViewModel: ViewModelType {
         settingButtonTapped$
             .map { _ -> ProfileSettingViewModel in
                 let dependency = ProfileSettingViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository)
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return ProfileSettingViewModel(dependency: dependency)
             }
             .bind(to: showSettingView$)
@@ -113,8 +111,7 @@ final class ProfileViewModel: ViewModelType {
             .map { _ -> ProfileDetailViewModel in
                 let dependency = ProfileDetailViewModel.Dependency(
                     user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository)
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return ProfileDetailViewModel(dependency: dependency)
             }
             .bind(to: showDetailView$)

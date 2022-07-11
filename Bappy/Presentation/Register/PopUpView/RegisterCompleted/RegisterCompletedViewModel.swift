@@ -13,7 +13,6 @@ final class RegisterCompletedViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
     }
     
     struct Input {
@@ -59,9 +58,7 @@ final class RegisterCompletedViewModel: ViewModelType {
                 let dependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
                     user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository
-                )
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return BappyTabBarViewModel(dependency: dependency)
             }
             .bind(to: switchToMainView$)
@@ -72,9 +69,7 @@ final class RegisterCompletedViewModel: ViewModelType {
                 let dependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
                     user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository
-                )
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return BappyTabBarViewModel(dependency: dependency)
             }
             .bind(to: switchToMainView$)

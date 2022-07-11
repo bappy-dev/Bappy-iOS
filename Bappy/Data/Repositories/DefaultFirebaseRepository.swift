@@ -62,6 +62,17 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     var isAnonymous: BehaviorSubject<Bool> { isAnonymous$ }
     var token: BehaviorSubject<String?> { token$ }
     
+    func getIDTokenForcingRefresh(completion: @escaping(Result<String?, Error>) -> Void) {
+        auth.currentUser?.getIDTokenForcingRefresh(true) { [weak self] idToken, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            self?.token$.onNext(idToken)
+            completion(.success(idToken))
+        }
+    }
+    
     func getIDTokenForcingRefresh() -> Observable<Result<String?, Error>> {
         return user$
             .flatMap { user -> Observable<Result<String?, Error>> in

@@ -13,7 +13,6 @@ final class RegisterViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
         var numOfPage: Int
         var isButtonEnabled: Bool
         var nameDependency: RegisterNameViewModel.Dependency
@@ -247,12 +246,11 @@ final class RegisterViewModel: ViewModelType {
                 birth$.compactMap { $0 },
                 country$.compactMap { $0 }
             ))
-            .withLatestFrom(dependency.firebaseRepository.token.compactMap { $0 }) {
+            .map {
                 dependency.bappyAuthRepository.createUser(
                     name: $0.0, gender: $0.1.rawValue,
                     birth: $0.2,
-                    country: "\($0.3.name)/\($0.3.code)",
-                    token: $1)
+                    country: "\($0.3.name)/\($0.3.code)")
             }
             .flatMap { $0 }
             .share()
@@ -267,8 +265,7 @@ final class RegisterViewModel: ViewModelType {
             .map { user -> RegisterCompletedViewModel in
                 let dependency = RegisterCompletedViewModel.Dependency(
                     user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository
+                    bappyAuthRepository: dependency.bappyAuthRepository
                 )
                 return RegisterCompletedViewModel(dependency: dependency)
             }

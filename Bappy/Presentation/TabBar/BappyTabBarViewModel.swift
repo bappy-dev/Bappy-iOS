@@ -15,7 +15,6 @@ final class BappyTabBarViewModel: ViewModelType {
         var selectedIndex: Int
         var user: BappyUser
         var bappyAuthRepository: BappyAuthRepository
-        var firebaseRepository: FirebaseRepository
         var writeViewModelDependency: HangoutMakeViewModel.Dependency {
             return .init(
                 currentUser: .init(id: "abc", state: .normal),
@@ -90,14 +89,12 @@ final class BappyTabBarViewModel: ViewModelType {
         self.subViewModels = SubViewModels(
             homeListViewModel: HomeListViewModel(dependency: .init(
                 bappyAuthRepository: dependency.bappyAuthRepository,
-                firebaseRepository: dependency.firebaseRepository,
                 hangoutRepository: DefaultHangoutRepository(),
                 locationRepository: DefaultLocationRepository.shared)
             ),
             profileViewModel: ProfileViewModel(dependency: .init(
                 user: dependency.user,
-                bappyAuthRepository: dependency.bappyAuthRepository,
-                firebaseRepository: dependency.firebaseRepository)
+                bappyAuthRepository: dependency.bappyAuthRepository)
             )
         )
         

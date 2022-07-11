@@ -14,7 +14,6 @@ final class ProfileEditViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
     }
     
     struct SubViewModels {

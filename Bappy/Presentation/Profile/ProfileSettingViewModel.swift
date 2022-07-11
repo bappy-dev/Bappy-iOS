@@ -13,7 +13,6 @@ final class ProfileSettingViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
-        let firebaseRepository: FirebaseRepository
     }
     
     struct Input {

@@ -12,7 +12,7 @@ final class DefaultGoogleMapsRepository {
     
     private let provider: Provider
     
-    init(provider: Provider = BappyProvider()) {
+    init(provider: Provider = PublicProvider()) {
         self.provider = provider
     }
 }
