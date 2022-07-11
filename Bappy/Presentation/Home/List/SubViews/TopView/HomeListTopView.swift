@@ -7,17 +7,14 @@
 
 import UIKit
 import SnapKit
-
-protocol HomeListTopViewDelegate: AnyObject {
-    func localeButtonTapped()
-    func searchButtonTapped()
-    func filterButtonTapped()
-}
+import RxSwift
+import RxCocoa
 
 final class HomeListTopView: UIView {
     
     // MARK: Properties
-    weak var delegate: HomeListTopViewDelegate?
+    private let viewModel: HomeListTopViewModel
+    private let disposeBag = DisposeBag()
     
     private let logoImageView = UIImageView()
     private let localeButton = UIButton()
@@ -25,32 +22,19 @@ final class HomeListTopView: UIView {
     private let filterButton = UIButton()
     
     // MARK: Lifecycle
-    init() {
+    init(viewModel: HomeListTopViewModel) {
+        self.viewModel = viewModel
         super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func localeButtonHandler() {
-        delegate?.localeButtonTapped()
-    }
-    
-    @objc
-    private func searchButtonHandler() {
-        delegate?.searchButtonTapped()
-    }
-    
-    @objc
-    private func filterButtonHandler() {
-        delegate?.filterButtonTapped()
-    }
     
     // MARK: Helpers
     private func configure() {
@@ -59,9 +43,6 @@ final class HomeListTopView: UIView {
         localeButton.setImage(UIImage(named: "home_location"), for: .normal)
         searchButton.setImage(UIImage(named: "home_search"), for: .normal)
         filterButton.setImage(UIImage(named: "home_filter"), for: .normal)
-        localeButton.addTarget(self, action: #selector(localeButtonHandler), for: .touchUpInside)
-        searchButton.addTarget(self, action: #selector(searchButtonHandler), for: .touchUpInside)
-        filterButton.addTarget(self, action: #selector(filterButtonHandler), for: .touchUpInside)
     }
     
     private func layout() {
@@ -94,5 +75,22 @@ final class HomeListTopView: UIView {
             $0.trailing.equalTo(filterButton.snp.leading)
             $0.width.height.equalTo(44.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension HomeListTopView {
+    private func bind() {
+        localeButton.rx.tap
+            .bind(to: viewModel.input.localeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        searchButton.rx.tap
+            .bind(to: viewModel.input.searchButtonTapped)
+            .disposed(by: disposeBag)
+        
+        filterButton.rx.tap
+            .bind(to: viewModel.input.filterButtonTapped)
+            .disposed(by: disposeBag)
     }
 }

@@ -22,12 +22,14 @@ final class ProfileViewModel: ViewModelType {
     }
     
     struct Input {
+        var scrollToTop: AnyObserver<Void> // <-> Parent
         var settingButtonTapped: AnyObserver<Void> // <-> View
         var selectedButtonIndex: AnyObserver<Int> // <-> Child
         var moreButtonTapped: AnyObserver<Void> // <-> Child
     }
     
     struct Output {
+        var scrollToTop: Signal<Void> // <-> View
         var hideSettingButton: Signal<Bool> // <-> View
         var hangouts: Driver<[Hangout]> // <-> View
         var showSettingView: PublishSubject<ProfileSettingViewModel> // <-> View
@@ -44,6 +46,7 @@ final class ProfileViewModel: ViewModelType {
     private let currentUser$: BehaviorSubject<BappyUser?>
     private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
     
+    private let scrollToTop$ = PublishSubject<Void>()
     private let selectedButtonIndex$ = PublishSubject<Int>()
     private let settingButtonTapped$ = PublishSubject<Void>()
     private let moreButtonTapped$ = PublishSubject<Void>()
@@ -66,6 +69,8 @@ final class ProfileViewModel: ViewModelType {
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         let currentUser$ = dependency.bappyAuthRepository.currentUser
         
+        let scrollToTop = scrollToTop$
+            .asSignal(onErrorJustReturn: Void())
         let hideSettingButton = Observable
             .combineLatest(user$, currentUser$.compactMap { $0 })
             .map { $0.0 != $0.1 }
@@ -76,12 +81,14 @@ final class ProfileViewModel: ViewModelType {
         
         // Input & Output
         self.input = Input(
+            scrollToTop: scrollToTop$.asObserver(),
             settingButtonTapped: settingButtonTapped$.asObserver(),
             selectedButtonIndex: selectedButtonIndex$.asObserver(),
             moreButtonTapped: moreButtonTapped$.asObserver()
         )
         
         self.output = Output(
+            scrollToTop: scrollToTop,
             hideSettingButton: hideSettingButton,
             hangouts: hangouts,
             showSettingView: showSettingView$,

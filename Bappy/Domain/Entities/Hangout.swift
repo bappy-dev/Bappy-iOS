@@ -7,10 +7,7 @@
 
 import UIKit
 
-
-
 struct Hangout: Equatable, Identifiable {
-    enum State: String { case available, closed, expired, preview }
     typealias Identifier = String
     
     let id: Identifier
@@ -31,7 +28,7 @@ struct Hangout: Equatable, Identifiable {
     let mapImageURL: URL?
     
     let participantIDs: [Info]
-    let userHasLiked: Bool
+    var userHasLiked: Bool
     
     var googleMapURL: URL? {
         let baseURL = "https://www.google.com/maps/dir/"
@@ -65,6 +62,40 @@ extension Hangout {
     struct Info {
         let id: String
         let imageURL: URL?
+    }
+    
+    enum State: String { case available, closed, expired, preview }
+    enum Category: Int {
+        case All, Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
+        
+        var description: String {
+            switch self {
+            case .All : return "All"
+            case .Travel : return "Travel"
+            case .Study : return "Study"
+            case .Sports : return "Sports"
+            case .Food : return "Food"
+            case .Drinks : return "Drinks"
+            case .Cook : return "Cook"
+            case .Culture : return "Cultural Activities"
+            case .Volunteer : return "Volunteer"
+            case .Language : return "Practice Language"
+            case .Crafting : return "Crafting"
+            }
+        }
+    }
+    enum Sorting: Int {
+        case Newest, Nearest, ManyViews, manyHearts, lessSeats
+        
+        var description: String {
+            switch self {
+            case .Newest: return "Newest"
+            case .Nearest: return "Nearest"
+            case .ManyViews: return "Many views"
+            case .manyHearts: return "Many hearts"
+            case .lessSeats: return "Less seats"
+            }
+        }
     }
 }
 

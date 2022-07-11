@@ -183,15 +183,9 @@ extension BappyTabBarController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.popToSelectedRootView
-            .emit(onNext: {[weak self] _ in
-                let navigationController = self?.selectedViewController as? UINavigationController
-                navigationController?.popToRootViewController(animated: true)
-            })
-            .disposed(by: disposeBag)
-        
         viewModel.output.showWriteView
-            .emit(onNext: {[weak self] viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 self?.showWriteView(viewModel: viewModel)
             })
             .disposed(by: disposeBag)

@@ -7,19 +7,15 @@
 
 import UIKit
 import SnapKit
-
-protocol SortingOrderViewControllerDelegate: AnyObject {
-    
-}
+import RxSwift
+import RxCocoa
 
 private let reuseIndentifier = "SortingOrderCell"
 final class SortingOrderViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: SortingOrderViewControllerDelegate?
-    private var sortingList: [String] = [
-        "Newest", "Nearest", "Many views", "Many hearts", "Less seats"
-    ]
+    private let viewModel: SortingOrderViewModel
+    private let disposeBag = DisposeBag()
     
     private let upperRightPoint: CGPoint
     private let maxDimmedAlpha: CGFloat = 0.3
@@ -27,11 +23,9 @@ final class SortingOrderViewController: UIViewController {
     private let containerView = UIView()
     private let dimmedView = UIView()
     
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SortingOrderCell.self, forCellReuseIdentifier: reuseIndentifier)
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.rowHeight = 45.0
         tableView.separatorInset = .init(top: 0, left: 17.0, bottom: 0, right: 16.0)
         tableView.backgroundColor = .bappyLightgray
@@ -39,23 +33,18 @@ final class SortingOrderViewController: UIViewController {
     }()
    
     // MARK: Lifecycle
-    init(upperRightPoint: CGPoint) {
+    init(viewModel: SortingOrderViewModel, upperRightPoint: CGPoint) {
+        self.viewModel = viewModel
         self.upperRightPoint = upperRightPoint
         super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        animateShowDimmedView()
-        animatePresentContainer()
     }
     
     // MARK: Events
@@ -72,8 +61,7 @@ final class SortingOrderViewController: UIViewController {
         }
     }
     
-    private func animatePresentContainer() {
-        let height = sortingList.count * 45
+    private func animatePresentContainer(height: CGFloat) {
         UIView.animate(withDuration: 0.3) {
             self.containerView.snp.updateConstraints {
                 $0.height.equalTo(height)
@@ -128,20 +116,35 @@ final class SortingOrderViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
-extension SortingOrderViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sortingList.count
+// MARK: - Bind
+extension SortingOrderViewController {
+    private func bind() {
+        self.rx.viewDidAppear
+            .withLatestFrom(viewModel.output.sortingList)
+            .bind(onNext: { [weak self] sortings in
+                let height: CGFloat = CGFloat(sortings.count * 45)
+                self?.animateShowDimmedView()
+                self?.animatePresentContainer(height: height)
+            })
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.sortingList
+            .drive(tableView.rx.items) { tableView, row, sorting in
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIndentifier,
+                    for: IndexPath(row: row, section: 0)
+                ) as! SortingOrderCell
+                cell.text = sorting.description
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in self?.animateDismissView() })
+            .disposed(by: disposeBag)
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIndentifier, for: indexPath) as! SortingOrderCell
-        cell.text = sortingList[indexPath.row]
-        return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension SortingOrderViewController: UITableViewDelegate {
-    
 }

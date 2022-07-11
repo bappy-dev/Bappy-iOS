@@ -16,6 +16,12 @@ extension Reactive where Base: UIScrollView {
             scrollView.setContentOffset(offset, animated: true)
         }
     }
+    
+    var scrollToTop: Binder<Void> {
+        return Binder(self.base) { scrollView, _ in
+            scrollView.setContentOffset(CGPoint.zero, animated: true)
+        }
+    }
 }
 
 extension Reactive where Base: UIView {

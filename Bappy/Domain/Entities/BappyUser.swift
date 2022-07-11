@@ -33,7 +33,7 @@ struct BappyUser: Equatable, Identifiable {
     var affiliation: String?
     var languages: [Language]?
     var personalities: [Persnoality]?
-    var interests: [HangoutCategory]?
+    var interests: [Hangout.Category]?
     
     var numOfJoinedHangouts: Int?
     var numOfMadeHangouts: Int?

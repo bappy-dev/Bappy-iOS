@@ -13,8 +13,8 @@ final class ProfileEditInterestsViewModel: ViewModelType {
     
     struct Dependency {
         let user: BappyUser
-        var interests: [HangoutCategory: Bool] {
-            var dict = [HangoutCategory: Bool]()
+        var interests: [Hangout.Category: Bool] {
+            var dict = [Hangout.Category: Bool]()
             for personality in (user.interests ?? []) {
                 dict[personality] = true
             }
@@ -53,7 +53,7 @@ final class ProfileEditInterestsViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let interests$: BehaviorSubject<[HangoutCategory: Bool]>
+    private let interests$: BehaviorSubject<[Hangout.Category: Bool]>
     
     private let travelButtonTapped$ = PublishSubject<Void>()
     private let studyButtonTapped$ = PublishSubject<Void>()
@@ -70,7 +70,7 @@ final class ProfileEditInterestsViewModel: ViewModelType {
         self.dependency = dependency
         
         // Streams
-        let interests$ = BehaviorSubject<[HangoutCategory: Bool]>(value: dependency.interests)
+        let interests$ = BehaviorSubject<[Hangout.Category: Bool]>(value: dependency.interests)
         
         let travel = interests$
             .map { $0[.Travel] ?? false }
@@ -134,68 +134,68 @@ final class ProfileEditInterestsViewModel: ViewModelType {
         self.interests$ = interests$
         
         travelButtonTapped$
-            .map { HangoutCategory.Travel }
+            .map { Hangout.Category.Travel }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         studyButtonTapped$
-            .map { HangoutCategory.Study }
+            .map { Hangout.Category.Study }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         sportsButtonTapped$
-            .map { HangoutCategory.Sports }
+            .map { Hangout.Category.Sports }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         foodButtonTapped$
-            .map { HangoutCategory.Food }
+            .map { Hangout.Category.Food }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         drinksButtonTapped$
-            .map { HangoutCategory.Drinks }
+            .map { Hangout.Category.Drinks }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         cookButtonTapped$
-            .map { HangoutCategory.Cook }
+            .map { Hangout.Category.Cook }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         cultureButtonTapped$
-            .map { HangoutCategory.Culture }
+            .map { Hangout.Category.Culture }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         volunteerButtonTapped$
-            .map { HangoutCategory.Volunteer }
+            .map { Hangout.Category.Volunteer }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         languageButtonTapped$
-            .map { HangoutCategory.Language }
+            .map { Hangout.Category.Language }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
         craftingButtonTapped$
-            .map { HangoutCategory.Crafting }
+            .map { Hangout.Category.Crafting }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
     }
 }
 
-private func flipInterestOfDict(interest: HangoutCategory, in interests: [HangoutCategory: Bool]) -> [HangoutCategory: Bool] {
+private func flipInterestOfDict(interest: Hangout.Category, in interests: [Hangout.Category: Bool]) -> [Hangout.Category: Bool] {
     var dict = interests
     dict[interest] = !(interests[interest] ?? false)
     return dict

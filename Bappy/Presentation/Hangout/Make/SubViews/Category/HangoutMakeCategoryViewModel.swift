@@ -26,7 +26,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
     }
     
     struct Output {
-        var categories: Signal<[HangoutCategory]> // <-> Parent
+        var categories: Signal<[Hangout.Category]> // <-> Parent
         var isTravelButtonEnabled: Driver<Bool> // <-> View
         var isStudyButtonEnabled: Driver<Bool> // <-> View
         var isSportsButtonEnabled: Driver<Bool> // <-> View
@@ -46,7 +46,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let categories$: BehaviorSubject<[HangoutCategory: Bool]>
+    private let categories$: BehaviorSubject<[Hangout.Category: Bool]>
     private let travelButtonTapped$ = PublishSubject<Void>()
     private let studyButtonTapped$ = PublishSubject<Void>()
     private let sportsButtonTapped$ = PublishSubject<Void>()
@@ -73,7 +73,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         self.dependency = dependency
         
         // Streams
-        let categories$ = BehaviorSubject<[HangoutCategory: Bool]>(value: [:])
+        let categories$ = BehaviorSubject<[Hangout.Category: Bool]>(value: [:])
         
         let categories = categories$
             .map { $0.filter { $0.value } }
@@ -202,7 +202,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         isTravelButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Travel] = isEnabled
                 return newDict
@@ -210,7 +210,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isStudyButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Study] = isEnabled
                 return newDict
@@ -218,7 +218,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isSportsButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Sports] = isEnabled
                 return newDict
@@ -226,7 +226,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isFoodButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Food] = isEnabled
                 return newDict
@@ -234,7 +234,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isDrinksButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Drinks] = isEnabled
                 return newDict
@@ -242,7 +242,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isCookButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Cook] = isEnabled
                 return newDict
@@ -250,7 +250,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isCultureButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Culture] = isEnabled
                 return newDict
@@ -258,7 +258,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isVolunteerButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Volunteer] = isEnabled
                 return newDict
@@ -266,7 +266,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isLanguageButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Language] = isEnabled
                 return newDict
@@ -274,7 +274,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .bind(to: categories$)
             .disposed(by: disposeBag)
         isCraftingButtonEnabled$
-            .withLatestFrom(categories$) { isEnabled, dict -> [HangoutCategory: Bool] in
+            .withLatestFrom(categories$) { isEnabled, dict -> [Hangout.Category: Bool] in
                 var newDict = dict
                 newDict[.Crafting] = isEnabled
                 return newDict

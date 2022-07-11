@@ -111,6 +111,10 @@ extension ProfileViewController {
             .bind(to: viewModel.input.settingButtonTapped)
             .disposed(by: disposeBag)
         
+        viewModel.output.scrollToTop
+            .emit(to: tableView.rx.scrollToTop)
+            .disposed(by: disposeBag)
+        
         viewModel.output.hangouts
             .drive(tableView.rx.items) { tableView, row, item in
                 let cell = tableView.dequeueReusableCell(

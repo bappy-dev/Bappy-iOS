@@ -60,4 +60,14 @@ struct APIEndpoints {
             headers: ["authorization": token]
         )
     }
+    
+    static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO, token: String) -> Endpoint<HangoutsResponseDTO> {
+        return Endpoint(
+            baseURL: "SERVER", // 임시
+            path: "hangouts",
+            method: .get,
+            queryParameters: hangoutsRequestDTO,
+            headers: ["authorization": token]
+        )
+    }
 }

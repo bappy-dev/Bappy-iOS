@@ -46,7 +46,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var backButtonTapped: AnyObserver<Void>
         var viewDidAppear: AnyObserver<Bool>
         var keyboardWithButtonHeight: AnyObserver<CGFloat>
-        var categories: AnyObserver<[HangoutCategory]?>
+        var categories: AnyObserver<[Hangout.Category]?>
         var title: AnyObserver<String?>
         var date: AnyObserver<Date?>
         var place: AnyObserver<Map?>
@@ -99,7 +99,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let backButtonTapped$ = PublishSubject<Void>()
     private let viewDidAppear$ = PublishSubject<Bool>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
-    private let categories$ = BehaviorSubject<[HangoutCategory]?>(value: [])
+    private let categories$ = BehaviorSubject<[Hangout.Category]?>(value: [])
     private let title$ = BehaviorSubject<String?>(value: nil)
     private let date$ = BehaviorSubject<Date?>(value: nil)
     private let place$ = BehaviorSubject<Map?>(value: nil)

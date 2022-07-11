@@ -10,10 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-enum HangoutCategory: String {
-    case Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
-}
-
 final class HangoutMakeCategoryView: UIView {
     
     // MARK: Properties

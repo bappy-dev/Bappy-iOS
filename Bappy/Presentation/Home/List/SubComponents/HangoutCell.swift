@@ -10,7 +10,8 @@ import SnapKit
 import Kingfisher
 
 protocol HangoutCellDelegate: AnyObject {
-    func showDetailView(_ indexPath: IndexPath)
+    func moreButtonTapped(indexPath: IndexPath)
+    func likeButtonTapped(indexPath: IndexPath)
 }
 
 final class HangoutCell: UITableViewCell {
@@ -73,7 +74,11 @@ final class HangoutCell: UITableViewCell {
         return imageView
     }()
     
-    private let likeButton = BappyLikeButton()
+    private lazy var likeButton: BappyLikeButton = {
+        let button = BappyLikeButton()
+        button.addTarget(self, action: #selector(likeButtonHandler), for: .touchUpInside)
+        return button
+    }()
     
     private lazy var moreButton: UIButton = {
         let button = UIButton()
@@ -110,16 +115,15 @@ final class HangoutCell: UITableViewCell {
     }
     
     // MARK: Actions
-//    @objc
-//    private func toggleLikeButton(_ button: UIButton) {
-//        button.isSelected = !button.isSelected
-//        let normalImage = button.isSelected ? UIImage(named: "heart_fill") : UIImage(named: "heart")
-//        button.setImage(normalImage, for: .normal)
-//    }
+    @objc
+    private func likeButtonHandler(_ button: UIButton) {
+        guard let indexPath = indexPath else { return }
+        delegate?.likeButtonTapped(indexPath: indexPath)
+    }
     
     @objc func moreButtonHandler(_ button: UIButton) {
         guard let indexPath = indexPath else { return }
-        delegate?.showDetailView(indexPath)
+        delegate?.moreButtonTapped(indexPath: indexPath)
     }
     
     // MARK: Helpers

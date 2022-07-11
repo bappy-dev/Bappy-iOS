@@ -16,77 +16,16 @@ final class HomeListViewController: UIViewController {
     // MARK: Properties
     private let viewModel: HomeListViewModel
     private let disposeBag = DisposeBag()
-    // 임시 변수
-    private var hangoutList: [Hangout] = [
-        Hangout(
-            id: "abc", state: .available, title: "Who wants to go eat?",
-            meetTime: "01. JUL. 19:00", language: "English",
-            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
-            placeName: "Pusan University",
-            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
-            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
-            postImageURL: URL(string: EXAMPLE_IMAGE1_URL),
-            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
-            mapImageURL: URL(string: EXAMPLE_MAP_URL),
-            participantIDs: [
-                .init(id: "abc", imageURL: nil),
-                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
-            ],
-            userHasLiked: true),
-        Hangout(
-            id: "def", state: .available, title: "Who wants to go eat?",
-            meetTime: "03. JUL. 18:00", language: "Korean",
-            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
-            placeName: "Pusan University",
-            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
-            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
-            postImageURL: URL(string: EXAMPLE_IMAGE2_URL),
-            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
-            mapImageURL: URL(string: EXAMPLE_MAP_URL),
-            participantIDs: [
-                .init(id: "abc", imageURL: nil),
-                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
-            ],
-            userHasLiked: false),
-        Hangout(
-            id: "def", state: .closed, title: "Who wants to go eat?",
-            meetTime: "02. JUL. 18:00", language: "English",
-            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
-            placeName: "Pusan University",
-            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
-            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
-            postImageURL: URL(string: EXAMPLE_IMAGE2_URL),
-            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
-            mapImageURL: URL(string: EXAMPLE_MAP_URL),
-            participantIDs: [
-                .init(id: "abc", imageURL: nil),
-                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE3_URL))
-            ],
-            userHasLiked: false),
-        Hangout(
-            id: "abc", state: .expired, title: "Who wants to go eat?",
-            meetTime: "01. JUL. 19:00", language: "English",
-            placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
-            placeName: "Pusan University",
-            plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
-            limitNumber: 5, coordinates: .init(latitude: 35.2342279, longitude: 129.0860221),
-            postImageURL: URL(string: EXAMPLE_IMAGE1_URL),
-            openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
-            mapImageURL: URL(string: EXAMPLE_MAP_URL),
-            participantIDs: [
-                .init(id: "abc", imageURL: nil),
-                .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
-            ],
-            userHasLiked: true),
-    ]
-    private var hasShown: Bool = false
-    
-    private let topView = HomeListTopView()
-    private let topSubView = HomeListTopSubView()
+    private let topView: HomeListTopView
+    private let topSubView: HomeListTopSubView
     private let tableView = UITableView()
     
     // MARK: Lifecycle
     init(viewModel: HomeListViewModel) {
+        let topViewModel = viewModel.subViewModels.topViewModel
+        let topSubViewModel = viewModel.subViewModels.topSubViewModel
+        self.topView = HomeListTopView(viewModel: topViewModel)
+        self.topSubView = HomeListTopSubView(viewModel: topSubViewModel)
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
@@ -108,7 +47,6 @@ final class HomeListViewController: UIViewController {
 
     // MARK: Helpers
     private func configureTableView() {
-        tableView.dataSource = self
         tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .none
         tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
@@ -124,8 +62,6 @@ final class HomeListViewController: UIViewController {
     
     private func configure() {
         view.backgroundColor = .white
-        topView.delegate = self
-        topSubView.delegate = self
     }
     
     private func layout() {
@@ -150,73 +86,77 @@ final class HomeListViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
-extension HomeListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return hangoutList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! HangoutCell
-        cell.delegate = self
-        cell.indexPath = indexPath
-        cell.bind(with: hangoutList[indexPath.row])
-        return cell
+// MARK: - Bind
+extension HomeListViewController {
+    private func bind() {
+        viewModel.output.scrollToTop
+            .emit(to: tableView.rx.scrollToTop)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hangouts
+            .drive(tableView.rx.items) { tableView, row, hangout in
+                let indexPath = IndexPath(row: row, section: 0)
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: indexPath
+                ) as! HangoutCell
+                cell.delegate = self
+                cell.indexPath = indexPath
+                cell.bind(with: hangout)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLocaleView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = HomeLocaleViewController()
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.tabBarController?.present(viewController, animated: false)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSearchView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = HomeSearchViewController()
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSortingView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                guard let self = self else { return }
+                let point: CGPoint = .init(
+                    x: self.topSubView.frame.maxX - 7.0,
+                    y: self.topSubView.frame.maxY - 12.0
+                )
+                let viewController = SortingOrderViewController(viewModel: viewModel, upperRightPoint: point)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self.tabBarController?.present(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showDetailView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = HangoutDetailViewController(viewModel: viewModel)
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
 // MARK: - UITableViewDelegate
 extension HomeListViewController: HangoutCellDelegate {
-    func showDetailView(_ indexPath: IndexPath) {
-        let dependency: HangoutDetailViewModel.Dependency = .init(
-            currentUser: BappyUser(id: "abc", state: .anonymous),
-            hangout: hangoutList[indexPath.row],
-            postImage: nil,
-            mapImage: nil
-        )
-        let viewModel = HangoutDetailViewModel(dependency: dependency)
-        let viewController = HangoutDetailViewController(viewModel: viewModel)
-        viewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
-// MARK: - HomeListTopViewDelegate
-extension HomeListViewController: HomeListTopViewDelegate {
-    func localeButtonTapped() {
-        guard let tabBarController = tabBarController else { return }
-        let viewController = HomeLocaleViewController()
-        viewController.modalPresentationStyle = .overCurrentContext
-        tabBarController.present(viewController, animated: false)
+    func moreButtonTapped(indexPath: IndexPath) {
+        viewModel.input.moreButtonTapped.onNext(indexPath)
     }
     
-    func searchButtonTapped() {
-        let viewController = HomeSearchViewController()
-        viewController.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(viewController, animated: true)
-    }
-    
-    func filterButtonTapped() {
-        //
-    }
-}
-
-// MARK: - HomeListTopSubViewDelegate
-extension HomeListViewController: HomeListTopSubViewDelegate {
-    func sortingOrderButtonTapped() {
-        let point: CGPoint = .init(
-            x: topSubView.frame.maxX - 7.0,
-            y: topSubView.frame.maxY - 12.0
-        )
-        let viewController = SortingOrderViewController(upperRightPoint: point)
-        viewController.modalPresentationStyle = .overCurrentContext
-        tabBarController?.present(viewController, animated: true)
-    }
-}
-
-// MARK: - Bind
-extension HomeListViewController {
-    private func bind() {
-        
+    func likeButtonTapped(indexPath: IndexPath) {
+        viewModel.input.likeButtonTapped.onNext(indexPath)
     }
 }

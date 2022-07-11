@@ -7,33 +7,28 @@
 
 import UIKit
 import SnapKit
-
-protocol HomeListTopSubViewDelegate: AnyObject {
-    func sortingOrderButtonTapped()
-}
+import RxSwift
+import RxCocoa
 
 private let reuseIdentifier = "HomeListCategoryCell"
 final class HomeListTopSubView: UIView {
     
     // MARK: Properties
-    weak var delegate: HomeListTopSubViewDelegate?
-    private var categoryList = ["All", "Travel", "Study", "Sports", "Food", "Drinks", "Cook", "Cultural Activities", "Volunteer", "Practice Language", "Crafting"]
+    private let viewModel: HomeListTopSubViewModel
+    private let disposeBag = DisposeBag()
     
-    private lazy var collectionView: UICollectionView = {
+    private let sortingOrderButton = UIButton()
+    
+    private let collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
+        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        flowLayout.minimumLineSpacing = 11.0
+        flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 15.0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.dataSource = self
-        collectionView.delegate = self
         collectionView.register(HomeListCategoryCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
-    }()
-    
-    private lazy var sortingOrderButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(sortingOrderButtonHandler), for: .touchUpInside)
-        return button
     }()
     
     private let sortingOrderTitleLabel: UILabel = {
@@ -46,33 +41,22 @@ final class HomeListTopSubView: UIView {
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HomeListTopSubViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top) // 임시
-    }
-    
-    // MARK: Actions
-    @objc
-    private func sortingOrderButtonHandler() {
-        delegate?.sortingOrderButtonTapped()
-    }
-    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        sortingOrderTitleLabel.text = "Many hearts"
     }
     
     private func layout() {
@@ -143,32 +127,31 @@ final class HomeListTopSubView: UIView {
         }
     }
 }
-// MARK: - UICollectionViewDataSource
-extension HomeListTopSubView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categoryList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! HomeListCategoryCell
-        cell.category = categoryList[indexPath.item]
-        return cell
-    }
-}
-
-
-// MARK: - UICollectionViewDelegateFlowLayout
-extension HomeListTopSubView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = CGFloat(categoryList[indexPath.item].count) * 8.0 + 36.0
-        let height: CGFloat = 43.0
-        return .init(width: width, height: height)    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 11.0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .init(top: 0, left: 3.0, bottom: 0, right: 15.0)
+// MARK: - Bind
+extension HomeListTopSubView {
+    private func bind() {
+        collectionView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposeBag)
+        
+        sortingOrderButton.rx.tap
+            .bind(to: viewModel.input.sortingButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.sorting
+            .drive(sortingOrderTitleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.categories
+            .drive(collectionView.rx.items) { collectionView, item, element in
+                let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: reuseIdentifier,
+                    for: IndexPath(item: item, section: 0)
+                ) as! HomeListCategoryCell
+                cell.bind(with: element.key)
+                cell.isCellSelected = element.value
+                return cell
+            }
+            .disposed(by: disposeBag)
     }
 }

@@ -11,15 +11,9 @@ import SnapKit
 final class HomeListCategoryCell: UICollectionViewCell {
     
     // MARK: Properties
-    var category: String = "" {
+    var isCellSelected: Bool = false {
         didSet {
-            categoryLabel.text = category
-        }
-    }
-    
-    override var isSelected: Bool {
-        didSet {
-            categoryLabel.backgroundColor = isSelected ? .bappyYellow : .bappyLightgray
+            contentView.backgroundColor = isCellSelected ? .bappyYellow : .bappyLightgray
         }
     }
     
@@ -28,8 +22,7 @@ final class HomeListCategoryCell: UICollectionViewCell {
         label.font = .roboto(size: 18.0)
         label.textAlignment = .center
         label.textColor = .bappyBrown
-        label.layer.cornerRadius = 16.0
-        label.backgroundColor = .bappyLightgray
+        label.backgroundColor = .clear
         label.clipsToBounds = true
         return label
     }()
@@ -48,14 +41,27 @@ final class HomeListCategoryCell: UICollectionViewCell {
     
     // MARK: Helpers
     private func configure() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .bappyLightgray
+        contentView.layer.cornerRadius = 16.0
     }
     
     private func layout() {
+        contentView.snp.makeConstraints {
+            $0.height.equalTo(32.0)
+        }
+        
         contentView.addSubview(categoryLabel)
         categoryLabel.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(5.5)
-            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(32.0)
+            $0.leading.trailing.equalToSuperview().inset(13.0)
+            $0.center.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension HomeListCategoryCell {
+    func bind(with category: Hangout.Category) {
+        categoryLabel.text = category.description
     }
 }
