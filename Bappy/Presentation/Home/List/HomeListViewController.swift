@@ -110,7 +110,7 @@ extension HomeListViewController {
         viewModel.output.showLocaleView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
-                let viewController = HomeLocaleViewController()
+                let viewController = HomeLocaleViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
                 self?.tabBarController?.present(viewController, animated: false)
             })

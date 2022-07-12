@@ -13,6 +13,9 @@ import RxCocoa
 final class HomeLocaleViewController: UIViewController {
     
     // MARK: Properties
+    private let viewModel: HomeLocaleViewModel
+    private let disposeBag = DisposeBag()
+    
     private let maxDimmedAlpha: CGFloat = 0.3
     private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
     
@@ -29,14 +32,16 @@ final class HomeLocaleViewController: UIViewController {
     private let childViewController: UINavigationController
 
     // MARK: Lifecycle
-    init() {
-        let rootViewController = LocaleSettingViewController()
+    init(viewModel: HomeLocaleViewModel) {
+        let settingViewModel = viewModel.subViewModels.settingViewModel
+        let rootViewController = LocaleSettingViewController(viewModel: settingViewModel)
         self.childViewController = UINavigationController(rootViewController: rootViewController)
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
-        rootViewController.delegate = self
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -84,12 +89,6 @@ final class HomeLocaleViewController: UIViewController {
         }
     }
     
-    // MARK: Actions
-    @objc
-    private func closeButtonHandler() {
-        animateDismissView()
-    }
-    
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .clear
@@ -124,8 +123,11 @@ final class HomeLocaleViewController: UIViewController {
     }
 }
 
-extension HomeLocaleViewController: LocaleSettingViewControllerDelegate {
-    func closeButtonTapped() {
-        animateDismissView()
+// MARK: - Bind
+extension HomeLocaleViewController {
+    private func bind() {
+        viewModel.output.dismissView
+            .emit(onNext: { [weak self] in self?.animateDismissView() })
+            .disposed(by: disposeBag)
     }
 }

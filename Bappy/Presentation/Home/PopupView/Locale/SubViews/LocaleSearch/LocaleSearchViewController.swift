@@ -13,7 +13,10 @@ import RxCocoa
 private let reuseIdentifier = "SearchPlaceCell"
 final class LocaleSearchViewController: UIViewController {
     
-    // MARK: Properties    
+    // MARK: Properties
+    private let viewModel: LocaleSearchViewModel
+    private let disposeBag = DisposeBag()
+    
     private let searchTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "search"))
@@ -45,7 +48,8 @@ final class LocaleSearchViewController: UIViewController {
     private let provider = BappyProvider()
     
     // MARK: Lifecycle
-    init() {
+    init(viewModel: LocaleSearchViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
         configure()

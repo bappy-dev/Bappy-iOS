@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import Differentiator
 
-struct Location {
+struct Location: Equatable, IdentifiableType {
     
+    let identity: String
     let name: String
     let address: String
     
@@ -16,4 +18,13 @@ struct Location {
     let longitude: CGFloat
     
     let isSelected: Bool
+    
+    init(name: String, address: String, latitude: CGFloat, longitude: CGFloat, isSelected: Bool) {
+        self.name = name
+        self.address = address
+        self.latitude = latitude
+        self.longitude = longitude
+        self.isSelected = isSelected
+        self.identity = UUID().uuidString
+    }
 }

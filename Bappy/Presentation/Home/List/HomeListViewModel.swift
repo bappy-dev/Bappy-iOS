@@ -83,7 +83,8 @@ final class HomeListViewModel: ViewModelType {
             .asDriver(onErrorJustReturn: [])
         let showLocaleView = localeButtonTapped$
             .map { _ -> HomeLocaleViewModel in
-                let dependency = HomeLocaleViewModel.Dependency()
+                let dependency = HomeLocaleViewModel.Dependency(
+                    bappyAuthRepository: dependency.bappyAuthRepository)
                 return HomeLocaleViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)

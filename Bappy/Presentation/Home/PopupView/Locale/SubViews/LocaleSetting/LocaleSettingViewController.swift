@@ -9,45 +9,23 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 
-protocol LocaleSettingViewControllerDelegate: AnyObject {
-    func closeButtonTapped()
-}
 private let reuseIdentifier = "LocaleSettingCell"
+typealias LocaleSettingSectionDataSource = RxTableViewSectionedAnimatedDataSource<LocaleSettingSection>
 final class LocaleSettingViewController: UIViewController {
     
     // MARK: Properties
-    weak var delegate: LocaleSettingViewControllerDelegate?
-    private var locationsList: [Location] = [
-        Location(
-            name: "Centum Station",
-            address: "210 Haeun-daero, Haeundae-gu, Busan, South Korea",
-            latitude: 35.179495,
-            longitude: 129.124544,
-            isSelected: false
-        ),
-        Location(
-            name: "Pusan National University",
-            address: "2 Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan, South Korea",
-            latitude: 35.2339681,
-            longitude: 129.0806855,
-            isSelected: true
-        ),
-        Location(
-            name: "Dongseong-ro",
-            address: "Dongseong-ro, Jung-gu, Daegu, South Korea",
-            latitude: 35.8715163,
-            longitude: 128.5959431,
-            isSelected: false
-        ),
-        Location(
-            name: "Pangyo-dong",
-            address: "Pangyo-dong, Bundang-gu, Seongnam-si, Gyeonggi-do, South Korea",
-            latitude: 37.3908894,
-            longitude: 127.0967915,
-            isSelected: false
-        ),
-    ]
+    private let viewModel: LocaleSettingViewModel
+    private let disposeBag = DisposeBag()
+    
+    private let closeButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "  Close", style: .plain, target: nil, action: nil)
+        button.setTitleTextAttributes([
+            .font: UIFont.roboto(size: 18.0, family: .Medium)
+            ], for: .normal)
+        return button
+    }()
     
     private lazy var searchTextField: UITextField = {
         let textField = UITextField()
@@ -66,11 +44,9 @@ final class LocaleSettingViewController: UIViewController {
         return textField
     }()
     
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(LocaleSettingCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.rowHeight = 75.0
         tableView.separatorInset = .init(top: 0, left: 20.0, bottom: 0, right: 20.0)
         tableView.backgroundColor = .bappyLightgray
@@ -78,15 +54,31 @@ final class LocaleSettingViewController: UIViewController {
         return tableView
     }()
     
+    private let dataSource: LocaleSettingSectionDataSource = {
+        let dataSource = LocaleSettingSectionDataSource { dataSource, tableView, indexPath, location -> UITableViewCell in
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: reuseIdentifier,
+                for: indexPath
+            ) as! LocaleSettingCell
+            cell.bind(with: location)
+            cell.selectionStyle = .none
+            return cell
+        }
+        dataSource.canEditRowAtIndexPath = { _, _ in true }
+        return dataSource
+    }()
+    
     private let topSectionView = UIView()
     private let currentLocaleView = LocaleSettingHeaderView()
     
     // MARK: Lifecycle
-    init() {
+    init(viewModel: LocaleSettingViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -102,24 +94,17 @@ final class LocaleSettingViewController: UIViewController {
     
     // MARK: Actions
     @objc
-    private func closeButtonHandler() {
-        delegate?.closeButtonTapped()
-    }
-    
-    @objc
     private func textFieldEditingDidBegin(_ textFiled: UITextField) {
         textFiled.endEditing(true)
    
-        let viewController = LocaleSearchViewController()
+        let viewController = LocaleSearchViewController(viewModel: LocaleSearchViewModel())
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     // MARK: Helpers
     private func configure() {
         navigationItem.title = "Address Setting"
-        
-        let closeButton = UIBarButtonItem(title: "  Close", style: .plain, target: self, action: #selector(closeButtonHandler))
-        closeButton.setTitleTextAttributes([.font: UIFont.roboto(size: 18.0, family: .Medium)], for: .normal)
+   
         navigationItem.leftBarButtonItem = closeButton
         
         let backItem = UIBarButtonItem(title: "Setting", style: .plain, target: nil, action: nil)
@@ -168,26 +153,19 @@ final class LocaleSettingViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
-extension LocaleSettingViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return locationsList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! LocaleSettingCell
-        cell.bind(with: locationsList[indexPath.row])
-        cell.selectionStyle = .none
-        return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension LocaleSettingViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            locationsList.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        }
+// MARK: - Bind
+extension LocaleSettingViewController {
+    private func bind() {
+        closeButton.rx.tap
+            .bind(to: viewModel.input.closeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemDeleted
+            .bind(to: viewModel.input.itemDeleted)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.localeSettingSection
+            .drive(tableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
     }
 }
