@@ -24,7 +24,10 @@ final class BappyProvider {
             .disposed(by: disposeBag)
     }
     
-    private func checkError(with data: Data?, _ response: URLResponse?, _ error: Error?, completion: @escaping(Result<Data, Error>) -> ()) {
+    private func checkError(with data: Data?,
+                            _ response: URLResponse?,
+                            _ error: Error?,
+                            completion: @escaping(Result<Data, Error>) -> ()) {
         if let error = error {
             completion(.failure(error))
             return
@@ -84,7 +87,9 @@ final class BappyProvider {
         }
     }
     
-    private func retry<R: Decodable, E: RequestResponsable>(with endpoint: E, completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
+    private func retry<R: Decodable,
+                       E: RequestResponsable>(with endpoint: E,
+                                              completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
         self.getNewToken { [weak self] result in
             switch result {
             case .success(let token):
@@ -112,7 +117,8 @@ final class BappyProvider {
         }
     }
     
-    private func retry<E: RequestResponsable>(_ endpoint: E, completion: @escaping(Result<Data, Error>) -> Void) {
+    private func retry<E: RequestResponsable>(_ endpoint: E,
+                                              completion: @escaping(Result<Data, Error>) -> Void) {
         self.getNewToken { [weak self] result in
             switch result {
             case .success(let token):
@@ -141,7 +147,9 @@ final class BappyProvider {
 }
 
 extension BappyProvider: Provider {
-    func request<R: Decodable, E: RequestResponsable>(with endpoint: E, completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
+    func request<R: Decodable,
+                 E: RequestResponsable>(with endpoint: E,
+                                        completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
         self.getToken { [weak self] result in
             switch result {
             case .success(let token):
@@ -175,7 +183,8 @@ extension BappyProvider: Provider {
         }
     }
     
-    func request<E: RequestResponsable>(_ endpoint: E, completion: @escaping(Result<Data, Error>) -> Void) {
+    func request<E: RequestResponsable>(_ endpoint: E,
+                                        completion: @escaping(Result<Data, Error>) -> Void) {
         self.getToken { [weak self] result in
             switch result {
             case .success(let token):
@@ -208,11 +217,48 @@ extension BappyProvider: Provider {
         }
     }
     
-    func request(_ url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
+    func request(_ url: URL,
+                 completion: @escaping (Result<Data, Error>) -> Void) {
         session.dataTask(with: url) { [weak self] data, response, error in
             self?.checkError(with: data, response, error) { result in
                 completion(result)
             }
         }.resume()
+    }
+    
+    func upload<R: Decodable,
+                E: RequestResponsable>(with endpoint: E,
+                                       completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
+        self.getToken { [weak self] result in
+            switch result {
+            case .success(let token):
+                do {
+                    var urlRequest = try endpoint.getURLRequest()
+                    urlRequest.setValue(token, forHTTPHeaderField: "Authorization")
+                    let multipartData = try endpoint.getMultipartFormData()
+                    self?.session.uploadTask(with: urlRequest, from: multipartData) { data, response, error in
+                        self?.checkError(with: data, response, error) { result in
+                            guard let self = self else { return }
+                            switch result {
+                            case .success(let data):
+                                completion(self.decode(data: data))
+                            case .failure(let error):
+                                if let error = error as? NetworkError {
+                                    switch error {
+                                    case .invalidToken, .expiredToken:
+                                        self.retry(with: endpoint, completion: completion)
+                                    default: completion(.failure(error))
+                                    }
+                                } else { completion(.failure(error)) }
+                            }
+                        }
+                    }.resume()
+                } catch {
+                    completion(.failure(NetworkError.urlRequest(error)))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 }

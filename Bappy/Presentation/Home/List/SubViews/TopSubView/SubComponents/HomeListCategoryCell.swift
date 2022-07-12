@@ -53,7 +53,7 @@ final class HomeListCategoryCell: UICollectionViewCell {
         contentView.addSubview(categoryLabel)
         categoryLabel.snp.makeConstraints {
             $0.height.equalTo(32.0)
-            $0.leading.trailing.equalToSuperview().inset(13.0)
+            $0.leading.trailing.equalToSuperview().inset(16.0)
             $0.center.equalToSuperview()
         }
     }

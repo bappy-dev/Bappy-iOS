@@ -14,7 +14,10 @@ final class PublicProvider {
         self.session = session
     }
     
-    private func checkError(with data: Data?, _ response: URLResponse?, _ error: Error?, completion: @escaping(Result<Data, Error>) -> ()) {
+    private func checkError(with data: Data?,
+                            _ response: URLResponse?,
+                            _ error: Error?,
+                            completion: @escaping(Result<Data, Error>) -> ()) {
         if let error = error {
             completion(.failure(error))
             return
@@ -59,7 +62,9 @@ final class PublicProvider {
 }
 
 extension PublicProvider: Provider {
-    func request<R: Decodable, E: RequestResponsable>(with endpoint: E, completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
+    func request<R: Decodable,
+                 E: RequestResponsable>(with endpoint: E,
+                                        completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
         do {
             let urlRequest = try endpoint.getURLRequest()
             
@@ -81,7 +86,8 @@ extension PublicProvider: Provider {
         }
     }
     
-    func request<E: RequestResponsable>(_ endpoint: E, completion: @escaping(Result<Data, Error>) -> Void) {
+    func request<E: RequestResponsable>(_ endpoint: E,
+                                        completion: @escaping(Result<Data, Error>) -> Void) {
         do {
             let urlRequest = try endpoint.getURLRequest()
             
@@ -102,19 +108,38 @@ extension PublicProvider: Provider {
         }
     }
     
-    func request(_ url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
+    func request(_ url: URL,
+                 completion: @escaping (Result<Data, Error>) -> Void) {
         session.dataTask(with: url) { [weak self] data, response, error in
             self?.checkError(with: data, response, error) { result in
                 completion(result)
             }
         }.resume()
     }
-}
-
-extension Encodable {
-    func toDictionary() throws -> [String: Any]? {
-        let data = try JSONEncoder().encode(self)
-        let jsonData = try JSONSerialization.jsonObject(with: data)
-        return jsonData as? [String: Any]
+    
+    func upload<R: Decodable,
+                 E: RequestResponsable>(with endpoint: E,
+                                        completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
+        do {
+            let urlRequest = try endpoint.getURLRequest()
+            let multipartData = try endpoint.getMultipartFormData()
+            session.uploadTask(with: urlRequest, from: multipartData) { [weak self] data, response, error in
+                self?.checkError(with: data, response, error) { result in
+                    guard let self = self else { return }
+                    
+                    switch result {
+                    case .success(let data):
+                        completion(self.decode(data: data))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            }.resume()
+            
+        } catch {
+            completion(.failure(NetworkError.urlRequest(error)))
+        }
     }
 }
+
+

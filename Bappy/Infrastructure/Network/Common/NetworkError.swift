@@ -17,6 +17,7 @@ enum NetworkError: LocalizedError {
     case decodeError
     case expiredToken
     case invalidToken
+    case notMultipartType
     
     var errorDescription: String? {
         switch self {
@@ -29,6 +30,7 @@ enum NetworkError: LocalizedError {
         case .decodeError: return "decode 과정에서 에러가 발생했습니다."
         case .expiredToken: return "Token이 만료되었습니다."
         case .invalidToken: return "유효하지 않은 토큰입니다."
+        case .notMultipartType: return "Content-Type이 multipart가 아닙니다."
         }
     }
 }

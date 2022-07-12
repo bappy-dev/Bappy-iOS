@@ -52,7 +52,8 @@ struct APIEndpoints {
             baseURL: "SERVER", // 임시
             path: "user",
             method: .post,
-            bodyParameters: createUserRequestDTO)
+            bodyParameters: createUserRequestDTO,
+            contentType: .applicationJSON)
     }
     
     static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {

@@ -24,7 +24,7 @@ final class HomeListTopSubView: UIView {
         flowLayout.scrollDirection = .horizontal
         flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         flowLayout.minimumLineSpacing = 11.0
-        flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 15.0)
+        flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 20.0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(HomeListCategoryCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false

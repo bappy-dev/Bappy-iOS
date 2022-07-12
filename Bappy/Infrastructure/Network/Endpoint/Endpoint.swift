@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit.UIImage
 
 protocol RequestResponsable: Requestable, Responsable {}
 
@@ -17,10 +18,20 @@ final class Endpoint<R>: RequestResponsable {
     var method: HttpMethod
     var queryParameters: Encodable?
     var bodyParameters: Encodable?
+    var images: [UIImage]?
     var headers: [String : String]?
+    var contentType: ContentType?
     var sampleData: Data?
     
-    init(baseURL: String, path: String = "", method: HttpMethod = .get, queryParameters: Encodable? = nil, bodyParameters: Encodable? = nil, headers: [String: String]? = [:], sampleData: Data? = nil) {
+    init(baseURL: String,
+         path: String = "",
+         method: HttpMethod = .get,
+         queryParameters: Encodable? = nil,
+         bodyParameters: Encodable? = nil,
+         images: [UIImage]? = nil,
+         headers: [String: String]? = [:],
+         contentType: ContentType? = nil,
+         sampleData: Data? = nil) {
         self.baseURL = baseURL
         self.path = path
         self.method = method
