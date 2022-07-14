@@ -45,6 +45,21 @@ final class BappyInitialViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func showUpdateAlert() {
+        let appleID = "" // 나중에 AppStore Connect에서 확인
+        let urlStr = "itms-apps://itunes.apple.com/app/apple-store/\(appleID)"
+        guard let url = URL(string: urlStr) else { return }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+    
+    private func showNoticeAlert(notice: RemoteConfigValues.Notice) {
+        let title = notice.noticeTitle
+        let message = notice.noticeMessage
+        let alert = BappyAlertController(title: title, message: message, bappyStyle: .happy)
+        alert.canDismissByTouch = false
+        self.present(alert, animated: false)
+    }
+    
     private func configure() {
         view.backgroundColor = .white
     }
@@ -71,21 +86,29 @@ final class BappyInitialViewController: UIViewController {
 extension BappyInitialViewController {
     private func bind() {
         viewModel.output.switchToSignInView
-            .take(1)
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToSignInView(viewModel: viewModel, animated: true)
             })
             .disposed(by: dispoesBag)
-        
+
         viewModel.output.switchToMainView
-            .take(1)
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
             })
             .disposed(by: dispoesBag)
+        
+        viewModel.output.showUpdateAlert
+            .emit(onNext: { [weak self] _ in self?.showUpdateAlert() })
+            .disposed(by: dispoesBag)
+        
+        viewModel.output.showNoticeAlert
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] notice in self?.showNoticeAlert(notice: notice) })
+            .disposed(by: dispoesBag)
+        
     }
 }

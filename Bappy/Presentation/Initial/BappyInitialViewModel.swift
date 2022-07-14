@@ -19,8 +19,10 @@ final class BappyInitialViewModel: ViewModelType {
     struct Input {}
     
     struct Output {
-        var switchToSignInView: PublishSubject<BappyLoginViewModel>
-        var switchToMainView: PublishSubject<BappyTabBarViewModel>
+        var switchToSignInView: Signal<BappyLoginViewModel?> // <-> View
+        var switchToMainView: Signal<BappyTabBarViewModel?> // <-> View
+        var showUpdateAlert: Signal<Void> // <-> View
+        var showNoticeAlert: Signal<RemoteConfigValues.Notice?> // <-> View
     }
     
     let dependency: Dependency
@@ -28,11 +30,14 @@ final class BappyInitialViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let switchToSignInView$ = PublishSubject<BappyLoginViewModel>()
-    private let switchToMainView$ = PublishSubject<BappyTabBarViewModel>()
+    private let switchToSignInView$ = PublishSubject<BappyLoginViewModel?>()
+    private let switchToMainView$ = PublishSubject<BappyTabBarViewModel?>()
     
     private let firbaseSignInState$: BehaviorSubject<Bool>
     private let isAnonymousUser$: BehaviorSubject<Bool>
+    
+    private let showUpdateAlert$ = PublishSubject<Void>()
+    private let showNoticeAlert$ = PublishSubject<RemoteConfigValues.Notice?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -41,22 +46,71 @@ final class BappyInitialViewModel: ViewModelType {
         let firbaseSignInState$ = dependency.firebaseRepository.isUserSignedIn
         let isAnonymousUser$ = dependency.firebaseRepository.isAnonymous
         
-        
+        let switchToSignInView = switchToSignInView$
+            .asSignal(onErrorJustReturn: nil)
+        let switchToMainView = switchToMainView$
+            .asSignal(onErrorJustReturn: nil)
+        let showUpdateAlert = showUpdateAlert$
+            .asSignal(onErrorJustReturn: Void())
+        let showNoticeAlert = showNoticeAlert$
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input()
         
         self.output = Output(
-            switchToSignInView: switchToSignInView$,
-            switchToMainView: switchToMainView$
+            switchToSignInView: switchToSignInView,
+            switchToMainView: switchToMainView,
+            showUpdateAlert: showUpdateAlert,
+            showNoticeAlert: showNoticeAlert
         )
         
         // Bindind
         self.firbaseSignInState$ = firbaseSignInState$
         self.isAnonymousUser$ = isAnonymousUser$
         
+        let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
+            .share()
+        
+        remoteConfigValuesResult
+            .compactMap(getRemoteConfigValuesError)
+            .bind(onNext: { print("ERROR: \($0)") })
+            .disposed(by: disposeBag)
+        
+        let remoteConfigValues = remoteConfigValuesResult
+            .compactMap(getRemoteConfigValues)
+            .debug()
+            .share()
+        
+        // 앱 버전이 최소 버전 보다 작은 경우
+        remoteConfigValues
+            .filter { !checkCurrentVersion(with: $0.minimumVersion) }
+            .map { _ in }
+            .bind(to: showUpdateAlert$)
+            .disposed(by: disposeBag)
+        
+        let notice = remoteConfigValues
+            .debug("??")
+            .filter { checkCurrentVersion(with: $0.minimumVersion) }
+            .debug("????")
+            .map(\.notice)
+            .share()
+        
+        // 공지사항이 있는 경우
+        notice
+            .filter(\.hasNotice)
+            .bind(to: showNoticeAlert$)
+            .disposed(by: disposeBag)
+        
+        let startFlow = notice
+            .debug("Start")
+            .filter { !$0.hasNotice }
+            .map { _ in }
+            .share()
+        
         // Not Sign In
-        firbaseSignInState$
+        startFlow
+            .withLatestFrom(firbaseSignInState$)
             .filter { !$0 }
             .map { _ -> BappyLoginViewModel in
                 print("DEBUG: Not Signed In")
@@ -70,7 +124,8 @@ final class BappyInitialViewModel: ViewModelType {
         
     
         // Check Guest Mode
-        isAnonymousUser$
+        startFlow
+            .withLatestFrom(isAnonymousUser$)
             .filter { $0 }
             .map { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchAnonymousUser)
@@ -86,8 +141,11 @@ final class BappyInitialViewModel: ViewModelType {
             .disposed(by: disposeBag)
     
         // Check registerd Firebase, but not in Backend
-        let tokenResult = Observable
-            .combineLatest(firbaseSignInState$, isAnonymousUser$)
+        let tokenResult = startFlow
+            .withLatestFrom(
+                Observable
+                .combineLatest(firbaseSignInState$, isAnonymousUser$)
+            )
             .filter { $0.0 && !$0.1 }
             .map { _ in }
             .flatMap(dependency.firebaseRepository.getIDTokenForcingRefresh)
@@ -146,22 +204,38 @@ final class BappyInitialViewModel: ViewModelType {
     }
 }
 
-    private func getToken(_ result: Result<String?, Error>) -> String? {
-        guard case .success(let value) = result else { return nil }
-        return value
-    }
+private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) -> RemoteConfigValues? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
 
-    private func getTokenError(_ result: Result<String?, Error>) -> String? {
-        guard case .failure(let error) = result else { return nil }
-        return error.localizedDescription
-    }
+private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
+}
 
-    private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-        guard case .success(let value) = result else { return nil }
-        return value
-    }
+private func getToken(_ result: Result<String?, Error>) -> String? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
 
-    private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-        guard case .failure(let error) = result else { return nil }
-        return error.localizedDescription
-    }
+private func getTokenError(_ result: Result<String?, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
+}
+
+private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
+
+private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
+}
+
+private func checkCurrentVersion(with minimumVersion: String) -> Bool {
+    let dict = Bundle.main.infoDictionary!
+    let currentVersion = dict["CFBundleShortVersionString"] as! String
+    return minimumVersion.compare(currentVersion, options: .numeric) != .orderedDescending
+}

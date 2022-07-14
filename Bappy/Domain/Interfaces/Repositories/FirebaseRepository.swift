@@ -20,4 +20,16 @@ protocol FirebaseRepository {
     func signIn(with credential: AuthCredential) -> Single<Result<AuthDataResult?, Error>>
     func signInAnonymously() -> Single<Result<AuthDataResult?, Error>>
     func signOut() -> Single<Result<Void, Error>>
+    func getRemoteConfigValues() -> Observable<Result<RemoteConfigValues, Error>>
+}
+
+struct RemoteConfigValues {
+    struct Notice {
+        var hasNotice: Bool
+        var noticeTitle: String
+        var noticeMessage: String
+    }
+    
+    var notice: Notice
+    var minimumVersion: String
 }

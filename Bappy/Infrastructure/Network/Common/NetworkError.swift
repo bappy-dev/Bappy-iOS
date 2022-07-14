@@ -41,12 +41,14 @@ enum FirebaseError: LocalizedError {
     case signInFailed
     case signOutFailed
     case emptyToken
+    case failedRemoteConfig
     
     var errorDescription: String? {
         switch self {
         case .signInFailed: return "Firebase SignIn에 실패했습니다."
         case .signOutFailed: return "Firebase SignOut에 실패했습니다."
         case .emptyToken: return "빈 Token 입니다."
+        case .failedRemoteConfig: return "Remote Config의 데이터를 불러오는데 실패했습니다."
         }
     }
 }

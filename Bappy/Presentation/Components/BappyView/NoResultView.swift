@@ -13,7 +13,7 @@ final class NoResultView: UIView {
     // MARK: Properties
     private let bappyImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "bappy_sad")
+        imageView.image = UIImage(named: "bappy_sulky")
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(x: 0, y: 0, width: 204.0, height: 254.0)
         return imageView
