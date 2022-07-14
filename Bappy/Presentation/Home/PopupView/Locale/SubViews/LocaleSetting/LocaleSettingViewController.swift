@@ -69,11 +69,13 @@ final class LocaleSettingViewController: UIViewController {
     }()
     
     private let topSectionView = UIView()
-    private let currentLocaleView = LocaleSettingHeaderView()
+    private let currentLocaleView: LocaleSettingHeaderView
     
     // MARK: Lifecycle
     init(viewModel: LocaleSettingViewModel) {
+        let headerViewModel = viewModel.subViewModels.headerViewModel
         self.viewModel = viewModel
+        self.currentLocaleView = LocaleSettingHeaderView(viewModel: headerViewModel)
         super.init(nibName: nil, bundle: nil)
         
         configure()
@@ -156,6 +158,14 @@ final class LocaleSettingViewController: UIViewController {
 // MARK: - Bind
 extension LocaleSettingViewController {
     private func bind() {
+        self.rx.viewWillAppear
+            .bind(to: viewModel.input.viewWillAppear)
+            .disposed(by: disposeBag)
+        
+        searchTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
         closeButton.rx.tap
             .bind(to: viewModel.input.closeButtonTapped)
             .disposed(by: disposeBag)

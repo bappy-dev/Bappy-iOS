@@ -84,7 +84,8 @@ final class HomeListViewModel: ViewModelType {
         let showLocaleView = localeButtonTapped$
             .map { _ -> HomeLocaleViewModel in
                 let dependency = HomeLocaleViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    locationRepsitory: dependency.locationRepository)
                 return HomeLocaleViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
@@ -134,18 +135,12 @@ final class HomeListViewModel: ViewModelType {
         self.currentUser$ = currentUser$
         self.location$ = location$
         
-        sorting$
-            .filter { $0 == .Nearest }
-            .map { _ in }
-            .flatMap(dependency.locationRepository.requestLocation)
-            .bind(onNext: { print("DEBUG: status \($0)") })
+        // User의 저장된 GPS가 true이고, 위치권한이 있을 때 실시간 위치정보 사용
+        currentUser$
+            .compactMap(\.?.isUserUsingGPS)
+            .withLatestFrom(dependency.locationRepository.status) { $0 && $1 == .authorizedWhenInUse }
+            .bind(onNext: dependency.locationRepository.turnGPSSetting)
             .disposed(by: disposeBag)
-        
-        location$
-            .bind(onNext: { print("DEBUG: location \($0)") })
-            .disposed(by: disposeBag)
-        
-//        dependency.locationRepository.turnOnGPS()
         
         let hangoutsResult = Observable
             .combineLatest(

@@ -18,6 +18,7 @@ enum NetworkError: LocalizedError {
     case expiredToken
     case invalidToken
     case notMultipartType
+    case emptyUser
     
     var errorDescription: String? {
         switch self {
@@ -31,6 +32,7 @@ enum NetworkError: LocalizedError {
         case .expiredToken: return "Token이 만료되었습니다."
         case .invalidToken: return "유효하지 않은 토큰입니다."
         case .notMultipartType: return "Content-Type이 multipart가 아닙니다."
+        case .emptyUser: return "유저가 존재하지 않습니다."
         }
     }
 }

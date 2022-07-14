@@ -31,7 +31,7 @@ struct Hangout: Equatable, Identifiable {
     var userHasLiked: Bool
     
     var googleMapURL: URL? {
-        let baseURL = "https://www.google.com/maps/dir/"
+        let baseURL = GOOGLE_MAP_DIR_BASEURL
         let path = "?"
         let queries = [
             "api=1",
@@ -45,7 +45,7 @@ struct Hangout: Equatable, Identifiable {
     }
     
     var kakaoMapURL: URL? {
-        let baseURL = "https://map.kakao.com/link/to/"
+        let baseURL = KAKAO_MAP_DIR_BASEURL
         let query = "\(placeName),\(coordinates.latitude),\(coordinates.longitude)"
         let urlString = baseURL + query
         return urlString

@@ -30,6 +30,10 @@ final class DefaultLocationRepository {
             .disposed(by: disposeBag)
         let authorizationStatus = locationManager.authorizationStatus
         self.status$ = BehaviorSubject<CLAuthorizationStatus>(value: authorizationStatus)
+        
+        locationManager.rx.didChangeAuthorizationStatus
+            .bind(to: status$)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -39,7 +43,7 @@ extension DefaultLocationRepository: LocationRepository {
     var location: BehaviorSubject<CLLocationCoordinate2D?> { location$ }
     var status: BehaviorSubject<CLAuthorizationStatus> { status$ }
 
-    func requestLocation() -> Observable<CLAuthorizationStatus> {
+    func requestAuthorization() -> Observable<CLAuthorizationStatus> {
         return Observable<CLAuthorizationStatus>
             .deferred { [weak self] in
                 guard let auth = self else { return .empty() }
@@ -51,11 +55,8 @@ extension DefaultLocationRepository: LocationRepository {
             }
     }
     
-    func turnOnGPS() {
-        self.locationManager.startUpdatingLocation()
-    }
-    
-    func turnOffGPS() {
-        self.locationManager.stopUpdatingLocation()
+    func turnGPSSetting(to setting: Bool) {
+        if setting { self.locationManager.startUpdatingLocation() }
+        else { self.locationManager.stopUpdatingLocation() }
     }
 }

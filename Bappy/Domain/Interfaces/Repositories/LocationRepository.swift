@@ -13,7 +13,6 @@ protocol LocationRepository {
     static var shared: Self { get }
     var location: BehaviorSubject<CLLocationCoordinate2D?> { get }
     var status: BehaviorSubject<CLAuthorizationStatus> { get }
-    func requestLocation() -> Observable<CLAuthorizationStatus>
-    func turnOnGPS()
-    func turnOffGPS()
+    func requestAuthorization() -> Observable<CLAuthorizationStatus>
+    func turnGPSSetting(to setting: Bool)
 }

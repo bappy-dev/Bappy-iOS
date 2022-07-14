@@ -41,6 +41,10 @@ final class HomeListCategoryCell: UICollectionViewCell {
     
     // MARK: Helpers
     private func configure() {
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         contentView.backgroundColor = .bappyLightgray
         contentView.layer.cornerRadius = 16.0
     }

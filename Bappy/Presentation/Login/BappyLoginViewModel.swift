@@ -33,8 +33,6 @@ final class BappyLoginViewModel: ViewModelType {
                         .displayName(forKey: NSLocale.Key.identifier, value: countryCode) ?? ""
                     return Country(code: code, name: name)
                 }
-            let bappyAuthRepository = bappyAuthRepository
-            let firebaseRepository = firebaseRepository
             
             return RegisterViewModel.Dependency(
                 bappyAuthRepository: bappyAuthRepository,

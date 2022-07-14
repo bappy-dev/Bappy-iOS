@@ -19,7 +19,6 @@ final class DefaultUserProfileRepository {
 }
 
 extension DefaultUserProfileRepository: UserProfileRepository {
-    
     func fetchBappyUser(id: String, token: String) -> Single<Result<BappyUser, Error>> {
         let requestDTO = BappyUserRequestDTO(id: id)
         let endpoint = APIEndpoints.getBappyUser(with: requestDTO)

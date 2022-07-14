@@ -7,11 +7,15 @@
 
 import UIKit
 import SnapKit
-import CryptoKit
+import RxSwift
+import RxCocoa
 
 final class LocaleSettingHeaderView: UIView {
     
     // MARK: Properties
+    private let viewModel: LocaleSettingHeaderViewModel
+    private let disposeBag = DisposeBag()
+    
     private let currentLocaleButton = UIButton()
     
     private let currentLocaleImageView: UIImageView = {
@@ -33,15 +37,18 @@ final class LocaleSettingHeaderView: UIView {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "locale_selected")
         imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
         return imageView
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: LocaleSettingHeaderViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -52,7 +59,6 @@ final class LocaleSettingHeaderView: UIView {
     private func configure() {
         self.backgroundColor = .clear
         currentLocaleButton.backgroundColor = .white
-        selectedImageView.isHidden = true
     }
     
     private func layout() {
@@ -101,5 +107,18 @@ final class LocaleSettingHeaderView: UIView {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1.0/3.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension LocaleSettingHeaderView {
+    private func bind() {
+        currentLocaleButton.rx.tap
+            .bind(to: viewModel.input.localeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideSelection
+            .emit(to: selectedImageView.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }

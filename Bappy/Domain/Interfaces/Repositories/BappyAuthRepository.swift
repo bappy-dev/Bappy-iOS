@@ -14,4 +14,6 @@ protocol BappyAuthRepository {
     func fetchCurrentUser(token: String) -> Single<Result<BappyUser, Error>>
     func fetchAnonymousUser() -> Single<BappyUser>
     func createUser(name: String, gender: String, birth: Date, country: String) -> Single<Result<BappyUser, Error>>
+    func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>>
+    func fetchUserLocations() -> Single<Result<[Location], Error>>
 }

@@ -10,7 +10,7 @@ import UIKit
 struct APIEndpoints {
     static func searchGoogleMapList(with mapsRequestDTO: MapsRequestDTO) -> Endpoint<MapsResponseDTO> {
         return Endpoint(
-            baseURL: "https://maps.googleapis.com/",
+            baseURL: GOOGLE_MAP_API_BASEURL,
             path: "maps/api/place/textsearch/json?",
             method: .get,
             queryParameters: mapsRequestDTO)
@@ -18,7 +18,7 @@ struct APIEndpoints {
     
     static func searchGoogleMapNextList(with mapsRequestDTO: MapsNextRequestDTO) -> Endpoint<MapsResponseDTO> {
         return Endpoint(
-            baseURL: "https://maps.googleapis.com/",
+            baseURL: GOOGLE_MAP_API_BASEURL,
             path: "maps/api/place/textsearch/json?",
             method: .get,
             queryParameters: mapsRequestDTO)
@@ -26,7 +26,7 @@ struct APIEndpoints {
     
     static func getGoogleMapImage(with mapImageRequestDTO: MapImageRequestDTO) -> Endpoint<Data> {
         return Endpoint(
-            baseURL: "https://maps.googleapis.com/",
+            baseURL: GOOGLE_MAP_API_BASEURL,
             path: "maps/api/staticmap?",
             method: .get,
             queryParameters: mapImageRequestDTO)
@@ -34,14 +34,14 @@ struct APIEndpoints {
     
     static func getCurrentUser() -> Endpoint<CurrentUserResponseDTO> {
         return Endpoint(
-            baseURL: "SERVER", // 임시
+            baseURL: BAPPY_API_BASEURL,
             path: "auth/login",
             method: .get)
     }
     
     static func getBappyUser(with userProfileRequestDTO: BappyUserRequestDTO) -> Endpoint<BappyUserResponseDTO> {
         return Endpoint(
-            baseURL: "SERVER", // 임시
+            baseURL: BAPPY_API_BASEURL,
             path: "auth/login",
             method: .get,
             queryParameters: userProfileRequestDTO)
@@ -49,7 +49,7 @@ struct APIEndpoints {
     
     static func createUser(with createUserRequestDTO: CreateUserRequestDTO) -> Endpoint<CreateUserResponseDTO> {
         return Endpoint(
-            baseURL: "SERVER", // 임시
+            baseURL: BAPPY_API_BASEURL,
             path: "user",
             method: .post,
             bodyParameters: createUserRequestDTO,
@@ -58,9 +58,18 @@ struct APIEndpoints {
     
     static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {
         return Endpoint(
-            baseURL: "SERVER", // 임시
+            baseURL: BAPPY_API_BASEURL,
             path: "hangouts",
             method: .get,
             queryParameters: hangoutsRequestDTO)
+    }
+    
+    static func updateGPSSetting(with gpsSettingRequestDTO: GPSSettingRequestDTO) -> Endpoint<GPSSettingResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/gps",
+            method: .put,
+            bodyParameters: gpsSettingRequestDTO,
+            contentType: .applicationJSON)
     }
 }

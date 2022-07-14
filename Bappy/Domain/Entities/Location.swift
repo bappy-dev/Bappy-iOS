@@ -17,7 +17,7 @@ struct Location: Equatable, IdentifiableType {
     let latitude: CGFloat
     let longitude: CGFloat
     
-    let isSelected: Bool
+    var isSelected: Bool
     
     init(name: String, address: String, latitude: CGFloat, longitude: CGFloat, isSelected: Bool) {
         self.name = name

@@ -49,7 +49,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     
     func fetchAnonymousUser() -> Single<BappyUser> {
         return Single<BappyUser>.create { single in
-            let user = BappyUser(id: UUID().uuidString, state: .anonymous)
+            let user = BappyUser(id: UUID().uuidString, state: .anonymous, isUserUsingGPS: false)
             self.currentUser$.onNext(user)
             single(.success(user))
             return Disposables.create()
@@ -89,6 +89,85 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
                 single(.success(.success(user)))
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
+    func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>> {
+//        let requestDTO = GPSSettingRequestDTO(gps: setting)
+//        let endpoint = APIEndpoints.updateGPSSetting(with: requestDTO)
+//        return  provider.request(with: endpoint)
+//            .map { [weak self] result -> Result<Bool, Error> in
+//                guard let self = self,
+//                      var user = try self.currentUser.value()
+//                else { return .failure(NetworkError.emptyUser) }
+//                switch result {
+//                case .success(let responseDTO):
+//                    let isSucceeded = responseDTO.toDomain()
+//                    user.isUserUsingGPS = setting
+//                    self.currentUser.onNext(user)
+//                    return .success(isSucceeded)
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        
+        return Single<Result<Bool, Error>>.create { single in
+            do {
+                guard var user = try self.currentUser.value()
+                else { return Disposables.create() }
+                user.isUserUsingGPS = setting
+                self.currentUser$.onNext(user)
+
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                    single(.success(.success(true)))
+                }
+                
+            } catch {
+                single(.failure(NetworkError.emptyUser))
+            }
+
+            return Disposables.create()
+        }
+    }
+    
+    func fetchUserLocations() -> Single<Result<[Location], Error>> {
+        return Single<Result<[Location], Error>>.create { single in
+            let locations = [
+                Location(
+                    name: "Centum Station",
+                    address: "210 Haeun-daero, Haeundae-gu, Busan, South Korea",
+                    latitude: 35.179495,
+                    longitude: 129.124544,
+                    isSelected: false
+                ),
+                Location(
+                    name: "Pusan National University",
+                    address: "2 Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan, South Korea",
+                    latitude: 35.2339681,
+                    longitude: 129.0806855,
+                    isSelected: true
+                ),
+                Location(
+                    name: "Dongseong-ro",
+                    address: "Dongseong-ro, Jung-gu, Daegu, South Korea",
+                    latitude: 35.8715163,
+                    longitude: 128.5959431,
+                    isSelected: false
+                ),
+                Location(
+                    name: "Pangyo-dong",
+                    address: "Pangyo-dong, Bundang-gu, Seongnam-si, Gyeonggi-do, South Korea",
+                    latitude: 37.3908894,
+                    longitude: 127.0967915,
+                    isSelected: false
+                ),
+            ]
+                
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                single(.success(.success(locations)))
             }
             
             return Disposables.create()
