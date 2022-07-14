@@ -32,6 +32,7 @@ final class LocaleSettingViewModel: ViewModelType {
     struct Output {
         var closeButtonTapped: Signal<Void> // <-> Parent
         var localeSettingSection: Driver<[LocaleSettingSection]> // <-> View
+        var showSearchView: Signal<LocaleSearchViewModel?> // <-> View
         var showAuthorizationAlert: Signal<Void> // <-> Parent
     }
     
@@ -52,6 +53,7 @@ final class LocaleSettingViewModel: ViewModelType {
     private let localeButtonTapped$ = PublishSubject<Void>()
     
     private let localeSettingSection$ = BehaviorSubject<[LocaleSettingSection]>(value: [.init(items: [])])
+    private let showSearchView$ = PublishSubject<LocaleSearchViewModel?>()
     private let showAuthorizationAlert$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
@@ -69,6 +71,8 @@ final class LocaleSettingViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let localeSettingSection = localeSettingSection$
             .asDriver(onErrorJustReturn: [])
+        let showSearchView = showSearchView$
+            .asSignal(onErrorJustReturn: nil)
         let showAuthorizationAlert = showAuthorizationAlert$
             .asSignal(onErrorJustReturn: Void())
         
@@ -84,6 +88,7 @@ final class LocaleSettingViewModel: ViewModelType {
         self.output = Output(
             closeButtonTapped: closeButtonTapped,
             localeSettingSection: localeSettingSection,
+            showSearchView: showSearchView,
             showAuthorizationAlert: showAuthorizationAlert
         )
         
@@ -91,6 +96,17 @@ final class LocaleSettingViewModel: ViewModelType {
         self.user$ = user$
         self.authorization$ = authorization$
         self.userGPSWithAuthorization$ = userGPSWithAuthorization$
+        
+        editingDidBegin$
+            .map { _ -> LocaleSearchViewModel? in
+                let dependency = LocaleSearchViewModel.Dependency(
+                    googleMapRepository: DefaultGoogleMapsRepository())
+                let viewModel = LocaleSearchViewModel(dependency: dependency)
+                viewModel.delegate = self
+                return viewModel
+            }
+            .bind(to: showSearchView$)
+            .disposed(by: disposeBag)
         
         itemDeleted$
             .withLatestFrom(localeSettingSection$) { indexPath, sections -> [LocaleSettingSection] in
@@ -215,4 +231,11 @@ private func getLocationsError(_ result: Result<[Location], Error>) -> String? {
 private func getGPSError(_ result: Result<Bool, Error>) -> String? {
     guard case .failure(let error) = result else { return nil }
     return error.localizedDescription
+}
+
+// MARK: - LocaleSearchViewModelDelegate
+extension LocaleSettingViewModel: LocaleSearchViewModelDelegate {
+    func mapSelected(map: Map) {
+        //
+    }
 }

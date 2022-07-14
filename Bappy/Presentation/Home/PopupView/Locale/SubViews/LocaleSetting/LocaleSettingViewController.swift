@@ -27,7 +27,7 @@ final class LocaleSettingViewController: UIViewController {
         return button
     }()
     
-    private lazy var searchTextField: UITextField = {
+    private let searchTextField: UITextField = {
         let textField = UITextField()
         let imageView = UIImageView(image: UIImage(named: "search"))
         let containerView = UIView()
@@ -40,7 +40,6 @@ final class LocaleSettingViewController: UIViewController {
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .unlessEditing
-        textField.addTarget(self, action: #selector(textFieldEditingDidBegin), for: .editingDidBegin)
         return textField
     }()
     
@@ -92,15 +91,6 @@ final class LocaleSettingViewController: UIViewController {
         super.touchesBegan(touches, with: event)
         
         searchTextField.resignFirstResponder()
-    }
-    
-    // MARK: Actions
-    @objc
-    private func textFieldEditingDidBegin(_ textFiled: UITextField) {
-        textFiled.endEditing(true)
-   
-        let viewController = LocaleSearchViewController(viewModel: LocaleSearchViewModel())
-        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     // MARK: Helpers
@@ -163,6 +153,7 @@ extension LocaleSettingViewController {
             .disposed(by: disposeBag)
         
         searchTextField.rx.controlEvent(.editingDidBegin)
+            .do { _ in self.searchTextField.resignFirstResponder() }
             .bind(to: viewModel.input.editingDidBegin)
             .disposed(by: disposeBag)
         
@@ -176,6 +167,14 @@ extension LocaleSettingViewController {
         
         viewModel.output.localeSettingSection
             .drive(tableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSearchView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = LocaleSearchViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }

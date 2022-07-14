@@ -45,7 +45,8 @@ final class LocaleSearchViewController: UIViewController {
     }()
     
     private let topSectionView = UIView()
-    private let provider = BappyProvider()
+    private let bottomSpinner = UIActivityIndicatorView(style: .medium)
+    private let noResultView = NoResultView()
     
     // MARK: Lifecycle
     init(viewModel: LocaleSearchViewModel) {
@@ -54,6 +55,7 @@ final class LocaleSearchViewController: UIViewController {
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -80,6 +82,11 @@ final class LocaleSearchViewController: UIViewController {
         view.backgroundColor = .bappyLightgray
         topSectionView.backgroundColor = .white
         topSectionView.addBappyShadow(shadowOffsetHeight: 1.0)
+        tableView.backgroundView = noResultView
+        noResultView.isHidden = true
+        bottomSpinner.hidesWhenStopped = true
+        tableView.tableFooterView = bottomSpinner
+        bottomSpinner.startAnimating()
     }
     
     private func layout() {
@@ -114,5 +121,77 @@ final class LocaleSearchViewController: UIViewController {
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().inset(10.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension LocaleSearchViewController {
+    private func bind() {
+        searchTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.willDisplayCell
+            .map { $0.indexPath }
+            .bind(to: viewModel.input.willDisplayIndex)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.prefetchRows
+            .bind(to: viewModel.input.prefetchRows)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.maps
+            .drive(tableView.rx.items) { tableView, row, map in
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: IndexPath(row: row, section: 0)
+                ) as! SearchPlaceCell
+                cell.setupCell(with: map)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideNoResultView
+            .skip(1)
+            .distinctUntilChanged()
+            .emit(to: noResultView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.show)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissLoader
+            .emit(to: ProgressHUD.rx.dismiss)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldSpinnerAnimating
+            .distinctUntilChanged()
+            .drive(bottomSpinner.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                self?.tableView.contentInset.bottom = height
+                self?.tableView.verticalScrollIndicatorInsets.bottom = height
+            }).disposed(by: disposeBag)
     }
 }
