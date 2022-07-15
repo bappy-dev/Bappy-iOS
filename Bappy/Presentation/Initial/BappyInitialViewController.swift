@@ -89,7 +89,7 @@ extension BappyInitialViewController {
             .compactMap { $0 }
             .emit(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                sceneDelegate.switchRootViewToSignInView(viewModel: viewModel, animated: true)
+                sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
             })
             .disposed(by: dispoesBag)
 
@@ -97,7 +97,7 @@ extension BappyInitialViewController {
             .compactMap { $0 }
             .emit(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModel)
             })
             .disposed(by: dispoesBag)
         

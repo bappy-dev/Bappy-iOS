@@ -58,8 +58,7 @@ final class RegisterCompletedViewController: UIViewController {
         button.backgroundColor = .bappyYellow
         button.setBappyTitle(
             title: "Okay!",
-            font: .roboto(size: 24.0, family: .Medium)
-        )
+            font: .roboto(size: 24.0, family: .Medium))
         button.layer.cornerRadius = 21.0
         return button
     }()
@@ -84,8 +83,7 @@ final class RegisterCompletedViewController: UIViewController {
         button.setBappyTitle(
             title: "Maybe later ",
             font: .roboto(size: 13.0, family: .Light),
-            hasUnderline: true
-        )
+            hasUnderline: true)
         return button
     }()
     
@@ -227,27 +225,21 @@ extension RegisterCompletedViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.switchToMainView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModel)
             })
             .disposed(by: disposeBag)
         
         viewModel.output.moveToEditProfileView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { viewModels in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true, completion: { _ in print("DEBUG: com")} )
-//                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true) { tabBarController in
-//                    print("DEBUG: Completion")
-//                    guard let navigationController = tabBarController?.selectedViewController
-//                            as? UINavigationController else { return }
-//                    let viewController = ProfileDetailViewController()
-//                    viewController.hidesBottomBarWhenPushed = true
-//                    print("DEBUG: navi \(navigationController.viewControllers)")
-//                    navigationController.pushViewController(viewController, animated: false)
-//                }
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModels.tabBarViewModel) { navigationController in
+                    let editViewController = ProfileEditViewController(viewModel: viewModels.editViewModel)
+                    navigationController?.pushViewController(editViewController, animated: true)
+                }
             })
             .disposed(by: disposeBag)
     }

@@ -161,9 +161,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         // 4가지 상태: Off/Off, On/Off, Off/On, On/On
         let startFlow = localeButtonTapped$
-            .debug()
             .withLatestFrom(userGPSWithAuthorization$)
-            .debug()
             .share()
         
         // 위치권한 거부 상태에 버튼 사용 시 Alert 띄우기

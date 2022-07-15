@@ -19,32 +19,49 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let dependency = BappyInitialViewModel.Dependency(
             bappyAuthRepository: bappyAuthRepository,
-            firebaseRepository: firebaseRepository
-        )
+            firebaseRepository: firebaseRepository)
         let viewModel = BappyInitialViewModel(dependency: dependency)
-        let viewControlelr = BappyInitialViewController(viewModel: viewModel)
+        let viewController = BappyInitialViewController(viewModel: viewModel)
         
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .white
         window?.tintColor = .bappyGray
-        window?.rootViewController = viewControlelr
+        window?.rootViewController = viewController
         window?.makeKeyAndVisible()
-        
-
-        
     }
 }
 
 extension SceneDelegate {
-    func switchRootViewToSignInView(viewModel: BappyLoginViewModel, animated: Bool = false, completion: ((UINavigationController?) -> Void)? = nil) {
+    func switchRootViewController(_ viewController: UIViewController,
+                                   animated: Bool = true,
+                                   duration: TimeInterval = 0.4,
+                                   options: UIView.AnimationOptions = .transitionCrossDissolve,
+                                   completion: ((Bool) -> Void)? = nil) {
+        guard animated else {
+            self.window?.rootViewController = viewController
+            self.window?.makeKeyAndVisible()
+            return
+        }
+        
+        UIView.transition(with: window!,
+                          duration: duration,
+                          options: options,
+                          animations: {
+            self.window?.rootViewController = viewController
+            self.window?.makeKeyAndVisible()
+        }, completion: completion)
+    }
+    
+    func switchRootViewToSignInView(viewModel: BappyLoginViewModel,
+                                    animated: Bool = false,
+                                    completion: ((UINavigationController?) -> Void)? = nil) {
         let naviRootViewController = BappyLoginViewController(viewModel: viewModel)
         let viewController = UINavigationController(rootViewController: naviRootViewController)
         viewController.navigationBar.isHidden = true
         viewController.interactivePopGestureRecognizer?.isEnabled = false
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()
-        guard let completion = completion else { return }
-        completion(viewController)
+        completion?(viewController)
         
         if animated {
             UIView.transition(
@@ -57,12 +74,16 @@ extension SceneDelegate {
         }
     }
     
-    func switchRootViewToMainView(viewModel: BappyTabBarViewModel, animated: Bool = false, completion: ((BappyTabBarController?) -> Void)? = nil) {
-        let viewController = BappyTabBarController(viewModel: viewModel)
+    func switchRootViewToMainView(viewModel: BappyTabBarViewModel,
+                                  animated: Bool = false,
+                                  completion: ((UINavigationController?) -> Void)? = nil) {
+        let naviRootViewController = BappyTabBarController(viewModel: viewModel)
+        let viewController = UINavigationController(rootViewController: naviRootViewController)
+        viewController.navigationBar.isHidden = true
+        viewController.interactivePopGestureRecognizer?.isEnabled = false
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()
-        guard let completion = completion else { return }
-        completion(viewController)
+        completion?(viewController)
         
         if animated {
             UIView.transition(

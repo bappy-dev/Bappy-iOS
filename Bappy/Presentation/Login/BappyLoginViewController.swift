@@ -210,7 +210,7 @@ extension BappyLoginViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                sceneDelegate.switchRootViewToMainView(viewModel: viewModel, animated: true)
+                sceneDelegate.switchRootViewToMainView(viewModel: viewModel)
             })
             .disposed(by: disposeBag)
         

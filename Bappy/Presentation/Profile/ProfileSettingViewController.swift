@@ -100,8 +100,11 @@ extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
                 bappyAuthRepository: DefaultBappyAuthRepository.shared,
                 firebaseRepository: DefaultFirebaseRepository.shared
             )
-            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-            sceneDelegate.switchRootViewToSignInView(viewModel: BappyLoginViewModel(dependency: dependency), animated: true)
+            let viewModel = BappyLoginViewModel(dependency: dependency)
+            let rootViewController = BappyLoginViewController(viewModel: viewModel)
+            let viewController = UINavigationController(rootViewController: rootViewController)
+            viewController.navigationBar.isHidden = true
+            viewController.interactivePopGestureRecognizer?.isEnabled = false
         } catch {
             fatalError("Failed sign out")
         }

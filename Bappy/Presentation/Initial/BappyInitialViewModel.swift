@@ -79,7 +79,6 @@ final class BappyInitialViewModel: ViewModelType {
         
         let remoteConfigValues = remoteConfigValuesResult
             .compactMap(getRemoteConfigValues)
-            .debug()
             .share()
         
         // 앱 버전이 최소 버전 보다 작은 경우
@@ -90,9 +89,7 @@ final class BappyInitialViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         let notice = remoteConfigValues
-            .debug("??")
             .filter { checkCurrentVersion(with: $0.minimumVersion) }
-            .debug("????")
             .map(\.notice)
             .share()
         
@@ -103,7 +100,6 @@ final class BappyInitialViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         let startFlow = notice
-            .debug("Start")
             .filter { !$0.hasNotice }
             .map { _ in }
             .share()

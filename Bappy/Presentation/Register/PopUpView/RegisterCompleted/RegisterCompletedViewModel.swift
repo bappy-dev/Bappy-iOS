@@ -10,6 +10,8 @@ import RxSwift
 import RxCocoa
 
 final class RegisterCompletedViewModel: ViewModelType {
+    typealias EditViewModels = (tabBarViewModel: BappyTabBarViewModel, editViewModel: ProfileEditViewModel)
+    
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
@@ -21,8 +23,8 @@ final class RegisterCompletedViewModel: ViewModelType {
     }
     
     struct Output {
-        var switchToMainView: PublishSubject<BappyTabBarViewModel>
-        var moveToEditProfileView: PublishSubject<BappyTabBarViewModel>
+        var switchToMainView: Signal<BappyTabBarViewModel?>
+        var moveToEditProfileView: Signal<(tabBarViewModel: BappyTabBarViewModel, editViewModel: ProfileEditViewModel)?>
     }
     
     let dependency: Dependency
@@ -33,13 +35,17 @@ final class RegisterCompletedViewModel: ViewModelType {
     private let okayButtonTapped$ = PublishSubject<Void>()
     private let laterButtonTapped$ = PublishSubject<Void>()
     
-    private let switchToMainView$ = PublishSubject<BappyTabBarViewModel>()
-    private let moveToEditProfileView$ = PublishSubject<BappyTabBarViewModel>()
+    private let switchToMainView$ = PublishSubject<BappyTabBarViewModel?>()
+    private let moveToEditProfileView$ = PublishSubject<EditViewModels?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
+        let switchToMainView = switchToMainView$
+            .asSignal(onErrorJustReturn: nil)
+        let moveToEditProfileView = moveToEditProfileView$
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(
@@ -48,8 +54,8 @@ final class RegisterCompletedViewModel: ViewModelType {
         )
         
         self.output = Output(
-            switchToMainView: switchToMainView$,
-            moveToEditProfileView: moveToEditProfileView$
+            switchToMainView: switchToMainView,
+            moveToEditProfileView: moveToEditProfileView
         )
         
         // Binding
@@ -65,14 +71,19 @@ final class RegisterCompletedViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         okayButtonTapped$
-            .map { _  -> BappyTabBarViewModel in
-                let dependency = BappyTabBarViewModel.Dependency(
+            .map { _  -> EditViewModels in
+                let tabBarDependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
                     user: dependency.user,
                     bappyAuthRepository: dependency.bappyAuthRepository)
-                return BappyTabBarViewModel(dependency: dependency)
+                let tabBarViewModel = BappyTabBarViewModel(dependency: tabBarDependency)
+                let editDependency = ProfileEditViewModel.Dependency(
+                    user: dependency.user,
+                    bappyAuthRepository: dependency.bappyAuthRepository)
+                let editViewModel = ProfileEditViewModel(dependency: editDependency)
+                return EditViewModels(tabBarViewModel, editViewModel)
             }
-            .bind(to: switchToMainView$)
+            .bind(to: moveToEditProfileView$)
             .disposed(by: disposeBag)
     }
 }
