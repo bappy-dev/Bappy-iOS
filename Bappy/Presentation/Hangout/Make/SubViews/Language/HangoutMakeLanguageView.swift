@@ -97,6 +97,7 @@ extension HangoutMakeLanguageView {
             .disposed(by: disposeBag)
         
         viewModel.output.text
+            .compactMap { $0 }
             .emit(to: languageTextField.rx.text)
             .disposed(by: disposeBag)
         

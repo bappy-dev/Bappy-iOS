@@ -34,7 +34,7 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
     private let editingDidBegin$ = PublishSubject<Void>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

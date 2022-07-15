@@ -32,7 +32,7 @@ final class HangoutMakePlaceViewModel: ViewModelType {
     private let editingDidBegin$ = PublishSubject<Void>()
     private let map$ = PublishSubject<Map>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

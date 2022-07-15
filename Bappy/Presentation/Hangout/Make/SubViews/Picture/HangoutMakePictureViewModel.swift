@@ -32,7 +32,7 @@ final class HangoutMakePictureViewModel: ViewModelType {
     private let pictureButtonTapped$ = PublishSubject<Void>()
     private let picture$ = PublishSubject<UIImage?>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

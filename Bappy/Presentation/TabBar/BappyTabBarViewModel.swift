@@ -17,34 +17,8 @@ final class BappyTabBarViewModel: ViewModelType {
         var bappyAuthRepository: BappyAuthRepository
         var writeViewModelDependency: HangoutMakeViewModel.Dependency {
             return .init(
-                currentUser: .init(id: "abc", state: .normal),
-                numOfPage: 9,
-                key: Bundle.main.googleMapAPIKey,
-                categoryDependency: .init(),
-                titleDependency: .init(
-                    minimumLength: 10,
-                    maximumLength: 20),
-                timeDependency: .init(
-                    minimumDate: (Date() + 60 * 60).roundUpUnitDigitOfMinutes(),
-                    dateFormat: "M.d (E)",
-                    timeFormat: "a h:mm"),
-                placeDependency: .init(),
-                pictureDependency: .init(),
-                planDependency: .init(
-                    minimumLength: 14,
-                    maximumLength: 200),
-                languageDependency: .init(language: "English"),
-                openchatDependency: .init(),
-                limitDependency: .init(
-                    minimumNumber: 4,
-                    maximumNumber: 10),
-                searchPlaceDependency: .init(
-                    key: Bundle.main.googleMapAPIKey,
-                    language: "en"),
-                selectLanguageDependecy: .init(
-                    languages: [
-                        "Arabic", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "German", "Greek", "Hebrew", "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Slovak", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"
-                    ])
+                googleMapImageRepository: DefaultGoogleMapImageRepository(),
+                currentUser: .init(id: "abc", state: .normal)
             )
         }
     }

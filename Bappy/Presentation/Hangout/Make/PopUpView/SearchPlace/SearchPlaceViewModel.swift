@@ -17,8 +17,9 @@ final class SearchPlaceViewModel: ViewModelType {
     weak var delegate: SearchPlaceViewModelDelegate?
     
     struct Dependency {
-        var key: String
-        var language: String
+        let googleMapsRepository: GoogleMapsRepository
+        var key: String { Bundle.main.googleMapAPIKey }
+        var language: String { "en" }
     }
     
     struct Input {
@@ -44,7 +45,6 @@ final class SearchPlaceViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-    let repository: GoogleMapsRepository
     
     private let key$: BehaviorSubject<String>
     private let language$: BehaviorSubject<String>
@@ -65,7 +65,6 @@ final class SearchPlaceViewModel: ViewModelType {
     
     init(dependency: Dependency) {
         self.dependency = dependency
-        self.repository = DefaultGoogleMapsRepository()
         
         // Streams
         let key$ = BehaviorSubject<String>(value: dependency.key)
@@ -155,8 +154,8 @@ final class SearchPlaceViewModel: ViewModelType {
         
         let result = Observable
             .merge(
-                startForNew.map(repository.fetchMapPage),
-                startForExtra.map(repository.fetchNextMapPage)
+                startForNew.map(dependency.googleMapsRepository.fetchMapPage),
+                startForExtra.map(dependency.googleMapsRepository.fetchNextMapPage)
             )
             .observe(on:MainScheduler.asyncInstance)
             .flatMap { $0 }

@@ -25,20 +25,10 @@ final class HangoutMakeViewModel: ViewModelType {
     }
     
     struct Dependency {
+        let googleMapImageRepository: GoogleMapImageRepository
         var currentUser: BappyUser
-        var numOfPage: Int
-        var key: String
-        var categoryDependency: HangoutMakeCategoryViewModel.Dependency
-        var titleDependency: HangoutMakeTitleViewModel.Dependency
-        var timeDependency: HangoutMakeTimeViewModel.Dependency
-        var placeDependency: HangoutMakePlaceViewModel.Dependency
-        var pictureDependency: HangoutMakePictureViewModel.Dependency
-        var planDependency: HangoutMakePlanViewModel.Dependency
-        var languageDependency: HangoutMakeLanguageViewModel.Dependency
-        var openchatDependency: HangoutMakeOpenchatViewModel.Dependency
-        var limitDependency: HangoutMakeLimitViewModel.Dependency
-        var searchPlaceDependency: SearchPlaceViewModel.Dependency
-        var selectLanguageDependecy: SelectLanguageViewModel.Dependency
+        var numOfPage: Int { 9 }
+        var key: String { Bundle.main.googleMapAPIKey }
     }
     
     struct Input {
@@ -89,7 +79,6 @@ final class HangoutMakeViewModel: ViewModelType {
     let input: Input
     let output: Output
     let subViewModels: SubViewModels
-    let repository: GoogleMapImageRepository
     
     private let page$ = BehaviorSubject<Int>(value: 0)
     private let currentUser$: BehaviorSubject<BappyUser>
@@ -127,18 +116,17 @@ final class HangoutMakeViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            categoryViewModel: HangoutMakeCategoryViewModel(dependency: dependency.categoryDependency),
-            titleViewModel: HangoutMakeTitleViewModel(dependency: dependency.titleDependency),
-            timeViewModel: HangoutMakeTimeViewModel(dependency: dependency.timeDependency),
-            placeViewModel: HangoutMakePlaceViewModel(dependency: dependency.placeDependency),
-            pictureViewModel: HangoutMakePictureViewModel(dependency: dependency.pictureDependency),
-            planViewModel: HangoutMakePlanViewModel(dependency: dependency.planDependency),
-            languageViewModel: HangoutMakeLanguageViewModel(dependency: dependency.languageDependency),
-            openchatViewModel: HangoutMakeOpenchatViewModel(dependency: dependency.openchatDependency),
-            limitViewModel: HangoutMakeLimitViewModel(dependency: dependency.limitDependency),
+            categoryViewModel: HangoutMakeCategoryViewModel(),
+            titleViewModel: HangoutMakeTitleViewModel(),
+            timeViewModel: HangoutMakeTimeViewModel(),
+            placeViewModel: HangoutMakePlaceViewModel(),
+            pictureViewModel: HangoutMakePictureViewModel(),
+            planViewModel: HangoutMakePlanViewModel(),
+            languageViewModel: HangoutMakeLanguageViewModel(),
+            openchatViewModel: HangoutMakeOpenchatViewModel(),
+            limitViewModel: HangoutMakeLimitViewModel(),
             continueButtonViewModel: ContinueButtonViewModel()
         )
-        self.repository = DefaultGoogleMapImageRepository()
         
         // Streams
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
@@ -276,7 +264,7 @@ final class HangoutMakeViewModel: ViewModelType {
                 Observable.combineLatest(key$, place$.compactMap { $0 })
             ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
             .do { [weak self] _ in self?.showLoader$.onNext(Void()) }
-            .map(repository.fetchMapImage)
+            .map(dependency.googleMapImageRepository.fetchMapImage)
             .do { [weak self] _ in self?.dismissLoader$.onNext(Void()) }
             .flatMap { $0 }
             .share()
@@ -352,7 +340,8 @@ final class HangoutMakeViewModel: ViewModelType {
         
         subViewModels.placeViewModel.output.showSearchPlaceView
             .map { _ -> SearchPlaceViewModel in
-                let dependency = dependency.searchPlaceDependency
+                let dependency = SearchPlaceViewModel.Dependency(
+                    googleMapsRepository: DefaultGoogleMapsRepository())
                 let viewModel = SearchPlaceViewModel(dependency: dependency)
                 viewModel.delegate = self
                 return viewModel
@@ -399,8 +388,7 @@ final class HangoutMakeViewModel: ViewModelType {
         
         subViewModels.languageViewModel.output.showSelectLanguageView
             .map { _ -> SelectLanguageViewModel in
-                let dependency = dependency.selectLanguageDependecy
-                let viewModel = SelectLanguageViewModel(dependency: dependency)
+                let viewModel = SelectLanguageViewModel()
                 viewModel.delegate = self
                 return viewModel
             }

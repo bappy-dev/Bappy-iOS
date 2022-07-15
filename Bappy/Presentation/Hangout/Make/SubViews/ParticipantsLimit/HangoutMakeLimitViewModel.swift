@@ -11,8 +11,8 @@ import RxCocoa
 
 final class HangoutMakeLimitViewModel: ViewModelType {
     struct Dependency {
-        var minimumNumber: Int
-        var maximumNumber: Int
+        var minimumNumber: Int { 4 }
+        var maximumNumber: Int { 10 }
     }
     
     struct Input {
@@ -40,7 +40,7 @@ final class HangoutMakeLimitViewModel: ViewModelType {
     private let minusButtonTapped$ = PublishSubject<Void>()
     private let plusButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

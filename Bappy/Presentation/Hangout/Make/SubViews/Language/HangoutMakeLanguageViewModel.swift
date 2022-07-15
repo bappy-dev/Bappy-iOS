@@ -10,17 +10,15 @@ import RxSwift
 import RxCocoa
 
 final class HangoutMakeLanguageViewModel: ViewModelType {
-    struct Dependency {
-        var language: Language
-    }
+    struct Dependency {}
     
     struct Input {
-        var language: AnyObserver<Language> // <-> Parent
+        var language: AnyObserver<Language?> // <-> Parent
         var editingDidBegin: AnyObserver<Void> // <-> View
     }
     
     struct Output {
-        var text: Signal<String> // <-> View
+        var text: Signal<String?> // <-> View
         var dismissKeyboard: Signal<Void> // <-> View
         var showSelectLanguageView: Signal<Void> // <-> Parent
         var isValid: Signal<Bool> // <-> Parent
@@ -31,20 +29,20 @@ final class HangoutMakeLanguageViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let language$ = PublishSubject<Language>()
+    private let language$ = PublishSubject<Language?>()
     private let editingDidBegin$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams
         let text = language$
-            .asSignal(onErrorJustReturn: dependency.language)
+            .asSignal(onErrorJustReturn: nil)
         let dismissKeyboard = editingDidBegin$
             .asSignal(onErrorJustReturn: Void())
         let showSelectLanguageView = dismissKeyboard
         let isValid = language$
-            .map { !$0.isEmpty }
+            .map { $0 != nil }
             .asSignal(onErrorJustReturn: false)
         
         // Input & Output

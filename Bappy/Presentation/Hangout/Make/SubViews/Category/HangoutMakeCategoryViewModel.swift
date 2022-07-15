@@ -69,7 +69,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
     private let isLanguageButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isCraftingButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

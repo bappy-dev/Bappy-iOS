@@ -11,8 +11,8 @@ import RxCocoa
 
 final class HangoutMakePlanViewModel: ViewModelType {
     struct Dependency {
-        var minimumLength: Int
-        var maximumLength: Int
+        var minimumLength: Int { 14 }
+        var maximumLength: Int { 200 }
     }
     
     struct Input {
@@ -45,7 +45,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
     private let minimumLength$: BehaviorSubject<Int>
     private let maximumLength$: BehaviorSubject<Int>
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

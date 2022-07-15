@@ -17,9 +17,11 @@ final class HangoutMakeTimeViewModel: ViewModelType {
     }
     
     struct Dependency {
-        var minimumDate: Date
-        var dateFormat: String
-        var timeFormat: String
+        var minimumDate: Date {
+            (Date() + 60 * 60).roundUpUnitDigitOfMinutes()
+        }
+        var dateFormat: String { "M.d (E)" }
+        var timeFormat: String { "a h:mm" }
         var calendarText: String {
             minimumDate.toString(dateFormat: dateFormat)
         }
@@ -71,7 +73,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
     private let calendarText$: BehaviorSubject<String>
     private let timeText$: BehaviorSubject<String>
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
             calendarPickerViewModel: HangoutMakeCalendarPickerViewModel(
