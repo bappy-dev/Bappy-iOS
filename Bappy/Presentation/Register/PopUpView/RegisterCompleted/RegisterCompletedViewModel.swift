@@ -24,7 +24,7 @@ final class RegisterCompletedViewModel: ViewModelType {
     
     struct Output {
         var switchToMainView: Signal<BappyTabBarViewModel?>
-        var moveToEditProfileView: Signal<(tabBarViewModel: BappyTabBarViewModel, editViewModel: ProfileEditViewModel)?>
+        var moveToEditProfileView: Signal<EditViewModels?>
     }
     
     let dependency: Dependency

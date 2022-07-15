@@ -63,6 +63,7 @@ final class HangoutMainSectionView: UIView {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Medium)
         label.textColor = .bappyBrown
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -149,6 +150,7 @@ final class HangoutMainSectionView: UIView {
         placeLabel.snp.makeConstraints {
             $0.centerY.equalTo(placeImageView)
             $0.leading.equalTo(languageLabel)
+            $0.trailing.lessThanOrEqualToSuperview().inset(20.0)
         }
 
         self.addSubview(openchatButton)

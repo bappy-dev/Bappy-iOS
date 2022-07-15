@@ -109,7 +109,7 @@ final class HangoutMakeCategoryView: UIView {
         vStackView.snp.makeConstraints {
             $0.top.equalTo(categoryCaptionLabel.snp.bottom).offset(60.0)
             $0.leading.trailing.equalToSuperview().inset(39.0)
-            $0.height.equalTo(39.0 * 4 + 12.0 * 2)
+            $0.height.equalTo(39.0 * 4 + 12.0 * 3)
         }
         
         volunteerButton.snp.makeConstraints { $0.width.equalToSuperview().dividedBy(2.5) }

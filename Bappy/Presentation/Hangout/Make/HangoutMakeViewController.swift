@@ -252,11 +252,12 @@ extension HangoutMakeViewController {
         
         viewModel.output.popView
             .emit(onNext: { [weak self] in
-                self?.dismiss(animated: true)
+                self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
         
         viewModel.output.showSearchPlaceView
+            .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let viewController = SearchPlaceViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
@@ -286,6 +287,7 @@ extension HangoutMakeViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showSelectLanguageView
+            .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let viewController = SelectLanguageViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
@@ -293,9 +295,17 @@ extension HangoutMakeViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.show)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissLoader
+            .emit(to: ProgressHUD.rx.dismiss)
+            .disposed(by: disposeBag)
+        
         viewModel.output.showHangoutPreview
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = HangoutDetailViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })

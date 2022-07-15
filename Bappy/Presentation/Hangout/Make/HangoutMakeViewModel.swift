@@ -42,10 +42,10 @@ final class HangoutMakeViewModel: ViewModelType {
     }
     
     struct Input {
-        var continueButtonTapped: AnyObserver<Void>
-        var backButtonTapped: AnyObserver<Void>
-        var viewDidAppear: AnyObserver<Bool>
-        var keyboardWithButtonHeight: AnyObserver<CGFloat>
+        var continueButtonTapped: AnyObserver<Void> // <-> Child
+        var backButtonTapped: AnyObserver<Void> // <-> View
+        var viewDidAppear: AnyObserver<Bool> // <-> View
+        var keyboardWithButtonHeight: AnyObserver<CGFloat> // <-> View
         var categories: AnyObserver<[Hangout.Category]?>
         var title: AnyObserver<String?>
         var date: AnyObserver<Date?>
@@ -64,24 +64,24 @@ final class HangoutMakeViewModel: ViewModelType {
         var isLanguageValid: AnyObserver<Bool>
         var isOpenchatValid: AnyObserver<Bool>
         var isLimitValid: AnyObserver<Bool>
-        var showSearchPlaceView: AnyObserver<SearchPlaceViewModel>
-        var showSelectLanguageView: AnyObserver<SelectLanguageViewModel>
+        var showSearchPlaceView: AnyObserver<SearchPlaceViewModel?>
+        var showSelectLanguageView: AnyObserver<SelectLanguageViewModel?>
     }
     
     struct Output {
-        var shouldKeyboardHide: Signal<Void>
-        var pageContentOffset: Driver<CGPoint>
-        var progression: Driver<CGFloat>
-        var initProgression: Signal<CGFloat>
-        var popView: Signal<Void>
-        var isContinueButtonEnabled: Signal<Bool>
-        var keyboardWithButtonHeight: Signal<CGFloat>
-        var showSearchPlaceView: Signal<SearchPlaceViewModel>
-        var showImagePicker: Signal<Void>
-        var showSelectLanguageView: Signal<SelectLanguageViewModel>
+        var shouldKeyboardHide: Signal<Void> // <-> View
+        var pageContentOffset: Driver<CGPoint> // <-> View
+        var progression: Driver<CGFloat> // <-> View
+        var initProgression: Signal<CGFloat> // <-> View
+        var popView: Signal<Void> // <-> View
+        var isContinueButtonEnabled: Signal<Bool> // <-> Child(Continue)
+        var keyboardWithButtonHeight: Signal<CGFloat> // <-> Child
+        var showSearchPlaceView: Signal<SearchPlaceViewModel?> // <-> View
+        var showImagePicker: Signal<Void> // <-> View
+        var showSelectLanguageView: Signal<SelectLanguageViewModel?> // <-> View
         var showLoader: Signal<Void>
         var dismissLoader: Signal<Void>
-        var showHangoutPreview: Observable<HangoutDetailViewModel>
+        var showHangoutPreview: Signal<HangoutDetailViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -117,11 +117,12 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
     private let isLimitValid$ = BehaviorSubject<Bool>(value: true)
-    private let showSearchPlaceView$ = PublishSubject<SearchPlaceViewModel>()
+    private let showSearchPlaceView$ = PublishSubject<SearchPlaceViewModel?>()
     private let showImagePicker$ = PublishSubject<Void>()
-    private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel>()
+    private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel?>()
     private let showLoader$ = PublishSubject<Void>()
     private let dismissLoader$ = PublishSubject<Void>()
+    private let showHangoutPreview$ = PublishSubject<HangoutDetailViewModel?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -184,64 +185,17 @@ final class HangoutMakeViewModel: ViewModelType {
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         let showSearchPlaceView = showSearchPlaceView$
-            .asSignal(onErrorJustReturn: SearchPlaceViewModel(dependency: dependency.searchPlaceDependency))
+            .asSignal(onErrorJustReturn: nil)
         let showImagePicker = showImagePicker$
             .asSignal(onErrorJustReturn: Void())
         let showSelectLanguageView = showSelectLanguageView$
-            .asSignal(onErrorJustReturn: SelectLanguageViewModel(dependency: dependency.selectLanguageDependecy))
+            .asSignal(onErrorJustReturn: nil)
         let showLoader = showLoader$
             .asSignal(onErrorJustReturn: Void())
         let dismissLoader = dismissLoader$
             .asSignal(onErrorJustReturn: Void())
-        let hangout = Observable
-            .combineLatest(
-                Observable.combineLatest(
-                    categories$.compactMap { $0 },
-                    title$.compactMap { $0 },
-                    date$.compactMap { $0 },
-                    place$.compactMap { $0 },
-                    picture$.compactMap { $0 }
-                ),
-                Observable.combineLatest(
-                    plan$.compactMap { $0 },
-                    language$.compactMap { $0 },
-                    openchat$.compactMap { $0 },
-                    limit$.compactMap { $0 }
-                )
-            )
-            .map {
-                Hangout(
-                    id: "preview", state: .preview, title: $0.1,
-                    meetTime: $0.2.toString(dateFormat: "dd. MMM. HH:mm"), language: $1.1, placeID: $0.3.id, placeName: $0.3.name, plan: $1.0, limitNumber: $1.3, coordinates: $0.3.coordinates, postImageURL: nil, openchatURL: URL(string: $1.2), mapImageURL: nil, participantIDs: [.init(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL)], userHasLiked: false)
-            }
-            .share()
-        
-        let result = continueButtonTapped$
-            .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
-            .filter { $0.0 + 1 == $0.1 }
-            .withLatestFrom(
-                Observable.combineLatest(key$, place$.compactMap { $0 })
-            ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
-            .map(repository.fetchMapImage)
-            .flatMap { $0 }
-            .share()
-        
-        let value = result
-            .compactMap(getValue)
-            .share()
-        
-        let error = result
-            .compactMap(getError)
-        
-        error
-            .bind(onNext: { print("ERROR: \($0)")})
-            .disposed(by: disposeBag)
-        
-        let showHangoutPreview = value
-            .withLatestFrom(Observable.combineLatest(
-                currentUser$, hangout, picture$.compactMap { $0 }
-            )) { ($1.0, $1.1, $1.2, $0) }
-            .map(getHangoutDetailViewModel)
+        let showHangoutPreview = showHangoutPreview$
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(
@@ -291,6 +245,60 @@ final class HangoutMakeViewModel: ViewModelType {
         self.currentUser$ = currentUser$
         self.numOfPage$ = numOfPage$
         self.key$ = key$
+        
+        let hangout = Observable
+            .combineLatest(
+                Observable.combineLatest(
+                    categories$.compactMap { $0 },
+                    title$.compactMap { $0 },
+                    date$.compactMap { $0 },
+                    place$.compactMap { $0 },
+                    picture$.compactMap { $0 }
+                ),
+                Observable.combineLatest(
+                    plan$.compactMap { $0 },
+                    language$.compactMap { $0 },
+                    openchat$.compactMap { $0 },
+                    limit$.compactMap { $0 }
+                )
+            )
+            .map {
+                Hangout(
+                    id: "preview", state: .preview, title: $0.1,
+                    meetTime: $0.2.toString(dateFormat: "dd. MMM. HH:mm"), language: $1.1, placeID: $0.3.id, placeName: $0.3.name, plan: $1.0, limitNumber: $1.3, coordinates: $0.3.coordinates, postImageURL: nil, openchatURL: URL(string: $1.2), mapImageURL: nil, participantIDs: [.init(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL)], userHasLiked: false)
+            }
+            .share()
+        
+        let result = continueButtonTapped$
+            .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
+            .filter { $0.0 + 1 == $0.1 }
+            .withLatestFrom(
+                Observable.combineLatest(key$, place$.compactMap { $0 })
+            ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
+            .do { [weak self] _ in self?.showLoader$.onNext(Void()) }
+            .map(repository.fetchMapImage)
+            .do { [weak self] _ in self?.dismissLoader$.onNext(Void()) }
+            .flatMap { $0 }
+            .share()
+        
+        let value = result
+            .compactMap(getValue)
+            .share()
+        
+        let error = result
+            .compactMap(getError)
+        
+        error
+            .bind(onNext: { print("ERROR: \($0)")})
+            .disposed(by: disposeBag)
+        
+        value
+            .withLatestFrom(Observable.combineLatest(
+                currentUser$, hangout, picture$.compactMap { $0 }
+            )) { ($1.0, $1.1, $1.2, $0) }
+            .map(getHangoutDetailViewModel)
+            .bind(to: showHangoutPreview$)
+            .disposed(by: disposeBag)
         
         continueButtonTappedWithPage
             .filter { $0.0 + 1 < $0.1 }

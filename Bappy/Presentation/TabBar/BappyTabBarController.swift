@@ -74,10 +74,7 @@ final class BappyTabBarController: UITabBarController {
     
     private func showWriteView(viewModel: HangoutMakeViewModel) {
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)
-        let viewController = UINavigationController(rootViewController: rootViewController)
-        viewController.modalPresentationStyle = .fullScreen
-        viewController.navigationBar.isHidden = true
-        present(viewController, animated: true)
+        self.navigationController?.pushViewController(rootViewController, animated: true)
     }
     
     private func configureViewController(homeListViewModel: HomeListViewModel, profileViewModel: ProfileViewModel) {
