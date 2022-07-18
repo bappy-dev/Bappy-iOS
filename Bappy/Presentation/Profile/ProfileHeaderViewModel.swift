@@ -26,6 +26,7 @@ final class ProfileHeaderViewModel: ViewModelType {
     }
     
     struct Input {
+        var user: AnyObserver<BappyUser> // <-> Parent
         var moreButtonTapped: AnyObserver<Void> // <-> View
         var selectedIndex: AnyObserver<Int> // <-> Child
     }
@@ -89,6 +90,7 @@ final class ProfileHeaderViewModel: ViewModelType {
         
         // Input & Output
         self.input = Input(
+            user: user$.asObserver(),
             moreButtonTapped: moreButtonTapped$.asObserver(),
             selectedIndex: selectedIndex$.asObserver()
         )
@@ -104,6 +106,10 @@ final class ProfileHeaderViewModel: ViewModelType {
         
         // Bindind
         self.user$ = user$
+        
+        user$
+            .bind(to: subViewModels.buttonSectionViewModel.input.user)
+            .disposed(by: disposeBag)
         
         subViewModels.buttonSectionViewModel.output.selectedIndex
             .distinctUntilChanged()

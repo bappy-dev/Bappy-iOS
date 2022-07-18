@@ -13,6 +13,7 @@ final class ProfileDetailViewModel: ViewModelType {
     
     struct Dependency {
         let user: BappyUser
+        let authorization: ProfileAuthorization
         let bappyAuthRepository: BappyAuthRepository
     }
     
@@ -32,8 +33,8 @@ final class ProfileDetailViewModel: ViewModelType {
     
     struct Output {
         var popView: Signal<Void> // <-> View
-        var hideEditButton: Signal<Bool> // <-> View
-        var showEditView: PublishSubject<ProfileEditViewModel> // <-> View
+        var hideEditButton: Driver<Bool> // <-> View
+        var showEditView: Signal<ProfileEditViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -43,11 +44,11 @@ final class ProfileDetailViewModel: ViewModelType {
     let subViewModels: SubViewModels
     
     private let user$: BehaviorSubject<BappyUser>
-    private let currentUser$: BehaviorSubject<BappyUser?>
+    private let authorization$: BehaviorSubject<ProfileAuthorization>
     
     private let backButtonTapped$ = PublishSubject<Void>()
     private let editButtonTapped$ = PublishSubject<Void>()
-    private let showEditView$ = PublishSubject<ProfileEditViewModel>()
+    private let showEditView$ = PublishSubject<ProfileEditViewModel?>()
   
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -68,16 +69,16 @@ final class ProfileDetailViewModel: ViewModelType {
         
         // Streams
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
-        let currentUser$ = dependency.bappyAuthRepository.currentUser
+        let authorization$ = BehaviorSubject<ProfileAuthorization>(value: dependency.authorization)
         
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
-        let hideEditButton = Observable
-            .combineLatest(user$, currentUser$.compactMap { $0 })
-            .map { $0.0 != $0.1 }
-            .startWith(true)
-            .asSignal(onErrorJustReturn: true)
-        
+        let hideEditButton = authorization$
+            .map { $0 == .view }
+            .asDriver(onErrorJustReturn: true)
+        let showEditView = showEditView$
+            .asSignal(onErrorJustReturn: nil)
+            
         // Input & Output
         self.input = Input(
             backButtonTapped: backButtonTapped$.asObserver(),
@@ -87,12 +88,12 @@ final class ProfileDetailViewModel: ViewModelType {
         self.output = Output(
             popView: popView,
             hideEditButton: hideEditButton,
-            showEditView: showEditView$
+            showEditView: showEditView
         )
         
         // Bindind
         self.user$ = user$
-        self.currentUser$ = currentUser$
+        self.authorization$ = authorization$
         
         editButtonTapped$
             .map { _ -> ProfileEditViewModel in

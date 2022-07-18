@@ -157,12 +157,12 @@ extension ProfileDetailViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.hideEditButton
-            .emit(to: editButton.rx.isHidden)
+            .drive(editButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         viewModel.output.showEditView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = ProfileEditViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .fullScreen
                 self?.navigationController?.pushViewController(viewController, animated: true)

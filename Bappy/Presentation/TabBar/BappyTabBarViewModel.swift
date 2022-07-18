@@ -68,6 +68,7 @@ final class BappyTabBarViewModel: ViewModelType {
             ),
             profileViewModel: ProfileViewModel(dependency: .init(
                 user: dependency.user,
+                authorization: .edit,
                 bappyAuthRepository: dependency.bappyAuthRepository)
             )
         )

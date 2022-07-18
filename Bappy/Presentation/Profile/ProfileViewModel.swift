@@ -9,10 +9,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+enum ProfileAuthorization { case view, edit }
+
 final class ProfileViewModel: ViewModelType {
     
     struct Dependency {
         let user: BappyUser
+        let authorization: ProfileAuthorization
         let bappyAuthRepository: BappyAuthRepository
     }
     
@@ -31,8 +34,8 @@ final class ProfileViewModel: ViewModelType {
         var scrollToTop: Signal<Void> // <-> View
         var hideSettingButton: Signal<Bool> // <-> View
         var hangouts: Driver<[Hangout]> // <-> View
-        var showSettingView: PublishSubject<ProfileSettingViewModel> // <-> View
-        var showDetailView: PublishSubject<ProfileDetailViewModel> // <-> View
+        var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
+        var showDetailView: Signal<ProfileDetailViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -42,7 +45,7 @@ final class ProfileViewModel: ViewModelType {
     let subViewModels: SubViewModels
     
     private let user$: BehaviorSubject<BappyUser>
-    private let currentUser$: BehaviorSubject<BappyUser?>
+    private let authorization$: BehaviorSubject<ProfileAuthorization>
     private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
@@ -50,8 +53,8 @@ final class ProfileViewModel: ViewModelType {
     private let settingButtonTapped$ = PublishSubject<Void>()
     private let moreButtonTapped$ = PublishSubject<Void>()
     
-    private let showSettingView$ = PublishSubject<ProfileSettingViewModel>()
-    private let showDetailView$ = PublishSubject<ProfileDetailViewModel>()
+    private let showSettingView$ = PublishSubject<ProfileSettingViewModel?>()
+    private let showDetailView$ = PublishSubject<ProfileDetailViewModel?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -66,17 +69,19 @@ final class ProfileViewModel: ViewModelType {
         
         // Streams
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
-        let currentUser$ = dependency.bappyAuthRepository.currentUser
+        let authorization$ = BehaviorSubject<ProfileAuthorization>(value: dependency.authorization)
         
         let scrollToTop = scrollToTop$
             .asSignal(onErrorJustReturn: Void())
-        let hideSettingButton = Observable
-            .combineLatest(user$, currentUser$.compactMap { $0 })
-            .map { $0.0 != $0.1 }
-            .startWith(true)
+        let hideSettingButton = authorization$
+            .map { $0 == .view }
             .asSignal(onErrorJustReturn: true)
         let hangouts = hangouts$
             .asDriver(onErrorJustReturn: [])
+        let showSettingView = showSettingView$
+            .asSignal(onErrorJustReturn: nil)
+        let showDetailView = showDetailView$
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(
@@ -90,13 +95,13 @@ final class ProfileViewModel: ViewModelType {
             scrollToTop: scrollToTop,
             hideSettingButton: hideSettingButton,
             hangouts: hangouts,
-            showSettingView: showSettingView$,
-            showDetailView: showDetailView$
+            showSettingView: showSettingView,
+            showDetailView: showDetailView
         )
         
         // Bindind
         self.user$ = user$
-        self.currentUser$ = currentUser$
+        self.authorization$ = authorization$
         
         settingButtonTapped$
             .map { _ -> ProfileSettingViewModel in
@@ -108,9 +113,11 @@ final class ProfileViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         moreButtonTapped$
-            .map { _ -> ProfileDetailViewModel in
+            .withLatestFrom(user$)
+            .map { user -> ProfileDetailViewModel in
                 let dependency = ProfileDetailViewModel.Dependency(
-                    user: dependency.user,
+                    user: user,
+                    authorization: dependency.authorization,
                     bappyAuthRepository: dependency.bappyAuthRepository)
                 return ProfileDetailViewModel(dependency: dependency)
             }
@@ -118,6 +125,10 @@ final class ProfileViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // Child(HeaderView)
+        user$
+            .bind(to: subViewModels.headerViewModel.input.user)
+            .disposed(by: disposeBag)
+        
         subViewModels.headerViewModel.output.moreButtonTapped
             .emit(to: moreButtonTapped$)
             .disposed(by: disposeBag)

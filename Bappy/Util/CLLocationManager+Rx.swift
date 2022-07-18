@@ -149,26 +149,26 @@ extension Reactive where Base: CLLocationManager {
     /**
     Reactive wrapper for `delegate` message.
     */
-    public var didRangeBeaconsInRegion: Observable<(beacons: [CLBeacon], region: CLBeaconRegion)> {
-        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:didRangeBeacons:in:)))
-            .map { a in
-                let beacons = try castOrThrow([CLBeacon].self, a[1])
-                let region = try castOrThrow(CLBeaconRegion.self, a[2])
-                return (beacons: beacons, region: region)
-            }
-    }
+//    public var didRangeBeaconsInRegion: Observable<(beacons: [CLBeacon], region: CLBeaconRegion)> {
+//        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:didRangeBeacons:in:)))
+//            .map { a in
+//                let beacons = try castOrThrow([CLBeacon].self, a[1])
+//                let region = try castOrThrow(CLBeaconRegion.self, a[2])
+//                return (beacons: beacons, region: region)
+//            }
+//    }
 
     /**
     Reactive wrapper for `delegate` message.
     */
-    public var rangingBeaconsDidFailForRegionWithError: Observable<(region: CLBeaconRegion, error: Error)> {
-        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:rangingBeaconsDidFailFor:withError:)))
-            .map { a in
-                let region = try castOrThrow(CLBeaconRegion.self, a[1])
-                let error = try castOrThrow(Error.self, a[2])
-                return (region: region, error: error)
-            }
-    }
+//    public var rangingBeaconsDidFailForRegionWithError: Observable<(region: CLBeaconRegion, error: Error)> {
+//        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:rangingBeaconsDidFailFor:withError:)))
+//            .map { a in
+//                let region = try castOrThrow(CLBeaconRegion.self, a[1])
+//                let error = try castOrThrow(Error.self, a[2])
+//                return (region: region, error: error)
+//            }
+//    }
 
     // MARK: Responding to Visit Events
     /**
@@ -189,11 +189,16 @@ extension Reactive where Base: CLLocationManager {
     Reactive wrapper for `delegate` message.
     */
     public var didChangeAuthorizationStatus: Observable<CLAuthorizationStatus> {
-        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:didChangeAuthorization:)))
+        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManagerDidChangeAuthorization(_:)))
             .map { a in
-                let number = try castOrThrow(NSNumber.self, a[1])
-                return CLAuthorizationStatus(rawValue: Int32(number.intValue)) ?? .notDetermined
+                let manager = try castOrThrow(CLLocationManager.self, a[0])
+                return manager.authorizationStatus
             }
+//        return delegate.methodInvoked(#selector(CLLocationManagerDelegate.locationManager(_:didChangeAuthorization:)))
+//            .map { a in
+//                let number = try castOrThrow(NSNumber.self, a[1])
+//                return CLAuthorizationStatus(rawValue: Int32(number.intValue)) ?? .notDetermined
+//            }
     }
 }
 

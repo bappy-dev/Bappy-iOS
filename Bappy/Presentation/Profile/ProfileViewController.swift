@@ -127,8 +127,8 @@ extension ProfileViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showSettingView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = ProfileSettingViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .fullScreen
                 viewController.hidesBottomBarWhenPushed = true
@@ -137,8 +137,8 @@ extension ProfileViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showDetailView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = ProfileDetailViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .fullScreen
                 viewController.hidesBottomBarWhenPushed = true

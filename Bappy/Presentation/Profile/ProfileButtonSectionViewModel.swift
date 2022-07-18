@@ -17,6 +17,7 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     }
     
     struct Input {
+        var user: AnyObserver<BappyUser> // <-> Parent
         var joinedButtonTapped: AnyObserver<Void> // <-> View
         var madeButtonTapped: AnyObserver<Void> // <-> View
         var likedButtonTapped: AnyObserver<Void> // <-> View
@@ -34,34 +35,40 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     let input: Input
     let output: Output
     
+    private let user$: BehaviorSubject<BappyUser>
     private let joinedButtonTapped$ = PublishSubject<Void>()
     private let madeButtonTapped$ = PublishSubject<Void>()
     private let likedButtonTapped$ = PublishSubject<Void>()
-    
-    private let numOfJoined$: BehaviorSubject<String>
-    private let numOfMade$: BehaviorSubject<String>
-    private let numOfLiked$: BehaviorSubject<String>
+
     private let selectedIndex$ = BehaviorSubject<Int>(value: 0)
   
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // Streams
-        let numOfJoined$ = BehaviorSubject<String>(value: "\(dependency.user.numOfJoinedHangouts ?? 0)")
-        let numOfMade$ = BehaviorSubject<String>(value: "\(dependency.user.numOfMadeHangouts ?? 0)")
-        let numOfLiked$ = BehaviorSubject<String>(value: "\(dependency.user.numOfLikedHangouts ?? 0)")
+        let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         
-        let numOfJoined = numOfJoined$
+        let numOfJoined = user$
+            .map(\.numOfJoinedHangouts)
+            .map { $0 ?? 0 }
+            .map(String.init)
             .asDriver(onErrorJustReturn: "0")
-        let numOfMade = numOfMade$
+        let numOfMade = user$
+            .map(\.numOfMadeHangouts)
+            .map { $0 ?? 0 }
+            .map(String.init)
             .asDriver(onErrorJustReturn: "0")
-        let numOfLiked = numOfLiked$
+        let numOfLiked = user$
+            .map(\.numOfLikedHangouts)
+            .map { $0 ?? 0 }
+            .map(String.init)
             .asDriver(onErrorJustReturn: "0")
         let selectedIndex = selectedIndex$
             .asDriver(onErrorJustReturn: 0)
         
         // Input & Output
         self.input = Input(
+            user: user$.asObserver(),
             joinedButtonTapped: joinedButtonTapped$.asObserver(),
             madeButtonTapped: madeButtonTapped$.asObserver(),
             likedButtonTapped: likedButtonTapped$.asObserver()
@@ -75,9 +82,7 @@ final class ProfileButtonSectionViewModel: ViewModelType {
         )
         
         // Bindind
-        self.numOfJoined$ = numOfJoined$
-        self.numOfMade$ = numOfMade$
-        self.numOfLiked$ = numOfLiked$
+        self.user$ = user$
         
         Observable
             .merge(
