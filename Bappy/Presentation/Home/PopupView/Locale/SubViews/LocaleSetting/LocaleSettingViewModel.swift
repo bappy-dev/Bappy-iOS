@@ -64,7 +64,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         // Streams
         let user$ = dependency.bappyAuthRepository.currentUser
-        let authorization$ = dependency.locationRepsitory.status
+        let authorization$ = dependency.locationRepsitory.authorization
         let userGPSWithAuthorization$ = BehaviorSubject<(gps: Bool, authorization: CLAuthorizationStatus)>(value: (gps: false, authorization: .notDetermined))
         
         let closeButtonTapped = closeButtonTapped$

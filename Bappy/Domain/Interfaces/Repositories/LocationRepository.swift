@@ -12,7 +12,7 @@ import CoreLocation
 protocol LocationRepository {
     static var shared: Self { get }
     var location: BehaviorSubject<CLLocationCoordinate2D?> { get }
-    var status: BehaviorSubject<CLAuthorizationStatus> { get }
+    var authorization: BehaviorSubject<CLAuthorizationStatus> { get }
     func requestAuthorization() -> Observable<CLAuthorizationStatus>
     func turnGPSSetting(to setting: Bool)
 }

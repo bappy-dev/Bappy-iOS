@@ -138,7 +138,7 @@ final class HomeListViewModel: ViewModelType {
         // User의 저장된 GPS가 true이고, 위치권한이 있을 때 실시간 위치정보 사용
         currentUser$
             .compactMap(\.?.isUserUsingGPS)
-            .withLatestFrom(dependency.locationRepository.status) { $0 && $1 == .authorizedWhenInUse }
+            .withLatestFrom(dependency.locationRepository.authorization) { $0 && $1 == .authorizedWhenInUse }
             .bind(onNext: dependency.locationRepository.turnGPSSetting)
             .disposed(by: disposeBag)
         
