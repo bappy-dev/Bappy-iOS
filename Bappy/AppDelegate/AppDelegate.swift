@@ -28,10 +28,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         let authOptions: UNAuthorizationOptions = [.alert, .sound]
         
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { _, _ in }
-        UNUserNotificationCenter.current().getNotificationSettings { setting in
-            print("DEBUG: authorization \(setting.authorizationStatus)")
-        }
+        DefaultNotificationRepository.shared.requestAuthorization(options: authOptions)
+//        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { _, _ in }
+//        UNUserNotificationCenter.current().getNotificationSettings { setting in
+//            print("DEBUG: authorization \(setting.authorizationStatus)")
+//        }
         application.registerForRemoteNotifications()
         return true
     }

@@ -29,6 +29,16 @@ final class HangoutDetailViewController: UIViewController {
     
     private let hangoutButton = HangoutButton()
     
+    private let reportButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "detail_report"), for: .normal)
+        button.setBappyTitle(
+            title: "    I want to report this hangout",
+            font: .roboto(size: 16.0, family: .Medium),
+            hasUnderline: true)
+        return button
+    }()
+    
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
@@ -139,7 +149,14 @@ final class HangoutDetailViewController: UIViewController {
         hangoutButton.snp.makeConstraints {
             $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(61.0)
+        }
+        
+        contentView.addSubview(reportButton)
+        reportButton.snp.makeConstraints {
+            $0.top.equalTo(hangoutButton.snp.bottom).offset(18.0)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(44.0)
+            $0.bottom.equalToSuperview().inset(90.0)
         }
         
         view.addSubview(titleTopView)
@@ -166,6 +183,10 @@ extension HangoutDetailViewController {
         
         hangoutButton.rx.tap
             .bind(to: viewModel.input.hangoutButtonTapped)
+            .disposed(by: disposeBag)
+        
+        reportButton.rx.tap
+            .bind(to: viewModel.input.reportButtonTapped)
             .disposed(by: disposeBag)
         
         scrollView.rx.didScroll
@@ -197,6 +218,13 @@ extension HangoutDetailViewController {
         viewModel.output.showSigninPopupView
             .emit(onNext: { [weak self] _ in
                 self?.showSigninPopupView()
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showReportView
+            .emit(onNext: { [weak self] _ in
+                let viewController = ReportViewController()
+                self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
     }

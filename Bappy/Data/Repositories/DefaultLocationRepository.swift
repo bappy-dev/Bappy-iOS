@@ -29,10 +29,10 @@ final class DefaultLocationRepository {
             .bind(onNext: self.location$.onNext)
             .disposed(by: disposeBag)
         let authorizationStatus = locationManager.authorizationStatus
-        self.status$ = BehaviorSubject<CLAuthorizationStatus>(value: authorizationStatus)
+        self.authorization$ = BehaviorSubject<CLAuthorizationStatus>(value: authorizationStatus)
         
         locationManager.rx.didChangeAuthorizationStatus
-            .bind(to: status$)
+            .bind(to: authorization$)
             .disposed(by: disposeBag)
     }
 }

@@ -24,11 +24,13 @@ final class HangoutDetailViewModel: ViewModelType {
         var hangout: Hangout
         var postImage: UIImage?
         var mapImage: UIImage?
+        
         var isUserParticipating: Bool {
             return hangout.participantIDs
                 .map { $0.id }
                 .contains(currentUser.id)
         }
+        
         var hangoutButtonState: HangoutButton.State {
             switch hangout.state {
             case .preview: return .create
@@ -49,6 +51,7 @@ final class HangoutDetailViewModel: ViewModelType {
     struct Input {
         var backButtonTapped: AnyObserver<Void> // <-> View
         var hangoutButtonTapped: AnyObserver<Void> // <-> View
+        var reportButtonTapped: AnyObserver<Void> // <-> View
         var imageHeight: AnyObserver<CGFloat> // <-> View
         var mapButtonTapped: AnyObserver<Void> // <-> Child(Map)
     }
@@ -59,6 +62,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showOpenMapView: Signal<OpenMapPopupViewModel> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
         var showSigninPopupView: Signal<Void> // <-> View
+        var showReportView: Signal<Void> // <-> View
     }
     
     let dependency: Dependency
@@ -73,6 +77,7 @@ final class HangoutDetailViewModel: ViewModelType {
     
     private let backButtonTapped$ = PublishSubject<Void>()
     private let hangoutButtonTapped$ = PublishSubject<Void>()
+    private let reportButtonTapped$ = PublishSubject<Void>()
     private let imageHeight$ = PublishSubject<CGFloat>()
     private let mapButtonTapped$ = PublishSubject<Void>()
     
@@ -81,29 +86,24 @@ final class HangoutDetailViewModel: ViewModelType {
             isPreviewMode: dependency.hangout.state == .preview,
             postImageURL: dependency.hangout.postImageURL,
             postImage: dependency.postImage,
-            userHasLiked: dependency.hangout.userHasLiked
-        )
+            userHasLiked: dependency.hangout.userHasLiked)
         let mainDependency = HangoutMainSectionViewModel.Dependency(
             isUserParticipating: dependency.isUserParticipating,
             title: dependency.hangout.title,
             meetTime: dependency.hangout.meetTime,
             language: dependency.hangout.language,
             placeName: dependency.hangout.placeName,
-            openchatURL: dependency.hangout.openchatURL
-        )
+            openchatURL: dependency.hangout.openchatURL)
         let mapDependency = HangoutMapSectionViewModel.Dependency(
             isPreviewModel: dependency.hangout.state == .preview,
             placeName: dependency.hangout.placeName,
             mapImageURL: dependency.hangout.mapImageURL,
-            mapImage: dependency.mapImage
-        )
+            mapImage: dependency.mapImage)
         let planDependency = HangoutPlanSectionViewModel.Dependency(
-            plan: dependency.hangout.plan
-        )
+            plan: dependency.hangout.plan)
         let participantsDependency = HangoutParticipantsSectionViewModel.Dependency(
             limitNumber: dependency.hangout.limitNumber,
-            participantIDs: dependency.hangout.participantIDs
-        )
+            participantIDs: dependency.hangout.participantIDs)
         
         self.dependency = dependency
         self.subViewModels = SubViewModels(
@@ -143,11 +143,14 @@ final class HangoutDetailViewModel: ViewModelType {
             .filter { $0.state == .anonymous }
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
+        let showReportView = reportButtonTapped$
+            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
             backButtonTapped: backButtonTapped$.asObserver(),
             hangoutButtonTapped: hangoutButtonTapped$.asObserver(),
+            reportButtonTapped: reportButtonTapped$.asObserver(),
             imageHeight: imageHeight$.asObserver(),
             mapButtonTapped: mapButtonTapped$.asObserver()
         )
@@ -157,7 +160,8 @@ final class HangoutDetailViewModel: ViewModelType {
             imageHeight: imageHeight,
             showOpenMapView: showOpenMapView,
             hangoutButtonState: hangoutButtonState,
-            showSigninPopupView: showSigninPopupView
+            showSigninPopupView: showSigninPopupView,
+            showReportView: showReportView
         )
         
         // Bindind
