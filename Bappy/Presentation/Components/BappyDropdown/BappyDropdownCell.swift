@@ -1,5 +1,5 @@
 //
-//  ReportTypeCell.swift
+//  BappyDropdownCell.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/05/24.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ReportTypeCell: UITableViewCell {
+final class BappyDropdownCell: UITableViewCell {
     
     // MARK: Properties
     var text: String = "" {

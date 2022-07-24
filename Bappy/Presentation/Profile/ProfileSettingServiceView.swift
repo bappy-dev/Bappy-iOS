@@ -7,16 +7,14 @@
 
 import UIKit
 import SnapKit
-
-protocol ProfileSettingServiceViewDelegate: AnyObject {
-    func logoutButtonTapped()
-    func serviceButtonTapped()
-}
+import RxSwift
+import RxCocoa
 
 final class ProfileSettingServiceView: UIView {
     
     // MARK: Properites
-    weak var delegate: ProfileSettingServiceViewDelegate?
+    private let viewModel: ProfileSettingServiceViewModel
+    private let disposeBag = DisposeBag()
     
     private let serviceImageView: UIImageView = {
         let imageView = UIImageView()
@@ -33,55 +31,42 @@ final class ProfileSettingServiceView: UIView {
         return label
     }()
 
-    private lazy var serviceButton: UIButton = {
+    private let serviceButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "forward"), for: .normal)
         button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-        button.addTarget(self, action: #selector(serviceButtonHandler), for: .touchUpInside)
         return button
     }()
     
-    private lazy var deleteAccountButton: UIButton = {
+    private let deleteAccountButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBappyTitle(
             title: "Delete Account",
-            hasUnderline: true
-        )
+            hasUnderline: true)
         return button
     }()
     
-    private lazy var logoutButton: UIButton = {
+    private let logoutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBappyTitle(
             title: "Logout",
-            hasUnderline: true
-        )
-        button.addTarget(self, action: #selector(logoutButtonHandler), for: .touchUpInside)
+            hasUnderline: true)
         return button
     }()
     
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileSettingServiceViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Actions
-    @objc
-    private func logoutButtonHandler() {
-        delegate?.logoutButtonTapped()
-    }
-    
-    @objc
-    private func serviceButtonHandler() {
-        delegate?.serviceButtonTapped()
     }
     
     // MARK: Helpers
@@ -137,5 +122,22 @@ final class ProfileSettingServiceView: UIView {
             $0.height.equalTo(44.0)
             $0.bottom.equalToSuperview().inset(20.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileSettingServiceView {
+    private func bind() {
+        serviceButton.rx.tap
+            .bind(to: viewModel.input.serviceButtonTapped)
+            .disposed(by: disposeBag)
+        
+        logoutButton.rx.tap
+            .bind(to: viewModel.input.logoutButtonTapped)
+            .disposed(by: disposeBag)
+        
+        deleteAccountButton.rx.tap
+            .bind(to: viewModel.input.deleteAccountButtonTapped)
+            .disposed(by: disposeBag)
     }
 }

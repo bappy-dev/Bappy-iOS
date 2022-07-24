@@ -60,7 +60,7 @@ final class HangoutMakeViewModel: ViewModelType {
     
     struct Output {
         var shouldKeyboardHide: Signal<Void> // <-> View
-        var pageContentOffset: Driver<CGPoint> // <-> View
+        var page: Driver<Int> // <-> View
         var progression: Driver<CGFloat> // <-> View
         var initProgression: Signal<CGFloat> // <-> View
         var popView: Signal<Void> // <-> View
@@ -136,7 +136,7 @@ final class HangoutMakeViewModel: ViewModelType {
         let shouldKeyboardHide = Observable
             .merge(continueButtonTapped$, backButtonTapped$)
             .asSignal(onErrorJustReturn: Void())
-        let pageContentOffset = page$.map(getContentOffset)
+        let page = page$
             .asDriver(onErrorJustReturn: .zero)
         let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
                                                 resultSelector: getProgression)
@@ -215,7 +215,7 @@ final class HangoutMakeViewModel: ViewModelType {
         
         self.output = Output(
             shouldKeyboardHide: shouldKeyboardHide,
-            pageContentOffset: pageContentOffset,
+            page: page,
             progression: progression,
             initProgression: initProgression,
             popView: popView,
@@ -427,11 +427,6 @@ final class HangoutMakeViewModel: ViewModelType {
             .disposed(by: disposeBag)
             
     }
-}
-
-private func getContentOffset(page: Int) -> CGPoint {
-    let x = UIScreen.main.bounds.width * CGFloat(page)
-    return CGPoint(x: x, y: 0)
 }
 
 private func getProgression(currentPage: Int, numOfPage: Int) -> CGFloat {

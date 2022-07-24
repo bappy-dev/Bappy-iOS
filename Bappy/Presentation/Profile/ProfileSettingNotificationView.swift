@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ProfileSettingNotificationView: UIView {
     
     // MARK: Properites
+    private let viewModel: ProfileSettingNotificationViewModel
+    private let disposeBag = DisposeBag()
+    
     private let notificationImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -26,10 +31,9 @@ final class ProfileSettingNotificationView: UIView {
         return label
     }()
 
-    private lazy var notificationSwitch: UIButton = {
+    private let notificationSwitch: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "setting_switch_on"), for: .normal)
-//        button.addTarget(self, action: #selector(toggleSwitch), for: .touchUpInside)
         return button
     }()
 
@@ -49,10 +53,9 @@ final class ProfileSettingNotificationView: UIView {
         return label
     }()
 
-    private lazy var myHangoutSwitch: UIButton = {
+    private let myHangoutSwitch: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "setting_switch_on"), for: .normal)
-//        button.addTarget(self, action: #selector(toggleSwitch), for: .touchUpInside)
         return button
     }()
     
@@ -72,19 +75,20 @@ final class ProfileSettingNotificationView: UIView {
         return label
     }()
 
-    private lazy var newHangoutSwitch: UIButton = {
+    private let newHangoutSwitch: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "setting_switch_on"), for: .normal)
-//        button.addTarget(self, action: #selector(toggleSwitch), for: .touchUpInside)
         return button
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ProfileSettingNotificationViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -170,5 +174,12 @@ final class ProfileSettingNotificationView: UIView {
             $0.height.equalTo(0.5)
             $0.bottom.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension ProfileSettingNotificationView {
+    private func bind() {
+        
     }
 }

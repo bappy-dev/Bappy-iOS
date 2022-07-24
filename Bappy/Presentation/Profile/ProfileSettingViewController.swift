@@ -25,20 +25,18 @@ final class ProfileSettingViewController: UIViewController {
         return label
     }()
     
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "chevron_back"), for: .normal)
-        button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
-        return button
-    }()
+    private let backButton = UIButton()
     
-    private let notificationView = ProfileSettingNotificationView()
-    private let serviceView = ProfileSettingServiceView()
+    private let notificationView: ProfileSettingNotificationView
+    private let serviceView: ProfileSettingServiceView
     
     // MARK: Lifecycle
     
     init(viewModel: ProfileSettingViewModel) {
+        let notificationViewModel = viewModel.subViewModels.notificationViewModel
+        let serviceViewModel = viewModel.subViewModels.serviceViewModel
+        self.notificationView = ProfileSettingNotificationView(viewModel: notificationViewModel)
+        self.serviceView = ProfileSettingServiceView(viewModel: serviceViewModel)
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
@@ -51,16 +49,10 @@ final class ProfileSettingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: Actions
-    @objc
-    private func backButtonHandler() {
-        self.navigationController?.popViewController(animated: true)
-    }
-
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .white
-        serviceView.delegate = self
+        backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
     }
 
     private func layout() {
@@ -91,34 +83,51 @@ final class ProfileSettingViewController: UIViewController {
     }
 }
 
-// MARK: - ProfileSettingServiceViewDelegate
-extension ProfileSettingViewController: ProfileSettingServiceViewDelegate {
-    func logoutButtonTapped() {
-        do {
-            try Auth.auth().signOut()
-            let dependency = BappyLoginViewModel.Dependency(
-                bappyAuthRepository: DefaultBappyAuthRepository.shared,
-                firebaseRepository: DefaultFirebaseRepository.shared
-            )
-            let viewModel = BappyLoginViewModel(dependency: dependency)
-            let rootViewController = BappyLoginViewController(viewModel: viewModel)
-            let viewController = UINavigationController(rootViewController: rootViewController)
-            viewController.navigationBar.isHidden = true
-            viewController.interactivePopGestureRecognizer?.isEnabled = false
-        } catch {
-            fatalError("Failed sign out")
-        }
-    }
-    
-    func serviceButtonTapped() {
-        let viewController = CustomerServiceViewController()
-        self.navigationController?.pushViewController(viewController, animated: true)
-    }
-}
-
 // MARK: - Bind
 extension ProfileSettingViewController {
     private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
         
+        viewModel.output.showServiceView
+            .emit(onNext: { [weak self] _ in
+                let viewController = CustomerServiceViewController()
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoginView
+            .emit(onNext: { [weak self] _ in
+                do {
+                    try Auth.auth().signOut()
+                    let dependency = BappyLoginViewModel.Dependency(
+                        bappyAuthRepository: DefaultBappyAuthRepository.shared,
+                        firebaseRepository: DefaultFirebaseRepository.shared)
+                    let viewModel = BappyLoginViewModel(dependency: dependency)
+                    let rootViewController = BappyLoginViewController(viewModel: viewModel)
+                    let viewController = UINavigationController(rootViewController: rootViewController)
+                    viewController.navigationBar.isHidden = true
+                    viewController.interactivePopGestureRecognizer?.isEnabled = false
+                    //
+                } catch {
+                    fatalError("Failed sign out")
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showDeleteAccountView
+            .emit(onNext: { [weak self] _ in
+                let viewModel = DeleteAccountViewModel(dependency: .init())
+                let viewController = DeleteAccountViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }

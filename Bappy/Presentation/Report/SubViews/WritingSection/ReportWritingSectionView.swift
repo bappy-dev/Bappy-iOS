@@ -7,10 +7,15 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ReportWritingSectionView: UIView {
     
     // MARK: Properties
+    private let viewModel: ReportWritingSectionViewModel
+    private let disposeBag = DisposeBag()
+    
     private let reportingTypeCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0, family: .Medium)
@@ -34,20 +39,19 @@ final class ReportWritingSectionView: UIView {
         return backgroundView
     }()
     
-    private lazy var reportingTypeTextField: UITextField = {
+    private let reportingTypeTextField: UITextField = {
         let textField = UITextField()
         let configuration = UIImage.SymbolConfiguration(pointSize: 13.0, weight: .medium)
         let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
         let imageView = UIImageView(image: image)
         imageView.tintColor = UIColor(red: 177.0/255.0, green: 172.0/255.0, blue: 154.0/255.0, alpha: 1.0)
         textField.font = .roboto(size: 12.0)
-        textField.textColor = .black
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Select the reason for reporting.",
             attributes: [.foregroundColor: UIColor(red: 169.0/255.0, green: 162.0/255.0, blue: 139.0/255.0, alpha: 1.0)])
         textField.rightView = imageView
         textField.rightViewMode = .always
-        textField.addTarget(self, action: #selector(didTapReportingType), for: .editingDidBegin)
         return textField
     }()
     
@@ -71,7 +75,7 @@ final class ReportWritingSectionView: UIView {
         let textView = UITextView()
         textView.backgroundColor = .clear
         textView.font = .roboto(size: 12.0)
-        textView.textColor = .black
+        textView.textColor = .bappyBrown
         textView.textAlignment = .left
         return textView
     }()
@@ -85,14 +89,18 @@ final class ReportWritingSectionView: UIView {
         return label
     }()
     
-    private let dropdownView = ReportTypeDropdownView()
+    private let dropdownView: BappyDropdownView
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: ReportWritingSectionViewModel) {
+        let dropdownViewModel = viewModel.subViewModels.dropdownViewModel
+        self.viewModel = viewModel
+        self.dropdownView = BappyDropdownView(viewModel: dropdownViewModel)
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -101,19 +109,13 @@ final class ReportWritingSectionView: UIView {
     
     // MARK: Actions
     @objc
-    private func didTapReportingType(_ textField: UITextField) {
-        textField.endEditing(true)
-        openDropdown()
-    }
-    
-    @objc
     private func didTextChange() {
         reportingDetailPlaceholderLabel.isHidden = !reportingDetailTextView.text.isEmpty
     }
     
+    // MARK: Helpers
     private func openDropdown() {
         UIView.animate(withDuration: 0.3) {
-            self.dropdownView.isHidden = false
             self.dropdownView.snp.updateConstraints {
                 $0.height.equalTo(175.0)
             }
@@ -127,16 +129,16 @@ final class ReportWritingSectionView: UIView {
                 $0.height.equalTo(0)
             }
             self.layoutIfNeeded()
-        } completion: { _ in
-//            self.dropdownView.isHidden = true
         }
     }
     
-    // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        NotificationCenter.default.addObserver(self, selector: #selector(didTextChange), name: UITextView.textDidChangeNotification, object: nil)
-        dropdownView.delegate = self
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didTextChange),
+            name: UITextView.textDidChangeNotification,
+            object: nil)
     }
     
     private func layout() {
@@ -162,8 +164,8 @@ final class ReportWritingSectionView: UIView {
         
         reportingTypeBackgroundView.addSubview(reportingTypeTextField)
         reportingTypeTextField.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(10.0)
-            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(15.0)
+            $0.top.bottom.equalToSuperview()
         }
         
         self.addSubview(reportingDetailCaptionLabel)
@@ -205,10 +207,35 @@ final class ReportWritingSectionView: UIView {
     }
 }
 
-// MARK: ReportTypeDropdownViewDelegate
-extension ReportWritingSectionView: ReportTypeDropdownViewDelegate {
-    func didSelectText(_ text: String) {
-        reportingTypeTextField.text = text
-        closeDropdown()
+// MARK: - Bind
+extension ReportWritingSectionView {
+    private func bind() {
+        reportingTypeTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: reportingTypeTextField.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        reportingTypeTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        reportingDetailTextView.rx.text.orEmpty
+            .bind(to: viewModel.input.detailText)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.openDropdown
+            .emit(onNext: { [weak self] _ in self?.openDropdown() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.closeDropdown
+            .emit(onNext: { [weak self] _ in self?.closeDropdown() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dropdownText
+            .emit(to: reportingTypeTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHidePlaceholder
+            .drive(reportingDetailPlaceholderLabel.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }

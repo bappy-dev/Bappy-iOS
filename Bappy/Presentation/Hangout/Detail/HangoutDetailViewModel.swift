@@ -62,7 +62,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showOpenMapView: Signal<OpenMapPopupViewModel> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
         var showSigninPopupView: Signal<Void> // <-> View
-        var showReportView: Signal<Void> // <-> View
+        var showReportView: Signal<ReportViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -144,7 +144,11 @@ final class HangoutDetailViewModel: ViewModelType {
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
         let showReportView = reportButtonTapped$
-            .asSignal(onErrorJustReturn: Void())
+            .map { _ -> ReportViewModel in
+                let dependency = ReportViewModel.Dependency()
+                return ReportViewModel(dependency: dependency)
+            }
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(

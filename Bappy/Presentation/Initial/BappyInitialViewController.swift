@@ -68,7 +68,7 @@ final class BappyInitialViewController: UIViewController {
         view.addSubview(bappyImageView)
         bappyImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-60.0)
+            $0.centerY.equalTo(view.safeAreaLayoutGuide).offset(-60.0)
             $0.width.height.equalTo(300.0)
         }
         

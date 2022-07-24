@@ -222,8 +222,9 @@ extension HangoutDetailViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showReportView
-            .emit(onNext: { [weak self] _ in
-                let viewController = ReportViewController()
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = ReportViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)

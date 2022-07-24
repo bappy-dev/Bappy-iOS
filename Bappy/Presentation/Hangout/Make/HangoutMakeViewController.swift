@@ -237,7 +237,9 @@ extension HangoutMakeViewController {
             .emit(to: view.rx.endEditing)
             .disposed(by: disposeBag)
         
-        viewModel.output.pageContentOffset
+        viewModel.output.page
+            .map(CGFloat.init)
+            .map { CGPoint(x: UIScreen.main.bounds.width * $0, y: 0) }
             .drive(scrollView.rx.setContentOffset)
             .disposed(by: disposeBag)
 

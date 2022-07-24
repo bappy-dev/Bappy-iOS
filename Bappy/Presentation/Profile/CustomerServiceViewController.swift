@@ -170,7 +170,7 @@ Bappy app's My Page
         
         view.addSubview(backButton)
         backButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(9.0)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(18.0)
             $0.leading.equalToSuperview().inset(9.0)
             $0.width.height.equalTo(44.0)
         }
@@ -183,7 +183,7 @@ Bappy app's My Page
         
         view.addSubview(dividingView)
         dividingView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(53.0)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(41.0)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1.0)
         }
@@ -202,7 +202,7 @@ Bappy app's My Page
         
         contentView.addSubview(vStackView)
         vStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(56.0)
+            $0.top.equalToSuperview().inset(33.0)
             $0.leading.equalToSuperview().inset(35.0)
             $0.trailing.equalToSuperview().inset(33.0)
             $0.height.equalTo(126.0)

@@ -97,7 +97,8 @@ extension String {
         return dateFormatter.date(from: self)
     }
     
-    func toAnotherDateFormat(from beforeDateFormat: String, to afterDateFormat: String) -> String? {
+    func toAnotherDateFormat(from beforeDateFormat: String,
+                             to afterDateFormat: String) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en")
         dateFormatter.timeZone = TimeZone(identifier: TimeZone.current.identifier)
@@ -110,7 +111,10 @@ extension String {
 
 // MARK: - UIButton
 extension UIButton {
-    func setBappyTitle(title: String, font: UIFont = .roboto(size: 16.0, family: .Regular), color: UIColor = .bappyBrown, hasUnderline: Bool = false) {
+    func setBappyTitle(title: String,
+                       font: UIFont = .roboto(size: 16.0, family: .Regular),
+                       color: UIColor = .bappyBrown,
+                       hasUnderline: Bool = false) {
         var attributes: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: color
@@ -133,4 +137,41 @@ extension UIColor {
     static var bappyGray: UIColor { UIColor(named: "bappy_gray") ?? .clear }
     static var bappyLightgray: UIColor { UIColor(named: "bappy_lightgray") ?? .clear }
     static var bappyCoral: UIColor { UIColor(named: "bappy_coral") ?? .clear }
+}
+
+// MARK: - NSAttributedString
+extension NSAttributedString {
+    convenience init(stringList: [String],
+                     bullet: String = "\u{2022}",
+                     font: UIFont = .systemFont(ofSize: 16.0),
+                     textColor: UIColor = .label,
+                     indentation: CGFloat = .zero,
+                     lineSpacing: CGFloat = .zero,
+                     paragraphSpacing: CGFloat = .zero) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        let tabStopOptions: [NSTextTab.OptionKey: Any] = [:]
+        
+        paragraphStyle.tabStops = [
+            NSTextTab(textAlignment: .left, location: indentation, options: tabStopOptions)
+        ]
+        
+        paragraphStyle.defaultTabInterval = indentation
+        paragraphStyle.lineSpacing = lineSpacing
+        paragraphStyle.paragraphSpacing = paragraphSpacing
+        paragraphStyle.headIndent = indentation
+        
+        let bulletList = NSMutableAttributedString()
+        for string in stringList {
+            let formattedString = "\(bullet)\t\(string)\n"
+            let attributedString = NSMutableAttributedString(string: formattedString)
+            let attributedStringRange = NSMakeRange(0, attributedString.length)
+            attributedString.addAttributes([.paragraphStyle: paragraphStyle], range: attributedStringRange)
+            attributedString.addAttributes([.foregroundColor: textColor], range: attributedStringRange)
+            attributedString.addAttributes([.font: font], range: attributedStringRange)
+            
+            bulletList.append(attributedString)
+        }
+        
+        self.init(attributedString: bulletList)
+    }
 }
