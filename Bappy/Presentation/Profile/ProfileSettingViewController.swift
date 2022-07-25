@@ -117,8 +117,8 @@ extension ProfileSettingViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showDeleteAccountView
-            .emit(onNext: { [weak self] _ in
-                let viewModel = DeleteAccountViewModel(dependency: .init())
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = DeleteAccountViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })

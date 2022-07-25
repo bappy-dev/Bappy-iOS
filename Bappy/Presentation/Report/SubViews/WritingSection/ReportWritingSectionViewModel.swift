@@ -12,16 +12,7 @@ import RxCocoa
 final class ReportWritingSectionViewModel: ViewModelType {
     
     struct Dependency {
-        var dropdownList: [String] {
-            [
-                "The post is too violent.",
-                "The post is false information.",
-                "The post is is hate speech.",
-                "The post is scam or fraud.",
-                "The post is sexual activity.",
-                "Something else",
-            ]
-        }
+        var dropdownList: [String]
         var maxLength: Int { 500 }
     }
     

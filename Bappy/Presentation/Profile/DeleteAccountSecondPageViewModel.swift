@@ -12,20 +12,7 @@ import RxCocoa
 final class DeleteAccountSecondPageViewModel: ViewModelType {
     
     struct Dependency {
-        var dropdownList: [String] {
-            [
-                "There is no hangout I want to join.",
-                "I am looking for dates.",
-                "Hangouts are far from my area.",
-                "It is a bothersome to make hangout.",
-                "This app is hard to use.",
-                "So many perverts or weirdos.",
-                "I had a bad experience in hangout.",
-                "I don’t use this app a lot.",
-                "I want to make a new account.",
-                "Something else"
-            ]
-        }
+        var dropdownList: [String]
     }
     
     struct SubViewModels {
@@ -52,7 +39,7 @@ final class DeleteAccountSecondPageViewModel: ViewModelType {
     private let editingDidBegin$ = PublishSubject<Void>()
     private let selectedText$ = PublishSubject<String?>()
     
-    init(dependency: Dependency = Dependency()) {
+    init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
             dropdownViewModel: BappyDropdownViewModel(

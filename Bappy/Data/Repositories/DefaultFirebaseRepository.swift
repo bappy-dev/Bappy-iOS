@@ -148,16 +148,30 @@ extension DefaultFirebaseRepository: FirebaseRepository {
                 if status == .success {
                     self.remoteConfig.activate()
                     let minimumVersion = self.remoteConfig["minimumVersion"].stringValue!
+                    
                     let hasNotice = self.remoteConfig["hasNotice"].boolValue
-                    let noticeTitle = self.remoteConfig["noticeTitle"].stringValue!.replacingOccurrences(of: "\\n", with: "\n")
-                    let noticeMessage = self.remoteConfig["noticeMessage"].stringValue!.replacingOccurrences(of: "\\n", with: "\n")
+                    let noticeTitle = self.remoteConfig["noticeTitle"].stringValue!
+                        .replacingOccurrences(of: "\\n", with: "\n")
+                    let noticeMessage = self.remoteConfig["noticeMessage"].stringValue!
+                        .replacingOccurrences(of: "\\n", with: "\n")
+                    
+                    let reasonsForReport = self.remoteConfig["reasonsForReport"].stringValue!
+                        .replacingOccurrences(of: "\\n", with: "\n")
+                        .split(separator: "\n")
+                        .map(String.init)
+                    let reasonsForWithdrawl = self.remoteConfig["reasonsForWithdrawl"].stringValue!
+                        .replacingOccurrences(of: "\\n", with: "\n")
+                        .split(separator: "\n")
+                        .map(String.init)
                     
                     let remoteConfigValues = RemoteConfigValues(
                         notice: .init(
                             hasNotice: hasNotice,
                             noticeTitle: noticeTitle,
                             noticeMessage: noticeMessage),
-                        minimumVersion: minimumVersion)
+                        minimumVersion: minimumVersion,
+                        reasonsForReport: reasonsForReport,
+                        reasonsForWithdrawl: reasonsForWithdrawl)
                     observer.onNext(.success(remoteConfigValues))
                 } else {
                     observer.onError(FirebaseError.failedRemoteConfig)

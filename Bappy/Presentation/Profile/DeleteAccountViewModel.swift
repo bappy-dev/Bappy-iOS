@@ -17,6 +17,7 @@ final class DeleteAccountViewModel: ViewModelType {
     }
     
     struct Dependency {
+        var dropdownList: [String]
     }
     
     struct Input {
@@ -49,7 +50,10 @@ final class DeleteAccountViewModel: ViewModelType {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
             firstPageViewModel: DeleteAccountFirstPageViewModel(),
-            secondPageViewModel: DeleteAccountSecondPageViewModel())
+            secondPageViewModel: DeleteAccountSecondPageViewModel(
+                dependency: .init(dropdownList: dependency.dropdownList)
+            )
+        )
         
         // Streams
         let page = page$

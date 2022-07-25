@@ -13,6 +13,7 @@ final class ProfileSettingViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
+        let firebaseRepository: FirebaseRepository
     }
     
     struct SubViewModels {
@@ -30,7 +31,7 @@ final class ProfileSettingViewModel: ViewModelType {
     struct Output {
         var showServiceView: Signal<Void> // <-> View
         var showLoginView: Signal<Void> // <-> View
-        var showDeleteAccountView: Signal<Void> // <-> View
+        var showDeleteAccountView: Signal<DeleteAccountViewModel?> // <-> View
         var popView: Signal<Void> // <-> View
     }
     
@@ -39,6 +40,8 @@ final class ProfileSettingViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
+    
+    private let reasonsForWithdrawl$ = BehaviorSubject<[String]?>(value: nil)
     
     private let backButtonTapped$ = PublishSubject<Void>()
     private let serviceButtonTapped$ = PublishSubject<Void>()
@@ -58,7 +61,14 @@ final class ProfileSettingViewModel: ViewModelType {
         let showLoginView = logoutButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let showDeleteAccountView = deleteAccountButtonTapped$
-            .asSignal(onErrorJustReturn: Void())
+            .withLatestFrom(reasonsForWithdrawl$)
+            .compactMap { reasons -> DeleteAccountViewModel? in
+                guard let reasons = reasons else { return nil }
+                let dependency = DeleteAccountViewModel.Dependency(
+                    dropdownList: reasons)
+                return DeleteAccountViewModel(dependency: dependency)
+            }
+            .asSignal(onErrorJustReturn: nil)
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         
@@ -78,6 +88,21 @@ final class ProfileSettingViewModel: ViewModelType {
         )
         
         // Bindind
+        let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
+            .share()
+        
+        remoteConfigValuesResult
+            .compactMap(getRemoteConfigValuesError)
+            .bind(onNext: { print("ERROR: \($0)") })
+            .disposed(by: disposeBag)
+        
+        remoteConfigValuesResult
+            .compactMap(getRemoteConfigValues)
+            .map(\.reasonsForWithdrawl)
+            .bind(to: reasonsForWithdrawl$)
+            .disposed(by: disposeBag)
+        
+        // Child(Service)
         subViewModels.serviceViewModel.output.serviceButtonTapped
             .emit(to: serviceButtonTapped$)
             .disposed(by: disposeBag)
@@ -90,4 +115,14 @@ final class ProfileSettingViewModel: ViewModelType {
             .emit(to: deleteAccountButtonTapped$)
             .disposed(by: disposeBag)
     }
+}
+
+private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) -> RemoteConfigValues? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
+
+private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
 }

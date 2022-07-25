@@ -106,7 +106,8 @@ final class ProfileViewModel: ViewModelType {
         settingButtonTapped$
             .map { _ -> ProfileSettingViewModel in
                 let dependency = ProfileSettingViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: DefaultFirebaseRepository.shared)
                 return ProfileSettingViewModel(dependency: dependency)
             }
             .bind(to: showSettingView$)

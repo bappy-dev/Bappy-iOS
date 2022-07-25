@@ -20,6 +20,7 @@ final class HangoutDetailViewModel: ViewModelType {
     }
     
     struct Dependency {
+        let firebaseRepository: FirebaseRepository
         var currentUser: BappyUser
         var hangout: Hangout
         var postImage: UIImage?
@@ -40,7 +41,8 @@ final class HangoutDetailViewModel: ViewModelType {
             }
         }
         
-        init(currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
+        init(firebaseRepository: FirebaseRepository, currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
+            self.firebaseRepository = firebaseRepository
             self.currentUser = currentUser
             self.hangout = hangout
             self.postImage = postImage
@@ -74,6 +76,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let hangoutButtonState$: BehaviorSubject<HangoutButton.State>
     private let isUserParticipating$: BehaviorSubject<Bool>
     private let currentUser$: BehaviorSubject<BappyUser>
+    private let reasonsForReport$ = BehaviorSubject<[String]?>(value: nil)
     
     private let backButtonTapped$ = PublishSubject<Void>()
     private let hangoutButtonTapped$ = PublishSubject<Void>()
@@ -144,8 +147,10 @@ final class HangoutDetailViewModel: ViewModelType {
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
         let showReportView = reportButtonTapped$
-            .map { _ -> ReportViewModel in
-                let dependency = ReportViewModel.Dependency()
+            .withLatestFrom(reasonsForReport$)
+            .compactMap { reasons -> ReportViewModel? in
+                guard let reasons = reasons else { return nil }
+                let dependency = ReportViewModel.Dependency(dropdownList: reasons)
                 return ReportViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
@@ -173,6 +178,20 @@ final class HangoutDetailViewModel: ViewModelType {
         self.isUserParticipating$ = isUserParticipating$
         self.currentUser$ = currentUser$
         
+        let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
+            .share()
+        
+        remoteConfigValuesResult
+            .compactMap(getRemoteConfigValuesError)
+            .bind(onNext: { print("ERROR: \($0)") })
+            .disposed(by: disposeBag)
+        
+        remoteConfigValuesResult
+            .compactMap(getRemoteConfigValues)
+            .map(\.reasonsForReport)
+            .bind(to: reasonsForReport$)
+            .disposed(by: disposeBag)
+        
         // Child(Image)
         imageHeight
             .emit(to: subViewModels.imageSectionViewModel.input.imageHeight)
@@ -183,4 +202,14 @@ final class HangoutDetailViewModel: ViewModelType {
             .emit(to: mapButtonTapped$)
             .disposed(by: disposeBag)
     }
+}
+
+private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) -> RemoteConfigValues? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
+
+private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
 }

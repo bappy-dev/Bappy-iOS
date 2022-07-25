@@ -32,4 +32,6 @@ struct RemoteConfigValues {
     
     var notice: Notice
     var minimumVersion: String
+    var reasonsForReport: [String]
+    var reasonsForWithdrawl: [String]
 }

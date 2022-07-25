@@ -102,6 +102,7 @@ final class HomeListViewModel: ViewModelType {
             .withLatestFrom(currentUser$.compactMap { $0 }) { (user: $1, hangout: $0) }
             .map { element -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
+                    firebaseRepository: DefaultFirebaseRepository.shared,
                     currentUser: element.user,
                     hangout: element.hangout)
                 return HangoutDetailViewModel(dependency: dependency)

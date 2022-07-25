@@ -12,6 +12,7 @@ import RxCocoa
 final class ReportViewModel: ViewModelType {
     
     struct Dependency {
+        var dropdownList: [String]
         var maxNumOfImages: Int { 5 }
     }
     
@@ -53,8 +54,10 @@ final class ReportViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            writingViewModel: ReportWritingSectionViewModel(dependency: .init()),
-            imageViewModel: ReportImageSectionViewModel(dependency: .init(maxNumOfImages: dependency.maxNumOfImages))
+            writingViewModel: ReportWritingSectionViewModel(
+                dependency: .init(dropdownList: dependency.dropdownList)),
+            imageViewModel: ReportImageSectionViewModel(
+                dependency: .init(maxNumOfImages: dependency.maxNumOfImages))
         )
         
         // Streams
