@@ -13,15 +13,18 @@ final class BappyAlertController: UIViewController {
     
     // MARK: Properties
     var canDismissByTouch: Bool = true
+    var isContentsBlurred: Bool = false {
+        didSet {
+            blurredView.isHidden = !isContentsBlurred
+            dimmedView.isHidden = isContentsBlurred
+        }
+    }
     
     private var alertTitle: String?
     private var alertMessage: String?
     private var bappyStyle: BappyStyle?
     
-    private var cancelAlertAction: BappyAlertAction?
-    private var defaultAlertAction: BappyAlertAction?
-    private var cancelButtonHandler: ((BappyAlertAction) -> Void)?
-    private var defaultButtonHandler: ((BappyAlertAction) -> Void)?
+    private var hasCancelButton: Bool = false
     
     private let maxDimmedAlpha: CGFloat = 0.3
     
@@ -62,45 +65,22 @@ final class BappyAlertController: UIViewController {
         return label
     }()
     
-    private lazy var cancelButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .bappyCoral
-        button.layer.cornerRadius = 22.0
-        button.isHidden = true
-        button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
-        button.addBappyShadow()
-        return button
+    private let blurredView: UIVisualEffectView = {
+        let effect = UIBlurEffect(style: .regular)
+        let blurredView = UIVisualEffectView(effect: effect)
+        blurredView.isHidden = true
+        blurredView.backgroundColor = .black.withAlphaComponent(0.5)
+        return blurredView
     }()
     
-    private let cancelTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 20.0, family: .Medium)
-        label.textColor = .white
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        label.adjustsFontSizeToFitWidth = true
-        return label
+    private let buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 15.0
+        stackView.distribution = .fillEqually
+        return stackView
     }()
     
-    private lazy var defaultButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .bappyYellow
-        button.layer.cornerRadius = 22.0
-        button.isHidden = true
-        button.addTarget(self, action: #selector(defaultButtonTapped), for: .touchUpInside)
-        button.addBappyShadow()
-        return button
-    }()
-    
-    private let defaultTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 20.0, family: .Medium)
-        label.textColor = .bappyBrown
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        label.adjustsFontSizeToFitWidth = true
-        return label
-    }()
     
     // MARK: Lifecycle
     init(title: String? = nil, message: String? = nil, bappyStyle: BappyStyle? = nil) {
@@ -126,7 +106,7 @@ final class BappyAlertController: UIViewController {
     
     // MARK: Events
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if canDismissByTouch && cancelButton.isHidden {
+        if canDismissByTouch && !hasCancelButton {
             animateDismissView()
         }
     }
@@ -161,22 +141,65 @@ final class BappyAlertController: UIViewController {
         }
     }
     
-    // MARK: Actions
-    @objc
-    private func cancelButtonTapped() {
-        guard let cancelAlertAction = cancelAlertAction else { return }
-        cancelButtonHandler?(cancelAlertAction)
-        animateDismissView()
-    }
-    
-    @objc
-    private func defaultButtonTapped() {
-        guard let defaultAlertAction = defaultAlertAction else { return }
-        defaultButtonHandler?(defaultAlertAction)
-        animateDismissView()
-    }
-    
     // MARK: Helpers
+    private func getDisclosureImageView() -> UIImageView {
+        let imageView = UIImageView()
+        let configuration = UIImage.SymbolConfiguration(pointSize: 14.0, weight: .medium)
+        let image = UIImage(systemName: "chevron.forward", withConfiguration: configuration)
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .bappyBrown
+        return imageView
+    }
+    
+    private func getAlertLabel(_ action: BappyAlertAction) -> UILabel {
+        let label = UILabel()
+        label.text = action.title
+        label.font = .roboto(size: 20.0, family: .Medium)
+        label.textColor = (action.style == .cancel) ? .white : .bappyBrown
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }
+    
+    private func getAlertButton(_ action: BappyAlertAction) -> UIButton {
+        let button = UIButton()
+        button.backgroundColor = (action.style == .cancel) ? .bappyCoral : .bappyYellow
+        button.layer.cornerRadius = 22.0
+        button.addAction(UIAction { [weak self] _ in
+            action.handler?(action)
+            self?.animateDismissView()
+        }, for: .touchUpInside)
+        button.addBappyShadow()
+        
+        let label = getAlertLabel(action)
+        button.addSubview(label)
+        
+        if action.style == .disclosure {
+            label.snp.makeConstraints {
+                $0.top.bottom.equalToSuperview()
+                $0.leading.trailing.equalToSuperview().inset(38.0)
+                $0.height.equalTo(44.0)
+            }
+            
+            let imageView = getDisclosureImageView()
+            button.addSubview(imageView)
+            imageView.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.trailing.equalToSuperview().inset(18.0)
+            }
+        } else {
+            label.snp.makeConstraints {
+                $0.top.bottom.equalToSuperview()
+                $0.leading.trailing.equalToSuperview().inset(15.0)
+                $0.height.equalTo(44.0)
+            }
+        }
+        
+        return button
+    }
+    
     private func confiugre() {
         self.modalPresentationStyle = .overCurrentContext
         view.backgroundColor = .clear
@@ -192,26 +215,6 @@ final class BappyAlertController: UIViewController {
     }
     
     private func layout() {
-        let buttonArrangedSubviews: [UIView] = [cancelButton, defaultButton]
-        let buttonStackView = UIStackView(arrangedSubviews: buttonArrangedSubviews)
-        buttonStackView.axis = .horizontal
-        buttonStackView.spacing = 15.0
-        buttonStackView.distribution = .fillEqually
-        
-        cancelButton.addSubview(cancelTitleLabel)
-        cancelTitleLabel.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(15.0)
-            $0.height.equalTo(44.0)
-        }
-        
-        defaultButton.addSubview(defaultTitleLabel)
-        defaultTitleLabel.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(15.0)
-            $0.height.equalTo(44.0)
-        }
-        
         let vArrangedSubviews: [UIView] = [
             titleLabel, bappyImageView, messageLabel, buttonStackView
         ]
@@ -223,6 +226,11 @@ final class BappyAlertController: UIViewController {
         
         view.addSubview(dimmedView)
         dimmedView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        view.addSubview(blurredView)
+        blurredView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
@@ -243,18 +251,9 @@ final class BappyAlertController: UIViewController {
 
 extension BappyAlertController {
     func addAction(_ action: BappyAlertAction) {
-        switch action.style {
-        case .cancel:
-            cancelButton.isHidden = false
-            cancelTitleLabel.text = action.title
-            cancelAlertAction = action
-            cancelButtonHandler = action.handler
-            
-        case .default:
-            defaultButton.isHidden = false
-            defaultTitleLabel.text = action.title
-            defaultAlertAction = action
-            defaultButtonHandler = action.handler
-        }
+        let button = getAlertButton(action)
+        buttonStackView.addArrangedSubview(button)
+        
+        if action.style == .cancel { hasCancelButton = true }
     }
 }

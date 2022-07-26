@@ -30,6 +30,23 @@ final class ProfileViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var signInAlert: BappyAlertController = {
+        let title = "Sign in and make your own profile!"
+        let alert = BappyAlertController(title: title, bappyStyle: .happy)
+        alert.canDismissByTouch = false
+        alert.isContentsBlurred = true
+        let signInAction = BappyAlertAction(title: "Go to sign-in!", style: .disclosure) { _ in
+            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+            let dependency = BappyLoginViewModel.Dependency(
+                bappyAuthRepository: DefaultBappyAuthRepository.shared,
+                firebaseRepository: DefaultFirebaseRepository.shared)
+            let viewModel = BappyLoginViewModel(dependency: dependency)
+            sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
+        }
+        alert.addAction(signInAction)
+        return alert
+    }()
+    
     // MARK: Lifecycle
     init(viewModel: ProfileViewModel) {
         let headerViewModel = viewModel.subViewModels.headerViewModel
@@ -59,6 +76,15 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func showSignInAlert() {
+        self.addChild(signInAlert)
+        view.addSubview(signInAlert.view)
+        signInAlert.view.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        signInAlert.didMove(toParent: self)
+    }
+    
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
         guard let navigationController = navigationController as? BappyNavigationViewController else { return }
         navigationController.statusBarStyle = statusBarStyle
@@ -99,6 +125,10 @@ final class ProfileViewController: UIViewController {
 // MARK: - Bind
 extension ProfileViewController {
     private func bind() {
+        self.rx.viewWillAppear
+            .bind(to: viewModel.input.viewWillAppear)
+            .disposed(by: disposeBag)
+        
         tableView.rx.didScroll
             .withLatestFrom(tableView.rx.contentOffset)
             .observe(on: MainScheduler.asyncInstance)
@@ -148,6 +178,10 @@ extension ProfileViewController {
         
         viewModel.output.hideSettingButton
             .emit(to: settingButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showAlert
+            .emit(onNext: { [weak self] _ in self?.showSignInAlert() })
             .disposed(by: disposeBag)
     }
 }

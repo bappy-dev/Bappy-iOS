@@ -25,6 +25,7 @@ final class ProfileViewModel: ViewModelType {
     
     struct Input {
         var scrollToTop: AnyObserver<Void> // <-> Parent
+        var viewWillAppear: AnyObserver<Bool> // <-> View
         var settingButtonTapped: AnyObserver<Void> // <-> View
         var selectedButtonIndex: AnyObserver<Int> // <-> Child
         var moreButtonTapped: AnyObserver<Void> // <-> Child
@@ -36,6 +37,7 @@ final class ProfileViewModel: ViewModelType {
         var hangouts: Driver<[Hangout]> // <-> View
         var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
         var showDetailView: Signal<ProfileDetailViewModel?> // <-> View
+        var showAlert: Signal<Void> // <-> View
     }
     
     let dependency: Dependency
@@ -49,12 +51,14 @@ final class ProfileViewModel: ViewModelType {
     private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
+    private let viewWillAppear$ = PublishSubject<Bool>()
     private let selectedButtonIndex$ = PublishSubject<Int>()
     private let settingButtonTapped$ = PublishSubject<Void>()
     private let moreButtonTapped$ = PublishSubject<Void>()
     
     private let showSettingView$ = PublishSubject<ProfileSettingViewModel?>()
     private let showDetailView$ = PublishSubject<ProfileDetailViewModel?>()
+    private let showAlert$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -82,10 +86,13 @@ final class ProfileViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showDetailView = showDetailView$
             .asSignal(onErrorJustReturn: nil)
+        let showAlert = showAlert$
+            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
             scrollToTop: scrollToTop$.asObserver(),
+            viewWillAppear: viewWillAppear$.asObserver(),
             settingButtonTapped: settingButtonTapped$.asObserver(),
             selectedButtonIndex: selectedButtonIndex$.asObserver(),
             moreButtonTapped: moreButtonTapped$.asObserver()
@@ -96,12 +103,22 @@ final class ProfileViewModel: ViewModelType {
             hideSettingButton: hideSettingButton,
             hangouts: hangouts,
             showSettingView: showSettingView,
-            showDetailView: showDetailView
+            showDetailView: showDetailView,
+            showAlert: showAlert
         )
         
         // Bindind
         self.user$ = user$
         self.authorization$ = authorization$
+        
+        viewWillAppear$
+            .take(1)
+            .withLatestFrom(user$)
+            .map(\.state)
+            .filter { $0 == .anonymous }
+            .map { _ in }
+            .bind(to: showAlert$)
+            .disposed(by: disposeBag)
         
         settingButtonTapped$
             .map { _ -> ProfileSettingViewModel in

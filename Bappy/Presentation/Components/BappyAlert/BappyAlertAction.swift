@@ -8,7 +8,7 @@
 import UIKit
 
 final class BappyAlertAction {
-    enum Style { case `default`, cancel }
+    enum Style { case `default`, disclosure, cancel }
     
     var title: String
     var style: Style
