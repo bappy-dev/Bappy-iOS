@@ -9,26 +9,35 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+protocol SelectNationalityViewModelDelegate: AnyObject {
+    func selectedCountry(_ country: Country)
+}
+
 final class SelectNationalityViewModel: ViewModelType {
     
+    weak var delegate: SelectNationalityViewModelDelegate?
+    
     struct Dependency {
-        var country: Country
-        var countries: [Country]
+        var countries: [Country] {
+            NSLocale.isoCountryCodes
+                .map { NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: $0]) }
+                .map { countryCode -> Country in
+                    let code = String(countryCode[countryCode.index(after: countryCode.startIndex)...])
+                    return Country(code: code)
+                }
+        }
     }
 
     struct Input {
-        var countries: AnyObserver<[Country]>
-        var text: AnyObserver<String>
-        var closeButtonTapped: AnyObserver<Void>
-        var itemSelected: AnyObserver<IndexPath>
+        var text: AnyObserver<String> // <-> View
+        var closeButtonTapped: AnyObserver<Void> // <-> View
+        var itemSelected: AnyObserver<IndexPath> // <-> View
     }
 
     struct Output {
-        
-        var searchedCountries: Driver<[Country]>
-        var dismiss: Signal<Void>
-        var hideNoResultView: BehaviorRelay<Bool>
-        var country: Signal<Country>
+        var searchedCountries: Driver<[Country]> // <-> View
+        var dismiss: Signal<Void> // <-> View
+        var hideNoResultView: Driver<Bool> // <-> View
     }
 
     let dependency: Dependency
@@ -40,8 +49,10 @@ final class SelectNationalityViewModel: ViewModelType {
     private let text$ = PublishSubject<String>()
     private let closeButtonTapped$ = PublishSubject<Void>()
     private let itemSelected$ = PublishSubject<IndexPath>()
+    
+    private let hideNoResultView$ = BehaviorSubject<Bool>(value: true)
 
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
 
         // Streams
@@ -53,14 +64,11 @@ final class SelectNationalityViewModel: ViewModelType {
         let dismiss = Observable
             .merge(closeButtonTapped$, itemSelected$.map { _ in })
             .asSignal(onErrorJustReturn: Void())
-        let hideNoResultView = BehaviorRelay<Bool>(value: true)
-        let country = itemSelected$
-            .withLatestFrom(searchedCountries) { $1[$0.row] }
-            .asSignal(onErrorJustReturn: dependency.country)
+        let hideNoResultView = hideNoResultView$
+            .asDriver(onErrorJustReturn: true)
 
         // Input & Output
         self.input = Input(
-            countries: countries$.asObserver(),
             text: text$.asObserver(),
             closeButtonTapped: closeButtonTapped$.asObserver(),
             itemSelected: itemSelected$.asObserver()
@@ -69,8 +77,7 @@ final class SelectNationalityViewModel: ViewModelType {
         self.output = Output(
             searchedCountries: searchedCountries,
             dismiss: dismiss,
-            hideNoResultView: hideNoResultView,
-            country: country
+            hideNoResultView: hideNoResultView
         )
 
         // Binding
@@ -78,12 +85,19 @@ final class SelectNationalityViewModel: ViewModelType {
         
         searchedCountries
             .map { !$0.isEmpty }
-            .drive(hideNoResultView)
+            .drive(hideNoResultView$)
+            .disposed(by: disposeBag)
+        
+        itemSelected$
+            .withLatestFrom(searchedCountries) { $1[$0.row] }
+            .bind(onNext: { [weak self] country in
+                self?.delegate?.selectedCountry(country)
+            })
             .disposed(by: disposeBag)
     }
 }
 
 private func searchCountriesWithText(text: String, countries: [Country]) -> [Country] {
-    guard !text.isEmpty else { return countries}
+    guard !text.isEmpty else { return countries }
     return countries.filter { $0.name.lowercased().contains(text.lowercased()) }
 }

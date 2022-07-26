@@ -21,6 +21,7 @@ final class ProfileDetailMainView: UIView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 29.5
+        imageView.clipsToBounds = true
         return imageView
     }()
     

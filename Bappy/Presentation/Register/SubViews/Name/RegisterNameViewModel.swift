@@ -11,8 +11,8 @@ import RxCocoa
 
 final class RegisterNameViewModel: ViewModelType {
     struct Dependency {
-        var minimumLength: Int
-        var maximumLength: Int
+        var minimumLength: Int { 3 }
+        var maximumLength: Int { 30 }
     }
     
     struct Input {
@@ -39,7 +39,7 @@ final class RegisterNameViewModel: ViewModelType {
     private let editingDidBegin$ = PublishSubject<Void>()
     private let keyboardWithButtonHeight$ = PublishSubject<CGFloat>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams

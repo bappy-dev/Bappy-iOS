@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import CoreMIDI
 
 final class ProfileSettingViewModel: ViewModelType {
     
@@ -30,7 +31,7 @@ final class ProfileSettingViewModel: ViewModelType {
     
     struct Output {
         var showServiceView: Signal<Void> // <-> View
-        var showLoginView: Signal<Void> // <-> View
+        var switchToSignInView: Signal<BappyLoginViewModel?> // <-> View
         var showDeleteAccountView: Signal<DeleteAccountViewModel?> // <-> View
         var popView: Signal<Void> // <-> View
     }
@@ -58,8 +59,14 @@ final class ProfileSettingViewModel: ViewModelType {
         // Streams
         let showServiceView = serviceButtonTapped$
             .asSignal(onErrorJustReturn: Void())
-        let showLoginView = logoutButtonTapped$
-            .asSignal(onErrorJustReturn: Void())
+        let switchToSignInView = logoutButtonTapped$
+            .map { _ -> BappyLoginViewModel in
+                let dependency = BappyLoginViewModel.Dependency(
+                    bappyAuthRepository: dependency.bappyAuthRepository,
+                    firebaseRepository: dependency.firebaseRepository)
+                return BappyLoginViewModel(dependency: dependency)
+            }
+            .asSignal(onErrorJustReturn: nil)
         let showDeleteAccountView = deleteAccountButtonTapped$
             .withLatestFrom(reasonsForWithdrawl$)
             .compactMap { reasons -> DeleteAccountViewModel? in
@@ -82,7 +89,7 @@ final class ProfileSettingViewModel: ViewModelType {
         
         self.output = Output(
             showServiceView: showServiceView,
-            showLoginView: showLoginView,
+            switchToSignInView: switchToSignInView,
             showDeleteAccountView: showDeleteAccountView,
             popView: popView
         )

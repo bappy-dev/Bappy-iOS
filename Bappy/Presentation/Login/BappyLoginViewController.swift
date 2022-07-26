@@ -24,7 +24,7 @@ final class BappyLoginViewController: UIViewController {
     
     private var currentNonce: String?
     
-    private let appleCredential$ = PublishSubject<AuthCredential>()
+    private let authCredential$ = PublishSubject<AuthCredential>()
     
     private let bappyImageView: UIImageView = {
         let imageView = UIImageView()
@@ -124,7 +124,17 @@ final class BappyLoginViewController: UIViewController {
             let inset = (button.frame.width - titleWidth) / 2 - 30.0
             button.imageEdgeInsets = .init(top: 0, left: -inset, bottom: 0, right: inset)
         }
-        
+    }
+    
+    private func showLoader(_ show: Bool) {
+        if show {
+            ProgressHUD.animationType = .horizontalCirclesPulse
+            ProgressHUD.colorBackground = .bappyYellow
+            ProgressHUD.colorAnimation = .bappyBrown
+            ProgressHUD.show(interaction: false)
+        } else {
+            ProgressHUD.dismiss()
+        }
     }
     
     private func configure() {
@@ -173,21 +183,19 @@ final class BappyLoginViewController: UIViewController {
 extension BappyLoginViewController {
     private func bind() {
         googleLoginButton.rx.tap
-            .flatMap(startSignInWithGoogleFlow)
-            .bind(to: viewModel.input.googleCredential)
+            .bind(onNext: { [weak self] _ in self?.startSignInWithGoogleFlow()})
             .disposed(by: disposeBag)
-        
+
         facebookLoginButton.rx.tap
-            .flatMap(startSignInWithFacebookFlow)
-            .bind(to: viewModel.input.facebookCredential)
+            .bind(onNext: { [weak self] _ in self?.startSignInWithFacebookFlow()})
             .disposed(by: disposeBag)
-        
+
         appleLoginButton.rx.tap
             .bind(onNext: { [weak self] _ in self?.startSignInWithAppleFlow()})
             .disposed(by: disposeBag)
-        
-        appleCredential$
-            .bind(to: viewModel.input.appleCredential)
+
+        authCredential$
+            .bind(to: viewModel.input.authCredential)
             .disposed(by: disposeBag)
         
         loginSkipButton.rx.tap
@@ -196,27 +204,20 @@ extension BappyLoginViewController {
         
         viewModel.output.showLoader
             .distinctUntilChanged()
-            .emit(onNext: { show in
-                if show {
-                    ProgressHUD.animationType = .horizontalCirclesPulse
-                    ProgressHUD.colorBackground = .bappyYellow
-                    ProgressHUD.colorAnimation = .bappyBrown
-                    ProgressHUD.show(interaction: false)
-                } else { ProgressHUD.dismiss() }
-            })
+            .emit(onNext: { [weak self] show in self?.showLoader(show) })
             .disposed(by: disposeBag)
         
-        viewModel.output.signIn
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { viewModel in
+        viewModel.output.switchToSignInView
+            .compactMap { $0 }
+            .emit(onNext: { viewModel in
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToMainView(viewModel: viewModel)
             })
             .disposed(by: disposeBag)
         
         viewModel.output.showRegisterView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] viewModel in
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = RegisterViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
@@ -226,60 +227,44 @@ extension BappyLoginViewController {
 
 // MARK: - Google Sign In
 extension BappyLoginViewController {
-    private func startSignInWithGoogleFlow() -> Single<AuthCredential> {
-        return Single<AuthCredential>.create { [weak self] single in
-            
-            guard
-                let self = self,
-                let clientID = FirebaseApp.app()?.options.clientID
-            else {
-                return Disposables.create()
+    private func startSignInWithGoogleFlow() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { [weak self] user, error in
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
             }
-            let config = GIDConfiguration(clientID: clientID)
-            
-            GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
-                if let error = error {
-                    print("ERROR: \(error.localizedDescription)")
-                    return
-                }
 
-                guard let authentication = user?.authentication,
-                      let idToken = authentication.idToken else { return }
-                
-                let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
-                
-                single(.success(credential))
-            }
-            return Disposables.create()
+            guard let authentication = user?.authentication,
+                  let idToken = authentication.idToken else { return }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
+            self?.authCredential$.onNext(credential)
         }
     }
 }
 
 // MARK: - Facebook Sign In
 extension BappyLoginViewController {
-    private func startSignInWithFacebookFlow() -> Single<AuthCredential> {
-        return Single<AuthCredential>.create { [weak self] single in
-            guard let self = self else { return Disposables.create() }
-            let loginManager = LoginManager()
-            loginManager.logIn(permissions: ["public_profile"], from: self) { result, error in
-                
-                if let error = error {
-                    print("ERROR: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let result = result, !result.isCancelled else { return }
-                
-                guard let accessToken = AccessToken.current?.tokenString else { return }
-                let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
-                
-                single(.success(credential))
+    private func startSignInWithFacebookFlow() {
+        let loginManager = LoginManager()
+        loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
+
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return
             }
-            return Disposables.create()
+
+            guard let result = result, !result.isCancelled else { return }
+
+            guard let accessToken = AccessToken.current?.tokenString else { return }
+            let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+
+            self?.authCredential$.onNext(credential)
         }
     }
 }
-
 
 // MARK: - Apple Sign In
 extension BappyLoginViewController {
@@ -290,30 +275,30 @@ extension BappyLoginViewController {
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
         request.nonce = sha256(nonce)
-        
+
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
     }
-    
+
     private func sha256(_ input: String) -> String {
         let inputData = Data(input.utf8)
         let hashedData = SHA256.hash(data: inputData)
         let hashString = hashedData.compactMap {
             return String(format: "%02x", $0)
         }.joined()
-        
+
         return hashString
     }
-    
+
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         let charset: Array<Character> =
             Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
         var result = ""
         var remainingLength = length
-        
+
         while remainingLength > 0 {
             let randoms: [UInt8] = (0 ..< 16).map { _ in
                 var random: UInt8 = 0
@@ -323,19 +308,18 @@ extension BappyLoginViewController {
                 }
                 return random
             }
-            
+
             randoms.forEach { random in
                 if remainingLength == 0 {
                     return
                 }
-                
+
                 if random < charset.count {
                     result.append(charset[Int(random)])
                     remainingLength -= 1
                 }
             }
         }
-                    
         return result
     }
 }
@@ -358,7 +342,7 @@ extension BappyLoginViewController: ASAuthorizationControllerDelegate {
 
             let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
 
-            appleCredential$.onNext(credential)
+            authCredential$.onNext(credential)
         }
     }
 }

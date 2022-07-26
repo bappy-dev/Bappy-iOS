@@ -97,19 +97,13 @@ extension ProfileSettingViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.showLoginView
-            .emit(onNext: { [weak self] _ in
+        viewModel.output.switchToSignInView
+            .compactMap { $0 }
+            .emit(onNext: { viewModel in
                 do {
                     try Auth.auth().signOut()
-                    let dependency = BappyLoginViewModel.Dependency(
-                        bappyAuthRepository: DefaultBappyAuthRepository.shared,
-                        firebaseRepository: DefaultFirebaseRepository.shared)
-                    let viewModel = BappyLoginViewModel(dependency: dependency)
-                    let rootViewController = BappyLoginViewController(viewModel: viewModel)
-                    let viewController = UINavigationController(rootViewController: rootViewController)
-                    viewController.navigationBar.isHidden = true
-                    viewController.interactivePopGestureRecognizer?.isEnabled = false
-                    //
+                    guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                    sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
                 } catch {
                     fatalError("Failed sign out")
                 }

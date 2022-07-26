@@ -13,12 +13,7 @@ final class RegisterViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
-        var numOfPage: Int
-        var isButtonEnabled: Bool
-        var nameDependency: RegisterNameViewModel.Dependency
-        var birthDependency: RegisterBirthViewModel.Dependency
-        var country: Country
-        var selectnationalityDependency: SelectNationalityViewModel.Dependency
+        var numOfPage: Int { 4 }
     }
     
     struct SubViewModels {
@@ -27,7 +22,6 @@ final class RegisterViewModel: ViewModelType {
         let birthViewModel: RegisterBirthViewModel
         let nationalityViewModel: RegisterNationalityViewModel
         let continueButtonViewModel: ContinueButtonViewModel
-        let selectNationalityViewModel: SelectNationalityViewModel
     }
     
     struct Input {
@@ -52,11 +46,11 @@ final class RegisterViewModel: ViewModelType {
         var progression: Driver<CGFloat> // <-> View
         var initProgression: Signal<CGFloat> // <-> View
         var popView: Signal<Void> // <-> View
-        var showCompleteView: PublishSubject<RegisterCompletedViewModel> // <-> View
+        var showCompleteView: Signal<RegisterCompletedViewModel?> // <-> View
         var isContinueButtonEnabled: Signal<Bool> // <-> Child(ContinueButton)
         var keyboardWithButtonHeight: Signal<CGFloat> // <-> Child(Name)
-        var country: Signal<Country> // <-> Child(Country)
-        var showSelectNationalityView: Signal<Void> // <-> View
+        var country: Signal<Country?> // <-> Child(Country)
+        var showSelectNationalityView: Signal<SelectNationalityViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -67,7 +61,7 @@ final class RegisterViewModel: ViewModelType {
     
     private let page$: BehaviorSubject<Int>
     private let numOfPage$: BehaviorSubject<Int>
-    private let showCompleteView$ = PublishSubject<RegisterCompletedViewModel>()
+    private let showCompleteView$ = PublishSubject<RegisterCompletedViewModel?>()
     
     private let continueButtonTapped$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
@@ -83,15 +77,16 @@ final class RegisterViewModel: ViewModelType {
     private let nationalityTextFieldTapped$ = PublishSubject<Void>()
     private let viewDidAppear$ = PublishSubject<Bool>()
     
+    private let showSelectNationalityView$ = PublishSubject<SelectNationalityViewModel?>()
+    
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            nameViewModel: RegisterNameViewModel(dependency: dependency.nameDependency),
+            nameViewModel: RegisterNameViewModel(),
             genderViewModel: RegisterGenderViewModel(),
-            birthViewModel: RegisterBirthViewModel(dependency: dependency.birthDependency),
-            nationalityViewModel: RegisterNationalityViewModel(dependency: .init(country: dependency.country)),
-            continueButtonViewModel: ContinueButtonViewModel(),
-            selectNationalityViewModel: SelectNationalityViewModel(dependency: dependency.selectnationalityDependency)
+            birthViewModel: RegisterBirthViewModel(),
+            nationalityViewModel: RegisterNationalityViewModel(),
+            continueButtonViewModel: ContinueButtonViewModel()
         )
         
         // Streams
@@ -116,6 +111,8 @@ final class RegisterViewModel: ViewModelType {
             .filter { $0 == 0 }
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
+        let showCompleteView = showCompleteView$
+            .asSignal(onErrorJustReturn: nil)
         
         let continueButtonTappedWithPage = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
@@ -129,9 +126,9 @@ final class RegisterViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: 0)
         let country = country$
             .compactMap { $0 }
-            .asSignal(onErrorJustReturn: dependency.country)
-        let showSelectNationalityView = nationalityTextFieldTapped$
-            .asSignal(onErrorJustReturn: Void())
+            .asSignal(onErrorJustReturn: nil)
+        let showSelectNationalityView = showSelectNationalityView$
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(
@@ -156,7 +153,7 @@ final class RegisterViewModel: ViewModelType {
             progression: progression,
             initProgression: initProgression,
             popView: popView,
-            showCompleteView: showCompleteView$,
+            showCompleteView: showCompleteView,
             isContinueButtonEnabled: isContinueButtonEnabled,
             keyboardWithButtonHeight: keyboardWithButtonHeight,
             country: country,
@@ -166,6 +163,15 @@ final class RegisterViewModel: ViewModelType {
         // Binding
         self.page$ = page$
         self.numOfPage$ = numOfPage$
+        
+        nationalityTextFieldTapped$
+            .map { _ -> SelectNationalityViewModel in
+                let viewModel = SelectNationalityViewModel()
+                viewModel.delegate = self
+                return viewModel
+            }
+            .bind(to: showSelectNationalityView$)
+            .disposed(by: disposeBag)
         
         continueButtonTappedWithPage
             .filter { $0.0 + 1 < $0.1 }
@@ -212,6 +218,7 @@ final class RegisterViewModel: ViewModelType {
         
         // NationalityView
         country
+            .compactMap { $0 }
             .emit(to: subViewModels.nationalityViewModel.input.country)
             .disposed(by: disposeBag)
         
@@ -232,11 +239,6 @@ final class RegisterViewModel: ViewModelType {
             .emit(to: continueButtonTapped$)
             .disposed(by: disposeBag)
         
-        // SelectNationalityView
-        subViewModels.selectNationalityViewModel.output.country
-            .emit(to: country$)
-            .disposed(by: disposeBag)
-        
         // CompltedView
         let result = continueButtonTappedWithPage
             .filter { $0.0 + 1 == $0.1 }
@@ -250,7 +252,7 @@ final class RegisterViewModel: ViewModelType {
                 dependency.bappyAuthRepository.createUser(
                     name: $0.0, gender: $0.1.rawValue,
                     birth: $0.2,
-                    country: "\($0.3.name)/\($0.3.code)")
+                    countryCode: $0.3.code)
             }
             .flatMap { $0 }
             .share()
@@ -302,4 +304,11 @@ private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
 private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
     guard case .failure(let error) = result else { return nil }
     return error.localizedDescription
+}
+
+// MARK: - SelectNationalityViewModelDelegate
+extension RegisterViewModel: SelectNationalityViewModelDelegate {
+    func selectedCountry(_ country: Country) {
+        country$.onNext(country)
+    }
 }

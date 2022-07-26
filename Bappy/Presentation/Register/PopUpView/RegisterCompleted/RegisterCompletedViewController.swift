@@ -238,7 +238,9 @@ extension RegisterCompletedViewController {
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToMainView(viewModel: viewModels.tabBarViewModel) { navigationController in
                     let editViewController = ProfileEditViewController(viewModel: viewModels.editViewModel)
-                    navigationController?.pushViewController(editViewController, animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        navigationController?.pushViewController(editViewController, animated: true)
+                    }
                 }
             })
             .disposed(by: disposeBag)

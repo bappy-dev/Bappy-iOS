@@ -10,10 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class RegisterNationalityViewModel: ViewModelType {
-    struct Dependency {
-        var country: Country
-        var text: String { "\(country.name) \(country.flag)" }
-    }
+    struct Dependency {}
     
     struct Input {
         var country: AnyObserver<Country>
@@ -21,7 +18,7 @@ final class RegisterNationalityViewModel: ViewModelType {
     }
     
     struct Output {
-        var country: Signal<String>
+        var country: Signal<String?>
         var isValid: Driver<Bool>
         var textFieldTapped: Signal<Void>
     }
@@ -34,13 +31,13 @@ final class RegisterNationalityViewModel: ViewModelType {
     private let country$ = PublishSubject<Country>()
     private let textFieldTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // Streams
         let country = country$
             .map { "\($0.name) \($0.flag)" }
-            .asSignal(onErrorJustReturn: dependency.text)
+            .asSignal(onErrorJustReturn: nil)
         let isValid = country
             .map { _ in true }
             .asDriver(onErrorJustReturn: false)

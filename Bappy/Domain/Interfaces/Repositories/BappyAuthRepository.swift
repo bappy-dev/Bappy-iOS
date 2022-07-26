@@ -13,7 +13,7 @@ protocol BappyAuthRepository {
     var currentUser: BehaviorSubject<BappyUser?> { get }
     func fetchCurrentUser(token: String) -> Single<Result<BappyUser, Error>>
     func fetchAnonymousUser() -> Single<BappyUser>
-    func createUser(name: String, gender: String, birth: Date, country: String) -> Single<Result<BappyUser, Error>>
+    func createUser(name: String, gender: String, birth: Date, countryCode: String) -> Single<Result<BappyUser, Error>>
     func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>>
     func fetchUserLocations() -> Single<Result<[Location], Error>>
 }

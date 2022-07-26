@@ -215,7 +215,10 @@ extension SelectNationalityViewController {
         
         viewModel.output.searchedCountries
             .drive(tableView.rx.items) { tableView, row, country in
-                let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: IndexPath(row: row, section: 0)) as! CountryCell
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: IndexPath(row: row, section: 0)
+                ) as! CountryCell
                 cell.country = country
                 return cell
             }
@@ -229,7 +232,7 @@ extension SelectNationalityViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.hideNoResultView
-            .bind(to: noResultView.rx.isHidden)
+            .drive(noResultView.rx.isHidden)
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight

@@ -36,7 +36,22 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                }
 //            }
         return Single<Result<BappyUser, Error>>.create { single in
-            let user = BappyUser(id: UUID().uuidString, state: .notRegistered)
+            let user = BappyUser(
+                id: UUID().uuidString,
+                state: .normal,
+                isUserUsingGPS: true,
+                name: "David",
+                gender: .Male,
+                birth: Date(),
+                nationality: Country(code: "KR"),
+                profileImageURL: URL(string: EXAMPLE_IMAGE3_URL),
+                introduce: "Hello ~~",
+                affiliation: "Bappy",
+                languages: ["Korean", "English"],
+                personalities: [.Empathatic, .Talkative, .Spontaneous],
+                interests: [.Culture, .Travel, .Language]
+            )
+//            let user = BappyUser(id: UUID().uuidString, state: .notRegistered)
             self.currentUser$.onNext(user)
             
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
@@ -56,7 +71,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
         }
     }
     
-    func createUser(name: String, gender: String, birth: Date, country: String) -> Single<Result<BappyUser, Error>> {
+    func createUser(name: String, gender: String, birth: Date, countryCode: String) -> Single<Result<BappyUser, Error>> {
 //        let requestDTO = CreateUserRequestDTO(
 //            userName: name,
 //            userGender: gender,
@@ -75,7 +90,6 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                    return .failure(error)
 //                }
 //            }
-        let country = country.split(separator: "/").map { String($0) }
         return Single<Result<BappyUser, Error>>.create { single in
             let user = BappyUser(
                 id: UUID().uuidString,
@@ -83,8 +97,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
                 name: name,
                 gender: Gender(rawValue: gender) ?? .Other,
                 birth: birth,
-                nationality: Country(code: country[1], name: country[0])
-                )
+                nationality: Country(code: countryCode))
             self.currentUser$.onNext(user)
             
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {

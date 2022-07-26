@@ -186,22 +186,20 @@ extension RegisterViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showSelectNationalityView
-            .emit(onNext: { [weak self] _ in
-                guard let self = self else { return }
-                let viewModel = self.viewModel.subViewModels.selectNationalityViewModel
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = SelectNationalityViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
-                self.present(viewController, animated: false, completion: nil)
+                self?.present(viewController, animated: false, completion: nil)
             })
             .disposed(by: disposeBag)
         
         viewModel.output.showCompleteView
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] viewModel in
-                guard let self = self else { return }
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
                 let viewController = RegisterCompletedViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
-                self.present(viewController, animated: false, completion: nil)
+                self?.present(viewController, animated: false, completion: nil)
             })
             .disposed(by: disposeBag)
         

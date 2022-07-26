@@ -16,12 +16,23 @@ final class RegisterBirthViewModel: ViewModelType {
     }
     
     struct Dependency {
-        var year: String
-        var month: String
-        var day: String
-        var yearList: [String]
-        var monthList: [String]
-        var dayList: [String]
+        var year: String { "2000" }
+        var month: String { "06" }
+        var day: String { "15" }
+        var yearList: [String] {
+            Array(1931...Date.thisYear-17)
+                .map { String($0) }
+        }
+        var monthList: [String] {
+            Array(1...12)
+                .map { String($0) }
+                .map { ($0.count == 1) ? "0\($0)" : $0 }
+        }
+        var dayList: [String] {
+            Array(1...31)
+                .map { String($0) }
+                .map { ($0.count == 1) ? "0\($0)" : $0 }
+        }
         var date: String { "\(year)-\(month)-\(day)" }
     }
     
@@ -46,7 +57,7 @@ final class RegisterBirthViewModel: ViewModelType {
     
     private let selectedDate$ = PublishSubject<Date>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         let subViewModel = SubViewModels(
             birthPickerViewModel: BirthPickerViewModel(
                 dependency: .init(
