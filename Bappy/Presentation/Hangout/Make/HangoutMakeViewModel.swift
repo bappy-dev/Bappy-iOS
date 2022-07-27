@@ -455,6 +455,7 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
 private func getHangoutDetailViewModel(dependency: (user: BappyUser, hangout: Hangout, postImage: UIImage, mapImage: UIImage)) -> HangoutDetailViewModel {
         let dependency = HangoutDetailViewModel.Dependency(
             firebaseRepository: DefaultFirebaseRepository.shared,
+            userProfileRepository: DefaultUserProfileRepository(),
             currentUser: dependency.user,
             hangout: dependency.hangout,
             postImage: dependency.postImage,

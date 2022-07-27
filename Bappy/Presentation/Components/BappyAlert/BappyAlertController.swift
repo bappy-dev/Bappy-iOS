@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class BappyAlertController: UIViewController {
+class BappyAlertController: UIViewController {
     enum BappyStyle: String { case happy, sad, excited, service, stupid, sulky }
     
     // MARK: Properties

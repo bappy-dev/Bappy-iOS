@@ -103,6 +103,7 @@ final class HomeListViewModel: ViewModelType {
             .map { element -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
                     firebaseRepository: DefaultFirebaseRepository.shared,
+                    userProfileRepository: DefaultUserProfileRepository(),
                     currentUser: element.user,
                     hangout: element.hangout)
                 return HangoutDetailViewModel(dependency: dependency)

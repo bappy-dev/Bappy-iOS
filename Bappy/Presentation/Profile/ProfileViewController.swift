@@ -21,6 +21,15 @@ final class ProfileViewController: UIViewController {
     private let headerView: ProfileHeaderView
     private let settingButton = UIButton()
     
+    private let backButton: UIButton = {
+        let button = UIButton(type: .system)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        return button
+    }()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .bappyLightgray
@@ -30,20 +39,11 @@ final class ProfileViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var signInAlert: BappyAlertController = {
+    private lazy var signInAlert: SignInAlertController = {
         let title = "Sign in and make your own profile!"
-        let alert = BappyAlertController(title: title, bappyStyle: .happy)
+        let alert = SignInAlertController(title: title)
         alert.canDismissByTouch = false
         alert.isContentsBlurred = true
-        let signInAction = BappyAlertAction(title: "Go to sign-in!", style: .disclosure) { _ in
-            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-            let dependency = BappyLoginViewModel.Dependency(
-                bappyAuthRepository: DefaultBappyAuthRepository.shared,
-                firebaseRepository: DefaultFirebaseRepository.shared)
-            let viewModel = BappyLoginViewModel(dependency: dependency)
-            sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
-        }
-        alert.addAction(signInAction)
         return alert
     }()
     
@@ -91,7 +91,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func configure() {
-        view.backgroundColor = .white
+        view.backgroundColor = .bappyLightgray
         
         tableView.tableHeaderView = headerView
         headerView.frame.size.height = 352.0
@@ -119,6 +119,13 @@ final class ProfileViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(21.3)
             $0.bottom.equalToSuperview().inset(48.6)
         }
+        
+        titleTopView.addSubview(backButton)
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalToSuperview().inset(7.3)
+            $0.width.height.equalTo(44.0)
+        }
     }
 }
 
@@ -139,6 +146,10 @@ extension ProfileViewController {
         
         settingButton.rx.tap
             .bind(to: viewModel.input.settingButtonTapped)
+            .disposed(by: disposeBag)
+        
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
             .disposed(by: disposeBag)
         
         viewModel.output.scrollToTop
@@ -176,12 +187,22 @@ extension ProfileViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.hideSettingButton
+        viewModel.output.shouldHideSettingButton
             .emit(to: settingButton.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideBackButton
+            .emit(to: backButton.rx.isHidden)
             .disposed(by: disposeBag)
         
         viewModel.output.showAlert
             .emit(onNext: { [weak self] _ in self?.showSignInAlert() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }

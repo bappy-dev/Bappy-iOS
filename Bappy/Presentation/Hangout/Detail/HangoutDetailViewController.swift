@@ -86,10 +86,9 @@ final class HangoutDetailViewController: UIViewController {
     }
     
     // MARK: Helpers
-    private func showSigninPopupView() {
-        let popupView = SigninPopupViewController()
-        popupView.modalPresentationStyle = .overCurrentContext
-        present(popupView, animated: false)
+    private func showSignInAlert(title: String) {
+        let alert = SignInAlertController(title: title)
+        self.present(alert, animated: false)
     }
     
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
@@ -155,6 +154,7 @@ final class HangoutDetailViewController: UIViewController {
         reportButton.snp.makeConstraints {
             $0.top.equalTo(hangoutButton.snp.bottom).offset(18.0)
             $0.centerX.equalToSuperview()
+            $0.width.equalTo(250.0)
             $0.height.equalTo(44.0)
             $0.bottom.equalToSuperview().inset(90.0)
         }
@@ -215,9 +215,17 @@ extension HangoutDetailViewController {
             .emit(to: hangoutButton.rx.hangoutState)
             .disposed(by: disposeBag)
         
-        viewModel.output.showSigninPopupView
-            .emit(onNext: { [weak self] _ in
-                self?.showSigninPopupView()
+        viewModel.output.showSignInForJoinAlert
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] title in
+                self?.showSignInAlert(title: title)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSignInForProfileAlert
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] title in
+                self?.showSignInAlert(title: title)
             })
             .disposed(by: disposeBag)
         
@@ -225,6 +233,14 @@ extension HangoutDetailViewController {
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let viewController = ReportViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showUserProfile
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = ProfileViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)

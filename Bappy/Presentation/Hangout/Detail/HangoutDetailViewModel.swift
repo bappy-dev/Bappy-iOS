@@ -21,6 +21,7 @@ final class HangoutDetailViewModel: ViewModelType {
     
     struct Dependency {
         let firebaseRepository: FirebaseRepository
+        let userProfileRepository: UserProfileRepository
         var currentUser: BappyUser
         var hangout: Hangout
         var postImage: UIImage?
@@ -28,7 +29,7 @@ final class HangoutDetailViewModel: ViewModelType {
         
         var isUserParticipating: Bool {
             return hangout.participantIDs
-                .map { $0.id }
+                .map(\.id)
                 .contains(currentUser.id)
         }
         
@@ -41,8 +42,9 @@ final class HangoutDetailViewModel: ViewModelType {
             }
         }
         
-        init(firebaseRepository: FirebaseRepository, currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
+        init(firebaseRepository: FirebaseRepository, userProfileRepository: UserProfileRepository, currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
             self.firebaseRepository = firebaseRepository
+            self.userProfileRepository = userProfileRepository
             self.currentUser = currentUser
             self.hangout = hangout
             self.postImage = postImage
@@ -56,6 +58,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var reportButtonTapped: AnyObserver<Void> // <-> View
         var imageHeight: AnyObserver<CGFloat> // <-> View
         var mapButtonTapped: AnyObserver<Void> // <-> Child(Map)
+        var selectedUserID: AnyObserver<String> // <-> Child(Participants)
     }
     
     struct Output {
@@ -63,8 +66,10 @@ final class HangoutDetailViewModel: ViewModelType {
         var imageHeight: Signal<CGFloat> // <-> Child(Map)
         var showOpenMapView: Signal<OpenMapPopupViewModel> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
-        var showSigninPopupView: Signal<Void> // <-> View
+        var showSignInForJoinAlert: Signal<String?> // <-> View
+        var showSignInForProfileAlert: Signal<String?> // <-> View
         var showReportView: Signal<ReportViewModel?> // <-> View
+        var showUserProfile: Signal<ProfileViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -83,6 +88,9 @@ final class HangoutDetailViewModel: ViewModelType {
     private let reportButtonTapped$ = PublishSubject<Void>()
     private let imageHeight$ = PublishSubject<CGFloat>()
     private let mapButtonTapped$ = PublishSubject<Void>()
+    private let selectedUserID$ = PublishSubject<String>()
+    
+    private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     
     init(dependency: Dependency) {
         let imageDependency = HangoutImageSectionViewModel.Dependency(
@@ -139,13 +147,18 @@ final class HangoutDetailViewModel: ViewModelType {
             )))
         let hangoutButtonState = hangoutButtonState$
             .asSignal(onErrorJustReturn: .expired)
-        let showSigninPopupView = hangoutButtonTapped$
+        let showSignInForJoinAlert = hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .join }
             .withLatestFrom(currentUser$)
             .filter { $0.state == .anonymous }
-            .map { _ in }
-            .asSignal(onErrorJustReturn: Void())
+            .map { _ in "Please sign in to join!" }
+            .asSignal(onErrorJustReturn: nil)
+        let showSignInForProfileAlert = selectedUserID$
+            .withLatestFrom(currentUser$)
+            .filter { $0.state == .anonymous}
+            .map { _ in "Sign in to check other's profiles!" }
+            .asSignal(onErrorJustReturn: nil)
         let showReportView = reportButtonTapped$
             .withLatestFrom(reasonsForReport$)
             .compactMap { reasons -> ReportViewModel? in
@@ -154,6 +167,8 @@ final class HangoutDetailViewModel: ViewModelType {
                 return ReportViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
+        let showUserProfile = showUserProfile$
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(
@@ -161,7 +176,8 @@ final class HangoutDetailViewModel: ViewModelType {
             hangoutButtonTapped: hangoutButtonTapped$.asObserver(),
             reportButtonTapped: reportButtonTapped$.asObserver(),
             imageHeight: imageHeight$.asObserver(),
-            mapButtonTapped: mapButtonTapped$.asObserver()
+            mapButtonTapped: mapButtonTapped$.asObserver(),
+            selectedUserID: selectedUserID$.asObserver()
         )
         
         self.output = Output(
@@ -169,8 +185,10 @@ final class HangoutDetailViewModel: ViewModelType {
             imageHeight: imageHeight,
             showOpenMapView: showOpenMapView,
             hangoutButtonState: hangoutButtonState,
-            showSigninPopupView: showSigninPopupView,
-            showReportView: showReportView
+            showSignInForJoinAlert: showSignInForJoinAlert,
+            showSignInForProfileAlert: showSignInForProfileAlert,
+            showReportView: showReportView,
+            showUserProfile: showUserProfile
         )
         
         // Bindind
@@ -192,6 +210,31 @@ final class HangoutDetailViewModel: ViewModelType {
             .bind(to: reasonsForReport$)
             .disposed(by: disposeBag)
         
+        let bappyUserResult = selectedUserID$
+            .withLatestFrom(currentUser$) { ($0, $1)}
+            .filter { $1.state == .normal }
+            .map(\.0)
+            .flatMap(dependency.userProfileRepository.fetchBappyUser)
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        bappyUserResult
+            .compactMap(getBappyUserError)
+            .bind(onNext: { print("ERROR: \($0)") })
+            .disposed(by: disposeBag)
+        
+        bappyUserResult
+            .compactMap(getBappyUser)
+            .map { user -> ProfileViewModel in
+                let dependency = ProfileViewModel.Dependency(
+                    user: user,
+                    authorization: .view,
+                    bappyAuthRepository: DefaultBappyAuthRepository.shared)
+                return ProfileViewModel(dependency: dependency)
+            }
+            .bind(to: showUserProfile$)
+            .disposed(by: disposeBag)
+        
         // Child(Image)
         imageHeight
             .emit(to: subViewModels.imageSectionViewModel.input.imageHeight)
@@ -199,7 +242,13 @@ final class HangoutDetailViewModel: ViewModelType {
         
         // Child(Map)
         subViewModels.mapSectionViewModel.output.mapButtonTapped
-            .emit(to: mapButtonTapped$)
+            .emit(to: input.mapButtonTapped)
+            .disposed(by: disposeBag)
+        
+        // Child(Participants)
+        subViewModels.participantsSectionViewModel.output.selectedUserID
+            .compactMap { $0 }
+            .emit(to: input.selectedUserID)
             .disposed(by: disposeBag)
     }
 }
@@ -210,6 +259,16 @@ private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) 
 }
 
 private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
+    guard case .failure(let error) = result else { return nil }
+    return error.localizedDescription
+}
+
+private func getBappyUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
+    guard case .success(let value) = result else { return nil }
+    return value
+}
+
+private func getBappyUserError(_ result: Result<BappyUser, Error>) -> String? {
     guard case .failure(let error) = result else { return nil }
     return error.localizedDescription
 }

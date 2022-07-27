@@ -16,17 +16,22 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
         var participantIDs: [Hangout.Info]
     }
     
-    struct Input {}
+    struct Input {
+        var itemSelected: AnyObserver<IndexPath> // <-> View
+    }
     
     struct Output {
-        var limitNumberText: Signal<String>
-        var participantIDs: Driver<[Hangout.Info]>
+        var limitNumberText: Signal<String> // <-> View
+        var participantIDs: Driver<[Hangout.Info]> // <-> View
+        var selectedUserID: Signal<String?> // <-> Parent
     }
     
     let dependency: Dependency
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
+    
+    private let itemSelected$ = PublishSubject<IndexPath>()
     
     private let limitNumber$: BehaviorSubject<Int>
     private let participantIDs$: BehaviorSubject<[Hangout.Info]>
@@ -43,13 +48,19 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: "Max \(dependency.limitNumber)")
         let participantIDs = participantIDs$
             .asDriver(onErrorJustReturn: dependency.participantIDs)
+        let selectedUserID = itemSelected$
+            .withLatestFrom(participantIDs$) { $1[$0.row].id }
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
-        self.input = Input()
+        self.input = Input(
+            itemSelected: itemSelected$.asObserver()
+        )
         
         self.output = Output(
             limitNumberText: limitNumberText,
-            participantIDs: participantIDs
+            participantIDs: participantIDs,
+            selectedUserID: selectedUserID
         )
         
         // Bindind

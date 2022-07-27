@@ -27,17 +27,20 @@ final class ProfileViewModel: ViewModelType {
         var scrollToTop: AnyObserver<Void> // <-> Parent
         var viewWillAppear: AnyObserver<Bool> // <-> View
         var settingButtonTapped: AnyObserver<Void> // <-> View
+        var backButtonTapped: AnyObserver<Void> // <-> View
         var selectedButtonIndex: AnyObserver<Int> // <-> Child
         var moreButtonTapped: AnyObserver<Void> // <-> Child
     }
     
     struct Output {
         var scrollToTop: Signal<Void> // <-> View
-        var hideSettingButton: Signal<Bool> // <-> View
+        var shouldHideSettingButton: Signal<Bool> // <-> View
+        var shouldHideBackButton: Signal<Bool> // <-> View
         var hangouts: Driver<[Hangout]> // <-> View
         var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
         var showDetailView: Signal<ProfileDetailViewModel?> // <-> View
         var showAlert: Signal<Void> // <-> View
+        var popView: Signal<Void> // <-> View
     }
     
     let dependency: Dependency
@@ -54,6 +57,7 @@ final class ProfileViewModel: ViewModelType {
     private let viewWillAppear$ = PublishSubject<Bool>()
     private let selectedButtonIndex$ = PublishSubject<Int>()
     private let settingButtonTapped$ = PublishSubject<Void>()
+    private let backButtonTapped$ = PublishSubject<Void>()
     private let moreButtonTapped$ = PublishSubject<Void>()
     
     private let showSettingView$ = PublishSubject<ProfileSettingViewModel?>()
@@ -77,7 +81,7 @@ final class ProfileViewModel: ViewModelType {
         
         let scrollToTop = scrollToTop$
             .asSignal(onErrorJustReturn: Void())
-        let hideSettingButton = authorization$
+        let shouldHideSettingButton = authorization$
             .map { $0 == .view }
             .asSignal(onErrorJustReturn: true)
         let hangouts = hangouts$
@@ -88,23 +92,31 @@ final class ProfileViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showAlert = showAlert$
             .asSignal(onErrorJustReturn: Void())
+        let shouldHideBackButton = authorization$
+            .map { $0 == .edit }
+            .asSignal(onErrorJustReturn: true)
+        let popView = backButtonTapped$
+            .asSignal(onErrorJustReturn: Void())
         
         // Input & Output
         self.input = Input(
             scrollToTop: scrollToTop$.asObserver(),
             viewWillAppear: viewWillAppear$.asObserver(),
             settingButtonTapped: settingButtonTapped$.asObserver(),
+            backButtonTapped: backButtonTapped$.asObserver(),
             selectedButtonIndex: selectedButtonIndex$.asObserver(),
             moreButtonTapped: moreButtonTapped$.asObserver()
         )
         
         self.output = Output(
             scrollToTop: scrollToTop,
-            hideSettingButton: hideSettingButton,
+            shouldHideSettingButton: shouldHideSettingButton,
+            shouldHideBackButton: shouldHideBackButton,
             hangouts: hangouts,
             showSettingView: showSettingView,
             showDetailView: showDetailView,
-            showAlert: showAlert
+            showAlert: showAlert,
+            popView: popView
         )
         
         // Bindind

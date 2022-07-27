@@ -89,6 +89,10 @@ final class HangoutParticipantsSectionView: UIView {
 // MARK: - Bind
 extension HangoutParticipantsSectionView {
     private func bind() {
+        collectionView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposeBag)
+        
         viewModel.output.limitNumberText
             .emit(to: numOfParticipantsLabel.rx.text)
             .disposed(by: disposeBag)
