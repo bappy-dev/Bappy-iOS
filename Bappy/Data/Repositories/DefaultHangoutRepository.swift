@@ -62,8 +62,8 @@ extension DefaultHangoutRepository: HangoutRepository {
                     openchatURL: URL(string: "https://open.kakao.com/o/gyeerYje"),
                     mapImageURL: URL(string: EXAMPLE_MAP_URL),
                     participantIDs: [
-                        .init(id: "abc", imageURL: nil),
-                        .init(id: "abc", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
+                        .init(id: "def", imageURL: nil),
+                        .init(id: "def", imageURL: URL(string: EXAMPLE_IMAGE1_URL))
                     ],
                     userHasLiked: false),
                 Hangout(

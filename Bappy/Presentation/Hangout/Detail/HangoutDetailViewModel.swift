@@ -28,6 +28,8 @@ final class HangoutDetailViewModel: ViewModelType {
         var mapImage: UIImage?
         
         var isUserParticipating: Bool {
+            print("DEBUG: participantIDs \(hangout.participantIDs)")
+            print("DEBUG: currentUser.id \(currentUser.id)")
             return hangout.participantIDs
                 .map(\.id)
                 .contains(currentUser.id)
@@ -57,6 +59,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var hangoutButtonTapped: AnyObserver<Void> // <-> View
         var reportButtonTapped: AnyObserver<Void> // <-> View
         var imageHeight: AnyObserver<CGFloat> // <-> View
+        var cancelAlertButtonTapped: AnyObserver<Void> // <-> View
         var mapButtonTapped: AnyObserver<Void> // <-> Child(Map)
         var selectedUserID: AnyObserver<String> // <-> Child(Participants)
     }
@@ -68,6 +71,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
         var showSignInForJoinAlert: Signal<String?> // <-> View
         var showSignInForProfileAlert: Signal<String?> // <-> View
+        var showCancelAlert: Signal<Void> // <-> View
         var showReportView: Signal<ReportViewModel?> // <-> View
         var showUserProfile: Signal<ProfileViewModel?> // <-> View
     }
@@ -87,6 +91,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let hangoutButtonTapped$ = PublishSubject<Void>()
     private let reportButtonTapped$ = PublishSubject<Void>()
     private let imageHeight$ = PublishSubject<CGFloat>()
+    private let cancelAlertButtonTapped$ = PublishSubject<Void>()
     private let mapButtonTapped$ = PublishSubject<Void>()
     private let selectedUserID$ = PublishSubject<String>()
     
@@ -159,6 +164,11 @@ final class HangoutDetailViewModel: ViewModelType {
             .filter { $0.state == .anonymous}
             .map { _ in "Sign in to check other's profiles!" }
             .asSignal(onErrorJustReturn: nil)
+        let showCancelAlert = hangoutButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 == .cancel }
+            .map { _ in }
+            .asSignal(onErrorJustReturn: Void())
         let showReportView = reportButtonTapped$
             .withLatestFrom(reasonsForReport$)
             .compactMap { reasons -> ReportViewModel? in
@@ -176,6 +186,7 @@ final class HangoutDetailViewModel: ViewModelType {
             hangoutButtonTapped: hangoutButtonTapped$.asObserver(),
             reportButtonTapped: reportButtonTapped$.asObserver(),
             imageHeight: imageHeight$.asObserver(),
+            cancelAlertButtonTapped: cancelAlertButtonTapped$.asObserver(),
             mapButtonTapped: mapButtonTapped$.asObserver(),
             selectedUserID: selectedUserID$.asObserver()
         )
@@ -187,6 +198,7 @@ final class HangoutDetailViewModel: ViewModelType {
             hangoutButtonState: hangoutButtonState,
             showSignInForJoinAlert: showSignInForJoinAlert,
             showSignInForProfileAlert: showSignInForProfileAlert,
+            showCancelAlert: showCancelAlert,
             showReportView: showReportView,
             showUserProfile: showUserProfile
         )

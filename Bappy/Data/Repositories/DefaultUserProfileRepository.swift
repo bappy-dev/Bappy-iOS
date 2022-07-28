@@ -34,7 +34,7 @@ extension DefaultUserProfileRepository: UserProfileRepository {
 //            }
         return Single<Result<BappyUser, Error>>.create { single in
             let user = BappyUser(
-                id: UUID().uuidString,
+                id: "abc",
                 state: .normal,
                 name: "Bappy",
                 gender: .Other,

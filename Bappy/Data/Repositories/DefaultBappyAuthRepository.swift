@@ -37,7 +37,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //            }
         return Single<Result<BappyUser, Error>>.create { single in
             let user = BappyUser(
-                id: UUID().uuidString,
+                id: "abc",
                 state: .normal,
                 isUserUsingGPS: true,
                 name: "David",

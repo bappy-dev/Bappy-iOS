@@ -91,6 +91,21 @@ final class HangoutDetailViewController: UIViewController {
         self.present(alert, animated: false)
     }
     
+    private func showCancelAlert() {
+        let title = "Will you really cancel?\nPlease leave the chat room first!"
+        let message = "Bappy friends are looking\nforward to seeing you"
+        let alert = BappyAlertController(
+            title: title,
+            message: message,
+            bappyStyle: .sad)
+        let action = BappyAlertAction(
+            title: "Cancel", style: .default, handler: { [weak self] _ in
+                self?.viewModel.input.cancelAlertButtonTapped.onNext(Void())
+            })
+        alert.addAction(action)
+        self.present(alert, animated: false)
+    }
+    
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
         guard let navigationController = navigationController as? BappyNavigationViewController else { return }
         navigationController.statusBarStyle = statusBarStyle
@@ -226,6 +241,12 @@ extension HangoutDetailViewController {
             .compactMap { $0 }
             .emit(onNext: { [weak self] title in
                 self?.showSignInAlert(title: title)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showCancelAlert
+            .emit(onNext: { [weak self] _ in
+                self?.showCancelAlert()
             })
             .disposed(by: disposeBag)
         
