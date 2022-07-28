@@ -50,10 +50,10 @@ struct APIEndpoints {
     static func createUser(with createUserRequestDTO: CreateUserRequestDTO) -> Endpoint<CreateUserResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "user",
+            path: "user/",
             method: .post,
             bodyParameters: createUserRequestDTO,
-            contentType: .applicationJSON)
+            contentType: .multipart)
     }
     
     static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {

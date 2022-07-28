@@ -30,7 +30,6 @@ final class DefaultFirebaseRepository {
         let isAnonymous$ = BehaviorSubject<Bool>(value: user?.isAnonymous ?? false)
         let token$ = BehaviorSubject<String?>(value: nil)
         
-        
         auth.addStateDidChangeListener { _, user in
             user$.onNext(user)
         }
@@ -59,6 +58,10 @@ final class DefaultFirebaseRepository {
             .disposed(by: disposeBag)
         
         setRemoteConfig()
+        
+        getIDTokenForcingRefresh()
+            .bind(onNext: { print("DEBUG: \($0)") })
+            .disposed(by: disposeBag)
     }
     
     private func setRemoteConfig() {
@@ -97,7 +100,6 @@ extension DefaultFirebaseRepository: FirebaseRepository {
                         observer.onNext(.failure(error))
                         return
                     }
-                    print("DEBUG: token \(idToken )")
                     self?.token$.onNext(idToken)
                     observer.onNext(.success(idToken))
                 }

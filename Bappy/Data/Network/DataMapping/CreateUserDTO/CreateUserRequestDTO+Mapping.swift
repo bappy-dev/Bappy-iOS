@@ -11,5 +11,5 @@ struct CreateUserRequestDTO: Encodable {
     let userName: String
     let userGender: String
     let userBirth: String
-    let userNation: String
+    let userNationality: String
 }

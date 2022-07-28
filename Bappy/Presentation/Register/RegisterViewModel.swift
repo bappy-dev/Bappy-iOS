@@ -250,7 +250,8 @@ final class RegisterViewModel: ViewModelType {
             ))
             .map {
                 dependency.bappyAuthRepository.createUser(
-                    name: $0.0, gender: $0.1.rawValue,
+                    name: $0.0,
+                    gender: $0.1,
                     birth: $0.2,
                     countryCode: $0.3.code)
             }

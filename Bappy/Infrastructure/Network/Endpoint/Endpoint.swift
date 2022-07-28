@@ -20,7 +20,7 @@ final class Endpoint<R>: RequestResponsable {
     var bodyParameters: Encodable?
     var images: [UIImage]?
     var headers: [String : String]?
-    var contentType: ContentType?
+    var contentType: ContentType
     var sampleData: Data?
     
     init(baseURL: String,
@@ -30,7 +30,7 @@ final class Endpoint<R>: RequestResponsable {
          bodyParameters: Encodable? = nil,
          images: [UIImage]? = nil,
          headers: [String: String]? = [:],
-         contentType: ContentType? = nil,
+         contentType: ContentType = .none,
          sampleData: Data? = nil) {
         self.baseURL = baseURL
         self.path = path
@@ -38,6 +38,7 @@ final class Endpoint<R>: RequestResponsable {
         self.queryParameters = queryParameters
         self.bodyParameters = bodyParameters
         self.headers = headers
+        self.contentType = contentType
         self.sampleData = sampleData
     }
 }

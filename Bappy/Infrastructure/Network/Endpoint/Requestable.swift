@@ -9,7 +9,7 @@ import Foundation
 import UIKit.UIImage
 
 enum ContentType {
-    case applicationJSON, multipart
+    case applicationJSON, multipart, none
 }
 
 protocol Requestable {
@@ -20,15 +20,11 @@ protocol Requestable {
     var bodyParameters: Encodable? { get }
     var images: [UIImage]? { get }
     var headers: [String: String]? { get }
-    var contentType: ContentType? { get }
+    var contentType: ContentType { get }
     var sampleData: Data? { get }
 }
 
 extension Requestable {
-    var boundary: String? {
-        contentType.flatMap { $0 == .multipart ? "Boundary-\(UUID().uuidString)" : nil }
-    }
-    
     func getURLRequest() throws -> URLRequest {
         let url = try url()
         var urlRequest = URLRequest(url: url)
@@ -41,28 +37,36 @@ extension Requestable {
             urlRequest.setValue(value, forHTTPHeaderField: key)
         }
         
-        if let contentType = contentType {
-            switch contentType {
-            case .applicationJSON:
+        switch contentType {
+        case .applicationJSON, .none:
+            // header
+            if contentType == .applicationJSON {
                 urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            case .multipart:
-                guard let boundary = boundary else { break }
-                urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
             }
-        }
-        
-        // httpBody
-        if let contentType = contentType, contentType != .multipart,
-           let bodyParameters = try bodyParameters?.toDictionary() {
-            if !bodyParameters.isEmpty {
-                urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: bodyParameters)
+            
+            // httpBody
+            if let bodyParameters = try bodyParameters?.toDictionary() {
+                if !bodyParameters.isEmpty {
+                    urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: bodyParameters)
+                }
             }
+            
+        case .multipart:
+            let boundary = "Boundary-\(UUID().uuidString)"
+            // header
+            urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            // httpBody
+            let httpBody = try getMultipartFormData(boundary: boundary)
+            urlRequest.httpBody = httpBody
         }
         
         return urlRequest
     }
-    
-    func url() throws -> URL {
+}
+
+extension Requestable {
+    private func url() throws -> URL {
         // baseURL + path
         let fullPath = "\(baseURL)\(path)"
         guard var urlComponents = URLComponents(string: fullPath) else { throw NetworkError.components }
@@ -81,8 +85,7 @@ extension Requestable {
         return url
     }
     
-    func getMultipartFormData() throws -> Data {
-        guard let boundary = boundary else { throw NetworkError.notMultipartType }
+    private func getMultipartFormData(boundary: String) throws -> Data {
         var data = Data()
         
         if let bodyParameters = try bodyParameters?.toDictionary() {
@@ -98,27 +101,24 @@ extension Requestable {
                 guard let imageData = image.jpegData(compressionQuality: 1.0) else { continue }
                 data.append(convertFileData(fieldName: "file",
                                             fileName: "\(UUID().uuidString).jpg",
-                                            mimeType: "multipart/form-data",
+                                            mimeType: "image/jpg",
                                             fileData: imageData,
                                             boundary: boundary))
             }
         }
         
+        data.append("--\(boundary)--".data(using: .utf8)!)
         return data
     }
-}
-
-extension Requestable {
+    
     private func convertFormField(key: String,
                                   value: String,
                                   boundary: String) -> Data {
         var data = Data()
         let boundaryPrefix = "--\(boundary)\r\n"
-        let mimeType = "application/json"
         
         data.append(boundaryPrefix.data(using: .utf8)!)
         data.append("Content-Disposition: form-data; name=\"\(key)\"\r\n".data(using: .utf8)!)
-        data.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
         data.append("\r\n".data(using: .utf8)!)
         data.append("\(value)\r\n".data(using: .utf8)!)
         

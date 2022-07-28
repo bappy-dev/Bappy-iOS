@@ -225,40 +225,4 @@ extension BappyProvider: Provider {
             }
         }.resume()
     }
-    
-    func upload<R: Decodable,
-                E: RequestResponsable>(with endpoint: E,
-                                       completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
-        self.getToken { [weak self] result in
-            switch result {
-            case .success(let token):
-                do {
-                    var urlRequest = try endpoint.getURLRequest()
-                    urlRequest.setValue(token, forHTTPHeaderField: "Authorization")
-                    let multipartData = try endpoint.getMultipartFormData()
-                    self?.session.uploadTask(with: urlRequest, from: multipartData) { data, response, error in
-                        self?.checkError(with: data, response, error) { result in
-                            guard let self = self else { return }
-                            switch result {
-                            case .success(let data):
-                                completion(self.decode(data: data))
-                            case .failure(let error):
-                                if let error = error as? NetworkError {
-                                    switch error {
-                                    case .invalidToken, .expiredToken:
-                                        self.retry(with: endpoint, completion: completion)
-                                    default: completion(.failure(error))
-                                    }
-                                } else { completion(.failure(error)) }
-                            }
-                        }
-                    }.resume()
-                } catch {
-                    completion(.failure(NetworkError.urlRequest(error)))
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
 }
