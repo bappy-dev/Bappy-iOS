@@ -11,7 +11,7 @@ import RxSwift
 protocol BappyAuthRepository {
     static var shared: Self { get }
     var currentUser: BehaviorSubject<BappyUser?> { get }
-    func fetchCurrentUser(token: String) -> Single<Result<BappyUser, Error>>
+    func fetchCurrentUser() -> Single<Result<BappyUser, Error>>
     func fetchAnonymousUser() -> Single<BappyUser>
     func createUser(name: String, gender: String, birth: Date, countryCode: String) -> Single<Result<BappyUser, Error>>
     func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>>

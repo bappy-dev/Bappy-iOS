@@ -76,20 +76,9 @@ final class BappyLoginViewModel: ViewModelType {
             .bind(onNext: { print("ERROR: \($0)") })
             .disposed(by: disposeBag)
         
-        let tokenResult = signInResult
+        let signInUserResult = signInResult
             .map(getAuthResult)
             .compactMap { _ in }
-            .flatMap(dependency.firebaseRepository.getIDTokenForcingRefresh)
-            .share()
-        
-        tokenResult
-            .compactMap(getTokenError)
-            .do { [weak self] _ in self?.showLoader$.onNext(false) }
-            .bind(onNext: { print("ERROR: \($0)") })
-            .disposed(by: disposeBag)
-        
-        let signInUserResult = tokenResult
-            .compactMap(getToken)
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .observe(on: MainScheduler.asyncInstance)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
@@ -152,16 +141,6 @@ private func getAuthResult(_ result: Result<AuthDataResult?, Error>) -> AuthData
 }
 
 private func getAuthError(_ result: Result<AuthDataResult?, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getToken(_ result: Result<String?, Error>) -> String? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getTokenError(_ result: Result<String?, Error>) -> String? {
     guard case .failure(let error) = result else { return nil }
     return error.localizedDescription
 }

@@ -154,8 +154,8 @@ final class BappyInitialViewModel: ViewModelType {
             .disposed(by: disposeBag)
     
         let userResult = tokenResult
-            .map(getToken)
-            .compactMap { $0 }
+            .compactMap(getToken)
+            .map { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .observe(on: MainScheduler.asyncInstance)
             .share()

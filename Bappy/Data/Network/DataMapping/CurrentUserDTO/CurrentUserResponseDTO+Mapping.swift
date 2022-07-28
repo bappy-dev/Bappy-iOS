@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct CurrentUserResponseDTO: Decodable {
     
@@ -40,7 +41,7 @@ extension CurrentUserResponseDTO {
             case birth = "userBirth"
             case affiliation = "userAffiliation"
             case introduce = "userIntroduce"
-            case profileImageURL = "userProfileImageURL"
+            case profileImageURL = "userProfileImageUrl"
             case isUserUsingGPS = "userGPS"
             case state = "userState"
             case languages = "userLanguages"
@@ -52,15 +53,32 @@ extension CurrentUserResponseDTO {
 
 extension CurrentUserResponseDTO {
     func toDomain() -> BappyUser {
+        print("DEBUG: user response \(user)")
+        var state: UserState {
+            switch user.state {
+            case "normal": return .normal
+            case "notRegistered": return .notRegistered
+            default: return .notRegistered }
+        }
+        
+        var gender: Gender? {
+            guard let gender = user.gender else { return nil }
+            switch gender {
+            case "0": return .Male
+            case "1": return .Female
+            case "2": return .Other
+            default: return nil }
+        }
+        
         return BappyUser(
             id: user.id ?? UUID().uuidString,
-            state: .normal, // 임시
+            state: state, // 임시
             isUserUsingGPS: user.isUserUsingGPS,
             coordinates: nil, // 임시
             name: user.name,
-            gender: nil, // 임시
-            birth: nil, // 임시
-            nationality: nil, // 임시
+            gender: gender,
+            birth: user.birth?.toDate(format: "yyyy.MM.dd"),
+            nationality: user.nationality.flatMap { Country(code: $0) },
             profileImageURL: user.profileImageURL.flatMap { URL(string: $0) },
             introduce: user.introduce,
             affiliation: user.affiliation,

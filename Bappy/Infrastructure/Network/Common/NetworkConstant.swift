@@ -8,7 +8,7 @@
 import Foundation
 
 #if DEBUG
-    let BAPPY_API_BASEURL = ""
+    let BAPPY_API_BASEURL = "http://3.133.59.135:8080/"
 #else
     let BAPPY_API_BASEURL = ""
 #endif

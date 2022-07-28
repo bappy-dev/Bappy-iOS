@@ -23,13 +23,7 @@ extension CreateUserResponseDTO {
         let nationality: String?
         let gender: String?
         let birth: String?
-        let affiliation: String?
-        let introduce: String?
-        let profileImageURL: String?
         let state: String
-        let languages: [String]?
-        let personalities: [String]?
-        let interests: [String]?
         
         private enum CodingKeys: String, CodingKey {
             case id = "userInfoID"
@@ -37,33 +31,37 @@ extension CreateUserResponseDTO {
             case nationality = "userNationality"
             case gender = "userGender"
             case birth = "userBirth"
-            case affiliation = "userAffiliation"
-            case introduce = "userIntroduce"
-            case profileImageURL = "userProfileImageURL"
             case state = "userState"
-            case languages = "userLanguages"
-            case personalities = "userPersonalities"
-            case interests = "userInterests"
         }
     }
 }
 
 extension CreateUserResponseDTO {
     func toDomain() -> BappyUser {
+        print("DEBUG: user create response \(user)")
+        var state: UserState {
+            switch user.state {
+            case "normal": return .normal
+            case "notRegistered": return .notRegistered
+            default: return .notRegistered }
+        }
+        
+        var gender: Gender? {
+            guard let gender = user.gender else { return nil }
+            switch gender {
+            case "0": return .Male
+            case "1": return .Female
+            case "2": return .Other
+            default: return nil }
+        }
+        
         return BappyUser(
             id: user.id ?? UUID().uuidString,
-            state: .normal, // 임시
-            coordinates: nil, // 임시
+            state: state,
             name: user.name,
-            gender: nil, // 임시
-            birth: nil, // 임시
-            nationality: nil, // 임시
-            profileImageURL: user.profileImageURL.flatMap { URL(string: $0) },
-            introduce: user.introduce,
-            affiliation: user.affiliation,
-            languages: user.languages,
-            personalities: nil, // 임시
-            interests: nil // 임시
+            gender: gender,
+            birth: user.birth?.toDate(format: "yyyy.MM.dd"),
+            nationality: nil
         )
     }
 }

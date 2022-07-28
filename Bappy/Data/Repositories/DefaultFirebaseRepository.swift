@@ -83,7 +83,6 @@ extension DefaultFirebaseRepository: FirebaseRepository {
                 completion(.failure(error))
                 return
             }
-            print("DEBUG: token \(idToken)")
             self?.token$.onNext(idToken)
             completion(.success(idToken))
         }
@@ -98,7 +97,7 @@ extension DefaultFirebaseRepository: FirebaseRepository {
                         observer.onNext(.failure(error))
                         return
                     }
-                    print("DEBUG: token \(idToken)")
+                    print("DEBUG: token \(idToken )")
                     self?.token$.onNext(idToken)
                     observer.onNext(.success(idToken))
                 }
