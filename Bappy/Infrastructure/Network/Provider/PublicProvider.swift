@@ -9,9 +9,12 @@ import Foundation
 
 final class PublicProvider {
     private let session: URLSessionable
+    private let networkCheckRepository: NetworkCheckRepository
     
-    init(session: URLSessionable = URLSession.shared) {
+    init(session: URLSessionable = URLSession.shared,
+         networkCheckRepository: NetworkCheckRepository = DefaultNetworkCheckRepository.shared) {
         self.session = session
+        self.networkCheckRepository = networkCheckRepository
     }
     
     private func checkError(with data: Data?,
@@ -65,56 +68,62 @@ extension PublicProvider: Provider {
     func request<R: Decodable,
                  E: RequestResponsable>(with endpoint: E,
                                         completion: @escaping(Result<R, Error>) -> Void) where E.Response == R {
-        do {
-            let urlRequest = try endpoint.getURLRequest()
-            
-            session.dataTask(with: urlRequest) { [weak self] data, response, error in
-                self?.checkError(with: data, response, error) { result in
-                    guard let self = self else { return }
-                    
-                    switch result {
-                    case .success(let data):
-                        completion(self.decode(data: data))
-                    case .failure(let error):
-                        completion(.failure(error))
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            do {
+                let urlRequest = try endpoint.getURLRequest()
+                
+                self?.session.dataTask(with: urlRequest) { data, response, error in
+                    self?.checkError(with: data, response, error) { result in
+                        guard let self = self else { return }
+                        
+                        switch result {
+                        case .success(let data):
+                            completion(self.decode(data: data))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
                     }
-                }
-            }.resume()
-            
-        } catch {
-            completion(.failure(NetworkError.urlRequest(error)))
+                }.resume()
+                
+            } catch {
+                completion(.failure(NetworkError.urlRequest(error)))
+            }
         }
     }
     
     func request<E: RequestResponsable>(_ endpoint: E,
                                         completion: @escaping(Result<Data, Error>) -> Void) {
-        do {
-            let urlRequest = try endpoint.getURLRequest()
-            
-            session.dataTask(with: urlRequest) { [weak self] data, response, error in
-                self?.checkError(with: data, response, error) { result in
-                    
-                    switch result {
-                    case .success(let data):
-                        completion(.success(data))
-                    case .failure(let error):
-                        completion(.failure(error))
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            do {
+                let urlRequest = try endpoint.getURLRequest()
+                
+                self?.session.dataTask(with: urlRequest) { data, response, error in
+                    self?.checkError(with: data, response, error) { result in
+                        
+                        switch result {
+                        case .success(let data):
+                            completion(.success(data))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
                     }
-                }
-            }.resume()
-            
-        } catch {
-            completion(.failure(NetworkError.urlRequest(error)))
+                }.resume()
+                
+            } catch {
+                completion(.failure(NetworkError.urlRequest(error)))
+            }
         }
     }
     
     func request(_ url: URL,
                  completion: @escaping (Result<Data, Error>) -> Void) {
-        session.dataTask(with: url) { [weak self] data, response, error in
-            self?.checkError(with: data, response, error) { result in
-                completion(result)
-            }
-        }.resume()
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            self?.session.dataTask(with: url) { data, response, error in
+                self?.checkError(with: data, response, error) { result in
+                    completion(result)
+                }
+            }.resume()
+        }
     }
 }
 

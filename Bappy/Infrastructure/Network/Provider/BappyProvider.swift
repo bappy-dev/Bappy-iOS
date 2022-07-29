@@ -11,13 +11,17 @@ import RxSwift
 final class BappyProvider {
     private let session: URLSessionable
     private let firebaseRepository: FirebaseRepository
+    private let networkCheckRepository: NetworkCheckRepository
     private let disposeBag = DisposeBag()
     
     private var token: String? = nil
     
-    init(session: URLSessionable = URLSession.shared, firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared) {
+    init(session: URLSessionable = URLSession.shared,
+         firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared,
+         networkCheckRepository: NetworkCheckRepository = DefaultNetworkCheckRepository.shared) {
         self.session = session
         self.firebaseRepository = firebaseRepository
+        self.networkCheckRepository = networkCheckRepository
         
         firebaseRepository.token
             .bind(onNext: { self.token = $0 })
@@ -104,8 +108,10 @@ final class BappyProvider {
     }
     
     private func getToken(completion: @escaping(Result<String, Error>) -> Void) {
-        if let token = token { completion(.success(token)) }
-        else { getNewToken { completion($0) } }
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            if let token = self?.token { completion(.success(token)) }
+            else { self?.getNewToken { completion($0) } }
+        }
     }
     
     private func getNewToken(completion: @escaping(Result<String, Error>) -> Void) {
@@ -195,6 +201,7 @@ extension BappyProvider: Provider {
                             guard let self = self else { return }
                             self.checkServerConnection(error) { connection in
                                 guard connection else { return }
+                                
                                 switch result {
                                 case .success(let data):
                                     completion(self.decode(data: data))
@@ -230,17 +237,22 @@ extension BappyProvider: Provider {
                     urlRequest.setValue(token, forHTTPHeaderField: "Authorization")
                     self?.session.dataTask(with: urlRequest) { data, response, error in
                         self?.checkError(with: data, response, error) { result in
-                            switch result {
-                            case .success(let data):
-                                completion(.success(data))
-                            case .failure(let error):
-                                if let error = error as? NetworkError {
-                                    switch error {
-                                    case .invalidToken, .expiredToken:
-                                        self?.retry(endpoint, completion: completion)
-                                    default: completion(.failure(error))
-                                    }
-                                } else { completion(.failure(error)) }
+                            guard let self = self else { return }
+                            self.checkServerConnection(error) { connection in
+                                guard connection else { return }
+                                
+                                switch result {
+                                case .success(let data):
+                                    completion(.success(data))
+                                case .failure(let error):
+                                    if let error = error as? NetworkError {
+                                        switch error {
+                                        case .invalidToken, .expiredToken:
+                                            self.retry(endpoint, completion: completion)
+                                        default: completion(.failure(error))
+                                        }
+                                    } else { completion(.failure(error)) }
+                                }
                             }
                         }
                     }.resume()
@@ -258,7 +270,12 @@ extension BappyProvider: Provider {
                  completion: @escaping (Result<Data, Error>) -> Void) {
         session.dataTask(with: url) { [weak self] data, response, error in
             self?.checkError(with: data, response, error) { result in
-                completion(result)
+                guard let self = self else { return }
+                self.checkServerConnection(error) { connection in
+                    guard connection else { return }
+                    
+                    completion(result)
+                }
             }
         }.resume()
     }

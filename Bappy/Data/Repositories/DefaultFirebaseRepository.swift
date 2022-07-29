@@ -14,6 +14,8 @@ import RxSwift
 final class DefaultFirebaseRepository {
     private let auth: Auth
     private let remoteConfig: RemoteConfig
+    private let networkCheckRepository: NetworkCheckRepository
+    
     private let user$: BehaviorSubject<User?>
     private let isUserSignedIn$: BehaviorSubject<Bool>
     private let isAnonymous$: BehaviorSubject<Bool>
@@ -21,7 +23,7 @@ final class DefaultFirebaseRepository {
     
     private var disposeBag = DisposeBag()
     
-    private init() {
+    private init(networkCheckRepository: NetworkCheckRepository = DefaultNetworkCheckRepository.shared) {
         let auth = Auth.auth()
         let remoteConfig = RemoteConfig.remoteConfig()
         let user = auth.currentUser
@@ -36,6 +38,7 @@ final class DefaultFirebaseRepository {
         
         self.auth = auth
         self.remoteConfig = remoteConfig
+        self.networkCheckRepository = networkCheckRepository
         self.user$ = user$
         self.isUserSignedIn$ = isUserSignedIn$
         self.isAnonymous$ = isAnonymous$
@@ -74,44 +77,38 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     var isAnonymous: BehaviorSubject<Bool> { isAnonymous$ }
     var token: BehaviorSubject<String?> { token$ }
     
-    
-    
     func getIDTokenForcingRefresh(completion: @escaping(Result<String?, Error>) -> Void) {
-        auth.currentUser?.getIDTokenForcingRefresh(true) { [weak self] idToken, error in
-            if let error = error {
-                completion(.failure(error))
-                return
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            self?.auth.currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                self?.token$.onNext(idToken)
+                completion(.success(idToken))
             }
-            self?.token$.onNext(idToken)
-            completion(.success(idToken))
         }
     }
     
     func getIDTokenForcingRefresh() -> Observable<Result<String?, Error>> {
-        return user$
-            .flatMap { user -> Observable<Result<String?, Error>> in
-            return Observable<Result<String?, Error>>.create { observer in
-                user?.getIDTokenForcingRefresh(true) { [weak self] idToken, error in
-                    if let error = error {
-                        observer.onNext(.failure(error))
-                        return
-                    }
-                    self?.token$.onNext(idToken)
-                    observer.onNext(.success(idToken))
-                }
-                return Disposables.create()
+        return Observable<Result<String?, Error>>.create { [weak self] observer in
+            self?.getIDTokenForcingRefresh { result in
+                observer.onNext(result)
             }
+            return Disposables.create()
         }
     }
     
     func signIn(with credential: AuthCredential) -> Single<Result<AuthDataResult?, Error>> {
         return Single<Result<AuthDataResult?, Error>>.create { [weak self] single in
-            self?.auth.signIn(with: credential) { authResult, error in
-                if let error = error {
-                    single(.failure(error))
-                    return
+            self?.networkCheckRepository.checkNetworkConnection {
+                self?.auth.signIn(with: credential) { authResult, error in
+                    if let error = error {
+                        single(.failure(error))
+                        return
+                    }
+                    single(.success(.success(authResult)))
                 }
-                single(.success(.success(authResult)))
             }
             return Disposables.create()
         }
@@ -119,12 +116,14 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     
     func signInAnonymously() -> Single<Result<AuthDataResult?, Error>> {
         return Single<Result<AuthDataResult?, Error>>.create { [weak self] single in
-            self?.auth.signInAnonymously { authResult, error in
-                if let error = error {
-                    single(.failure(error))
-                    return
+            self?.networkCheckRepository.checkNetworkConnection {
+                self?.auth.signInAnonymously { authResult, error in
+                    if let error = error {
+                        single(.failure(error))
+                        return
+                    }
+                    single(.success(.success(authResult)))
                 }
-                single(.success(.success(authResult)))
             }
             return Disposables.create()
         }
@@ -132,10 +131,12 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     
     func signOut() -> Single<Result<Void, Error>> {
         return Single<Result<Void, Error>>.create { [weak self] single in
-            do {
-                try self?.auth.signOut()
-                single(.success(.success(Void())))
-            } catch { single(.failure(FirebaseError.signOutFailed)) }
+            self?.networkCheckRepository.checkNetworkConnection {
+                do {
+                    try self?.auth.signOut()
+                    single(.success(.success(Void())))
+                } catch { single(.failure(FirebaseError.signOutFailed)) }
+            }
             return Disposables.create()
         }
     }
@@ -143,37 +144,39 @@ extension DefaultFirebaseRepository: FirebaseRepository {
     func getRemoteConfigValues() -> Observable<Result<RemoteConfigValues, Error>> {
         return Observable<Result<RemoteConfigValues, Error>>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
-            self.remoteConfig.fetch { status, error in
-                if status == .success {
-                    self.remoteConfig.activate()
-                    let minimumVersion = self.remoteConfig["minimumVersion"].stringValue!
-                    
-                    let hasNotice = self.remoteConfig["hasNotice"].boolValue
-                    let noticeTitle = self.remoteConfig["noticeTitle"].stringValue!
-                        .replacingOccurrences(of: "\\n", with: "\n")
-                    let noticeMessage = self.remoteConfig["noticeMessage"].stringValue!
-                        .replacingOccurrences(of: "\\n", with: "\n")
-                    
-                    let reasonsForReport = self.remoteConfig["reasonsForReport"].stringValue!
-                        .replacingOccurrences(of: "\\n", with: "\n")
-                        .split(separator: "\n")
-                        .map(String.init)
-                    let reasonsForWithdrawl = self.remoteConfig["reasonsForWithdrawl"].stringValue!
-                        .replacingOccurrences(of: "\\n", with: "\n")
-                        .split(separator: "\n")
-                        .map(String.init)
-                    
-                    let remoteConfigValues = RemoteConfigValues(
-                        notice: .init(
-                            hasNotice: hasNotice,
-                            noticeTitle: noticeTitle,
-                            noticeMessage: noticeMessage),
-                        minimumVersion: minimumVersion,
-                        reasonsForReport: reasonsForReport,
-                        reasonsForWithdrawl: reasonsForWithdrawl)
-                    observer.onNext(.success(remoteConfigValues))
-                } else {
-                    observer.onError(FirebaseError.failedRemoteConfig)
+            self.networkCheckRepository.checkNetworkConnection {
+                self.remoteConfig.fetch { status, error in
+                    if status == .success {
+                        self.remoteConfig.activate()
+                        let minimumVersion = self.remoteConfig["minimumVersion"].stringValue!
+                        
+                        let hasNotice = self.remoteConfig["hasNotice"].boolValue
+                        let noticeTitle = self.remoteConfig["noticeTitle"].stringValue!
+                            .replacingOccurrences(of: "\\n", with: "\n")
+                        let noticeMessage = self.remoteConfig["noticeMessage"].stringValue!
+                            .replacingOccurrences(of: "\\n", with: "\n")
+                        
+                        let reasonsForReport = self.remoteConfig["reasonsForReport"].stringValue!
+                            .replacingOccurrences(of: "\\n", with: "\n")
+                            .split(separator: "\n")
+                            .map(String.init)
+                        let reasonsForWithdrawl = self.remoteConfig["reasonsForWithdrawl"].stringValue!
+                            .replacingOccurrences(of: "\\n", with: "\n")
+                            .split(separator: "\n")
+                            .map(String.init)
+                        
+                        let remoteConfigValues = RemoteConfigValues(
+                            notice: .init(
+                                hasNotice: hasNotice,
+                                noticeTitle: noticeTitle,
+                                noticeMessage: noticeMessage),
+                            minimumVersion: minimumVersion,
+                            reasonsForReport: reasonsForReport,
+                            reasonsForWithdrawl: reasonsForWithdrawl)
+                        observer.onNext(.success(remoteConfigValues))
+                    } else {
+                        observer.onError(FirebaseError.failedRemoteConfig)
+                    }
                 }
             }
             return Disposables.create()

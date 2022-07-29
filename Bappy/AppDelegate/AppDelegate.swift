@@ -13,9 +13,12 @@ import FacebookCore
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    let networkCheckRepository: NetworkCheckRepository = DefaultNetworkCheckRepository.shared
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        networkCheckRepository.startMonitoring()
         
         // Firebase SDK Initialize
         FirebaseApp.configure()
@@ -29,10 +32,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         let authOptions: UNAuthorizationOptions = [.alert, .sound]
         
         DefaultNotificationRepository.shared.requestAuthorization(options: authOptions)
-//        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { _, _ in }
-//        UNUserNotificationCenter.current().getNotificationSettings { setting in
-//            print("DEBUG: authorization \(setting.authorizationStatus)")
-//        }
+        
         application.registerForRemoteNotifications()
         return true
     }

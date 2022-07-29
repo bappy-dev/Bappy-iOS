@@ -127,7 +127,7 @@ class BappyAlertController: UIViewController {
         }
     }
     
-    private func animateDismissView() {
+    private func animateDismissView(completion: (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.3) {
             self.containerView.isHidden = true
             self.view.layoutIfNeeded()
@@ -137,7 +137,9 @@ class BappyAlertController: UIViewController {
         UIView.animate(withDuration: 0.3) {
             self.dimmedView.alpha = 0
         } completion: { _ in
-            self.dismiss(animated: false)
+            self.dismiss(animated: false) {
+                completion?()
+            }
         }
     }
     
@@ -168,8 +170,9 @@ class BappyAlertController: UIViewController {
         button.backgroundColor = (action.style == .cancel) ? .bappyCoral : .bappyYellow
         button.layer.cornerRadius = 22.0
         button.addAction(UIAction { [weak self] _ in
-            action.handler?(action)
-            self?.animateDismissView()
+            self?.animateDismissView {
+                action.handler?(action)
+            }
         }, for: .touchUpInside)
         button.addBappyShadow()
         
