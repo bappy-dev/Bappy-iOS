@@ -186,5 +186,10 @@ extension BappyTabBarController {
                 self?.showWriteView(viewModel: viewModel)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.output.showSignInAlert
+            .compactMap { $0 }
+            .emit(to: self.rx.showSignInAlert)
+            .disposed(by: disposeBag)
     }
 }

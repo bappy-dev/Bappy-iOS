@@ -40,7 +40,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     private lazy var signInAlert: SignInAlertController = {
-        let title = "Sign in and make your own profile!"
+        let title = "Sign in and make\nyour own profile!"
         let alert = SignInAlertController(title: title)
         alert.canDismissByTouch = false
         alert.isContentsBlurred = true

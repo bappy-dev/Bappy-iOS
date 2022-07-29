@@ -175,7 +175,7 @@ extension DefaultFirebaseRepository: FirebaseRepository {
                             reasonsForWithdrawl: reasonsForWithdrawl)
                         observer.onNext(.success(remoteConfigValues))
                     } else {
-                        observer.onError(FirebaseError.failedRemoteConfig)
+                        observer.onNext(.failure(FirebaseError.failedRemoteConfig))
                     }
                 }
             }

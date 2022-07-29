@@ -15,12 +15,6 @@ final class BappyTabBarViewModel: ViewModelType {
         var selectedIndex: Int
         var user: BappyUser
         var bappyAuthRepository: BappyAuthRepository
-        var writeViewModelDependency: HangoutMakeViewModel.Dependency {
-            return .init(
-                googleMapImageRepository: DefaultGoogleMapImageRepository(),
-                currentUser: .init(id: "abc", state: .normal)
-            )
-        }
     }
     
     struct SubViewModels {
@@ -39,6 +33,7 @@ final class BappyTabBarViewModel: ViewModelType {
         var isHomeButtonSelected: Driver<Bool> // <-> View
         var isProfileButtonSelected: Driver<Bool> // <-> View
         var showWriteView: Signal<HangoutMakeViewModel?> // <-> View
+        var showSignInAlert: Signal<String?> // <-> View
         var scrollToTopInHome: Signal<Void> // <-> Child(Home)
         var scrollToTopInProfile: Signal<Void> // <-> Child(Profile)
     }
@@ -49,6 +44,7 @@ final class BappyTabBarViewModel: ViewModelType {
     let output: Output
     let subViewModels: SubViewModels
     
+    private let currentUser$: BehaviorSubject<BappyUser>
     private let selectedIndex$: BehaviorSubject<Int>
     private let popToSelectedRootView$ = PublishSubject<Void>()
     
@@ -74,6 +70,7 @@ final class BappyTabBarViewModel: ViewModelType {
         )
         
         // Streams
+        let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.user)
         let selectedIndex$ = BehaviorSubject<Int>(value: dependency.selectedIndex)
         
         let selectedIndex = selectedIndex$
@@ -85,7 +82,18 @@ final class BappyTabBarViewModel: ViewModelType {
             .map { $0 == 1 }
             .asDriver(onErrorJustReturn: true)
         let showWriteView = writeButtonTapped$
-            .map { _ in HangoutMakeViewModel(dependency: dependency.writeViewModelDependency)}
+            .withLatestFrom(currentUser$)
+            .filter { $0.state == .normal }
+            .map { user -> HangoutMakeViewModel in
+                let dependency = HangoutMakeViewModel.Dependency(
+                    googleMapImageRepository: DefaultGoogleMapImageRepository(),
+                    currentUser: user)
+                return HangoutMakeViewModel(dependency: dependency)}
+            .asSignal(onErrorJustReturn: nil)
+        let showSignInAlert = writeButtonTapped$
+            .withLatestFrom(currentUser$)
+            .filter { $0.state == .anonymous }
+            .map { _ in "Sign in to make\na new hangout!" }
             .asSignal(onErrorJustReturn: nil)
         let scrollToTopInHome = scrollToTopInHome$
             .asSignal(onErrorJustReturn: Void())
@@ -104,11 +112,13 @@ final class BappyTabBarViewModel: ViewModelType {
             isHomeButtonSelected: isHomeButtonSelected,
             isProfileButtonSelected: isProfileButtonSelected,
             showWriteView: showWriteView,
+            showSignInAlert: showSignInAlert,
             scrollToTopInHome: scrollToTopInHome,
             scrollToTopInProfile: scrollToTopInProfile
         )
         
         // Binding
+        self.currentUser$ = currentUser$
         self.selectedIndex$ = selectedIndex$
         
         homeButtonTapped$
