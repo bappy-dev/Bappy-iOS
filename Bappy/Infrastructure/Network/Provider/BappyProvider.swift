@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/07/11.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 
 final class BappyProvider {
@@ -22,6 +22,39 @@ final class BappyProvider {
         firebaseRepository.token
             .bind(onNext: { self.token = $0 })
             .disposed(by: disposeBag)
+    }
+    
+    private func showConnectionAlert() {
+        DispatchQueue.main.async {
+            if let viewController = UIWindow.keyWindow?.visibleViewConroller {
+                let alert = Alert(
+                    title: "Problem Occurred",
+                    message: "\nThere was a problem\nwith the Bappy\'s server.\n\nWe are very sorry\nfor the inconvenience.",
+                    bappyStyle: .sad,
+                    canDismissByTouch: false,
+                    actionTitle: "Exit App") {
+                        // 강제종료
+                        UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { exit(0) }
+                    }
+                viewController.showAlert(alert)
+            }
+        }
+    }
+    
+    private func checkServerConnection(_ error: Error?,
+                                       completion: @escaping(Bool) -> Void) {
+        guard let error = error as? NSError else {
+            completion(true)
+            return
+        }
+        
+        if error.domain == NSURLErrorDomain {
+            showConnectionAlert()
+            completion(false)
+        } else {
+            completion(true)
+        }
     }
     
     private func checkError(with data: Data?,
@@ -160,17 +193,20 @@ extension BappyProvider: Provider {
                     self?.session.dataTask(with: urlRequest) { data, response, error in
                         self?.checkError(with: data, response, error) { result in
                             guard let self = self else { return }
-                            switch result {
-                            case .success(let data):
-                                completion(self.decode(data: data))
-                            case .failure(let error):
-                                if let error = error as? NetworkError {
-                                    switch error {
-                                    case .invalidToken, .expiredToken:
-                                        self.retry(with: endpoint, completion: completion)
-                                    default: completion(.failure(error))
-                                    }
-                                } else { completion(.failure(error)) }
+                            self.checkServerConnection(error) { connection in
+                                guard connection else { return }
+                                switch result {
+                                case .success(let data):
+                                    completion(self.decode(data: data))
+                                case .failure(let error):
+                                    if let error = error as? NetworkError {
+                                        switch error {
+                                        case .invalidToken, .expiredToken:
+                                            self.retry(with: endpoint, completion: completion)
+                                        default: completion(.failure(error))
+                                        }
+                                    } else { completion(.failure(error)) }
+                                }
                             }
                         }
                     }.resume()

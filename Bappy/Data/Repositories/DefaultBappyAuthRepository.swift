@@ -23,43 +23,43 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     var currentUser: BehaviorSubject<BappyUser?> { currentUser$ }
     
     func fetchCurrentUser() -> Single<Result<BappyUser, Error>> {
-//        let endpoint = APIEndpoints.getCurrentUser()
-//        return  provider.request(with: endpoint)
-//            .map { [weak self] result -> Result<BappyUser, Error> in
-//                switch result {
-//                case .success(let responseDTO):
-//                    let user = responseDTO.toDomain()
-//                    self?.currentUser$.onNext(user)
-//                    return .success(user)
-//                case .failure(let error):
-//                    return .failure(error)
-//                }
-//            }
-        return Single<Result<BappyUser, Error>>.create { single in
-            let user = BappyUser(
-                id: "abc",
-                state: .normal,
-                isUserUsingGPS: true,
-                name: "David",
-                gender: .Male,
-                birth: Date(),
-                nationality: Country(code: "KR"),
-                profileImageURL: URL(string: EXAMPLE_IMAGE3_URL),
-                introduce: "Hello ~~",
-                affiliation: "Bappy",
-                languages: ["Korean", "English"],
-                personalities: [.Empathatic, .Talkative, .Spontaneous],
-                interests: [.Culture, .Travel, .Language]
-            )
-//            let user = BappyUser(id: UUID().uuidString, state: .notRegistered)
-            self.currentUser$.onNext(user)
-
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-                single(.success(.success(user)))
+        let endpoint = APIEndpoints.getCurrentUser()
+        return  provider.request(with: endpoint)
+            .map { [weak self] result -> Result<BappyUser, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    let user = responseDTO.toDomain()
+                    self?.currentUser$.onNext(user)
+                    return .success(user)
+                case .failure(let error):
+                    return .failure(error)
+                }
             }
-
-            return Disposables.create()
-        }
+//        return Single<Result<BappyUser, Error>>.create { single in
+//            let user = BappyUser(
+//                id: "abc",
+//                state: .normal,
+//                isUserUsingGPS: true,
+//                name: "David",
+//                gender: .Male,
+//                birth: Date(),
+//                nationality: Country(code: "KR"),
+//                profileImageURL: URL(string: EXAMPLE_IMAGE3_URL),
+//                introduce: "Hello ~~",
+//                affiliation: "Bappy",
+//                languages: ["Korean", "English"],
+//                personalities: [.Empathatic, .Talkative, .Spontaneous],
+//                interests: [.Culture, .Travel, .Language]
+//            )
+////            let user = BappyUser(id: UUID().uuidString, state: .notRegistered)
+//            self.currentUser$.onNext(user)
+//
+//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+//                single(.success(.success(user)))
+//            }
+//
+//            return Disposables.create()
+//        }
     }
     
     func fetchAnonymousUser() -> Single<BappyUser> {

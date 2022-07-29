@@ -7,6 +7,37 @@
 
 import UIKit
 import RxSwift
+import CryptoKit
+
+// MARK: - UIWindow
+extension UIWindow {
+    static var keyWindow: UIWindow? {
+        UIApplication
+            .shared
+            .connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first { $0.isKeyWindow }
+    }
+    
+    var visibleViewConroller: UIViewController? {
+        return self.getVisibleViewConroller(from: self.rootViewController)
+    }
+    
+    func getVisibleViewConroller(from viewController: UIViewController? = UIWindow.keyWindow?.rootViewController) -> UIViewController? {
+        if let navigationViewController = viewController as? UINavigationController {
+            return self.getVisibleViewConroller(from: navigationViewController.visibleViewController)
+        } else if let tabBarController = viewController as? UITabBarController {
+            return self.getVisibleViewConroller(from: tabBarController.selectedViewController)
+        } else {
+            if let presentedViewController = viewController?.presentedViewController {
+                return self.getVisibleViewConroller(from: presentedViewController)
+            } else {
+                return viewController
+            }
+        }
+    }
+}
 
 // MARK: - UIFont
 extension UIFont {
