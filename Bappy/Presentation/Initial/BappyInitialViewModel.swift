@@ -21,8 +21,7 @@ final class BappyInitialViewModel: ViewModelType {
     struct Output {
         var switchToSignInView: Signal<BappyLoginViewModel?> // <-> View
         var switchToMainView: Signal<BappyTabBarViewModel?> // <-> View
-        var showUpdateAlert: Signal<Void> // <-> View
-        var showNoticeAlert: Signal<RemoteConfigValues.Notice?> // <-> View
+        var showAlert: Signal<Alert?> // <-> View
     }
     
     let dependency: Dependency
@@ -35,9 +34,8 @@ final class BappyInitialViewModel: ViewModelType {
     
     private let firbaseSignInState$: BehaviorSubject<Bool>
     private let isAnonymousUser$: BehaviorSubject<Bool>
-    
-    private let showUpdateAlert$ = PublishSubject<Void>()
-    private let showNoticeAlert$ = PublishSubject<RemoteConfigValues.Notice?>()
+
+    private let showAlert$ = PublishSubject<Alert?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -50,9 +48,7 @@ final class BappyInitialViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let switchToMainView = switchToMainView$
             .asSignal(onErrorJustReturn: nil)
-        let showUpdateAlert = showUpdateAlert$
-            .asSignal(onErrorJustReturn: Void())
-        let showNoticeAlert = showNoticeAlert$
+        let showAlert = showAlert$
             .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
@@ -61,8 +57,7 @@ final class BappyInitialViewModel: ViewModelType {
         self.output = Output(
             switchToSignInView: switchToSignInView,
             switchToMainView: switchToMainView,
-            showUpdateAlert: showUpdateAlert,
-            showNoticeAlert: showNoticeAlert
+            showAlert: showAlert
         )
         
         // Bindind
@@ -84,8 +79,29 @@ final class BappyInitialViewModel: ViewModelType {
         // 앱 버전이 최소 버전 보다 작은 경우
         remoteConfigValues
             .filter { !checkCurrentVersion(with: $0.minimumVersion) }
-            .map { _ in }
-            .bind(to: showUpdateAlert$)
+            .map { _ -> Alert in
+                let appleID = "" // 나중에 AppStore Connect에서 확인
+                let urlStr = "itms-apps://itunes.apple.com/app/apple-store/\(appleID)"
+                let url = URL(string: urlStr)
+                let title = "This version is not supported"
+                let message = "Please update \"Bappy\" to the latest version"
+                let actionTitle = "Go to update"
+                
+                return Alert(
+                    title: title,
+                    message: message,
+                    bappyStyle: .happy,
+                    canDismissByTouch: false,
+                    actionTitle: actionTitle) {
+                        if let url = url {
+                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            // 강제종료
+                            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { exit(0) }
+                        }
+                    }
+            }
+            .bind(to: showAlert$)
             .disposed(by: disposeBag)
         
         let notice = remoteConfigValues
@@ -96,7 +112,14 @@ final class BappyInitialViewModel: ViewModelType {
         // 공지사항이 있는 경우
         notice
             .filter(\.hasNotice)
-            .bind(to: showNoticeAlert$)
+            .map { notice -> Alert in
+                return Alert(
+                    title: notice.noticeTitle,
+                    message: notice.noticeMessage,
+                    bappyStyle: .happy,
+                    canDismissByTouch: false)
+            }
+            .bind(to: showAlert$)
             .disposed(by: disposeBag)
         
         let startFlow = notice

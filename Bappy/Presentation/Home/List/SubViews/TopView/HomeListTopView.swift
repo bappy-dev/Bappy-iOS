@@ -43,6 +43,7 @@ final class HomeListTopView: UIView {
         localeButton.setImage(UIImage(named: "home_location"), for: .normal)
         searchButton.setImage(UIImage(named: "home_search"), for: .normal)
         filterButton.setImage(UIImage(named: "home_filter"), for: .normal)
+        filterButton.isHidden = true
     }
     
     private func layout() {
@@ -62,17 +63,17 @@ final class HomeListTopView: UIView {
             $0.width.height.equalTo(44.0)
         }
         
-        self.addSubview(filterButton)
-        filterButton.snp.makeConstraints {
-            $0.centerY.equalTo(localeButton)
-            $0.trailing.equalToSuperview().inset(8.0)
-            $0.width.height.equalTo(44.0)
-        }
+//        self.addSubview(filterButton)
+//        filterButton.snp.makeConstraints {
+//            $0.centerY.equalTo(localeButton)
+//            $0.trailing.equalToSuperview().inset(8.0)
+//            $0.width.height.equalTo(44.0)
+//        }
         
         self.addSubview(searchButton)
         searchButton.snp.makeConstraints {
             $0.centerY.equalTo(localeButton)
-            $0.trailing.equalTo(filterButton.snp.leading)
+            $0.trailing.equalToSuperview().inset(16.0)
             $0.width.height.equalTo(44.0)
         }
     }

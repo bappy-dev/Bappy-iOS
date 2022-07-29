@@ -28,8 +28,6 @@ final class HangoutDetailViewModel: ViewModelType {
         var mapImage: UIImage?
         
         var isUserParticipating: Bool {
-            print("DEBUG: participantIDs \(hangout.participantIDs)")
-            print("DEBUG: currentUser.id \(currentUser.id)")
             return hangout.participantIDs
                 .map(\.id)
                 .contains(currentUser.id)
@@ -40,8 +38,7 @@ final class HangoutDetailViewModel: ViewModelType {
             case .preview: return .create
             case .closed: return .closed
             case .expired: return . expired
-            case .available: return isUserParticipating ? .cancel : .join
-            }
+            case .available: return isUserParticipating ? .cancel : .join }
         }
         
         init(firebaseRepository: FirebaseRepository, userProfileRepository: UserProfileRepository, currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
@@ -69,9 +66,8 @@ final class HangoutDetailViewModel: ViewModelType {
         var imageHeight: Signal<CGFloat> // <-> Child(Map)
         var showOpenMapView: Signal<OpenMapPopupViewModel> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
-        var showSignInForJoinAlert: Signal<String?> // <-> View
-        var showSignInForProfileAlert: Signal<String?> // <-> View
-        var showCancelAlert: Signal<Void> // <-> View
+        var showSignInAlert: Signal<String?> // <-> View
+        var showCancelAlert: Signal<Alert?> // <-> View
         var showReportView: Signal<ReportViewModel?> // <-> View
         var showUserProfile: Signal<ProfileViewModel?> // <-> View
     }
@@ -95,6 +91,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let mapButtonTapped$ = PublishSubject<Void>()
     private let selectedUserID$ = PublishSubject<String>()
     
+    private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     
     init(dependency: Dependency) {
@@ -152,23 +149,22 @@ final class HangoutDetailViewModel: ViewModelType {
             )))
         let hangoutButtonState = hangoutButtonState$
             .asSignal(onErrorJustReturn: .expired)
-        let showSignInForJoinAlert = hangoutButtonTapped$
-            .withLatestFrom(hangoutButtonState$)
-            .filter { $0 == .join }
-            .withLatestFrom(currentUser$)
-            .filter { $0.state == .anonymous }
-            .map { _ in "Please sign in to join!" }
+        let showSignInAlert = Observable
+            .merge(
+                hangoutButtonTapped$
+                    .withLatestFrom(hangoutButtonState$)
+                    .filter { $0 == .join }
+                    .withLatestFrom(currentUser$)
+                    .filter { $0.state == .anonymous }
+                    .map { _ in "Please sign in to join!" },
+                selectedUserID$
+                    .withLatestFrom(currentUser$)
+                    .filter { $0.state == .anonymous}
+                    .map { _ in "Sign in to check other's profiles!" }
+            )
             .asSignal(onErrorJustReturn: nil)
-        let showSignInForProfileAlert = selectedUserID$
-            .withLatestFrom(currentUser$)
-            .filter { $0.state == .anonymous}
-            .map { _ in "Sign in to check other's profiles!" }
+        let showCancelAlert = showCancelAlert$
             .asSignal(onErrorJustReturn: nil)
-        let showCancelAlert = hangoutButtonTapped$
-            .withLatestFrom(hangoutButtonState$)
-            .filter { $0 == .cancel }
-            .map { _ in }
-            .asSignal(onErrorJustReturn: Void())
         let showReportView = reportButtonTapped$
             .withLatestFrom(reasonsForReport$)
             .compactMap { reasons -> ReportViewModel? in
@@ -196,8 +192,7 @@ final class HangoutDetailViewModel: ViewModelType {
             imageHeight: imageHeight,
             showOpenMapView: showOpenMapView,
             hangoutButtonState: hangoutButtonState,
-            showSignInForJoinAlert: showSignInForJoinAlert,
-            showSignInForProfileAlert: showSignInForProfileAlert,
+            showSignInAlert: showSignInAlert,
             showCancelAlert: showCancelAlert,
             showReportView: showReportView,
             showUserProfile: showUserProfile
@@ -207,6 +202,24 @@ final class HangoutDetailViewModel: ViewModelType {
         self.hangoutButtonState$ = hangoutButtonState$
         self.isUserParticipating$ = isUserParticipating$
         self.currentUser$ = currentUser$
+        
+        hangoutButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 == .cancel }
+            .map { _ -> Alert in
+                let title = "Will you really cancel?\nPlease leave the chat room first!"
+                let message = "Bappy friends are looking\nforward to seeing you"
+                let actionTitle = "Cancel"
+                return Alert(
+                    title: title,
+                    message: message,
+                    bappyStyle: .sad,
+                    actionTitle: actionTitle) { [weak self] in
+                        self?.input.cancelAlertButtonTapped.onNext(Void())
+                    }
+            }
+            .bind(to: showCancelAlert$)
+            .disposed(by: disposeBag)
         
         let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
             .share()

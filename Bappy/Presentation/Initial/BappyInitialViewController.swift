@@ -45,21 +45,6 @@ final class BappyInitialViewController: UIViewController {
     }
     
     // MARK: Helpers
-    private func showUpdateAlert() {
-        let appleID = "" // 나중에 AppStore Connect에서 확인
-        let urlStr = "itms-apps://itunes.apple.com/app/apple-store/\(appleID)"
-        guard let url = URL(string: urlStr) else { return }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-    }
-    
-    private func showNoticeAlert(notice: RemoteConfigValues.Notice) {
-        let title = notice.noticeTitle
-        let message = notice.noticeMessage
-        let alert = BappyAlertController(title: title, message: message, bappyStyle: .happy)
-        alert.canDismissByTouch = false
-        self.present(alert, animated: false)
-    }
-    
     private func configure() {
         view.backgroundColor = .white
     }
@@ -101,14 +86,9 @@ extension BappyInitialViewController {
             })
             .disposed(by: dispoesBag)
         
-        viewModel.output.showUpdateAlert
-            .emit(onNext: { [weak self] _ in self?.showUpdateAlert() })
-            .disposed(by: dispoesBag)
-        
-        viewModel.output.showNoticeAlert
+        viewModel.output.showAlert
             .compactMap { $0 }
-            .emit(onNext: { [weak self] notice in self?.showNoticeAlert(notice: notice) })
+            .emit(to: self.rx.showAlert)
             .disposed(by: dispoesBag)
-        
     }
 }

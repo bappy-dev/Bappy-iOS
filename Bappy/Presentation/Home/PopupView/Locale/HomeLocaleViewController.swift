@@ -90,19 +90,6 @@ final class HomeLocaleViewController: UIViewController {
     }
     
     // MARK: Helpers
-    private func showAuthorizationAlert() {
-        let title = "Permission Denied"
-        let message = "Please Turn On Location Service\nto Allow \"Bappy\"\nto Determine Your Location"
-        let alert = BappyAlertController(title: title, message: message, bappyStyle: .happy)
-        let settingAction = BappyAlertAction(title: "Setting", style: .default) { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-        }
-        let cancelAction = BappyAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(settingAction)
-        alert.addAction(cancelAction)
-        self.present(alert, animated: false)
-    }
-    
     private func configure() {
         view.backgroundColor = .clear
         childViewController.navigationBar.backgroundColor = .white
@@ -144,7 +131,8 @@ extension HomeLocaleViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showAuthorizationAlert
-            .emit(onNext: { [weak self] _ in self?.showAuthorizationAlert() })
+            .compactMap { $0 }
+            .emit(to: self.rx.showAlert)
             .disposed(by: disposeBag)
     }
 }

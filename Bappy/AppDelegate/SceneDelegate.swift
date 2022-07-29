@@ -6,6 +6,7 @@
 //
 
 import UIKit
+//import Firebase
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -22,7 +23,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             firebaseRepository: firebaseRepository)
         let viewModel = BappyInitialViewModel(dependency: dependency)
         let viewController = BappyInitialViewController(viewModel: viewModel)
-        
+//        do {
+//            try Auth.auth().signOut()
+//        } catch { fatalError() }
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .white
         window?.tintColor = .bappyGray

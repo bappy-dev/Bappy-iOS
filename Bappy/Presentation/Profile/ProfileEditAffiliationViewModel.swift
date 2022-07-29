@@ -45,7 +45,8 @@ final class ProfileEditAffiliationViewModel: ViewModelType {
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
         let placeHolder = user$
-            .map { $0.affiliation ?? dependency.affiliation }
+            .map { $0.affiliation ?? "" }
+            .map { $0.isEmpty ? dependency.affiliation : $0 }
             .asDriver(onErrorJustReturn: dependency.affiliation)
         let shouldHidePlaceHolder = text$
             .map { !$0.isEmpty }

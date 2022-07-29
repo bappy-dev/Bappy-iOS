@@ -36,7 +36,8 @@ final class ProfileDetailAffiliationViewModel: ViewModelType {
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         
         let affiliation = user$
-            .map { $0.affiliation ?? dependency.affiliation }
+            .map { $0.affiliation ?? "" }
+            .map { $0.isEmpty ? dependency.affiliation : $0 }
             .asDriver(onErrorJustReturn: dependency.affiliation)
         
         // Input & Output

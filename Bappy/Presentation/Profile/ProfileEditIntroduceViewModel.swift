@@ -45,7 +45,8 @@ final class ProfileEditIntroduceViewModel: ViewModelType {
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
         let placeHolder = user$
-            .map { $0.introduce ?? dependency.introduce }
+            .map { $0.introduce ?? "" }
+            .map { $0.isEmpty ? dependency.introduce : $0 }
             .asDriver(onErrorJustReturn: dependency.introduce)
         let shouldHidePlaceHolder = text$
             .map { !$0.isEmpty }

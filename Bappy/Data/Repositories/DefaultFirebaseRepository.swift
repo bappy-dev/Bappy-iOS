@@ -58,10 +58,6 @@ final class DefaultFirebaseRepository {
             .disposed(by: disposeBag)
         
         setRemoteConfig()
-        
-        getIDTokenForcingRefresh()
-            .bind(onNext: { print("DEBUG: \($0)") })
-            .disposed(by: disposeBag)
     }
     
     private func setRemoteConfig() {

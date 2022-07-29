@@ -86,26 +86,6 @@ final class HangoutDetailViewController: UIViewController {
     }
     
     // MARK: Helpers
-    private func showSignInAlert(title: String) {
-        let alert = SignInAlertController(title: title)
-        self.present(alert, animated: false)
-    }
-    
-    private func showCancelAlert() {
-        let title = "Will you really cancel?\nPlease leave the chat room first!"
-        let message = "Bappy friends are looking\nforward to seeing you"
-        let alert = BappyAlertController(
-            title: title,
-            message: message,
-            bappyStyle: .sad)
-        let action = BappyAlertAction(
-            title: "Cancel", style: .default, handler: { [weak self] _ in
-                self?.viewModel.input.cancelAlertButtonTapped.onNext(Void())
-            })
-        alert.addAction(action)
-        self.present(alert, animated: false)
-    }
-    
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
         guard let navigationController = navigationController as? BappyNavigationViewController else { return }
         navigationController.statusBarStyle = statusBarStyle
@@ -230,24 +210,14 @@ extension HangoutDetailViewController {
             .emit(to: hangoutButton.rx.hangoutState)
             .disposed(by: disposeBag)
         
-        viewModel.output.showSignInForJoinAlert
+        viewModel.output.showSignInAlert
             .compactMap { $0 }
-            .emit(onNext: { [weak self] title in
-                self?.showSignInAlert(title: title)
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.output.showSignInForProfileAlert
-            .compactMap { $0 }
-            .emit(onNext: { [weak self] title in
-                self?.showSignInAlert(title: title)
-            })
+            .emit(to: self.rx.showSignInAlert)
             .disposed(by: disposeBag)
         
         viewModel.output.showCancelAlert
-            .emit(onNext: { [weak self] _ in
-                self?.showCancelAlert()
-            })
+            .compactMap { $0 }
+            .emit(to: self.rx.showAlert)
             .disposed(by: disposeBag)
         
         viewModel.output.showReportView

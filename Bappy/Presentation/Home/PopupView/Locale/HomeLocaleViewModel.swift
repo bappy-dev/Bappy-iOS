@@ -27,7 +27,7 @@ final class HomeLocaleViewModel: ViewModelType {
     
     struct Output {
         var dismissView: Signal<Void> // <-> View
-        var showAuthorizationAlert: Signal<Void> // <-> View
+        var showAuthorizationAlert: Signal<Alert?> // <-> View
     }
     
     let dependency: Dependency
@@ -52,7 +52,20 @@ final class HomeLocaleViewModel: ViewModelType {
         let dismissView = closeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let showAuthorizationAlert = showAuthorizationAlert$
-            .asSignal(onErrorJustReturn: Void())
+            .map { _ -> Alert in
+                let title = "Permission Denied"
+                let message = "Please Turn On Location Service\nto Allow \"Bappy\"\nto Determine Your Location"
+                let actionTitle = "Setting"
+                return Alert(
+                    title: title,
+                    message: message,
+                    bappyStyle: .happy,
+                    canCancel: true,
+                    actionTitle: actionTitle) {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    }
+            }
+            .asSignal(onErrorJustReturn: nil)
         
         // Input & Output
         self.input = Input(

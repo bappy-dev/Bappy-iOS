@@ -153,6 +153,7 @@ extension BappyProvider: Provider {
         self.getToken { [weak self] result in
             switch result {
             case .success(let token):
+                print("DEBUG: token \(token)")
                 do {
                     var urlRequest = try endpoint.getURLRequest()
                     urlRequest.setValue(token, forHTTPHeaderField: "Authorization")

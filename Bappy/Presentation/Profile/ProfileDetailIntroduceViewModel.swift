@@ -36,7 +36,8 @@ final class ProfileDetailIntroduceViewModel: ViewModelType {
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         
         let introduce = user$
-            .map { $0.introduce ?? dependency.introduce }
+            .map { $0.introduce ?? "" }
+            .map { $0.isEmpty ? dependency.introduce : $0 }
             .asDriver(onErrorJustReturn: dependency.introduce)
         
         // Input & Output
