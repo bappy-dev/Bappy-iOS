@@ -31,16 +31,19 @@ final class BappyProvider {
     private func showConnectionAlert() {
         DispatchQueue.main.async {
             if let viewController = UIWindow.keyWindow?.visibleViewConroller {
-                let alert = Alert(
-                    title: "Problem Occurred",
-                    message: "\nThere was a problem\nwith the Bappy\'s server.\n\nWe are very sorry\nfor the inconvenience.",
-                    bappyStyle: .sad,
-                    canDismissByTouch: false,
+                let action = Alert.Action(
                     actionTitle: "Exit App") {
                         // 강제종료
                         UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { exit(0) }
                     }
+                let alert = Alert(
+                    title: "Problem Occurred\n",
+                    message: "\nThere was a problem\nwith the Bappy\'s server.\n\nWe are very sorry\nfor the inconvenience.",
+                    bappyStyle: .sad,
+                    canDismissByTouch: false,
+                    action: action
+                    )
                 viewController.showAlert(alert)
             }
         }

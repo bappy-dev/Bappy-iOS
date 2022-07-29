@@ -55,15 +55,21 @@ final class HomeLocaleViewModel: ViewModelType {
             .map { _ -> Alert in
                 let title = "Permission Denied"
                 let message = "Please Turn On Location Service\nto Allow \"Bappy\"\nto Determine Your Location"
-                let actionTitle = "Setting"
+                let actionTitle = "Go to Setting"
+                
+                let action = Alert.Action(
+                    actionTitle: actionTitle,
+                    actionStyle: .disclosure) {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    }
+                
                 return Alert(
                     title: title,
                     message: message,
                     bappyStyle: .happy,
                     canCancel: true,
-                    actionTitle: actionTitle) {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                    }
+                    action: action
+                    )
             }
             .asSignal(onErrorJustReturn: nil)
         

@@ -87,12 +87,9 @@ final class BappyInitialViewModel: ViewModelType {
                 let message = "Please update \"Bappy\" to the latest version"
                 let actionTitle = "Go to update"
                 
-                return Alert(
-                    title: title,
-                    message: message,
-                    bappyStyle: .happy,
-                    canDismissByTouch: false,
-                    actionTitle: actionTitle) {
+                let action = Alert.Action(
+                    actionTitle: actionTitle,
+                    actionStyle: .disclosure) {
                         if let url = url {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
                             // 강제종료
@@ -100,6 +97,14 @@ final class BappyInitialViewModel: ViewModelType {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { exit(0) }
                         }
                     }
+                
+                return Alert(
+                    title: title,
+                    message: message,
+                    bappyStyle: .happy,
+                    canDismissByTouch: false,
+                    action: action
+                    )
             }
             .bind(to: showAlert$)
             .disposed(by: disposeBag)

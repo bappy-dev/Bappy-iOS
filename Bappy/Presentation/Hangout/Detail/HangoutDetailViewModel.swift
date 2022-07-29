@@ -210,13 +210,16 @@ final class HangoutDetailViewModel: ViewModelType {
                 let title = "Will you really cancel?\nPlease leave the chat room first!"
                 let message = "Bappy friends are looking\nforward to seeing you"
                 let actionTitle = "Cancel"
+                let action = Alert.Action(
+                    actionTitle: actionTitle) { [weak self] in
+                        self?.input.cancelAlertButtonTapped.onNext(Void())
+                    }
                 return Alert(
                     title: title,
                     message: message,
                     bappyStyle: .sad,
-                    actionTitle: actionTitle) { [weak self] in
-                        self?.input.cancelAlertButtonTapped.onNext(Void())
-                    }
+                    action: action
+                )
             }
             .bind(to: showCancelAlert$)
             .disposed(by: disposeBag)

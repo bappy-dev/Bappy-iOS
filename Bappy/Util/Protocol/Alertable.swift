@@ -15,9 +15,7 @@ struct Alert {
     var canCancel: Bool
     var canDismissByTouch: Bool
     var isContentsBlurred: Bool
-    var actionTitle: String
-    var actionStyle: BappyAlertAction.Style
-    var completion: (() -> Void)?
+    var action: Action?
     
     init(title: String? = nil,
          message: String? = nil,
@@ -25,18 +23,30 @@ struct Alert {
          canCancel: Bool = false,
          canDismissByTouch: Bool = true,
          isContentsBlurred: Bool = false,
-         actionTitle: String = "",
-         actionStyle: BappyAlertAction.Style = .default,
-         completion: (() -> Void)? = nil) {
+         action: Action? = nil) {
         self.title = title
         self.message = message
         self.bappyStyle = bappyStyle
         self.canCancel = canCancel
         self.canDismissByTouch = canDismissByTouch
         self.isContentsBlurred = isContentsBlurred
-        self.actionTitle = actionTitle
-        self.actionStyle = actionStyle
-        self.completion = completion
+        self.action = action
+    }
+}
+
+extension Alert {
+    struct Action {
+        var actionTitle: String
+        var actionStyle: BappyAlertAction.Style
+        var completion: (() -> Void)?
+        
+        init(actionTitle: String,
+             actionStyle: BappyAlertAction.Style = .default,
+             completion: (() -> Void)? = nil) {
+            self.actionTitle = actionTitle
+            self.actionStyle = actionStyle
+            self.completion = completion
+        }
     }
 }
 
@@ -55,11 +65,13 @@ extension Alertable where Self: UIViewController {
             alertController.addAction(cancelAction)
         }
         
-        let action = BappyAlertAction(
-            title: alert.actionTitle,
-            style: alert.actionStyle,
-            handler: { _ in alert.completion?() })
-        alertController.addAction(action)
+        if let action = alert.action {
+            let alertAction = BappyAlertAction(
+                title: action.actionTitle,
+                style: action.actionStyle,
+                handler: { _ in action.completion?() })
+            alertController.addAction(alertAction)
+        }
         
         self.present(alertController, animated: false)
     }

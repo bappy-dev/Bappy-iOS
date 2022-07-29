@@ -23,12 +23,14 @@ final class DefaultNetworkCheckRepository {
     private func showNetworkAlert(handler: (() -> Void)? = nil) {
         DispatchQueue.main.async {
             if let viewController = UIWindow.keyWindow?.visibleViewConroller {
+                let action = Alert.Action(actionTitle: "Retry") { handler?() }
                 let alert = Alert(
                     title: "No Internet Connection\n",
                     message: "\nPlease check your internet\nconnection and try again\n",
                     bappyStyle: .sad,
                     canDismissByTouch: false,
-                    actionTitle: "Retry") { handler?() }
+                    action: action
+                    )
                 viewController.showAlert(alert)
             }
         }
