@@ -55,7 +55,7 @@ final class HomeLocaleViewModel: ViewModelType {
             .map { _ -> Alert in
                 let title = "Permission Denied"
                 let message = "Please Turn On Location Service\nto Allow \"Bappy\"\nto Determine Your Location"
-                let actionTitle = "Go to Setting"
+                let actionTitle = "Setting"
                 
                 let action = Alert.Action(
                     actionTitle: actionTitle,

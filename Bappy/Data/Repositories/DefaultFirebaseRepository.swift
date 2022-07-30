@@ -129,13 +129,25 @@ extension DefaultFirebaseRepository: FirebaseRepository {
         }
     }
     
+    func signOut(completion: @escaping(Result<Void, Error>) -> Void) {
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            do {
+                try self?.auth.signOut()
+                completion(.success(Void()))
+            } catch {
+                completion(.failure(FirebaseError.signOutFailed))
+            }
+        }
+    }
+    
     func signOut() -> Single<Result<Void, Error>> {
         return Single<Result<Void, Error>>.create { [weak self] single in
-            self?.networkCheckRepository.checkNetworkConnection {
-                do {
-                    try self?.auth.signOut()
-                    single(.success(.success(Void())))
-                } catch { single(.failure(FirebaseError.signOutFailed)) }
+            self?.signOut { result in
+                switch result {
+                case .success(let value):
+                    single(.success(.success(value)))
+                case .failure(let error):
+                    single(.failure(error)) }
             }
             return Disposables.create()
         }

@@ -28,30 +28,19 @@ final class SignInAlertController: BappyAlertController {
     private func setAlertAction() {
         let signInAction = BappyAlertAction(
             title: "Go to sign-in!",
-            style: .disclosure) { [weak self] _ in
-                guard let self = self,
-                        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+            style: .disclosure) { _ in
                 let firebaseRepository = DefaultFirebaseRepository.shared
-                
-                let result = firebaseRepository.signOut()
-                    .asObservable()
-                    .share()
-                
-                result
-                    .compactMap(getValue)
-                    .bind(onNext: { _ in
+                firebaseRepository.signOut { result in
+                    switch result {
+                    case .success():
+                        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
                         let dependency = BappyLoginViewModel.Dependency(
                             bappyAuthRepository: DefaultBappyAuthRepository.shared,
                             firebaseRepository: firebaseRepository)
                         let viewModel = BappyLoginViewModel(dependency: dependency)
-                        sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
-                    })
-                    .disposed(by: self.disposeBag)
-                    
-                result
-                    .compactMap(getError)
-                    .bind(onNext: { print("ERROR: \($0)")})
-                    .disposed(by: self.disposeBag)
+                        sceneDelegate?.switchRootViewToSignInView(viewModel: viewModel)
+                    case .failure(let error): print("ERROR: \(error)") }
+                }
         }
         self.addAction(signInAction)
     }

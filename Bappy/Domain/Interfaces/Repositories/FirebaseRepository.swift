@@ -19,6 +19,7 @@ protocol FirebaseRepository {
     func getIDTokenForcingRefresh() -> Observable<Result<String?, Error>>
     func signIn(with credential: AuthCredential) -> Single<Result<AuthDataResult?, Error>>
     func signInAnonymously() -> Single<Result<AuthDataResult?, Error>>
+    func signOut(completion: @escaping(Result<Void, Error>) -> Void)
     func signOut() -> Single<Result<Void, Error>>
     func getRemoteConfigValues() -> Observable<Result<RemoteConfigValues, Error>>
 }
