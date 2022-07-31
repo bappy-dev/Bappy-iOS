@@ -98,11 +98,8 @@ final class ProfileButtonSectionView: UIView {
     // MARK: Helpers
     private func updateYellowBarLayout(index: Int) {
         UIView.animate(withDuration: 0.3) {
-            self.yellowView.snp.remakeConstraints {
+            self.yellowView.snp.updateConstraints {
                 let inset = self.frame.width * CGFloat(index) / 3.0
-                $0.bottom.equalToSuperview()
-                $0.height.equalTo(6.0)
-                $0.width.equalTo(self.snp.width).dividedBy(3.0)
                 $0.leading.equalToSuperview().inset(inset)
             }
             self.layoutIfNeeded()
@@ -119,6 +116,10 @@ final class ProfileButtonSectionView: UIView {
         hStackView.addArrangedSubview(madeButton)
         hStackView.addArrangedSubview(likedButton)
         
+        self.snp.makeConstraints {
+            $0.height.equalTo(107.0)
+        }
+        
         self.addSubview(yellowView)
         yellowView.snp.makeConstraints {
             $0.bottom.equalToSuperview()
@@ -130,7 +131,6 @@ final class ProfileButtonSectionView: UIView {
         self.addSubview(hStackView)
         hStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(101.0)
             $0.bottom.equalTo(yellowView.snp.top)
         }
         

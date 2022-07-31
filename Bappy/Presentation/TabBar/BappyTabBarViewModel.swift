@@ -93,7 +93,7 @@ final class BappyTabBarViewModel: ViewModelType {
         let showSignInAlert = writeButtonTapped$
             .withLatestFrom(currentUser$)
             .filter { $0.state == .anonymous }
-            .map { _ in "Sign in to make\na new hangout!" }
+            .map { _ in "Sign in and make\na new hangout!" }
             .asSignal(onErrorJustReturn: nil)
         let scrollToTopInHome = scrollToTopInHome$
             .asSignal(onErrorJustReturn: Void())

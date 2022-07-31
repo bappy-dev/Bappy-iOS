@@ -84,14 +84,14 @@ final class BappyLoginViewController: UIViewController {
     
     private let loginSkipButton: UIButton = {
         let button = UIButton(type: .system)
-        let configuration = UIImage.SymbolConfiguration(pointSize: 16.0, weight: .medium)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
         let image = UIImage(systemName: "chevron.backward")
         button.setImage(image, for: .normal)
         button.setPreferredSymbolConfiguration(configuration, forImageIn: .normal)
         button.semanticContentAttribute = .forceRightToLeft
         button.setBappyTitle(
             title: "Login Skip  ",
-            font: .roboto(size: 16.0, family: .Bold),
+            font: .roboto(size: 18.0, family: .Black),
             color: .white,
             hasUnderline: true)
         return button
@@ -173,7 +173,7 @@ final class BappyLoginViewController: UIViewController {
         view.addSubview(loginSkipButton)
         loginSkipButton.snp.makeConstraints {
             $0.top.equalTo(vStackView.snp.bottom).offset(10.0)
-            $0.centerX.equalToSuperview()
+            $0.centerX.equalToSuperview().offset(8.0)
             $0.height.equalTo(44.0)
         }
     }

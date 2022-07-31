@@ -22,11 +22,12 @@ final class HomeListTopSubView: UIView {
     private let collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
-        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        flowLayout.estimatedItemSize = .init(width: 60, height: 43.0)
         flowLayout.minimumLineSpacing = 11.0
         flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 20.0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.register(HomeListCategoryCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(HomeListCategoryCell.self,
+                                forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()

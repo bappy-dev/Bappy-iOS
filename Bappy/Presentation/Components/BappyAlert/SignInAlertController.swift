@@ -6,12 +6,8 @@
 //
 
 import UIKit
-import RxSwift
 
 final class SignInAlertController: BappyAlertController {
-    
-    // MARK: Properties
-    private let disposeBag = DisposeBag()
     
     // MARK: Lifecycle
     init(title: String? = nil) {

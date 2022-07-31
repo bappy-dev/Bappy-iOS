@@ -182,7 +182,8 @@ class BappyAlertController: UIViewController {
         if action.style == .disclosure {
             label.snp.makeConstraints {
                 $0.top.bottom.equalToSuperview()
-                $0.leading.trailing.equalToSuperview().inset(38.0)
+                $0.leading.equalToSuperview().inset(38.0)
+                $0.trailing.greaterThanOrEqualToSuperview().inset(38.0)
                 $0.height.equalTo(44.0)
             }
             
