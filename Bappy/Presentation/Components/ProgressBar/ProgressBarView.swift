@@ -45,18 +45,14 @@ final class ProgressBarView: UIView {
 // MARK: - Methods
 extension ProgressBarView {
     func initializeProgression(_ progression: CGFloat) {
-        yellowView.snp.remakeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
-            $0.width.equalTo(0)
-        }
         updateProgression(progression)
     }
     
     func updateProgression(_ progression: CGFloat) {
         UIView.animate(withDuration: 0.3) {
-            self.yellowView.snp.remakeConstraints {
+            self.yellowView.snp.updateConstraints {
                 $0.top.leading.bottom.equalToSuperview()
-                $0.width.equalTo(self.snp.width).multipliedBy(progression)
+                $0.width.equalTo(UIScreen.main.bounds.width * progression)
             }
             self.layoutIfNeeded()
         }

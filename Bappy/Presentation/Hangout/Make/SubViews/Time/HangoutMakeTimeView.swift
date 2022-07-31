@@ -80,33 +80,28 @@ final class HangoutMakeTimeView: UIView {
     private func showDateView() {
         let topOffset: CGFloat = (scrollView.frame.height + bottomPadding - (dividingView.frame.width * 295.0 / 292.0) - 95.0 - 60.0) / 2.0
         UIView.animate(withDuration: 0.4) {
-            self.dateImageView.snp.remakeConstraints {
+            self.dateImageView.snp.updateConstraints {
                 $0.top.equalTo(self.contentView).offset(topOffset)
-                $0.width.height.equalTo(15.0)
-                $0.leading.equalTo(self.contentView).offset(51.0)
             }
             
-            self.calendarView.snp.remakeConstraints {
-                $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
-                $0.height.equalTo(self.calendarView.snp.width)
-                    .multipliedBy(295.0/292.0)
+            self.calendarView.snp.updateConstraints {
+                $0.height.equalTo(self.calendarView.frame.width * 295.0/292.0)
             }
+            
             self.layoutIfNeeded()
         }
     }
     
     private func hideDateView() {
         UIView.animate(withDuration: 0.4) {
-            self.dateImageView.snp.remakeConstraints {
+            self.dateImageView.snp.updateConstraints {
                 $0.top.equalTo(self.contentView).offset(92.0)
-                $0.width.height.equalTo(15.0)
-                $0.leading.equalTo(self.contentView).offset(51.0)
             }
             
-            self.calendarView.snp.remakeConstraints {
-                $0.top.equalTo(self.dateImageView.snp.bottom).offset(14.5)
+            self.calendarView.snp.updateConstraints {
                 $0.height.equalTo(0)
             }
+            
             self.layoutIfNeeded()
         }
     }
@@ -114,34 +109,30 @@ final class HangoutMakeTimeView: UIView {
     private func showTimeView() {
         let topOffset: CGFloat = (scrollView.frame.height + bottomPadding - (dividingView.frame.width * 216.0 / 292.0) - 95.0 - 60.0) / 2.0
         UIView.animate(withDuration: 0.4) {
-            self.dateImageView.snp.remakeConstraints {
+            self.dateImageView.snp.updateConstraints {
                 $0.top.equalTo(self.contentView).offset(topOffset)
-                $0.width.height.equalTo(15.0)
-                $0.leading.equalTo(self.contentView).offset(51.0)
             }
             
-            self.timeView.snp.remakeConstraints {
+            self.timeView.snp.updateConstraints {
                 $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
                 $0.leading.trailing.equalTo(self.dividingView)
-                $0.height.equalTo(self.timeView.snp.width).multipliedBy(216.0/292.0).offset(20.0)
+                $0.height.equalTo(self.timeView.frame.width * 216.0/292.0 + 20.0)
             }
+            
             self.layoutIfNeeded()
         }
     }
     
     private func hideTimeView() {
         UIView.animate(withDuration: 0.4) {
-            self.dateImageView.snp.remakeConstraints {
+            self.dateImageView.snp.updateConstraints {
                 $0.top.equalTo(self.contentView).offset(92.0)
-                $0.width.height.equalTo(15.0)
-                $0.leading.equalTo(self.contentView).offset(51.0)
             }
             
-            self.timeView.snp.remakeConstraints {
-                $0.top.equalTo(self.timeImageView.snp.bottom).offset(10.0)
-                $0.leading.trailing.equalTo(self.dividingView)
+            self.timeView.snp.updateConstraints {
                 $0.height.equalTo(0)
             }
+            
             self.layoutIfNeeded()
         }
     }

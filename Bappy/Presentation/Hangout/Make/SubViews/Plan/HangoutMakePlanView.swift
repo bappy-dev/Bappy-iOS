@@ -138,7 +138,6 @@ final class HangoutMakePlanView: UIView {
         planTextView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(4.0)
             $0.leading.trailing.equalToSuperview().inset(12.0)
-            $0.height.equalTo(140.0)
         }
 
         planTextView.addSubview(planPlaceholderLabel)
