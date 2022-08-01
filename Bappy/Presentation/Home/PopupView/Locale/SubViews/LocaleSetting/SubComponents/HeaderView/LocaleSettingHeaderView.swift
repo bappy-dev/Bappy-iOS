@@ -118,7 +118,7 @@ extension LocaleSettingHeaderView {
             .disposed(by: disposeBag)
         
         viewModel.output.shouldHideSelection
-            .emit(to: selectedImageView.rx.isHidden)
+            .drive(selectedImageView.rx.isHidden)
             .disposed(by: disposeBag)
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 import UIKit.UIImage
 
 enum ContentType {
-    case applicationJSON, multipart, none
+    case urlencoded, multipart, none
 }
 
 protocol Requestable {
@@ -38,16 +38,28 @@ extension Requestable {
         }
         
         switch contentType {
-        case .applicationJSON, .none:
+        case .none:
+            // httpBody
+            if let bodyParameters = try bodyParameters?.toDictionary() {
+                if !bodyParameters.isEmpty {
+                    urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: bodyParameters)
+                }
+            }
+            
+        case .urlencoded:
             // header
-            if contentType == .applicationJSON {
-                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            if contentType == .urlencoded {
+                urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             }
             
             // httpBody
             if let bodyParameters = try bodyParameters?.toDictionary() {
                 if !bodyParameters.isEmpty {
-                    urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: bodyParameters)
+                    let httpBody = bodyParameters
+                        .map { "\($0.key)=\($0.value)" }
+                        .joined(separator: "&")
+                        .data(using: .utf8)
+                    urlRequest.httpBody = httpBody
                 }
             }
             

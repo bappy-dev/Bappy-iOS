@@ -67,9 +67,9 @@ struct APIEndpoints {
     static func updateGPSSetting(with gpsSettingRequestDTO: GPSSettingRequestDTO) -> Endpoint<GPSSettingResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "user/gps",
+            path: "place/gps",
             method: .put,
             bodyParameters: gpsSettingRequestDTO,
-            contentType: .applicationJSON)
+            contentType: .urlencoded)
     }
 }

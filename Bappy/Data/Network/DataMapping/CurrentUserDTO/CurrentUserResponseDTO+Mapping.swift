@@ -34,7 +34,7 @@ extension CurrentUserResponseDTO {
         let interests: [String]?
         
         private enum CodingKeys: String, CodingKey {
-            case id = "userInfoID"
+            case id = "userId"
             case name = "userName"
             case nationality = "userNationality"
             case gender = "userGender"
@@ -70,9 +70,28 @@ extension CurrentUserResponseDTO {
             default: return nil }
         }
         
+        let personalities = user.personalities
+            .map { $0.compactMap { Persnoality(rawValue: $0) } }
+        
+        let interests = user.interests
+            .map { $0.compactMap { interest -> Hangout.Category? in
+                switch interest {
+                case "Travel": return .Travel
+                case "Study": return .Study
+                case "Sports": return .Sports
+                case "Food": return .Food
+                case "Drinks": return .Drinks
+                case "Cook": return .Cook
+                case "Culture": return .Culture
+                case "Volunteer": return .Volunteer
+                case "Language": return .Language
+                case "Crafting": return .Crafting
+                default: return nil }
+            }}
+        
         return BappyUser(
             id: user.id ?? UUID().uuidString,
-            state: state, // 임시
+            state: state,
             isUserUsingGPS: user.isUserUsingGPS,
             coordinates: nil, // 임시
             name: user.name,
@@ -83,8 +102,8 @@ extension CurrentUserResponseDTO {
             introduce: user.introduce,
             affiliation: user.affiliation,
             languages: user.languages,
-            personalities: nil, // 임시
-            interests: nil // 임시
+            personalities: personalities,
+            interests: interests
         )
     }
 }

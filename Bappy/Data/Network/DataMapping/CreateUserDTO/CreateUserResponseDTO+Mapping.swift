@@ -26,7 +26,7 @@ extension CreateUserResponseDTO {
         let state: String
         
         private enum CodingKeys: String, CodingKey {
-            case id = "userInfoID"
+            case id = "userId"
             case name = "userName"
             case nationality = "userNationality"
             case gender = "userGender"
@@ -61,7 +61,7 @@ extension CreateUserResponseDTO {
             name: user.name,
             gender: gender,
             birth: user.birth?.toDate(format: "yyyy.MM.dd"),
-            nationality: nil
+            nationality: user.nationality.flatMap { Country(code: $0) }
         )
     }
 }

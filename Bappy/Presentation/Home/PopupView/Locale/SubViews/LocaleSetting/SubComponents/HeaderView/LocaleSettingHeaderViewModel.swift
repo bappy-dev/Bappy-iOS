@@ -19,7 +19,7 @@ final class LocaleSettingHeaderViewModel: ViewModelType {
     }
     
     struct Output {
-        var shouldHideSelection: Signal<Bool> // <-> View
+        var shouldHideSelection: Driver<Bool> // <-> View
         var localeButtonTapped: Signal<Void> // <-> Parent
     }
     
@@ -28,7 +28,7 @@ final class LocaleSettingHeaderViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let isUserUsingGPS$ = PublishSubject<Bool>()
+    private let isUserUsingGPS$ = BehaviorSubject<Bool>(value: false)
     private let localeButtonTapped$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
@@ -37,7 +37,7 @@ final class LocaleSettingHeaderViewModel: ViewModelType {
         // Streams
         let shouldHideSelection = isUserUsingGPS$
             .map { !$0 }
-            .asSignal(onErrorJustReturn: true)
+            .asDriver(onErrorJustReturn: true)
         let localeButtonTapped = localeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         

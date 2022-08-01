@@ -159,7 +159,7 @@ final class LocaleSettingViewModel: ViewModelType {
             .bind(to: localeSettingSection$)
             .disposed(by: disposeBag)
         
-        // 4가지 상태: Off/Off, On/Off, Off/On, On/On
+        // 4가지 상태(GPS, Authorization): Off/Off, On/Off, Off/On, On/On
         let startFlow = localeButtonTapped$
             .withLatestFrom(userGPSWithAuthorization$)
             .share()
