@@ -14,7 +14,7 @@ final class BappyInitialViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: BappyInitialViewModel
-    private let dispoesBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     
     private let bappyImageView: UIImageView = {
         let imageView = UIImageView()
@@ -76,7 +76,7 @@ extension BappyInitialViewController {
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
             })
-            .disposed(by: dispoesBag)
+            .disposed(by: disposeBag)
 
         viewModel.output.switchToMainView
             .compactMap { $0 }
@@ -84,11 +84,11 @@ extension BappyInitialViewController {
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToMainView(viewModel: viewModel)
             })
-            .disposed(by: dispoesBag)
+            .disposed(by: disposeBag)
         
         viewModel.output.showAlert
             .compactMap { $0 }
             .emit(to: self.rx.showAlert)
-            .disposed(by: dispoesBag)
+            .disposed(by: disposeBag)
     }
 }

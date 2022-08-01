@@ -40,7 +40,7 @@ final class BappyInitialViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let firbaseSignInState$ = dependency.firebaseRepository.isUserSignedIn
         let isAnonymousUser$ = dependency.firebaseRepository.isAnonymous
         
@@ -51,7 +51,7 @@ final class BappyInitialViewModel: ViewModelType {
         let showAlert = showAlert$
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input()
         
         self.output = Output(
@@ -60,7 +60,7 @@ final class BappyInitialViewModel: ViewModelType {
             showAlert: showAlert
         )
         
-        // Bindind
+        // MARK: Bindind
         self.firbaseSignInState$ = firbaseSignInState$
         self.isAnonymousUser$ = isAnonymousUser$
         

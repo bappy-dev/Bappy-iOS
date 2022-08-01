@@ -40,7 +40,7 @@ final class OpenMapPopupViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let googleMapURL$ = BehaviorSubject<URL?>(value: dependency.googleMapURL)
         let kakaoMapURL$ = BehaviorSubject<URL?>(value: dependency.kakaoMapURL)
         
@@ -52,7 +52,7 @@ final class OpenMapPopupViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: dependency.kakaoMapURL)
         
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             googleMapButtonTapped: googleMapButtonTapped$.asObserver(),
             kakaoMapButtonTapped: kakaoMapButtonTapped$.asObserver()
@@ -63,7 +63,7 @@ final class OpenMapPopupViewModel: ViewModelType {
             openKakaoMap: openKakaoMap
         )
         
-        // Bindind
+        // MARK: Bindind
         self.googleMapURL$ = googleMapURL$
         self.kakaoMapURL$ = kakaoMapURL$
     }

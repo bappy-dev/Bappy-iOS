@@ -73,7 +73,7 @@ final class RegisterBirthViewModel: ViewModelType {
         self.dependency = dependency
         self.subViewModels = subViewModel
         
-        // Streams
+        // MARK: Streams
         let date = date$
             .compactMap { $0?.toString(dateFormat: "yyyy-MM-dd") }
             .asSignal(onErrorJustReturn: dependency.date)
@@ -81,7 +81,7 @@ final class RegisterBirthViewModel: ViewModelType {
             .map { $0 != nil }
             .asDriver(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             date: date$.asObserver()
         )
@@ -92,7 +92,7 @@ final class RegisterBirthViewModel: ViewModelType {
             selectedDate: selectedDate$
         )
         
-        // Binding        
+        // MARK: Binding        
         subViewModel.birthPickerViewModel.output.date
             .compactMap { $0 }
             .emit(to: date$)

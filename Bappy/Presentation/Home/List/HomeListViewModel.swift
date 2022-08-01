@@ -73,7 +73,7 @@ final class HomeListViewModel: ViewModelType {
             topSubViewModel: HomeListTopSubViewModel(dependency: .init())
         )
         
-        // Streams
+        // MARK: Streams
         let currentUser$ = dependency.bappyAuthRepository.currentUser
         let location$ = dependency.locationRepository.location
         
@@ -112,7 +112,7 @@ final class HomeListViewModel: ViewModelType {
         let sorting = sorting$
             .asDriver(onErrorJustReturn: .Newest)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             scrollToTop: scrollToTop$.asObserver(),
             localeButtonTapped: localeButtonTapped$.asObserver(),
@@ -133,7 +133,7 @@ final class HomeListViewModel: ViewModelType {
             sorting: sorting
         )
         
-        // Bindind
+        // MARK: Bindind
         self.currentUser$ = currentUser$
         self.location$ = location$
         

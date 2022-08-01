@@ -24,6 +24,14 @@ extension Reactive where Base: UIScrollView {
     }
 }
 
+extension Reactive where Base: UITableView {
+    var setEditing: Binder<Bool> {
+        return Binder(self.base) { tableView, editing in
+            tableView.setEditing(editing, animated: true)
+        }
+    }
+}
+
 extension Reactive where Base: UIView {
     var endEditing: Binder<Void> {
         return Binder(self.base) { view, _ in
@@ -79,18 +87,29 @@ extension Reactive where Base: UIActivityIndicatorView {
 }
 
 extension Reactive where Base: ProgressHUD {
-    public static var show: Binder<Void> {
-        return Binder(UIApplication.shared) { _, _ in
-            ProgressHUD.animationType = .horizontalCirclesPulse
-            ProgressHUD.colorBackground = .black.withAlphaComponent(0.1)
-            ProgressHUD.colorAnimation = .bappyBrown
-            ProgressHUD.show(interaction: false)
+    public static var showTranscluentLoader: Binder<Bool> {
+        return Binder(UIApplication.shared) { _, show in
+            if show {
+                ProgressHUD.animationType = .horizontalCirclesPulse
+                ProgressHUD.colorBackground = .black.withAlphaComponent(0.1)
+                ProgressHUD.colorAnimation = .bappyBrown
+                ProgressHUD.show(interaction: false)
+            } else {
+                ProgressHUD.dismiss()
+            }
         }
     }
     
-    public static var dismiss: Binder<Void> {
-        return Binder(UIApplication.shared) { _, _ in
-            ProgressHUD.dismiss()
+    public static var showYellowLoader: Binder<Bool> {
+        return Binder(UIApplication.shared) { _, show in
+            if show {
+                ProgressHUD.animationType = .horizontalCirclesPulse
+                ProgressHUD.colorBackground = .bappyYellow
+                ProgressHUD.colorAnimation = .bappyBrown
+                ProgressHUD.show(interaction: false)
+            } else {
+                ProgressHUD.dismiss()
+            }
         }
     }
 }

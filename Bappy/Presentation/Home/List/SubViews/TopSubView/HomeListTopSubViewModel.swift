@@ -48,7 +48,7 @@ final class HomeListTopSubViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let categories$ = BehaviorSubject<[Hangout.Category]>(value: dependency.categories)
         let category$ = BehaviorSubject<Hangout.Category>(value: .All)
         
@@ -65,7 +65,7 @@ final class HomeListTopSubViewModel: ViewModelType {
         let category = category$
             .asDriver(onErrorJustReturn: .All)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             itemSelected: itemSelected$.asObserver(),
             sortingButtonTapped: sortingButtonTapped$.asObserver(),
@@ -79,7 +79,7 @@ final class HomeListTopSubViewModel: ViewModelType {
             category: category
         )
         
-        // Bindind
+        // MARK: Bindind
         self.categories$ = categories$
         self.category$ = category$
         

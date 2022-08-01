@@ -42,7 +42,7 @@ final class ReportImageSectionViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let maxNumOfImages$ = BehaviorSubject<Int>(value: dependency.maxNumOfImages)
         
         let selectedImages = selectedImages$
@@ -60,7 +60,7 @@ final class ReportImageSectionViewModel: ViewModelType {
             .map { $0.item - 1 }
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             selectedImages: selectedImages$.asObserver(),
             itemSelected: itemSelected$.asObserver(),
@@ -74,7 +74,7 @@ final class ReportImageSectionViewModel: ViewModelType {
             removePhoto: removePhoto
         )
         
-        // Bindind
+        // MARK: Bindind
         self.maxNumOfImages$ = maxNumOfImages$
     }
 }

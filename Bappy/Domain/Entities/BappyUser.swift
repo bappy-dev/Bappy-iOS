@@ -16,7 +16,7 @@ struct BappyUser: Equatable, Identifiable {
     typealias Identifier = String
     
     // Required
-    let id: Identifier // UUID
+    let id: Identifier
     var state: UserState
     
     // Optional

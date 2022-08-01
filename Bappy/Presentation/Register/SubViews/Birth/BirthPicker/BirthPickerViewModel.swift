@@ -59,7 +59,7 @@ final class BirthPickerViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let year$ = BehaviorSubject<String>(value: dependency.year)
         let month$ = BehaviorSubject<String>(value: dependency.month)
         let day$ = BehaviorSubject<String>(value: dependency.day)
@@ -95,7 +95,7 @@ final class BirthPickerViewModel: ViewModelType {
         let shouldHide = doneButtonTapped$
             .asSignal(onErrorJustReturn: Void())
 
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             selectedYearRow: selectedYearRow$.asObserver(),
             selectedMonthRow: selectedMonthRow$.asObserver(),
@@ -114,7 +114,7 @@ final class BirthPickerViewModel: ViewModelType {
             shouldHide: shouldHide
         )
         
-        // Binding
+        // MARK: Binding
         self.year$ = year$
         self.month$ = month$
         self.day$ = day$

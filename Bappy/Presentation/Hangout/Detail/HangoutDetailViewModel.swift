@@ -127,7 +127,7 @@ final class HangoutDetailViewModel: ViewModelType {
             participantsSectionViewModel: HangoutParticipantsSectionViewModel(dependency: participantsDependency)
         )
         
-        // Streams
+        // MARK: Streams
         let hangoutButtonState$ = BehaviorSubject<HangoutButton.State>(value: dependency.hangoutButtonState)
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
@@ -176,7 +176,7 @@ final class HangoutDetailViewModel: ViewModelType {
         let showUserProfile = showUserProfile$
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             backButtonTapped: backButtonTapped$.asObserver(),
             hangoutButtonTapped: hangoutButtonTapped$.asObserver(),
@@ -198,7 +198,7 @@ final class HangoutDetailViewModel: ViewModelType {
             showUserProfile: showUserProfile
         )
         
-        // Bindind
+        // MARK: Bindind
         self.hangoutButtonState$ = hangoutButtonState$
         self.isUserParticipating$ = isUserParticipating$
         self.currentUser$ = currentUser$

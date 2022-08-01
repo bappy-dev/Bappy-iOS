@@ -48,7 +48,7 @@ final class HomeLocaleViewModel: ViewModelType {
                 locationRepsitory: dependency.locationRepsitory))
         )
         
-        // Streams
+        // MARK: Streams
         let dismissView = closeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let showAuthorizationAlert = showAuthorizationAlert$
@@ -73,7 +73,7 @@ final class HomeLocaleViewModel: ViewModelType {
             }
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             closeButtonTapped: closeButtonTapped$.asObserver(),
             showAuthorizationAlert: showAuthorizationAlert$.asObserver()
@@ -84,7 +84,7 @@ final class HomeLocaleViewModel: ViewModelType {
             showAuthorizationAlert: showAuthorizationAlert
         )
         
-        // Bindind
+        // MARK: Bindind
         
         // Child
         subViewModels.settingViewModel.output.closeButtonTapped

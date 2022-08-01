@@ -25,14 +25,14 @@ final class HomeSearchViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input()
         
         self.output = Output()
         
-        // Bindind
+        // MARK: Bindind
 
     }
 }

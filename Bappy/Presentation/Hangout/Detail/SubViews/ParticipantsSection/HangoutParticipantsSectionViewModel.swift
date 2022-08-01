@@ -39,7 +39,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let limitNumber$ = BehaviorSubject<Int>(value: dependency.limitNumber)
         let participantIDs$ = BehaviorSubject<[Hangout.Info]>(value: dependency.participantIDs)
         
@@ -52,7 +52,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
             .withLatestFrom(participantIDs$) { $1[$0.row].id }
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             itemSelected: itemSelected$.asObserver()
         )
@@ -63,7 +63,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
             selectedUserID: selectedUserID
         )
         
-        // Bindind
+        // MARK: Bindind
         self.limitNumber$ = limitNumber$
         self.participantIDs$ = participantIDs$
     }

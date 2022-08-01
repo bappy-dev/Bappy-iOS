@@ -43,7 +43,7 @@ final class HangoutMakeLimitViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let number$ = BehaviorSubject<Int>(value: dependency.minimumNumber)
         let minimumNumber$ = BehaviorSubject<Int>(value: dependency.minimumNumber)
         let maximumNumber$ = BehaviorSubject<Int>(value: dependency.maximumNumber)
@@ -64,7 +64,7 @@ final class HangoutMakeLimitViewModel: ViewModelType {
         let limit = number$
             .asSignal(onErrorJustReturn: dependency.minimumNumber)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             minusButtonTapped: minusButtonTapped$.asObserver(),
             plusButtonTapped: plusButtonTapped$.asObserver()
@@ -78,7 +78,7 @@ final class HangoutMakeLimitViewModel: ViewModelType {
             limit: limit
         )
         
-        // Binding
+        // MARK: Binding
         self.number$ = number$
         self.minimumNumber$ = minimumNumber$
         self.maximumNumber$ = maximumNumber$

@@ -72,7 +72,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let categories$ = BehaviorSubject<[Hangout.Category: Bool]>(value: [:])
         
         let categories = categories$
@@ -137,7 +137,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
         let isValid = shouldHideRule
             
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             travelButtonTapped: travelButtonTapped$.asObserver(),
             studyButtonTapped: studyButtonTapped$.asObserver(),
@@ -167,7 +167,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             isValid: isValid
         )
         
-        // Binding
+        // MARK: Binding
         self.categories$ = categories$
         
         isTravelButtonEnabled

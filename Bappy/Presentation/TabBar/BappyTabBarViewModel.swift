@@ -69,7 +69,7 @@ final class BappyTabBarViewModel: ViewModelType {
             )
         )
         
-        // Streams
+        // MARK: Streams
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.user)
         let selectedIndex$ = BehaviorSubject<Int>(value: dependency.selectedIndex)
         
@@ -100,7 +100,7 @@ final class BappyTabBarViewModel: ViewModelType {
         let scrollToTopInProfile = scrollToTopInProfile$
             .asSignal(onErrorJustReturn: Void())
 
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             homeButtonTapped: homeButtonTapped$.asObserver(),
             profileButtonTapped: profileButtonTapped$.asObserver(),
@@ -117,7 +117,7 @@ final class BappyTabBarViewModel: ViewModelType {
             scrollToTopInProfile: scrollToTopInProfile
         )
         
-        // Binding
+        // MARK: Binding
         self.currentUser$ = currentUser$
         self.selectedIndex$ = selectedIndex$
         

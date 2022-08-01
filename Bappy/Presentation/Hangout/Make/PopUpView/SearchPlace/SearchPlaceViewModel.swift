@@ -36,8 +36,7 @@ final class SearchPlaceViewModel: ViewModelType {
         var shouldHideNoResultView: Signal<Bool> // <-> View
         var dismissKeyboard: Signal<Void> // <-> View
         var dismissView: Signal<Void> // <-> View
-        var showLoader: Signal<Void> // <-> View
-        var dismissLoader: Signal<Void> // <-> View
+        var showLoader: Signal<Bool> // <-> View
         var shouldSpinnerAnimating: Driver<Bool> // <-> View
     }
     
@@ -60,13 +59,12 @@ final class SearchPlaceViewModel: ViewModelType {
     private let itemSelected$ = PublishSubject<IndexPath>()
     private let closeButtonTapped$ = PublishSubject<Void>()
     
-    private let showLoader$ = PublishSubject<Void>()
-    private let dismissLoader$ = PublishSubject<Void>()
+    private let showLoader$ = PublishSubject<Bool>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let key$ = BehaviorSubject<String>(value: dependency.key)
         let language$ = BehaviorSubject<String>(value: dependency.language)
         
@@ -88,13 +86,12 @@ final class SearchPlaceViewModel: ViewModelType {
                 closeButtonTapped$
             )
             .asSignal(onErrorJustReturn: Void())
-        let showLoader = showLoader$.asSignal(onErrorJustReturn: Void())
-        let dismissLoader = dismissLoader$.asSignal(onErrorJustReturn: Void())
+        let showLoader = showLoader$.asSignal(onErrorJustReturn: false)
         let shouldSpinnerAnimating = nextPageToken$
             .map { $0 != nil }
             .asDriver(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             searchButtonClicked: searchButtonClicked$.asObserver(),
@@ -110,11 +107,10 @@ final class SearchPlaceViewModel: ViewModelType {
             dismissKeyboard: dismissKeyboard,
             dismissView: dismissView,
             showLoader: showLoader,
-            dismissLoader: dismissLoader,
             shouldSpinnerAnimating: shouldSpinnerAnimating
         )
         
-        // Binding
+        // MARK: Binding
         self.key$ = key$
         self.language$ = language$
         
@@ -123,7 +119,7 @@ final class SearchPlaceViewModel: ViewModelType {
             .distinctUntilChanged { $0.1 == $1.1 }
             .do { [weak self] _ in
                 self?.isCommunicating$.onNext(true)
-                self?.showLoader$.onNext(Void())
+                self?.showLoader$.onNext(true)
                 self?.usedPageToken$.onNext([])
                 self?.maps$.onNext([])
             }
@@ -160,7 +156,7 @@ final class SearchPlaceViewModel: ViewModelType {
             .observe(on:MainScheduler.asyncInstance)
             .flatMap { $0 }
             .do { [weak self] _ in
-                self?.dismissLoader$.onNext(Void())
+                self?.showLoader$.onNext(false)
                 self?.isCommunicating$.onNext(false)
             }
             .share()

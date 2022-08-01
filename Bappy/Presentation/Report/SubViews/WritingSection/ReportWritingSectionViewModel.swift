@@ -52,7 +52,7 @@ final class ReportWritingSectionViewModel: ViewModelType {
             )
         )
         
-        // Streams
+        // MARK: Streams
         let openDropdown = editingDidBegin$
             .asSignal(onErrorJustReturn: Void())
         let closeDropdown = selectedText$
@@ -68,7 +68,7 @@ final class ReportWritingSectionViewModel: ViewModelType {
             .map { $0 != nil }
             .asSignal(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             editingDidBegin: editingDidBegin$.asObserver(),
             detailText: detailText$.asObserver()
@@ -82,7 +82,7 @@ final class ReportWritingSectionViewModel: ViewModelType {
             isReasonSelected: isReasonSelected
         )
         
-        // Bindind
+        // MARK: Bindind
         subViewModels.dropdownViewModel.output.selectedText
             .emit(to: selectedText$)
             .disposed(by: disposeBag)

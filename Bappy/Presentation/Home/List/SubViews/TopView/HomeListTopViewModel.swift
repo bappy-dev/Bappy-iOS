@@ -37,14 +37,14 @@ final class HomeListTopViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let localeButtonTapped = localeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let searchButtonTapped = searchButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let filterButtonTapped = filterButtonTapped$
             .asSignal(onErrorJustReturn: Void())
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             localeButtonTapped: localeButtonTapped$.asObserver(),
             searchButtonTapped: searchButtonTapped$.asObserver(),
@@ -57,7 +57,7 @@ final class HomeListTopViewModel: ViewModelType {
             filterButtonTapped: filterButtonTapped
         )
         
-        // Bindind
+        // MARK: Bindind
 
     }
 }

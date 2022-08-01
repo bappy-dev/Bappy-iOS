@@ -37,7 +37,7 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let isOpenchatValid = text$
             .map(validation)
             .share()
@@ -52,7 +52,7 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),

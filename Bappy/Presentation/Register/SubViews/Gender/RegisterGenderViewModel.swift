@@ -41,7 +41,7 @@ final class RegisterGenderViewModel: ViewModelType {
     init(dependency: Dependency = Dependency(gender: .Other)) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let gender = gender$
             .asSignal(onErrorJustReturn: dependency.gender)
         let isMaleSelected = BehaviorRelay<Bool>(value: false)
@@ -52,7 +52,7 @@ final class RegisterGenderViewModel: ViewModelType {
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             maleButtonTapped: maleButtonTapped$.asObserver(),
             femaleButtonTapped: femaleButtonTapped$.asObserver(),
@@ -67,7 +67,7 @@ final class RegisterGenderViewModel: ViewModelType {
             isValid: isValid
         )
         
-        // Binding
+        // MARK: Binding
         maleButtonTapped$
             .map { Gender.Male }
             .bind(to: gender$)

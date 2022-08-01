@@ -37,6 +37,7 @@ final class Endpoint<R>: RequestResponsable {
         self.method = method
         self.queryParameters = queryParameters
         self.bodyParameters = bodyParameters
+        self.images = images
         self.headers = headers
         self.contentType = contentType
         self.sampleData = sampleData

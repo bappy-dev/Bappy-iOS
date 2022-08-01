@@ -42,7 +42,7 @@ final class RegisterNameViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
@@ -61,7 +61,7 @@ final class RegisterNameViewModel: ViewModelType {
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             name: name$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
@@ -74,7 +74,7 @@ final class RegisterNameViewModel: ViewModelType {
             keyboardWithButtonHeight: keyboardWithButtonHeight
         )
         
-        // Binding
+        // MARK: Binding
         self.minimumLength$ = minimumLength$
         self.maximumLength$ = maximumLength$
     }

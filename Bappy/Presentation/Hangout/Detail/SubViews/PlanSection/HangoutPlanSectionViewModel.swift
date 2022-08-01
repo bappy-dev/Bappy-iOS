@@ -31,20 +31,20 @@ final class HangoutPlanSectionViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let plan$ = BehaviorSubject<String>(value: dependency.plan)
         
         let planText = plan$
             .asSignal(onErrorJustReturn: dependency.plan)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input()
         
         self.output = Output(
             planText: planText
         )
         
-        // Bindind
+        // MARK: Bindind
         self.plan$ = plan$
     }
 }

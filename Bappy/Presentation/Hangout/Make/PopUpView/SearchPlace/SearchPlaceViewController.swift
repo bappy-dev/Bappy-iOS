@@ -263,11 +263,7 @@ extension SearchPlaceViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showLoader
-            .emit(to: ProgressHUD.rx.show)
-            .disposed(by: disposeBag)
-        
-        viewModel.output.dismissLoader
-            .emit(to: ProgressHUD.rx.dismiss)
+            .emit(to: ProgressHUD.rx.showTranscluentLoader)
             .disposed(by: disposeBag)
         
         viewModel.output.shouldSpinnerAnimating

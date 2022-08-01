@@ -62,7 +62,7 @@ final class LocaleSettingViewModel: ViewModelType {
             headerViewModel: LocaleSettingHeaderViewModel(dependency: .init())
         )
         
-        // Streams
+        // MARK: Streams
         let user$ = dependency.bappyAuthRepository.currentUser
         let authorization$ = dependency.locationRepsitory.authorization
         let userGPSWithAuthorization$ = BehaviorSubject<(gps: Bool, authorization: CLAuthorizationStatus)>(value: (gps: false, authorization: .notDetermined))
@@ -76,7 +76,7 @@ final class LocaleSettingViewModel: ViewModelType {
         let showAuthorizationAlert = showAuthorizationAlert$
             .asSignal(onErrorJustReturn: Void())
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             viewWillAppear: viewWillAppear$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
@@ -92,7 +92,7 @@ final class LocaleSettingViewModel: ViewModelType {
             showAuthorizationAlert: showAuthorizationAlert
         )
         
-        // Bindind
+        // MARK: Bindind
         self.user$ = user$
         self.authorization$ = authorization$
         self.userGPSWithAuthorization$ = userGPSWithAuthorization$

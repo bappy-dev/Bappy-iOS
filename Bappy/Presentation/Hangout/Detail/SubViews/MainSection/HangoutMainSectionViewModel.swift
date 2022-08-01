@@ -50,7 +50,7 @@ final class HangoutMainSectionViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
         let title$ = BehaviorSubject<String>(value: dependency.title)
         let meetTime$ = BehaviorSubject<String>(value: dependency.meetTime)
@@ -73,7 +73,7 @@ final class HangoutMainSectionViewModel: ViewModelType {
             .withLatestFrom(openchatURL$)
             .asSignal(onErrorJustReturn: dependency.openchatURL)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             openchatButtonTapped: openchatButtonTapped$.asObserver()
         )
@@ -87,7 +87,7 @@ final class HangoutMainSectionViewModel: ViewModelType {
             goOpenchat: goOpenchat
         )
         
-        // Bindind
+        // MARK: Bindind
         self.isUserParticipating$ = isUserParticipating$
         self.title$ = title$
         self.meetTime$ = meetTime$

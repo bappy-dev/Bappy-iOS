@@ -41,13 +41,13 @@ final class RegisterCompletedViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let switchToMainView = switchToMainView$
             .asSignal(onErrorJustReturn: nil)
         let moveToEditProfileView = moveToEditProfileView$
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             okayButtonTapped: okayButtonTapped$.asObserver(),
             laterButtonTapped: laterButtonTapped$.asObserver()
@@ -58,7 +58,7 @@ final class RegisterCompletedViewModel: ViewModelType {
             moveToEditProfileView: moveToEditProfileView
         )
         
-        // Binding
+        // MARK: Binding
         laterButtonTapped$
             .map { _  -> BappyTabBarViewModel in
                 let dependency = BappyTabBarViewModel.Dependency(

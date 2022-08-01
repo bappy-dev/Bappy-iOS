@@ -34,13 +34,13 @@ final class ContinueButtonViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let buttonTapped = buttonTapped$
             .asSignal(onErrorJustReturn: Void())
         let isButtonEnabled = isButtonEnabled$
             .asDriver(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             buttonTapped: buttonTapped$.asObserver(),
             isButtonEnabled: isButtonEnabled$.asObserver()

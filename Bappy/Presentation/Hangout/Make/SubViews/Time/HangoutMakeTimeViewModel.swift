@@ -84,7 +84,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             )
         )
         
-        // Streams
+        // MARK: Streams
         let dateDoneButtonTapped = dateDoneButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let timeDoneButtonTapped = timeDoneButtonTapped$
@@ -121,7 +121,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             .map { $0 != nil }
             .asSignal(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             dateEditingDidBegin: dateEditingDidBegin$.asObserver(),
             timeEditingDidBegin: timeEditingDidBegin$.asObserver(),
@@ -147,7 +147,7 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             isValid: isValid
         )
         
-        // Binding
+        // MARK: Binding
         self.calendarText$ = calendarText$
         self.timeText$ = timeText$
         

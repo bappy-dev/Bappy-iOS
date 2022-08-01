@@ -10,6 +10,7 @@ import SnapKit
 import PhotosUI
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class ReportViewController: UIViewController {
     
@@ -176,6 +177,17 @@ extension ReportViewController {
             .compactMap { $0 }
             .emit(onNext: { [weak self] num in
                 self?.showPHPickerView(selectionLimit: num)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSuccessView
+            .emit(onNext: { [weak self] _ in
+                let viewController = ReportSuccessViewController()
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.setDismissCompletion {
+                    self?.navigationController?.popViewController(animated: false)
+                }
+                self?.present(viewController, animated: true)
             })
             .disposed(by: disposeBag)
         

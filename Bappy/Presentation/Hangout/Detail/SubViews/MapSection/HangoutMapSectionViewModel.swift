@@ -44,7 +44,7 @@ final class HangoutMapSectionViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let isPreviewModel$ = BehaviorSubject<Bool>(value: dependency.isPreviewModel)
         let placeName$ = BehaviorSubject<String>(value: dependency.placeName)
         let mapImageURL$ = BehaviorSubject<URL?>(value: dependency.mapImageURL)
@@ -63,7 +63,7 @@ final class HangoutMapSectionViewModel: ViewModelType {
             .withLatestFrom(mapImage$)
             .asSignal(onErrorJustReturn: dependency.mapImage)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             mapButtonTapped: mapButtonTapped$.asObserver()
         )
@@ -75,7 +75,7 @@ final class HangoutMapSectionViewModel: ViewModelType {
             mapImage: mapImage
         )
         
-        // Bindind
+        // MARK: Bindind
         self.isPreviewModel$ = isPreviewModel$
         self.placeName$ = placeName$
         self.mapImageURL$ = mapImageURL$

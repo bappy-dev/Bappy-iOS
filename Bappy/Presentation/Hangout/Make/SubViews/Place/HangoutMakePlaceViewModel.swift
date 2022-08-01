@@ -35,7 +35,7 @@ final class HangoutMakePlaceViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let endEditing = editingDidBegin$
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
@@ -47,7 +47,7 @@ final class HangoutMakePlaceViewModel: ViewModelType {
             .map { _ in true }
             .asSignal(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             editingDidBegin: editingDidBegin$.asObserver(),
             map: map$.asObserver()

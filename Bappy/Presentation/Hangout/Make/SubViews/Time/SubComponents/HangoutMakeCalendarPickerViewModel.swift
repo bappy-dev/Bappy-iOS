@@ -40,7 +40,7 @@ final class HangoutMakeCalendarPickerViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let minimumDate$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         let date$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         
@@ -54,7 +54,7 @@ final class HangoutMakeCalendarPickerViewModel: ViewModelType {
             .withLatestFrom(minimumDate$, resultSelector: getCalendarDate)
             .asDriver(onErrorJustReturn: dependency.minimumDate)
             
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             date: date$.asObserver(),
             doneButtonTapped: doneButtonTapped$.asObserver(),
@@ -67,7 +67,7 @@ final class HangoutMakeCalendarPickerViewModel: ViewModelType {
             calendarDate: calendarDate
         )
         
-        // Binding
+        // MARK: Binding
         self.minimumDate$ = minimumDate$
         self.date$ = date$
         

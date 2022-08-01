@@ -55,7 +55,7 @@ final class SelectNationalityViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
 
-        // Streams
+        // MARK: Streams
         let countries$ = BehaviorSubject<[Country]>(value: dependency.countries)
         
         let searchedCountries = text$
@@ -67,7 +67,7 @@ final class SelectNationalityViewModel: ViewModelType {
         let hideNoResultView = hideNoResultView$
             .asDriver(onErrorJustReturn: true)
 
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             closeButtonTapped: closeButtonTapped$.asObserver(),
@@ -80,7 +80,7 @@ final class SelectNationalityViewModel: ViewModelType {
             hideNoResultView: hideNoResultView
         )
 
-        // Binding
+        // MARK: Binding
         self.countries$ = countries$
         
         searchedCountries

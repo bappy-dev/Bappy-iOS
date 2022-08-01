@@ -46,7 +46,7 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let minimumDate$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         let date$ = BehaviorSubject<Date>(value: dependency.minimumDate)
         let calendarDate$ = BehaviorSubject<Date?>(value: nil)
@@ -68,7 +68,7 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
             )
             .asDriver(onErrorJustReturn: nil)
             
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             date: date$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
@@ -85,7 +85,7 @@ final class HangoutMakeTimePickerViewModel: ViewModelType {
             timeDate: timeDate
         )
         
-        // Binding
+        // MARK: Binding
         self.minimumDate$ = minimumDate$
         self.date$ = date$
         self.calendarDate$ = calendarDate$

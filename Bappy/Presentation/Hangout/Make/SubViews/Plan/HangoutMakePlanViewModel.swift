@@ -48,7 +48,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         let countInfo$ = BehaviorSubject<String>(value: "(0/\(dependency.maximumLength))")
@@ -78,7 +78,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
@@ -95,7 +95,7 @@ final class HangoutMakePlanViewModel: ViewModelType {
             isValid: isValid
         )
         
-        // Binding
+        // MARK: Binding
         self.minimumLength$ = minimumLength$
         self.maximumLength$ = maximumLength$
         self.countInfo$ = countInfo$

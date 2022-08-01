@@ -44,7 +44,7 @@ final class BappyLoginViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let showLoader = showLoader$
             .asSignal(onErrorJustReturn: false)
         let switchToSignInView = switchToSignInView$
@@ -52,7 +52,7 @@ final class BappyLoginViewModel: ViewModelType {
         let showRegisterView = showRegisterView$
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             authCredential: authCredential$.asObserver(),
             skipButtonTapped: skipButtonTapped$.asObserver()
@@ -64,19 +64,21 @@ final class BappyLoginViewModel: ViewModelType {
             showRegisterView: showRegisterView
         )
         
-        // Bindind
-        let signInResult = authCredential$
+        // MARK: Bindind
+        // Firebase SignIn
+        let signInFirebaseResult = authCredential$
             .do { [weak self] _ in self?.showLoader$.onNext(true) }
             .flatMap(dependency.firebaseRepository.signIn)
             .share()
         
-        signInResult
+        signInFirebaseResult
             .compactMap(getAuthError)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .bind(onNext: { print("ERROR: \($0)") })
             .disposed(by: disposeBag)
         
-        let signInUserResult = signInResult
+        // Back-end SignIn
+        let signInUserResult = signInFirebaseResult
             .map(getAuthResult)
             .compactMap { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)

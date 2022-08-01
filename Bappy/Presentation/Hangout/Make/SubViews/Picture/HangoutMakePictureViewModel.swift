@@ -35,7 +35,7 @@ final class HangoutMakePictureViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let picture = picture$
             .asSignal(onErrorJustReturn: nil)
         let hideDefaultImage = picture$
@@ -45,7 +45,7 @@ final class HangoutMakePictureViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let isValid = hideDefaultImage
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             pictureButtonTapped: pictureButtonTapped$.asObserver(),
             picture: picture$.asObserver()

@@ -45,7 +45,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
@@ -69,7 +69,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
@@ -84,7 +84,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
             isValid: isValid
         )
         
-        // Binding
+        // MARK: Binding
         self.minimumLength$ = minimumLength$
         self.maximumLength$ = maximumLength$
         

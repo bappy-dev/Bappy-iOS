@@ -33,8 +33,7 @@ final class LocaleSearchViewModel: ViewModelType {
         var maps: Driver<[Map]> // <-> View
         var shouldHideNoResultView: Signal<Bool> // <-> View
         var dismissKeyboard: Signal<Void> // <-> View
-        var showLoader: Signal<Void> // <-> View
-        var dismissLoader: Signal<Void> // <-> View
+        var showLoader: Signal<Bool> // <-> View
         var shouldSpinnerAnimating: Driver<Bool> // <-> View
         var popView: Signal<Void> // <-> View
     }
@@ -58,14 +57,13 @@ final class LocaleSearchViewModel: ViewModelType {
     private let prefetchRows$ = PublishSubject<[IndexPath]>()
     private let itemSelected$ = PublishSubject<IndexPath>()
     
-    private let showLoader$ = PublishSubject<Void>()
-    private let dismissLoader$ = PublishSubject<Void>()
+    private let showLoader$ = PublishSubject<Bool>()
     private let popView$ = PublishSubject<Void>()
     
     init(dependency: Dependency = .init(googleMapRepository: DefaultGoogleMapsRepository())) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let key$ = BehaviorSubject<String>(value: dependency.key)
         let language$ = BehaviorSubject<String>(value: dependency.language)
         
@@ -80,15 +78,14 @@ final class LocaleSearchViewModel: ViewModelType {
                 itemSelected$.map { _ in }
             )
             .asSignal(onErrorJustReturn: Void())
-        let showLoader = showLoader$.asSignal(onErrorJustReturn: Void())
-        let dismissLoader = dismissLoader$.asSignal(onErrorJustReturn: Void())
+        let showLoader = showLoader$.asSignal(onErrorJustReturn: false)
         let shouldSpinnerAnimating = nextPageToken$
             .map { $0 != nil }
             .asDriver(onErrorJustReturn: false)
         let popView = popView$
             .asSignal(onErrorJustReturn: Void())
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             searchButtonClicked: searchButtonClicked$.asObserver(),
@@ -102,12 +99,11 @@ final class LocaleSearchViewModel: ViewModelType {
             shouldHideNoResultView: shouldHideNoResultView,
             dismissKeyboard: dismissKeyboard,
             showLoader: showLoader,
-            dismissLoader: dismissLoader,
             shouldSpinnerAnimating: shouldSpinnerAnimating,
             popView: popView
         )
         
-        // Bindind
+        // MARK: Bindind
         self.key$ = key$
         self.language$ = language$
         
@@ -116,7 +112,7 @@ final class LocaleSearchViewModel: ViewModelType {
             .distinctUntilChanged { $0.1 == $1.1 }
             .do { [weak self] _ in
                 self?.isCommunicating$.onNext(true)
-                self?.showLoader$.onNext(Void())
+                self?.showLoader$.onNext(true)
                 self?.usedPageToken$.onNext([])
                 self?.maps$.onNext([])
             }
@@ -153,7 +149,7 @@ final class LocaleSearchViewModel: ViewModelType {
             .observe(on:MainScheduler.asyncInstance)
             .flatMap { $0 }
             .do { [weak self] _ in
-                self?.dismissLoader$.onNext(Void())
+                self?.showLoader$.onNext(false)
                 self?.isCommunicating$.onNext(false)
             }
             .share()

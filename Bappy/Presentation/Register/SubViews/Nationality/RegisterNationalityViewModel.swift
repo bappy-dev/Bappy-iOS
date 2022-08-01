@@ -34,7 +34,7 @@ final class RegisterNationalityViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let country = country$
             .map { "\($0.name) \($0.flag)" }
             .asSignal(onErrorJustReturn: nil)
@@ -44,7 +44,7 @@ final class RegisterNationalityViewModel: ViewModelType {
         let textFieldTapped = textFieldTapped$
             .asSignal(onErrorJustReturn: Void())
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             country: country$.asObserver(),
             textFieldTapped: textFieldTapped$.asObserver()
@@ -56,7 +56,7 @@ final class RegisterNationalityViewModel: ViewModelType {
             textFieldTapped: textFieldTapped
         )
         
-        // Binding
+        // MARK: Binding
 
     }
 }

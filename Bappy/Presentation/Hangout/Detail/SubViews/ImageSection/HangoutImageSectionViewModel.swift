@@ -44,7 +44,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let isPreviewMode$ = BehaviorSubject<Bool>(value: dependency.isPreviewMode)
         let postImageURL$ = BehaviorSubject<URL?>(value: dependency.postImageURL)
         let postImage$ = BehaviorSubject<UIImage?>(value: dependency.postImage)
@@ -63,7 +63,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
         let imageHeight = imageHeight$
             .asSignal(onErrorJustReturn: 0)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             imageHeight: imageHeight$.asObserver()
         )
@@ -75,7 +75,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
             imageHeight: imageHeight
         )
         
-        // Bindind
+        // MARK: Bindind
         self.isPreviewMode$ = isPreviewMode$
         self.postImageURL$ = postImageURL$
         self.postImage$ = postImage$

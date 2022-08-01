@@ -26,7 +26,7 @@ extension CurrentUserResponseDTO {
         let birth: String?
         let affiliation: String?
         let introduce: String?
-        let profileImageURL: String?
+        let profileImageFilename: String?
         let isUserUsingGPS: Bool?
         let state: String
         let languages: [String]?
@@ -41,7 +41,7 @@ extension CurrentUserResponseDTO {
             case birth = "userBirth"
             case affiliation = "userAffiliation"
             case introduce = "userIntroduce"
-            case profileImageURL = "userProfileImageUrl"
+            case profileImageFilename = "userProfileImageUrl"
             case isUserUsingGPS = "userGPS"
             case state = "userState"
             case languages = "userLanguages"
@@ -69,6 +69,9 @@ extension CurrentUserResponseDTO {
             case "2": return .Other
             default: return nil }
         }
+        
+        let profileImageURL = user.profileImageFilename
+            .flatMap { URL(string: "\(BAPPY_API_BASEURL)static-file/\($0)") }
         
         let personalities = user.personalities
             .map { $0.compactMap { Persnoality(rawValue: $0) } }
@@ -98,7 +101,7 @@ extension CurrentUserResponseDTO {
             gender: gender,
             birth: user.birth?.toDate(format: "yyyy.MM.dd"),
             nationality: user.nationality.flatMap { Country(code: $0) },
-            profileImageURL: user.profileImageURL.flatMap { URL(string: $0) },
+            profileImageURL: profileImageURL,
             introduce: user.introduce,
             affiliation: user.affiliation,
             languages: user.languages,

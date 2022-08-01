@@ -115,6 +115,37 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //        }
     }
     
+    func updateProfile(affiliation: String?,
+                       introduce: String?,
+                       languages: [Language]?,
+                       personalities: [Persnoality]?,
+                       interests: [Hangout.Category]?,
+                       image: UIImage?) -> Single<Result<Bool, Error>> {
+        let languages = languages
+            .map { $0.joined(separator: ",") }
+        let interests = interests
+            .map { $0.map(\.description).joined(separator: ",") }
+        let personalities = personalities
+            .map { $0.map(\.rawValue).joined(separator: ",") }
+        let requestDTO = UpdateProfileRequestDTO(
+            userAffiliation: affiliation,
+            userIntroduce: introduce,
+            userLanguages: languages,
+            userInterests: interests,
+            userPersonalities: personalities)
+        let endpoint = APIEndpoints.updateProfile(with: requestDTO, image: image)
+        return  provider.request(with: endpoint)
+            .map { result -> Result<Bool, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    let user = responseDTO.toDomain()
+                    return .success(user)
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
+    
     func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>> {
         let requestDTO = GPSSettingRequestDTO(gps: setting)
         let endpoint = APIEndpoints.updateGPSSetting(with: requestDTO)

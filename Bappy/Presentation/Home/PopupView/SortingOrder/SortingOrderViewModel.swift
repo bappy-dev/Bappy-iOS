@@ -44,7 +44,7 @@ final class SortingOrderViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let sortingList$ = BehaviorSubject<[Hangout.Sorting]>(value: dependency.sortingList)
         
         let sortingList = sortingList$
@@ -53,7 +53,7 @@ final class SortingOrderViewModel: ViewModelType {
             .map { _ in }
             .asSignal(onErrorJustReturn: Void())
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             itemSelected: itemSelected$.asObserver()
         )
@@ -63,7 +63,7 @@ final class SortingOrderViewModel: ViewModelType {
             popView: popView
         )
         
-        // Bindind
+        // MARK: Bindind
         self.sortingList$ = sortingList$
         
         itemSelected$

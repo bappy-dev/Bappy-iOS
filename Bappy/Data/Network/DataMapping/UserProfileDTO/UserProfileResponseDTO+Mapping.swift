@@ -25,7 +25,7 @@ extension BappyUserResponseDTO {
         let birth: String?
         let affiliation: String?
         let introduce: String?
-        let profileImageURL: String?
+        let profileImageFilename: String?
         let state: String
         let languages: [String]?
         let personalities: [String]?
@@ -39,7 +39,7 @@ extension BappyUserResponseDTO {
             case birth = "userBirth"
             case affiliation = "userAffiliation"
             case introduce = "userIntroduce"
-            case profileImageURL = "userProfileImageURL"
+            case profileImageFilename = "userProfileImageURL"
             case state = "userState"
             case languages = "userLanguages"
             case personalities = "userPersonalities"
@@ -50,6 +50,8 @@ extension BappyUserResponseDTO {
 
 extension BappyUserResponseDTO {
     func toDomain() -> BappyUser {
+        let profileImageURL = user.profileImageFilename
+            .flatMap { URL(string: "\(BAPPY_API_BASEURL)static-file/\($0)") }
         return BappyUser(
             id: user.id ?? UUID().uuidString,
             state: .normal, // 임시
@@ -58,7 +60,7 @@ extension BappyUserResponseDTO {
             gender: nil, // 임시
             birth: nil, // 임시
             nationality: nil, // 임시
-            profileImageURL: user.profileImageURL.flatMap { URL(string: $0) },
+            profileImageURL: profileImageURL,
             introduce: user.introduce,
             affiliation: user.affiliation,
             languages: user.languages,

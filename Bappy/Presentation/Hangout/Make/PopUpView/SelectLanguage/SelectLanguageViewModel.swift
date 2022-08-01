@@ -54,7 +54,7 @@ final class SelectLanguageViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
 
-        // Streams
+        // MARK: Streams
         let languages$ = BehaviorSubject<[Language]>(value: dependency.languages)
         let filteredlanguages$ = BehaviorSubject<[Language]>(value: dependency.languages)
 
@@ -77,7 +77,7 @@ final class SelectLanguageViewModel: ViewModelType {
             )
             .asSignal(onErrorJustReturn: Void())
 
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             text: text$.asObserver(),
             searchButtonClicked: searchButtonClicked$.asObserver(),
@@ -92,7 +92,7 @@ final class SelectLanguageViewModel: ViewModelType {
             dismissView: dismissView
         )
 
-        // Binding
+        // MARK: Binding
         self.languages$ = languages$
         self.filteredlanguages$ = filteredlanguages$
 

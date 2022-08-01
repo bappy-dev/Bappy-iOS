@@ -34,14 +34,14 @@ final class LocaleSettingHeaderViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let shouldHideSelection = isUserUsingGPS$
             .map { !$0 }
             .asDriver(onErrorJustReturn: true)
         let localeButtonTapped = localeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             isUserUsingGPS: isUserUsingGPS$.asObserver(),
             localeButtonTapped: localeButtonTapped$.asObserver()
@@ -52,6 +52,6 @@ final class LocaleSettingHeaderViewModel: ViewModelType {
             localeButtonTapped: localeButtonTapped
         )
         
-        // Bindind
+        // MARK: Bindind
     }
 }

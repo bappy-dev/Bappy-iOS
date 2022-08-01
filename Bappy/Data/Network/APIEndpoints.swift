@@ -64,6 +64,16 @@ struct APIEndpoints {
             queryParameters: hangoutsRequestDTO)
     }
     
+    static func updateProfile(with updateProfileRequestDTO: UpdateProfileRequestDTO, image: UIImage?) -> Endpoint<UpdateProfileResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user",
+            method: .put,
+            bodyParameters: updateProfileRequestDTO,
+            images: image.map { [$0] },
+            contentType: .multipart)
+    }
+    
     static func updateGPSSetting(with gpsSettingRequestDTO: GPSSettingRequestDTO) -> Endpoint<GPSSettingResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,

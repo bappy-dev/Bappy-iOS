@@ -35,7 +35,7 @@ final class HangoutMakeLanguageViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let text = language$
             .asSignal(onErrorJustReturn: nil)
         let dismissKeyboard = editingDidBegin$
@@ -45,7 +45,7 @@ final class HangoutMakeLanguageViewModel: ViewModelType {
             .map { $0 != nil }
             .asSignal(onErrorJustReturn: false)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             language: language$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver()

@@ -32,6 +32,7 @@ final class ReportViewModel: ViewModelType {
     struct Output {
         var popView: Signal<Void> // <-> View
         var showPHPickerView: Signal<Int?> // <-> View
+        var showSuccessView: Signal<Void> // <-> View
         var selectedImages: Signal<[UIImage]> // <-> Child(Image)
     }
     
@@ -60,7 +61,7 @@ final class ReportViewModel: ViewModelType {
                 dependency: .init(maxNumOfImages: dependency.maxNumOfImages))
         )
         
-        // Streams
+        // MARK: Streams
         let maxNumOfImages$ = BehaviorSubject<Int>(value: dependency.maxNumOfImages)
         
         let popView = backButtonTapped$
@@ -68,11 +69,14 @@ final class ReportViewModel: ViewModelType {
         let showPHPickerView = addPhoto$
             .withLatestFrom(maxNumOfImages$)
             .withLatestFrom(selectedImages$) { $0 - $1.count }
+            .filter { ($0 ?? 0) > 0 }
             .asSignal(onErrorJustReturn: nil)
+        let showSuccessView = reportButtonTapped$
+            .asSignal(onErrorJustReturn: Void())
         let selectedImages = selectedImages$
             .asSignal(onErrorJustReturn: [])
           
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             backButtonTapped: backButtonTapped$.asObserver(),
             reportButtonTapped: reportButtonTapped$.asObserver(),
@@ -84,14 +88,16 @@ final class ReportViewModel: ViewModelType {
         self.output = Output(
             popView: popView,
             showPHPickerView: showPHPickerView,
+            showSuccessView: showSuccessView,
             selectedImages: selectedImages
         )
         
-        // Bindind
+        // MARK: Bindind
         self.maxNumOfImages$ = maxNumOfImages$
         
         addedImage$
             .withLatestFrom(selectedImages$) { $1 + [$0] }
+            .filter { $0.count <= 5 }
             .bind(to: selectedImages$)
             .disposed(by: disposeBag)
         

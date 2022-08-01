@@ -36,7 +36,7 @@ final class BappyDropdownViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         
-        // Streams
+        // MARK: Streams
         let dropdownList$ = BehaviorSubject<[String]>(value: dependency.dropdownList)
         
         let dropdownList = dropdownList$
@@ -45,7 +45,7 @@ final class BappyDropdownViewModel: ViewModelType {
             .withLatestFrom(dropdownList) { $1[$0.row] }
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             itemSelected: itemSelected$.asObserver()
         )
@@ -55,7 +55,7 @@ final class BappyDropdownViewModel: ViewModelType {
             selectedText: selectedText
         )
         
-        // Bindind
+        // MARK: Bindind
         self.dropdownList$ = dropdownList$
             
     }

@@ -36,26 +36,24 @@ final class HangoutMakeViewModel: ViewModelType {
         var backButtonTapped: AnyObserver<Void> // <-> View
         var viewDidAppear: AnyObserver<Bool> // <-> View
         var keyboardWithButtonHeight: AnyObserver<CGFloat> // <-> View
-        var categories: AnyObserver<[Hangout.Category]?>
-        var title: AnyObserver<String?>
-        var date: AnyObserver<Date?>
-        var place: AnyObserver<Map?>
-        var picture: AnyObserver<UIImage?>
-        var plan: AnyObserver<String?>
-        var language: AnyObserver<Language?>
-        var openchat: AnyObserver<String?>
-        var limit: AnyObserver<Int?>
-        var isCategoriesValid: AnyObserver<Bool>
-        var isTitleValid: AnyObserver<Bool>
-        var isTimeValid: AnyObserver<Bool>
-        var isPlaceValid: AnyObserver<Bool>
-        var isPictureValid: AnyObserver<Bool>
-        var isPlanValid: AnyObserver<Bool>
-        var isLanguageValid: AnyObserver<Bool>
-        var isOpenchatValid: AnyObserver<Bool>
-        var isLimitValid: AnyObserver<Bool>
-        var showSearchPlaceView: AnyObserver<SearchPlaceViewModel?>
-        var showSelectLanguageView: AnyObserver<SelectLanguageViewModel?>
+        var categories: AnyObserver<[Hangout.Category]?> // <-> Child(Category)
+        var title: AnyObserver<String?> // <-> Child(Title)
+        var date: AnyObserver<Date?> // <-> Child(Date)
+        var place: AnyObserver<Map?> // <-> Delegate(SearchMap)
+        var picture: AnyObserver<UIImage?> // <-> Child(Picture)
+        var plan: AnyObserver<String?> // <-> Child(Plan)
+        var language: AnyObserver<Language?> // <-> Delegate(selectLanguage)
+        var openchat: AnyObserver<String?> // <-> Child(Openchat)
+        var limit: AnyObserver<Int?> // <-> Child(Limit)
+        var isCategoriesValid: AnyObserver<Bool> // <-> Child(Category)
+        var isTitleValid: AnyObserver<Bool> // <-> Child(Title)
+        var isTimeValid: AnyObserver<Bool> // <-> Child(Date)
+        var isPlaceValid: AnyObserver<Bool> // <-> Child(Place)
+        var isPictureValid: AnyObserver<Bool> // <-> Child(Picture)
+        var isPlanValid: AnyObserver<Bool> // <-> Child(Plan)
+        var isLanguageValid: AnyObserver<Bool> // <-> Child(Language)
+        var isOpenchatValid: AnyObserver<Bool> // <-> Child(Openchat)
+        var isLimitValid: AnyObserver<Bool> // <-> Child(Limit)
     }
     
     struct Output {
@@ -69,8 +67,7 @@ final class HangoutMakeViewModel: ViewModelType {
         var showSearchPlaceView: Signal<SearchPlaceViewModel?> // <-> View
         var showImagePicker: Signal<Void> // <-> View
         var showSelectLanguageView: Signal<SelectLanguageViewModel?> // <-> View
-        var showLoader: Signal<Void>
-        var dismissLoader: Signal<Void>
+        var showLoader: Signal<Bool> // <-> View
         var showHangoutPreview: Signal<HangoutDetailViewModel?> // <-> View
     }
     
@@ -109,8 +106,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let showSearchPlaceView$ = PublishSubject<SearchPlaceViewModel?>()
     private let showImagePicker$ = PublishSubject<Void>()
     private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel?>()
-    private let showLoader$ = PublishSubject<Void>()
-    private let dismissLoader$ = PublishSubject<Void>()
+    private let showLoader$ = PublishSubject<Bool>()
     private let showHangoutPreview$ = PublishSubject<HangoutDetailViewModel?>()
     
     init(dependency: Dependency) {
@@ -128,7 +124,7 @@ final class HangoutMakeViewModel: ViewModelType {
             continueButtonViewModel: ContinueButtonViewModel()
         )
         
-        // Streams
+        // MARK: Streams
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         let key$ = BehaviorSubject<String>(value: dependency.key)
@@ -179,13 +175,11 @@ final class HangoutMakeViewModel: ViewModelType {
         let showSelectLanguageView = showSelectLanguageView$
             .asSignal(onErrorJustReturn: nil)
         let showLoader = showLoader$
-            .asSignal(onErrorJustReturn: Void())
-        let dismissLoader = dismissLoader$
-            .asSignal(onErrorJustReturn: Void())
+            .asSignal(onErrorJustReturn: false)
         let showHangoutPreview = showHangoutPreview$
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             continueButtonTapped: continueButtonTapped$.asObserver(),
             backButtonTapped: backButtonTapped$.asObserver(),
@@ -208,9 +202,7 @@ final class HangoutMakeViewModel: ViewModelType {
             isPlanValid: isPlanValid$.asObserver(),
             isLanguageValid: isLanguageValid$.asObserver(),
             isOpenchatValid: isOpenchatValid$.asObserver(),
-            isLimitValid: isLimitValid$.asObserver(),
-            showSearchPlaceView: showSearchPlaceView$.asObserver(),
-            showSelectLanguageView: showSelectLanguageView$.asObserver()
+            isLimitValid: isLimitValid$.asObserver()
         )
         
         self.output = Output(
@@ -225,11 +217,10 @@ final class HangoutMakeViewModel: ViewModelType {
             showImagePicker: showImagePicker,
             showSelectLanguageView: showSelectLanguageView,
             showLoader: showLoader,
-            dismissLoader: dismissLoader,
             showHangoutPreview: showHangoutPreview
         )
         
-        // Bindind
+        // MARK: Bindind
         self.currentUser$ = currentUser$
         self.numOfPage$ = numOfPage$
         self.key$ = key$
@@ -263,9 +254,9 @@ final class HangoutMakeViewModel: ViewModelType {
             .withLatestFrom(
                 Observable.combineLatest(key$, place$.compactMap { $0 })
             ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
-            .do { [weak self] _ in self?.showLoader$.onNext(Void()) }
+            .do { [weak self] _ in self?.showLoader$.onNext(true) }
             .map(dependency.googleMapImageRepository.fetchMapImage)
-            .do { [weak self] _ in self?.dismissLoader$.onNext(Void()) }
+            .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .flatMap { $0 }
             .share()
         
@@ -273,10 +264,8 @@ final class HangoutMakeViewModel: ViewModelType {
             .compactMap(getValue)
             .share()
         
-        let error = result
+        result
             .compactMap(getError)
-        
-        error
             .bind(onNext: { print("ERROR: \($0)")})
             .disposed(by: disposeBag)
         
@@ -477,13 +466,13 @@ private func getError(_ result: Result<UIImage?, Error>) -> String? {
 // MARK: - SearchPlaceViewModelDelegate
 extension HangoutMakeViewModel: SearchPlaceViewModelDelegate {
     func mapSelected(map: Map) {
-        place$.onNext(map)
+        input.place.onNext(map)
     }
 }
 
 // MARK: - SelectLanguageViewModelDelegate
 extension HangoutMakeViewModel: SelectLanguageViewModelDelegate {    
     func languageSelected(language: Language) {
-        language$.onNext(language)
+        input.language.onNext(language)
     }
 }

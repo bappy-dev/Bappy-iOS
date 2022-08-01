@@ -89,7 +89,7 @@ final class RegisterViewModel: ViewModelType {
             continueButtonViewModel: ContinueButtonViewModel()
         )
         
-        // Streams
+        // MARK: Streams
         let page$ = BehaviorSubject<Int>(value: 0)
         let numOfPage$ = BehaviorSubject<Int>(value: dependency.numOfPage)
         
@@ -130,7 +130,7 @@ final class RegisterViewModel: ViewModelType {
         let showSelectNationalityView = showSelectNationalityView$
             .asSignal(onErrorJustReturn: nil)
         
-        // Input & Output
+        // MARK: Input & Output
         self.input = Input(
             continueButtonTapped: continueButtonTapped$.asObserver(),
             backButtonTapped: backButtonTapped$.asObserver(),
@@ -160,7 +160,7 @@ final class RegisterViewModel: ViewModelType {
             showSelectNationalityView: showSelectNationalityView
         )
         
-        // Binding
+        // MARK: Binding
         self.page$ = page$
         self.numOfPage$ = numOfPage$
         
