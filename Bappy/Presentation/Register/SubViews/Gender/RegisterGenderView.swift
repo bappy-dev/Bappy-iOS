@@ -7,96 +7,100 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
+import Accelerate
 
 final class RegisterGenderView: UIView {
     
     // MARK: Properties
-    private let genderQuestionLabel: UILabel = {
+    private let viewModel: RegisterGenderViewModel
+    private let disposeBag = DisposeBag()
+    
+    private let genderCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Select your gender?"
-        label.font = .roboto(size: 16.0)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.text = "What's\nyour gender"
+        label.font = .roboto(size: 36.0, family: .Bold)
+        label.textColor = .bappyBrown
+        label.numberOfLines = 2
         return label
     }()
     
-    private let asteriskLabel: UILabel = {
-        let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_yellow")
-        return label
-    }()
-    
-    private lazy var maleButton: SelectionButton = {
-        let button = SelectionButton(title: "Male")
-        button.layer.cornerRadius = 19.5
-        button.addTarget(self, action: #selector(selectionButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var femaleButton: SelectionButton = {
-        let button = SelectionButton(title: "Female")
-        button.layer.cornerRadius = 19.5
-        button.addTarget(self, action: #selector(selectionButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var otherButton: SelectionButton = {
-        let button = SelectionButton(title: "Other")
-        button.layer.cornerRadius = 19.5
-        button.addTarget(self, action: #selector(selectionButtonHandler), for: .touchUpInside)
-        return button
-    }()
+    private let maleButton = SelectionButton(title: "Male")
+    private let femaleButton = SelectionButton(title: "Female")
+    private let otherButton = SelectionButton(title: "Other")
+
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: RegisterGenderViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
+        configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func selectionButtonHandler(button: SelectionButton) {
-        [maleButton, femaleButton, otherButton].forEach {
-            $0.isButtonSelected = ($0 == button)
-        }
+    // MARK: Helpers
+    private func configure() {
+        self.backgroundColor = .white
+        maleButton.layer.cornerRadius = 19.5
+        femaleButton.layer.cornerRadius = 19.5
+        otherButton.layer.cornerRadius = 19.5
     }
     
-    // MARK: Helpers
     private func layout() {
-        self.addSubview(genderQuestionLabel)
-        genderQuestionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20.0)
-            $0.leading.equalToSuperview().inset(30.0)
-        }
-        
-        self.addSubview(asteriskLabel)
-        asteriskLabel.snp.makeConstraints {
-            $0.top.equalTo(genderQuestionLabel).offset(-3.0)
-            $0.leading.equalTo(genderQuestionLabel.snp.trailing).offset(6.0)
-        }
-        
-        self.addSubview(maleButton)
-        
-        let stackView = UIStackView(
-            arrangedSubviews: [
-                maleButton,
-                femaleButton,
-                otherButton])
+        let stackView = UIStackView(arrangedSubviews: [maleButton, femaleButton, otherButton])
         stackView.spacing = 19.0
         stackView.distribution = .fillEqually
         stackView.axis = .horizontal
         
+        self.addSubview(genderCaptionLabel)
+        genderCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
+        }
+   
         self.addSubview(stackView)
         stackView.snp.makeConstraints {
-            $0.top.equalTo(genderQuestionLabel.snp.bottom).offset(30.0)
+            $0.top.equalTo(genderCaptionLabel.snp.bottom).offset(80.0)
             $0.leading.trailing.equalToSuperview().inset(23.0)
             $0.height.equalTo(39.0)
         }
+    }
+}
+
+// MARK: - Bind
+extension RegisterGenderView {
+    private func bind() {
+        maleButton.rx.tap
+            .bind(to: viewModel.input.maleButtonTapped)
+            .disposed(by: disposeBag)
+        
+        femaleButton.rx.tap
+            .bind(to: viewModel.input.femaleButtonTapped)
+            .disposed(by: disposeBag)
+        
+        otherButton.rx.tap
+            .bind(to: viewModel.input.otherButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isMaleSelected
+            .bind(to: maleButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isFemaleSelected
+            .bind(to: femaleButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isOtherSelected
+            .bind(to: otherButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        
     }
 }

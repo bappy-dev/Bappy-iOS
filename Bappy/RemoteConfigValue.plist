@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>minimumVersion</key>
+	<string>1.0.0</string>
+	<key>hasNotice</key>
+	<false/>
+	<key>noticeTitle</key>
+	<string>Notice</string>
+	<key>noticeMessage</key>
+	<string>We apologize for the inconvenience</string>
+</dict>
+</plist>

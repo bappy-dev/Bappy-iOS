@@ -14,7 +14,7 @@ final class SearchPlaceCell: UITableViewCell {
     // MARK: Properties
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = UIColor(named: "bappy_brown")
+        imageView.tintColor = .bappyBrown
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -23,7 +23,7 @@ final class SearchPlaceCell: UITableViewCell {
         let label = UILabel()
         label.font = .roboto(size: 16.0, family: .Medium)
         label.numberOfLines = 0
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.lineBreakMode = .byWordWrapping
         return label
     }()
@@ -32,7 +32,7 @@ final class SearchPlaceCell: UITableViewCell {
         let label = UILabel()
         label.font = .roboto(size: 14.0, family: .Light)
         label.numberOfLines = 0
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.lineBreakMode = .byWordWrapping
         return label
     }()
@@ -58,7 +58,7 @@ final class SearchPlaceCell: UITableViewCell {
         contentView.addSubview(placeImageView)
         placeImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(6.8)
-            $0.leading.equalToSuperview().inset(3.0)
+            $0.leading.equalToSuperview().inset(23.0)
             $0.width.equalTo(13.0)
             $0.height.equalTo(18.0)
         }

@@ -6,56 +6,50 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class RegisterBirthView: UIView {
     
     // MARK: Properties
-    private let birthQuestionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Birth date?"
-        label.font = .roboto(size: 16.0)
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
+    private let viewModel: RegisterBirthViewModel
+    private let disposeBag = DisposeBag()
     
-    private let asteriskLabel: UILabel = {
+    private let birthCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.text = "When\nwere you born"
+        label.font = .roboto(size: 36.0, family: .Bold)
+        label.textColor = .bappyBrown
+        label.numberOfLines = 2
         return label
-    }()
-    
-    private let answerBackgroundView: UIView = {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
-        backgroundView.layer.cornerRadius = 19.5
-        return backgroundView
     }()
     
     private lazy var birthTextField: UITextField = {
         let textField = UITextField()
-        textField.font = .roboto(size: 14.0)
-        textField.textColor = .black
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "Select your birth date",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
+        textField.font = .roboto(size: 16.0)
+        textField.textColor = .bappyBrown
         textField.addTarget(self, action: #selector(showBirthPicker), for: .editingDidBegin)
         return textField
     }()
     
-    private lazy var birthPickerView: BirthPickerView = {
-        let birthPickerView = BirthPickerView()
-        birthPickerView.isHidden = true
-        birthPickerView.delegate = self
-        return birthPickerView
+    private let underlinedView: UIView = {
+        let underlinedView = UIView()
+        underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        return underlinedView
     }()
     
+    private let birthPickerView: BirthPickerView
+    
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: RegisterBirthViewModel) {
+        let birthPickerViewModel = viewModel.subViewModels.birthPickerViewModel
+        self.viewModel = viewModel
+        self.birthPickerView = BirthPickerView(viewModel: birthPickerViewModel)
+        super.init(frame: .zero)
         
+        configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -74,35 +68,33 @@ final class RegisterBirthView: UIView {
     }
     
     // MARK: Helpers
+    private func configure() {
+        self.backgroundColor = .white
+    }
+    
     private func layout() {
-        self.addSubview(birthQuestionLabel)
-        birthQuestionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20.0)
-            $0.leading.equalToSuperview().inset(30.0)
+        self.addSubview(birthCaptionLabel)
+        birthCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(asteriskLabel)
-        asteriskLabel.snp.makeConstraints {
-            $0.top.equalTo(birthQuestionLabel).offset(-3.0)
-            $0.leading.equalTo(birthQuestionLabel.snp.trailing).offset(6.0)
-        }
-        
-        self.addSubview(answerBackgroundView)
-        answerBackgroundView.snp.makeConstraints {
-            $0.top.equalTo(birthQuestionLabel.snp.bottom).offset(28.0)
-            $0.leading.trailing.equalToSuperview().inset(23.0)
-            $0.height.equalTo(39.0)
-        }
-        
-        answerBackgroundView.addSubview(birthTextField)
+        self.addSubview(birthTextField)
         birthTextField.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(10.0)
-            $0.centerY.equalToSuperview()
+            $0.top.equalTo(birthCaptionLabel.snp.bottom).offset(92.0)
+            $0.leading.trailing.equalToSuperview().inset(47.0)
+        }
+        
+        self.addSubview(underlinedView)
+        underlinedView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(44.0)
+            $0.height.equalTo(2.0)
+            $0.top.equalTo(birthTextField.snp.bottom).offset(7.0)
         }
         
         self.addSubview(birthPickerView)
         birthPickerView.snp.makeConstraints {
-            $0.top.equalTo(birthQuestionLabel.snp.bottom).offset(20.0)
+            $0.top.equalTo(birthCaptionLabel.snp.bottom).offset(20.0)
             $0.leading.equalToSuperview().inset(27.0)
             $0.trailing.equalToSuperview().inset(23.0)
             $0.height.equalTo(308.0)
@@ -110,9 +102,11 @@ final class RegisterBirthView: UIView {
     }
 }
 
-// BirthPickerViewDelegate
-extension RegisterBirthView: BirthPickerViewDelegate {
-    func birthPickerViewDidSelect(birthDate: String) {
-        birthTextField.text = birthDate
+// MARK: - Bind
+extension RegisterBirthView {
+    func bind() {
+        viewModel.output.date
+            .emit(to: birthTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }

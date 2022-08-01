@@ -8,71 +8,65 @@
 import UIKit
 import SnapKit
 import YPImagePicker
+import RxSwift
+import RxCocoa
 
 final class HangoutMakeViewController: UIViewController {
     
     // MARK: Properties
-    private var initialized: Bool = false
-    private var selectedImage: UIImage? {
-        didSet {
-            pictureView.selectedImage = self.selectedImage
-        }
-    }
+    private let viewModel: HangoutMakeViewModel
+    private let disposeBag = DisposeBag()
     
-    private var numberOfImages = 0
-    
-    private var page: Int = 0 {
-        didSet {
-            let x: CGFloat = UIScreen.main.bounds.width * CGFloat(page)
-            let offset = CGPoint(x: x, y: 0)
-            scrollView.setContentOffset(offset, animated: true)
-            progressBarView.updateProgression(CGFloat(page + 1) / 8.0)
-        }
-    }
-    
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "chevron_back"), for: .normal)
-        button.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
-        return button
-    }()
-
+    private let backButton = UIButton()
     private let progressBarView = ProgressBarView()
-    private let continueButtonView = ContinueButtonView()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    private let titleView = HangoutMakeTitleView()
-    private let timeView = HangoutMakeTimeView()
-    private let placeView = HangoutPlaceView()
-    private let pictureView = HangoutPictureView()
-    private let planView = HangoutPlanView()
-    private let languageView = HangoutLanguageView()
-    private let openchatView = HangoutOpenchatView()
-    private let participantsLimitView = HangoutParticipantsLimitView()
+    private let categoryView: HangoutMakeCategoryView
+    private let titleView: HangoutMakeTitleView
+    private let timeView: HangoutMakeTimeView
+    private let placeView: HangoutMakePlaceView
+    private let pictureView: HangoutMakePictureView
+    private let planView: HangoutMakePlanView
+    private let languageView: HangoutMakeLanguageView
+    private let openchatView: HangoutMakeOpenchatView
+    private let limitView: HangoutMakeLimitView
+    private let continueButtonView: ContinueButtonView
 
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-
+    init(viewModel: HangoutMakeViewModel) {
+        let categoryViewModel = viewModel.subViewModels.categoryViewModel
+        let titleViewModel = viewModel.subViewModels.titleViewModel
+        let timeViewModel = viewModel.subViewModels.timeViewModel
+        let placeViewModel = viewModel.subViewModels.placeViewModel
+        let pictureViewModel = viewModel.subViewModels.pictureViewModel
+        let planViewModel = viewModel.subViewModels.planViewModel
+        let languageViewModel = viewModel.subViewModels.languageViewModel
+        let openchatViewModel = viewModel.subViewModels.openchatViewModel
+        let limitViewModel = viewModel.subViewModels.limitViewModel
+        let continueButtonViewModel = viewModel.subViewModels.continueButtonViewModel
+        
+        self.viewModel = viewModel
+        self.categoryView = HangoutMakeCategoryView(viewModel: categoryViewModel)
+        self.titleView = HangoutMakeTitleView(viewModel: titleViewModel)
+        self.timeView = HangoutMakeTimeView(viewModel: timeViewModel)
+        self.placeView = HangoutMakePlaceView(viewModel: placeViewModel)
+        self.pictureView = HangoutMakePictureView(viewModel: pictureViewModel)
+        self.planView = HangoutMakePlanView(viewModel: planViewModel)
+        self.languageView = HangoutMakeLanguageView(viewModel: languageViewModel)
+        self.openchatView = HangoutMakeOpenchatView(viewModel: openchatViewModel)
+        self.limitView = HangoutMakeLimitView(viewModel: limitViewModel)
+        self.continueButtonView = ContinueButtonView(viewModel: continueButtonViewModel)
+        super.init(nibName: nil, bundle: nil)
+        
         configure()
         layout()
-        addKeyboardObserver()
+        bind()
         addTapGestureOnScrollView()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if !initialized {
-            progressBarView.initializeProgression(1.0/8.0)
-            initialized = true
-        }
     }
 
     // MARK: Events
@@ -87,11 +81,8 @@ final class HangoutMakeViewController: UIViewController {
         view.endEditing(true)
     }
 
-    // MARK: Actions
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
+    // MARK: Helpers
+    private func updateButtonPostion(keyboardHeight: CGFloat) {
         let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
         UIView.animate(withDuration: 0.4) {
@@ -100,44 +91,38 @@ final class HangoutMakeViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
-        
-        let bottomButtonHeight = keyboardHeight + continueButtonView.frame.height
-        titleView.updateTextFieldPosition(bottomButtonHeight: bottomButtonHeight)
-        planView.updateTextViewPosition(bottomButtonHeight: bottomButtonHeight)
     }
     
-    @objc
-    private func backButtonHandler() {
-        view.endEditing(true)
-        guard page > 0 else {
-            self.dismiss(animated: true)
-            return
-        }
-        page -= 1
-        continueButtonView.isEnabled = true
-    }
-
-    // MARK: Helpers
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
     }
-
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
+    
+    private func configureImagePicker() -> YPImagePicker {
+        var config = YPImagePickerConfiguration()
+        config.colors.tintColor = .bappyYellow
+        config.shouldSaveNewPicturesToAlbum = false
+        config.showsPhotoFilters = false
+        config.showsCrop = .rectangle(ratio: 390.0/333.0)
+        config.showsCropGridOverlay = true
+        config.library.mediaType = .photo
+        config.wordings.libraryTitle = "Gallery"
+        config.wordings.cameraTitle = "Camera"
+        config.wordings.next = "Select"
+        config.wordings.save = "Done"
+        config.startOnScreen = .library
+        config.library.maxNumberOfItems = 1
+        config.library.minNumberOfItems = 1
+        config.library.spacingBetweenItems = 2.0
+        return YPImagePicker(configuration: config)
     }
 
     private func configure() {
         view.backgroundColor = .white
+        backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
+        backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-        titleView.delegate = self
-        timeView.delegate = self
-        placeView.delegate = self
-        pictureView.delegate = self
-        languageView.delegate = self
-        continueButtonView.delegate = self
     }
     
     private func layout() {
@@ -167,10 +152,17 @@ final class HangoutMakeViewController: UIViewController {
             $0.height.equalToSuperview()
         }
         
-        view.addSubview(titleView)
-        titleView.snp.makeConstraints {
+        view.addSubview(categoryView)
+        categoryView.snp.makeConstraints {
             $0.top.leading.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
+        }
+        
+        view.addSubview(titleView)
+        titleView.snp.makeConstraints {
+            $0.top.bottom.equalTo(contentView)
+            $0.width.equalTo(view.frame.width)
+            $0.leading.equalTo(categoryView.snp.trailing)
         }
 
         view.addSubview(timeView)
@@ -215,8 +207,8 @@ final class HangoutMakeViewController: UIViewController {
             $0.leading.equalTo(languageView.snp.trailing)
         }
         
-        view.addSubview(participantsLimitView)
-        participantsLimitView.snp.makeConstraints {
+        view.addSubview(limitView)
+        limitView.snp.makeConstraints {
             $0.top.bottom.trailing.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(openchatView.snp.trailing)
@@ -230,89 +222,106 @@ final class HangoutMakeViewController: UIViewController {
     }
 }
 
-// MARK: - HangoutMakeTitleViewDelegate
-extension HangoutMakeViewController: HangoutMakeTitleViewDelegate {
-    func isTitleValid(_ valid: Bool) {
-        continueButtonView.isEnabled = valid
-    }
-}
-
-// MARK: - HangoutMakeTimeViewDelegate
-extension HangoutMakeViewController: HangoutMakeTimeViewDelegate {
-    func isTimeValid(_ valid: Bool) {
-        continueButtonView.isEnabled = valid
-    }
-}
-
-
-// MARK: - HangoutPlaceViewDelegate
-extension HangoutMakeViewController: HangoutPlaceViewDelegate {
-    func showSearchPlaceView() {
-        view.endEditing(true) // 임시
-        let viewController = SearchPlaceViewController()
-        viewController.modalPresentationStyle = .overCurrentContext
-        viewController.delegate = self
-        present(viewController, animated: false, completion: nil)
-    }
-}
-
-// MARK: - SearchPlaceViewControllerDelegate
-extension HangoutMakeViewController: SearchPlaceViewControllerDelegate {
-    func getSelectedMap(_ map: Map) {
-        placeView.map = map
-        continueButtonView.isEnabled = true
-    }
-}
-
-// MARK: - HangoutPictureViewDelegate
-extension HangoutMakeViewController: HangoutPictureViewDelegate {
-    func addPhoto() {
-        var config = YPImagePickerConfiguration()
-        config.colors.tintColor = UIColor(named: "bappy_yellow")!
-        config.shouldSaveNewPicturesToAlbum = false
-        config.showsPhotoFilters = false
-        config.showsCrop = .rectangle(ratio: 390.0/333.0)
-        config.showsCropGridOverlay = true
-        config.library.mediaType = .photo
-        config.wordings.libraryTitle = "Gallery"
-        config.wordings.cameraTitle = "Camera"
-        config.wordings.next = "Select"
-        config.wordings.save = "Done"
-        config.startOnScreen = .library
-        config.library.maxNumberOfItems = 1
-        config.library.minNumberOfItems = 1
-        config.library.spacingBetweenItems = 2.0
-        let picker = YPImagePicker(configuration: config)
+// MARK: - Bind
+extension HangoutMakeViewController {
+    private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
         
-        picker.didFinishPicking { [weak self, unowned picker] items, cancelled in
-            guard !cancelled else {
-                picker.dismiss(animated: true)
-                return
+        self.rx.viewDidAppear
+            .bind(to: viewModel.input.viewDidAppear)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldKeyboardHide
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.page
+            .map(CGFloat.init)
+            .map { CGPoint(x: UIScreen.main.bounds.width * $0, y: 0) }
+            .drive(scrollView.rx.setContentOffset)
+            .disposed(by: disposeBag)
+
+        viewModel.output.progression
+            .skip(1)
+            .drive(progressBarView.rx.setProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.initProgression
+            .emit(to: progressBarView.rx.initProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSearchPlaceView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = SearchPlaceViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showImagePicker
+            .emit(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                let picker = self.configureImagePicker()
+                picker.didFinishPicking
+                    .subscribe { items, cancelled in
+                        guard !cancelled else {
+                            picker.dismiss(animated: true)
+                            return
+                        }
+                        if let photo = items.singlePhoto {
+                            self.viewModel.input.picture.onNext(photo.modifiedImage)
+                        }
+                        picker.dismiss(animated: true)
+                    }
+                    .disposed(by: self.disposeBag)
+                    
+                self.present(picker, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSelectLanguageView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = SelectLanguageViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showTranscluentLoader)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showHangoutPreview
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = HangoutDetailViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] height in
+                self?.updateButtonPostion(keyboardHeight: height)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .map { [weak self] height in
+                return height + (self?.continueButtonView.frame.height ?? 0)
             }
-            if let photo = items.singlePhoto {
-                self?.selectedImage = photo.modifiedImage
-            }
-            picker.dismiss(animated: true)
-        }
-        present(picker, animated: true)
+            .drive(viewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
     }
 }
 
-// MARK: - HangoutLanguageViewDelegate
-extension HangoutMakeViewController: HangoutLanguageViewDelegate {
-    func showSelectLanguageView() {
-        view.endEditing(true) // 임시
-        let viewController = SelectLanguageViewController()
-        viewController.modalPresentationStyle = .overCurrentContext
-        present(viewController, animated: false, completion: nil)
-    }
-}
-
-// MARK: - ContinueButtonViewDelegate
-extension HangoutMakeViewController: ContinueButtonViewDelegate {
-    func continueButtonTapped() {
-        view.endEditing(true)
-        page += 1
-//        continueButtonView.isEnabled = false / asdfasdffsd
-    }
-}

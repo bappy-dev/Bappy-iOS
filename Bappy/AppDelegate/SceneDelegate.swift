@@ -6,38 +6,93 @@
 //
 
 import UIKit
-//import FacebookCore
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    
+    private let bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared
+    private let firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        let dependency = BappyInitialViewModel.Dependency(
+            bappyAuthRepository: bappyAuthRepository,
+            firebaseRepository: firebaseRepository)
+        let viewModel = BappyInitialViewModel(dependency: dependency)
+        let viewController = BappyInitialViewController(viewModel: viewModel)
+        
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .white
-        window?.tintColor = UIColor(named: "bappy_gray")
-        
-        // 회원가입
-//        let viewModel = RegisterViewModel()
-//        let viewController = RegisterViewController(viewModel: viewModel)
-//        let rootViewController = UINavigationController(rootViewController: viewController)
-//        rootViewController.navigationBar.isHidden = true
-        
-        // 회원가입 성공
-//        let rootViewController = RegisterSuccessViewController()
-        
-        // 메인탭
-        let rootViewController = BappyTabBarController()
-        
-        // 행아웃 만들기
-//        let viewController = HangoutMakeViewController()
-//        let rootViewController = UINavigationController(rootViewController: viewController)
-        
-        // 로그인
-//        let rootViewController = BappyLoginViewController()
-        window?.rootViewController = rootViewController
+        window?.tintColor = .bappyGray
+        window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
 }
 
+extension SceneDelegate {
+    func switchRootViewController(_ viewController: UIViewController,
+                                   animated: Bool = true,
+                                   duration: TimeInterval = 0.4,
+                                   options: UIView.AnimationOptions = .transitionCrossDissolve,
+                                   completion: ((Bool) -> Void)? = nil) {
+        guard animated else {
+            self.window?.rootViewController = viewController
+            self.window?.makeKeyAndVisible()
+            return
+        }
+        
+        UIView.transition(with: window!,
+                          duration: duration,
+                          options: options,
+                          animations: {
+            self.window?.rootViewController = viewController
+            self.window?.makeKeyAndVisible()
+        }, completion: completion)
+    }
+    
+    func switchRootViewToSignInView(viewModel: BappyLoginViewModel,
+                                    animated: Bool = false,
+                                    completion: ((UINavigationController?) -> Void)? = nil) {
+        let naviRootViewController = BappyLoginViewController(viewModel: viewModel)
+        let viewController = UINavigationController(rootViewController: naviRootViewController)
+        viewController.navigationBar.isHidden = true
+        viewController.interactivePopGestureRecognizer?.isEnabled = false
+        self.window?.rootViewController = viewController
+        window?.makeKeyAndVisible()
+        completion?(viewController)
+        
+        if animated {
+            UIView.transition(
+                with: window!,
+                duration: 0.4,
+                options: .transitionCrossDissolve,
+                animations: nil,
+                completion: nil
+            )
+        }
+    }
+    
+    func switchRootViewToMainView(viewModel: BappyTabBarViewModel,
+                                  animated: Bool = false,
+                                  completion: ((UINavigationController?) -> Void)? = nil) {
+        let naviRootViewController = BappyTabBarController(viewModel: viewModel)
+        let viewController = UINavigationController(rootViewController: naviRootViewController)
+        viewController.navigationBar.isHidden = true
+        viewController.interactivePopGestureRecognizer?.isEnabled = false
+        self.window?.rootViewController = viewController
+        window?.makeKeyAndVisible()
+        completion?(viewController)
+        
+        if animated {
+            UIView.transition(
+                with: window!,
+                duration: 0.4,
+                options: .transitionCrossDissolve,
+                animations: nil,
+                completion: nil
+            )
+        }
+    }
+}

@@ -76,7 +76,7 @@ final class ReportPhotoCell: UICollectionViewCell {
     // MARK: Helpers
     private func configure() {
         contentView.backgroundColor = .clear
-        containerView.backgroundColor = UIColor(named: "bappy_lightgray")
+        containerView.backgroundColor = .bappyLightgray
         containerView.layer.cornerRadius = 11.5
     }
 

@@ -7,55 +7,54 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class RegisterNationalityView: UIView {
     
     // MARK: Properties
-    private let nationalityQuestionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Where are you from?"
-        label.font = .roboto(size: 16.0)
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
+    private let viewModel: RegisterNationalityViewModel
+    private let disposeBag = DisposeBag()
     
-    private let asteriskLabel: UILabel = {
+    private let nationalityCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "*"
-        label.font = .roboto(size: 18.0, family: .Medium)
-        label.textColor = UIColor(named: "bappy_yellow")
+        label.text = "Where\nare you from"
+        label.font = .roboto(size: 36.0, family: .Bold)
+        label.textColor = .bappyBrown
+        label.numberOfLines = 2
         return label
-    }()
-    
-    private let answerBackgroundView: UIView = {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor(named: "bappy_lightgray")
-        backgroundView.layer.cornerRadius = 19.5
-        return backgroundView
     }()
     
     private let nationalityTextField: UITextField = {
         let textField = UITextField()
-        let configuration = UIImage.SymbolConfiguration(pointSize: 13.0, weight: .medium)
-        let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
-        let imageView = UIImageView(image: image)
-        imageView.tintColor = UIColor(named: "bappy_gray")
-        textField.font = .roboto(size: 14.0)
-        textField.textColor = .black
+        let imageView = UIImageView(image: UIImage(named: "make_language"))
+        let containerView = UIView()
+        textField.font = .roboto(size: 16.0)
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Choose your nationality",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
-        textField.rightView = imageView
-        textField.rightViewMode = .always
+            string: "Select your nationality",
+            attributes: [.foregroundColor: UIColor.bappyGray])
+        containerView.frame = CGRect(x: 0, y: 0, width: 25.0, height: 15.0)
+        containerView.addSubview(imageView)
+        textField.leftView = containerView
+        textField.leftViewMode = .always
         return textField
     }()
     
-    private lazy var countryListView = CountryListView()
+    private let underlinedView: UIView = {
+        let underlinedView = UIView()
+        underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        return underlinedView
+    }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: RegisterNationalityViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        
+        configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -63,36 +62,42 @@ final class RegisterNationalityView: UIView {
     }
     
     // MARK: Helpers
+    private func configure() {
+        self.backgroundColor = .white
+    }
+    
     private func layout() {
-        self.addSubview(nationalityQuestionLabel)
-        nationalityQuestionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20.0)
-            $0.leading.equalToSuperview().inset(30.0)
+        self.addSubview(nationalityCaptionLabel)
+        nationalityCaptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24.0)
+            $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(asteriskLabel)
-        asteriskLabel.snp.makeConstraints {
-            $0.top.equalTo(nationalityQuestionLabel).offset(-3.0)
-            $0.leading.equalTo(nationalityQuestionLabel.snp.trailing).offset(6.0)
-        }
-        
-        self.addSubview(answerBackgroundView)
-        answerBackgroundView.snp.makeConstraints {
-            $0.top.equalTo(nationalityQuestionLabel.snp.bottom).offset(28.0)
-            $0.leading.trailing.equalToSuperview().inset(23.0)
-            $0.height.equalTo(39.0)
-        }
-        
-        answerBackgroundView.addSubview(nationalityTextField)
+        self.addSubview(nationalityTextField)
         nationalityTextField.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(10.0)
-            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(54.0)
         }
         
-        self.addSubview(countryListView)
-        countryListView.snp.makeConstraints {
-            $0.top.equalTo(answerBackgroundView.snp.bottom).offset(8.0)
-            $0.leading.trailing.equalTo(answerBackgroundView)
+        self.addSubview(underlinedView)
+        underlinedView.snp.makeConstraints {
+            $0.top.equalTo(nationalityCaptionLabel.snp.bottom).offset(119.0)
+            $0.top.equalTo(nationalityTextField.snp.bottom).offset(7.0)
+            $0.leading.trailing.equalToSuperview().inset(44.0)
+            $0.height.equalTo(1.0)
+            $0.centerX.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Bind
+extension RegisterNationalityView {
+    private func bind() {
+        nationalityTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.textFieldTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.country
+            .emit(to: nationalityTextField.rx.text)
+            .disposed(by: disposeBag)
     }
 }

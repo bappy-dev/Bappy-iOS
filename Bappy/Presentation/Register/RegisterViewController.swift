@@ -14,52 +14,48 @@ final class RegisterViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: RegisterViewModel
-    private var page: Int = 0 {
-        didSet { print("DEBUG: page \(page)") }
-    }
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 18.0, family: .Medium)
-        label.text = "CREATE AN ACCOUNT"
-        label.textColor = UIColor(named: "bappy_brown")
-        return label
-    }()
-    
-    private let progressBarView = ProgressBarView()
+    private let disposeBag = DisposeBag()
+    private let backButton = UIButton()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let bottomButtonView: BottomButtonView
-    
-    private let disposeBag = DisposeBag()
+    private let progressBarView = ProgressBarView()
+    private let continueButtonView: ContinueButtonView
+    private let nameView: RegisterNameView
+    private let genderView: RegisterGenderView
+    private let birthView: RegisterBirthView
+    private let nationalityView: RegisterNationalityView
     
     // MARK: Lifecycle
-    init(viewModel: RegisterViewModel = RegisterViewModel()) {
+    init(viewModel: RegisterViewModel) {
+        let nameViewModel = viewModel.subViewModels.nameViewModel
+        let genderViewModel = viewModel.subViewModels.genderViewModel
+        let birthViewModel = viewModel.subViewModels.birthViewModel
+        let nationalityViewModel = viewModel.subViewModels.nationalityViewModel
+        let continueButtonViewModel = viewModel.subViewModels.continueButtonViewModel
+        
         self.viewModel = viewModel
-        self.bottomButtonView = BottomButtonView(viewModel: viewModel.subViewModels.bottomButtonViewModel)
+        self.nameView = RegisterNameView(viewModel: nameViewModel)
+        self.genderView = RegisterGenderView(viewModel: genderViewModel)
+        self.birthView = RegisterBirthView(viewModel: birthViewModel)
+        self.nationalityView = RegisterNationalityView(viewModel: nationalityViewModel)
+        self.continueButtonView = ContinueButtonView(viewModel: continueButtonViewModel)
+        
         super.init(nibName: nil, bundle: nil)
         
-        bind()
         configure()
         layout()
-        addKeyboardObserver()
+        bind()
         addTapGestureOnScrollView()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        progressBarView.initializeProgression(1.0/7.0)
-    }
-    
+
     // MARK: Events
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        
+
         view.endEditing(true)
     }
     
@@ -68,169 +64,157 @@ final class RegisterViewController: UIViewController {
         view.endEditing(true)
     }
     
-    // MARK: Actions
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
+    // MARK: Helpers
+    private func updateButtonPostion(keyboardHeight: CGFloat) {
+        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
-        UIView.animate(withDuration: 0.3) {
-            self.bottomButtonView.snp.updateConstraints {
-                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-1 * keyboardHeight)
+        UIView.animate(withDuration: 0.4) {
+            self.continueButtonView.snp.updateConstraints {
+                $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
             }
             self.view.layoutIfNeeded()
         }
-    }
-    
-    // MARK: Helpers
-    private func bind() {
-        contentView.rx.numOfSubviews
-            .bind(to: viewModel.input.numOfPage)
-            .disposed(by: disposeBag)
-        
-        viewModel.output.pageContentOffset
-            .drive(scrollView.rx.setContentOffset)
-            .disposed(by: disposeBag)
-        
-//        viewModel.output.pageContentOffset
-//            .drive(view.rx.endEditing)
-//            .disposed(by: disposeBag)
-        
-        viewModel.output.progression
-            .drive(progressBarView.rx.setProgression)
-            .disposed(by: disposeBag)
-        
-        viewModel.output.showSuccessView
-            .emit { [weak self] _ in
-                guard let self = self else { return }
-                let viewController = RegisterSuccessViewController()
-                self.navigationController?.pushViewController(viewController, animated: true)
-//                self.present(viewController, animated: true)
-            }
-            .disposed(by: disposeBag)
     }
     
     private func addTapGestureOnScrollView() {
         let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
         scrollView.addGestureRecognizer(scrollViewTapRecognizer)
     }
-    
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
+
     private func configure() {
         view.backgroundColor = .white
+        backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
+        backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
-
     }
     
     private func layout() {
-        view.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20.0)
-            $0.centerX.equalToSuperview()
-        }
-        
         view.addSubview(progressBarView)
         progressBarView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(28.0)
-            $0.leading.trailing.equalToSuperview().inset(23.0)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
         }
         
+        view.addSubview(backButton)
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(progressBarView.snp.bottom).offset(15.0)
+            $0.leading.equalToSuperview().inset(5.5)
+            $0.width.height.equalTo(44.0)
+        }
+
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(progressBarView.snp.bottom).offset(25.0)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(backButton.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        
+
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalToSuperview()
         }
         
-        let nameView = RegisterNameView()
-        let genderView = RegisterGenderView()
-        let birthView = RegisterBirthView()
-        let nationalityView = RegisterNationalityView()
-        let languageView = RegisterLanguageView()
-        let personalityView = RegisterPersonalityView()
-        let hobbyView = RegisterHobbyView()
-        
-        contentView.addSubview(nameView)
+        view.addSubview(nameView)
         nameView.snp.makeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
+            $0.top.leading.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
         }
         
-        contentView.addSubview(genderView)
+        view.addSubview(genderView)
         genderView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(nameView.snp.trailing)
         }
         
-        contentView.addSubview(birthView)
+        view.addSubview(birthView)
         birthView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(genderView.snp.trailing)
         }
         
-        contentView.addSubview(nationalityView)
+        view.addSubview(nationalityView)
         nationalityView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
+            $0.top.bottom.trailing.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(birthView.snp.trailing)
         }
         
-        contentView.addSubview(languageView)
-        languageView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.width.equalTo(view.frame.width)
-            $0.leading.equalTo(nationalityView.snp.trailing)
-        }
-        
-        contentView.addSubview(personalityView)
-        personalityView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview()
-            $0.width.equalTo(view.frame.width)
-            $0.leading.equalTo(languageView.snp.trailing)
-        }
-        
-        contentView.addSubview(hobbyView)
-        hobbyView.snp.makeConstraints {
-            $0.top.bottom.trailing.equalToSuperview()
-            $0.width.equalTo(view.frame.width)
-            $0.leading.equalTo(personalityView.snp.trailing)
-        }
-        
-        view.addSubview(bottomButtonView)
-        bottomButtonView.snp.makeConstraints {
+        view.addSubview(continueButtonView)
+        continueButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
         }
     }
 }
 
-// MARK: Binder
-// MainScheduler에서 수행, Observer only -> 값을 주입할 수 있지만, 값을 관찰할 수 없음
-extension Reactive where Base: UIScrollView {
-    var setContentOffset: Binder<CGPoint> {
-        return Binder(self.base) { scrollView, offset in
-            scrollView.setContentOffset(offset, animated: true)
-        }
-    }
-}
+// MARK: - Bind
+extension RegisterViewController {
+    private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
+        
+        self.rx.viewDidAppear
+            .bind(to: viewModel.input.viewDidAppear)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldKeyboardHide
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.pageContentOffset
+            .drive(scrollView.rx.setContentOffset)
+            .disposed(by: disposeBag)
 
-// MARK: ControlEvent
-// MainScheduler에서 수행, Observable only -> 값을 관찰할 수 있지만, 값을 주입할 수 없음
-extension Reactive where Base: UIView {
-    var numOfSubviews: ControlEvent<Int> {
-        let source = self.methodInvoked(#selector(Base.didAddSubview)).map { _ in base.subviews.count }
-        return ControlEvent(events: source)
+        viewModel.output.progression
+            .skip(1)
+            .drive(progressBarView.rx.setProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.initProgression
+            .emit(to: progressBarView.rx.initProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSelectNationalityView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = SelectNationalityViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showCompleteView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = RegisterCompletedViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .skip(1)
+            .drive(onNext: { [weak self] height in
+                self?.updateButtonPostion(keyboardHeight: height)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .map { [weak self] height in
+                return height + (self?.continueButtonView.frame.height ?? 0)
+            }
+            .drive(viewModel.input.keyboardWithButtonHeight)
+            .disposed(by: disposeBag)
     }
 }

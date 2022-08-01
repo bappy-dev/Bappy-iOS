@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class HangoutImageCell: UICollectionViewCell {
     
@@ -16,7 +17,6 @@ final class HangoutImageCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10.0
         imageView.clipsToBounds = true
-        imageView.image = UIImage(named: "example_post")
         return imageView
     }()
     
@@ -35,6 +35,7 @@ final class HangoutImageCell: UICollectionViewCell {
     // MARK: Helpers
     private func configure() {
         contentView.backgroundColor = .white
+        hangoutImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE3_URL))
     }
     
     private func layout() {

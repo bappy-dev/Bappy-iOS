@@ -11,7 +11,7 @@ final class BappyTabBar: UITabBar {
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let width = super.sizeThatFits(size).width
-        
-        return CGSize(width: width, height: 89.0)
+        let height = bottomInset / 3.0 + 76.0
+        return CGSize(width: width, height: height)
     }
 }

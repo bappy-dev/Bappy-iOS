@@ -7,15 +7,14 @@
 
 import UIKit
 import SnapKit
-
-protocol HangoutMakeTitleViewDelegate: AnyObject {
-    func isTitleValid(_ valid: Bool)
-}
+import RxSwift
+import RxCocoa
 
 final class HangoutMakeTitleView: UIView {
     
     // MARK: Properties
-    weak var delegate: HangoutMakeTitleViewDelegate?
+    private let viewModel: HangoutMakeTitleViewModel
+    private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -24,70 +23,57 @@ final class HangoutMakeTitleView: UIView {
         let label = UILabel()
         label.text = "Write the title\nof Hangout"
         label.font = .roboto(size: 36.0, family: .Bold)
-        label.textColor = UIColor(named: "bappy_brown")
+        label.textColor = .bappyBrown
         label.numberOfLines = 2
         return label
     }()
     
-    private lazy var titleTextField: UITextField = {
+    private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.font = .roboto(size: 16.0)
-        textField.textColor = UIColor(named: "bappy_brown")
+        textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Enter the hangout title",
-            attributes: [.foregroundColor: UIColor(named: "bappy_gray")!])
-        textField.addTarget(self, action: #selector(textFieldEditingHandler), for: .allEditingEvents)
-        textField.delegate = self
+            attributes: [.foregroundColor: UIColor.bappyGray])
         return textField
     }()
     
     private let underlinedView: UIView = {
         let underlinedView = UIView()
         underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
-        underlinedView.addBappyShadow(shadowOffsetHeight: 1.0)
         return underlinedView
     }()
     
     private let ruleDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 14.0)
-        label.textColor = UIColor(named: "bappy_coral")
+        label.textColor = .bappyCoral
         label.isHidden = true
         return label
     }()
     
     // MARK: Lifecycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(viewModel: HangoutMakeTitleViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Methods
-    func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
-        guard titleTextField.isFirstResponder else { return }
-        let labelPostion = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
-        let y = (bottomButtonHeight > labelPostion) ? bottomButtonHeight - labelPostion + 5.0 : 0
+    // MARK: Helpers
+    private func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
+        let labelPosition = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
+        let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
         let offset = CGPoint(x: 0, y: y)
         scrollView.setContentOffset(offset, animated: true)
-        
     }
     
-    // MARK: Actions
-    @objc
-    private func textFieldEditingHandler(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        let isValid = (text.count >= 14)
-        ruleDescriptionLabel.isHidden = isValid
-        delegate?.isTitleValid(isValid)
-    }
-    
-    // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
         ruleDescriptionLabel.text = "Enter 10-20 characters long"
@@ -135,11 +121,29 @@ final class HangoutMakeTitleView: UIView {
     }
 }
 
-// MARK: - UITextFieldDelegate
-extension HangoutMakeTitleView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let maxLength: Int = 20
-        guard let text = textField.text, text.count + string.count <= maxLength else { return false }
-        return true
+// MARK: - Bind
+extension HangoutMakeTitleView {
+    private func bind() {
+        titleTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        titleTextField.rx.controlEvent(.editingDidBegin)
+            .bind(to: viewModel.input.editingDidBegin)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.modifiedText
+            .emit(to: titleTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideRule
+            .emit(to: ruleDescriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.keyboardWithButtonHeight
+            .emit(onNext: { [weak self] height in
+                self?.updateTextFieldPosition(bottomButtonHeight: height)
+            })
+            .disposed(by: disposeBag)
     }
 }

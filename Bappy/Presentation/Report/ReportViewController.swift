@@ -8,57 +8,54 @@
 import UIKit
 import SnapKit
 import PhotosUI
+import RxSwift
+import RxCocoa
+import Kingfisher
 
 final class ReportViewController: UIViewController {
     
     // MARK: Properties
-    private var selectedImages = [UIImage]() {
-        didSet {
-            imageSectionView.selectedImages = self.selectedImages
-        }
-    }
-    
-    private var numberOfImages = 0
-    
+    private let viewModel: ReportViewModel
+    private let disposeBag = DisposeBag()
+
     private let titleTopView = TitleTopView(title: "Report", subTitle: "Detail page")
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let writingSectionView = ReportWritingSectionView()
-    private let imageSectionView = ReportImageSectionView()
+    private let writingSectionView: ReportWritingSectionView
+    private let imageSectionView: ReportImageSectionView
 
-    private lazy var backButton: UIButton = {
+    private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
         button.setImage(image, for: .normal)
         button.tintColor = .white
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
         return button
     }()
 
     private let reportButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor(named: "bappy_yellow")
-        button.setAttributedTitle(
-            NSAttributedString(
-                string: "REPORT",
-                attributes: [
-                    .foregroundColor: UIColor(named: "bappy_brown")!,
-                    .font: UIFont.roboto(size: 18.0, family: .Medium)
-                ]),
-            for: .normal)
+        button.backgroundColor = .bappyYellow
+        button.setBappyTitle(
+            title: "REPORT",
+            font: .roboto(size: 18.0, family: .Medium))
         button.layer.cornerRadius = 11.5
         button.addBappyShadow()
         return button
     }()
 
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(viewModel: ReportViewModel) {
+        let writingViewModel = viewModel.subViewModels.writingViewModel
+        let imageViewModel = viewModel.subViewModels.imageViewModel
+        self.viewModel = viewModel
+        self.writingSectionView = ReportWritingSectionView(viewModel: writingViewModel)
+        self.imageSectionView = ReportImageSectionView(viewModel: imageViewModel)
+        super.init(nibName: nil, bundle: nil)
 
         configure()
         layout()
-        addKeyboardObserver()
+        bind()
         addTapGestureOnScrollView()
     }
 
@@ -80,28 +77,19 @@ final class ReportViewController: UIViewController {
 
     // MARK: Actions
     @objc
-    private func backButtonHandler() {
-        self.navigationController?.popViewController(animated: true)
-    }
-
-    @objc
-    private func keyboardHeightObserver(_ notification: NSNotification) {
-        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        let keyboardHeight = view.frame.height - keyboardFrame.minY
-        self.scrollView.contentInset.bottom = keyboardHeight
-    }
-    
-    @objc
     private func didTapScrollView() {
         view.endEditing(true)
     }
 
     // MARK: Helpers
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHeightObserver), name: UIResponder.keyboardWillHideNotification, object: nil)
+    private func showPHPickerView(selectionLimit: Int) {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = selectionLimit
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        self.present(picker, animated: true)
     }
-    
     private func addTapGestureOnScrollView() {
         let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapScrollView))
         singleTapGestureRecognizer.numberOfTapsRequired = 1
@@ -117,8 +105,7 @@ final class ReportViewController: UIViewController {
 
     private func configure() {
         view.backgroundColor = .white
-//        scrollView.keyboardDismissMode = .interactive
-        imageSectionView.delegate = self
+        scrollView.keyboardDismissMode = .interactive
     }
 
     private func layout() {
@@ -136,7 +123,6 @@ final class ReportViewController: UIViewController {
         contentView.addSubview(imageSectionView)
         imageSectionView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-//            $0.height.equalTo(150.0)
         }
 
         contentView.addSubview(writingSectionView)
@@ -170,42 +156,60 @@ final class ReportViewController: UIViewController {
     }
 }
 
+// MARK: - Bind
+extension ReportViewController {
+    private func bind() {
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
+        
+        reportButton.rx.tap
+            .bind(to: viewModel.input.reportButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showPHPickerView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] num in
+                self?.showPHPickerView(selectionLimit: num)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSuccessView
+            .emit(onNext: { [weak self] _ in
+                let viewController = ReportSuccessViewController()
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.setDismissCompletion {
+                    self?.navigationController?.popViewController(animated: false)
+                }
+                self?.present(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                self?.scrollView.contentInset.bottom = height
+                self?.scrollView.verticalScrollIndicatorInsets.bottom = height
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
 // MARK: - PHPickerViewControllerDelegate
 extension ReportViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
         guard !results.isEmpty else { return }
-        self.numberOfImages += results.count
         for result in results {
             result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
                 guard let self = self, let image = object as? UIImage else { return }
-                self.selectedImages.append(image.downSize(newWidth: 300))
+                self.viewModel.input.addedImage.onNext(image)
             }
         }
-    }
-}
-
-// MARK: - ReportImageSectionViewDelegate
-extension ReportViewController: ReportImageSectionViewDelegate {
-    func addPhoto() {
-        guard numberOfImages < 5 else {
-//            let popUpContents = "사진은 최대 9장까지 첨부할 수 있습니다."
-//            let popUpViewController = PopUpViewController(buttonType: .cancel, contents: popUpContents)
-//            popUpViewController.modalPresentationStyle = .overCurrentContext
-//            present(popUpViewController, animated: false)
-            return
-        }
-        
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 5 - numberOfImages
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true)
-    }
-    
-    func removePhoto(indexPath: IndexPath) {
-        selectedImages.remove(at: indexPath.item - 1)
-        numberOfImages -= 1
     }
 }
