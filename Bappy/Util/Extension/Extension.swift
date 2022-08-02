@@ -7,7 +7,6 @@
 
 import UIKit
 import RxSwift
-import CryptoKit
 
 // MARK: - UIWindow
 extension UIWindow {
@@ -39,6 +38,39 @@ extension UIWindow {
     }
 }
 
+// MARK: - UINavigationController
+extension UINavigationController {
+    func pushViewController(_ viewController: UIViewController, transitionType: CATransitionType) {
+        let transition = CATransition()
+        transition.duration = 0.4
+        transition.type = transitionType
+        view.layer.add(transition, forKey: nil)
+        pushViewController(viewController, animated: false)
+    }
+    
+    func pushViewController(_ viewController: UIViewController, animated: Bool, completion: @escaping() -> Void) {
+        pushViewController(viewController, animated: animated)
+        if animated, let coordinator = transitionCoordinator {
+            coordinator.animate(alongsideTransition: nil) { _ in
+                completion()
+            }
+        } else {
+            completion()
+        }
+    }
+    
+    func popViewController(animated: Bool, completion: @escaping() -> Void) {
+        popViewController(animated: animated)
+        if animated, let coordinator = transitionCoordinator {
+            coordinator.animate(alongsideTransition: nil) { _ in
+                completion()
+            }
+        } else {
+            completion()
+        }
+    }
+}
+
 // MARK: - UIFont
 extension UIFont {
     enum Family: String {
@@ -58,6 +90,22 @@ extension UIView {
         self.layer.shadowOffset = CGSize(width: 0, height: shadowOffsetHeight)
         self.layer.shadowOpacity = 0.25
         self.layer.shadowRadius = 1.0
+    }
+}
+
+// MARK: - UIImage
+extension UIImage {
+    func downSize(newWidth: CGFloat) -> UIImage {
+        guard newWidth < self.size.width else { return self }
+        let scale = newWidth / self.size.width
+        let newHeight = self.size.height * scale
+        
+        let size = CGSize(width: newWidth, height: newHeight)
+        let render = UIGraphicsImageRenderer(size: size)
+        let renderImage = render.image { context in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+        return renderImage
     }
 }
 

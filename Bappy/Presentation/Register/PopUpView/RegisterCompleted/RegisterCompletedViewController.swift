@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Lottie
 
 final class RegisterCompletedViewController: UIViewController {
     
@@ -87,11 +88,10 @@ final class RegisterCompletedViewController: UIViewController {
         return button
     }()
     
-    private let completeImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "popup_complete")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    private let animationView: AnimationView = {
+        let animationView = AnimationView(name: "success")
+        animationView.contentMode = .scaleAspectFit
+        return animationView
     }()
     
     // MARK: Lifecycle
@@ -102,6 +102,7 @@ final class RegisterCompletedViewController: UIViewController {
         configure()
         layout()
         bind()
+        playAnimation()
     }
     
     required init?(coder: NSCoder) {
@@ -116,6 +117,10 @@ final class RegisterCompletedViewController: UIViewController {
     }
     
     // MARK: Animations
+    private func playAnimation() {
+        animationView.play()
+    }
+    
     private func animateShowDimmedView() {
         dimmedView.backgroundColor = .black
         dimmedView.alpha = 0
@@ -205,10 +210,11 @@ final class RegisterCompletedViewController: UIViewController {
             $0.bottom.equalToSuperview().inset(5.0)
         }
         
-        containerView.addSubview(completeImageView)
-        completeImageView.snp.makeConstraints {
+        containerView.addSubview(animationView)
+        animationView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalTo(containerView.snp.top)
+            $0.width.height.equalTo(80.0)
         }
     }
 }
@@ -238,9 +244,7 @@ extension RegisterCompletedViewController {
                 guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
                 sceneDelegate.switchRootViewToMainView(viewModel: viewModels.tabBarViewModel) { navigationController in
                     let editViewController = ProfileEditViewController(viewModel: viewModels.editViewModel)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        navigationController?.pushViewController(editViewController, animated: true)
-                    }
+                    navigationController?.pushViewController(editViewController, animated: false)
                 }
             })
             .disposed(by: disposeBag)

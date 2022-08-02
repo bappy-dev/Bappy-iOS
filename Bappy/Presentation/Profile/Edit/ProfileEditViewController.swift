@@ -187,7 +187,8 @@ extension ProfileEditViewController {
                             return
                         }
                         if let photo = items.singlePhoto {
-                            self.viewModel.input.edittedImage.onNext(photo.modifiedImage)
+                            let edittedImage = photo.modifiedImage?.downSize(newWidth: 200.0)
+                            self.viewModel.input.edittedImage.onNext(edittedImage)
                         }
                         picker.dismiss(animated: true)
                     }

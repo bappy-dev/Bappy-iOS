@@ -165,7 +165,9 @@ extension ProfileDetailViewController {
             .emit(onNext: { [weak self] viewModel in
                 let viewController = ProfileEditViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .fullScreen
-                self?.navigationController?.pushViewController(viewController, animated: true)
+                viewController.modalTransitionStyle = .crossDissolve
+                self?.tabBarController?.navigationController?.pushViewController(viewController, transitionType: .fade)
+                self?.navigationController?.popViewController(animated: false)
             })
             .disposed(by: disposeBag)
     }
