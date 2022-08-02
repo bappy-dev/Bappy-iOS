@@ -80,7 +80,6 @@ extension SceneDelegate {
         let naviRootViewController = BappyTabBarController(viewModel: viewModel)
         let viewController = UINavigationController(rootViewController: naviRootViewController)
         viewController.navigationBar.isHidden = true
-        viewController.interactivePopGestureRecognizer?.isEnabled = false
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         completion?(viewController)

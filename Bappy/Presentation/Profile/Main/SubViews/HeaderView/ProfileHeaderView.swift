@@ -83,13 +83,13 @@ final class ProfileHeaderView: UIView {
         self.addSubview(nameLabel)
         nameLabel.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(11.0)
-            $0.centerX.equalToSuperview()
+            $0.centerX.equalToSuperview().offset(-6.0)
         }
         
         self.addSubview(flagLabel)
         flagLabel.snp.makeConstraints {
             $0.centerY.equalTo(nameLabel)
-            $0.leading.equalTo(nameLabel.snp.trailing).offset(3.0)
+            $0.leading.equalTo(nameLabel.snp.trailing).offset(5.0)
         }
         
         self.addSubview(genderAndBirthLabel)

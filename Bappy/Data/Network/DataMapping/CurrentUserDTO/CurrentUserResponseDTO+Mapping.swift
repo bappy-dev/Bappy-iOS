@@ -21,7 +21,7 @@ extension CurrentUserResponseDTO {
     struct UserDTO: Decodable {
         let id: String?
         let name: String?
-        let nationality: String?
+        let nationalityCode: String?
         let gender: String?
         let birth: String?
         let affiliation: String?
@@ -36,7 +36,7 @@ extension CurrentUserResponseDTO {
         private enum CodingKeys: String, CodingKey {
             case id = "userId"
             case name = "userName"
-            case nationality = "userNationality"
+            case nationalityCode = "userNationalityCode"
             case gender = "userGender"
             case birth = "userBirth"
             case affiliation = "userAffiliation"
@@ -100,7 +100,7 @@ extension CurrentUserResponseDTO {
             name: user.name,
             gender: gender,
             birth: user.birth?.toDate(format: "yyyy.MM.dd"),
-            nationality: user.nationality.flatMap { Country(code: $0) },
+            nationality: user.nationalityCode.flatMap { Country(code: $0) },
             profileImageURL: profileImageURL,
             introduce: user.introduce,
             affiliation: user.affiliation,
