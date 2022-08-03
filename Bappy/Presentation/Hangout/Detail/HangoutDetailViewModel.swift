@@ -79,7 +79,8 @@ final class HangoutDetailViewModel: ViewModelType {
         var showReportView: Signal<ReportViewModel?> // <-> View
         var showUserProfile: Signal<ProfileViewModel?> // <-> View
         var showCreateSuccessView: Signal<Void> // <-> View
-        var showLoader: Signal<Bool> // <-> View
+        var showYellowLoader: Signal<Bool> // <-> View
+        var showTranscluentLoader: Signal<Bool> // <-> View
     }
     
     let dependency: Dependency
@@ -105,7 +106,8 @@ final class HangoutDetailViewModel: ViewModelType {
     private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     private let showCreateSuccessView$ = PublishSubject<Void>()
-    private let showLoader$ = PublishSubject<Bool>()
+    private let showYellowLoader$ = PublishSubject<Bool>()
+    private let showTranscluentLoader$ = PublishSubject<Bool>()
     
     init(dependency: Dependency) {
         let imageDependency = HangoutImageSectionViewModel.Dependency(
@@ -176,6 +178,8 @@ final class HangoutDetailViewModel: ViewModelType {
         let showCancelAlert = showCancelAlert$
             .asSignal(onErrorJustReturn: nil)
         let showReportView = reportButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 != .create }
             .withLatestFrom(reasonsForReport$)
             .compactMap { reasons -> ReportViewModel? in
                 guard let reasons = reasons else { return nil }
@@ -187,7 +191,9 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showCreateSuccessView = showCreateSuccessView$
             .asSignal(onErrorJustReturn: Void())
-        let showLoader = showLoader$
+        let showYellowLoader = showYellowLoader$
+            .asSignal(onErrorJustReturn: false)
+        let showTranscluentLoader = showTranscluentLoader$
             .asSignal(onErrorJustReturn: false)
         
         // MARK: Input & Output
@@ -211,7 +217,8 @@ final class HangoutDetailViewModel: ViewModelType {
             showReportView: showReportView,
             showUserProfile: showUserProfile,
             showCreateSuccessView: showCreateSuccessView,
-            showLoader: showLoader
+            showYellowLoader: showYellowLoader,
+            showTranscluentLoader: showTranscluentLoader
         )
         
         // MARK: Bindind
@@ -247,9 +254,9 @@ final class HangoutDetailViewModel: ViewModelType {
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .create }
             .withLatestFrom(hangout$)
-            .do { [weak self] _ in self?.showLoader$.onNext(true) }
+            .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap(dependency.hangoutRepository.createHangout)
-            .do { [weak self] _ in self?.showLoader$.onNext(false) }
+            .do { [weak self] _ in self?.showYellowLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
         
@@ -284,7 +291,9 @@ final class HangoutDetailViewModel: ViewModelType {
             .withLatestFrom(currentUser$) { ($0, $1)}
             .filter { $1.state == .normal }
             .map(\.0)
+            .do { [weak self] _ in self?.showTranscluentLoader$.onNext(true) }
             .flatMap(dependency.userProfileRepository.fetchBappyUser)
+            .do { [weak self] _ in self?.showTranscluentLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
         

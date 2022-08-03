@@ -58,12 +58,10 @@ final class OpenMapPopupViewModel: ViewModelType {
             .withLatestFrom(hangout$)
             .map {
                 getURL(
-                    baseURL: GOOGLE_MAP_DIR_BASEURL,
-                    path: "?",
+                    baseURL: KAKAO_MAP_DIR_BASEURL,
+                    path: nil,
                     queries: [
-                        "api=1",
-                        "destination=\($0.placeName)",
-                        "destination_place_id=\($0.placeID)"
+                        "\($0.placeName),\($0.coordinates.latitude),\($0.coordinates.longitude)"
                     ])
             }
             .asSignal(onErrorJustReturn: nil)

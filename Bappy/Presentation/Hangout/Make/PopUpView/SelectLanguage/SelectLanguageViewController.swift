@@ -222,11 +222,14 @@ extension SelectLanguageViewController {
             .drive(tableView.rx.items) { tableView, row, language in
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: reuseIdentifier,
-                    for: IndexPath(row: row, section: 0)
-                )
+                    for: IndexPath(row: row, section: 0))
+                let backgroundView = UIView()
+                backgroundView.backgroundColor = .bappyYellow
+                backgroundView.layer.cornerRadius = 7.0
                 cell.textLabel?.text = language
                 cell.textLabel?.textColor = .bappyBrown
                 cell.textLabel?.font = .roboto(size: 14.0)
+                cell.selectedBackgroundView = backgroundView
                 return cell
             }
             .disposed(by: disposeBag)
