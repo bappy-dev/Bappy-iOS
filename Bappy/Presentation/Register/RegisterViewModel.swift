@@ -259,12 +259,12 @@ final class RegisterViewModel: ViewModelType {
             .share()
         
         result
-            .compactMap(getUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         result
-            .compactMap(getUser)
+            .compactMap(getValue)
             .map { user -> RegisterCompletedViewModel in
                 let dependency = RegisterCompletedViewModel.Dependency(
                     user: user,
@@ -295,16 +295,6 @@ private func shouldButtonEnabled(page: Int, isNameValid: Bool, isGenderValid: Bo
     case 3: return isNationalityValid
     default: return false
     }
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }
 
 // MARK: - SelectNationalityViewModelDelegate

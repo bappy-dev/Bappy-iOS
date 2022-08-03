@@ -146,21 +146,20 @@ final class HomeListViewModel: ViewModelType {
         
         let hangoutsResult = Observable
             .combineLatest(
-                currentUser$.compactMap { $0 },
                 sorting$,
-                category$
+                category$,
+                currentUser$.compactMap { $0.flatMap { _ in "" } }
             )
-            .map { ("\($0.1.rawValue)", "", "", "") }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
         
         hangoutsResult
-            .compactMap(getHangoutsError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         hangoutsResult
-            .compactMap(getHangouts)
+            .compactMap(getValue)
             .bind(to: hangouts$)
             .disposed(by: disposeBag)
         
@@ -221,21 +220,9 @@ final class HomeListViewModel: ViewModelType {
     }
 }
 
-private func getHangouts(_ result: Result<[Hangout], Error>) -> [Hangout]? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getHangoutsError(_ result: Result<[Hangout], Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
 // MARK: - SortingOrderViewModelDelegate
 extension HomeListViewModel: SortingOrderViewModelDelegate {
     func selectedSorting(_ sorting: Hangout.Sorting) {
         sorting$.onNext(sorting)
     }
 }
-
-

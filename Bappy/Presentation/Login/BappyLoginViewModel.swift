@@ -72,14 +72,14 @@ final class BappyLoginViewModel: ViewModelType {
             .share()
         
         signInFirebaseResult
-            .compactMap(getAuthError)
+            .compactMap(getErrorDescription)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
-            .bind(onNext: { print("ERROR: \($0)") })
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         // Back-end SignIn
         let signInUserResult = signInFirebaseResult
-            .map(getAuthResult)
+            .map(getValue)
             .compactMap { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .observe(on: MainScheduler.asyncInstance)
@@ -87,12 +87,12 @@ final class BappyLoginViewModel: ViewModelType {
             .share()
         
         signInUserResult
-            .compactMap(getUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         let signInUser = signInUserResult
-            .compactMap(getUser)
+            .compactMap(getValue)
             .share()
         
         let signInNormalUser = signInUser
@@ -115,13 +115,13 @@ final class BappyLoginViewModel: ViewModelType {
             .share()
         
         let anonymousUser = anonymousResult
-            .map(getAuthResult)
+            .map(getValue)
             .compactMap { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchAnonymousUser)
         
         anonymousResult
-            .compactMap(getAuthError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         Observable.merge(signInNormalUser, anonymousUser)
@@ -135,24 +135,4 @@ final class BappyLoginViewModel: ViewModelType {
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)
     }
-}
- 
-private func getAuthResult(_ result: Result<AuthDataResult?, Error>) -> AuthDataResult? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getAuthError(_ result: Result<AuthDataResult?, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }

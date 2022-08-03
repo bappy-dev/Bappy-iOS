@@ -22,6 +22,7 @@ final class HangoutDetailViewModel: ViewModelType {
     struct Dependency {
         let firebaseRepository: FirebaseRepository
         let userProfileRepository: UserProfileRepository
+        let hangoutRepository: HangoutRepository
         var currentUser: BappyUser
         var hangout: Hangout
         var postImage: UIImage?
@@ -41,9 +42,16 @@ final class HangoutDetailViewModel: ViewModelType {
             case .available: return isUserParticipating ? .cancel : .join }
         }
         
-        init(firebaseRepository: FirebaseRepository, userProfileRepository: UserProfileRepository, currentUser: BappyUser, hangout: Hangout, postImage: UIImage? = nil, mapImage: UIImage? = nil) {
+        init(firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared,
+             userProfileRepository: UserProfileRepository = DefaultUserProfileRepository(),
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             currentUser: BappyUser,
+             hangout: Hangout,
+             postImage: UIImage? = nil,
+             mapImage: UIImage? = nil) {
             self.firebaseRepository = firebaseRepository
             self.userProfileRepository = userProfileRepository
+            self.hangoutRepository = hangoutRepository
             self.currentUser = currentUser
             self.hangout = hangout
             self.postImage = postImage
@@ -64,12 +72,14 @@ final class HangoutDetailViewModel: ViewModelType {
     struct Output {
         var popView: Signal<Void> // <-> View
         var imageHeight: Signal<CGFloat> // <-> Child(Map)
-        var showOpenMapView: Signal<OpenMapPopupViewModel> // <-> View
+        var showOpenMapView: Signal<OpenMapPopupViewModel?> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
         var showSignInAlert: Signal<String?> // <-> View
         var showCancelAlert: Signal<Alert?> // <-> View
         var showReportView: Signal<ReportViewModel?> // <-> View
         var showUserProfile: Signal<ProfileViewModel?> // <-> View
+        var showCreateSuccessView: Signal<Void> // <-> View
+        var showLoader: Signal<Bool> // <-> View
     }
     
     let dependency: Dependency
@@ -81,6 +91,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let hangoutButtonState$: BehaviorSubject<HangoutButton.State>
     private let isUserParticipating$: BehaviorSubject<Bool>
     private let currentUser$: BehaviorSubject<BappyUser>
+    private let hangout$: BehaviorSubject<Hangout>
     private let reasonsForReport$ = BehaviorSubject<[String]?>(value: nil)
     
     private let backButtonTapped$ = PublishSubject<Void>()
@@ -93,6 +104,8 @@ final class HangoutDetailViewModel: ViewModelType {
     
     private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
+    private let showCreateSuccessView$ = PublishSubject<Void>()
+    private let showLoader$ = PublishSubject<Bool>()
     
     init(dependency: Dependency) {
         let imageDependency = HangoutImageSectionViewModel.Dependency(
@@ -131,6 +144,7 @@ final class HangoutDetailViewModel: ViewModelType {
         let hangoutButtonState$ = BehaviorSubject<HangoutButton.State>(value: dependency.hangoutButtonState)
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
+        let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
         
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
@@ -139,14 +153,10 @@ final class HangoutDetailViewModel: ViewModelType {
         let showOpenMapView = mapButtonTapped$
             .map { _ -> OpenMapPopupViewModel in
                 let dependency = OpenMapPopupViewModel.Dependency(
-                    googleMapURL: dependency.hangout.googleMapURL,
-                    kakaoMapURL: dependency.hangout.kakaoMapURL)
+                    hangout: dependency.hangout)
                 return OpenMapPopupViewModel(dependency: dependency)
             }
-            .asSignal(onErrorJustReturn: OpenMapPopupViewModel(dependency: .init(
-                googleMapURL: dependency.hangout.googleMapURL,
-                kakaoMapURL: dependency.hangout.kakaoMapURL
-            )))
+            .asSignal(onErrorJustReturn: nil)
         let hangoutButtonState = hangoutButtonState$
             .asSignal(onErrorJustReturn: .expired)
         let showSignInAlert = Observable
@@ -175,6 +185,10 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showUserProfile = showUserProfile$
             .asSignal(onErrorJustReturn: nil)
+        let showCreateSuccessView = showCreateSuccessView$
+            .asSignal(onErrorJustReturn: Void())
+        let showLoader = showLoader$
+            .asSignal(onErrorJustReturn: false)
         
         // MARK: Input & Output
         self.input = Input(
@@ -195,14 +209,18 @@ final class HangoutDetailViewModel: ViewModelType {
             showSignInAlert: showSignInAlert,
             showCancelAlert: showCancelAlert,
             showReportView: showReportView,
-            showUserProfile: showUserProfile
+            showUserProfile: showUserProfile,
+            showCreateSuccessView: showCreateSuccessView,
+            showLoader: showLoader
         )
         
         // MARK: Bindind
         self.hangoutButtonState$ = hangoutButtonState$
         self.isUserParticipating$ = isUserParticipating$
         self.currentUser$ = currentUser$
+        self.hangout$ = hangout$
         
+        // Cancel 버튼이 눌러졌을 때..
         hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .cancel }
@@ -224,20 +242,44 @@ final class HangoutDetailViewModel: ViewModelType {
             .bind(to: showCancelAlert$)
             .disposed(by: disposeBag)
         
+        // Create 버튼이 눌러졌을 때..
+        let createResult = hangoutButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 == .create }
+            .withLatestFrom(hangout$)
+            .do { [weak self] _ in self?.showLoader$.onNext(true) }
+            .flatMap(dependency.hangoutRepository.createHangout)
+            .do { [weak self] _ in self?.showLoader$.onNext(false) }
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        createResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        createResult
+            .compactMap(getValue)
+            .map { _ in }
+            .bind(to: showCreateSuccessView$)
+            .disposed(by: disposeBag)
+        
+        // FirebaseRemoteConfig로 행아웃 신고사유 리스트 불러오기
         let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
             .share()
         
         remoteConfigValuesResult
-            .compactMap(getRemoteConfigValuesError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         remoteConfigValuesResult
-            .compactMap(getRemoteConfigValues)
+            .compactMap(getValue)
             .map(\.reasonsForReport)
             .bind(to: reasonsForReport$)
             .disposed(by: disposeBag)
         
+        // 참가자 셀 탭 했을 때..
         let bappyUserResult = selectedUserID$
             .withLatestFrom(currentUser$) { ($0, $1)}
             .filter { $1.state == .normal }
@@ -247,12 +289,13 @@ final class HangoutDetailViewModel: ViewModelType {
             .share()
         
         bappyUserResult
-            .compactMap(getBappyUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
+        // 탭한 참가자 프로필로 이동
         bappyUserResult
-            .compactMap(getBappyUser)
+            .compactMap(getValue)
             .map { user -> ProfileViewModel in
                 let dependency = ProfileViewModel.Dependency(
                     user: user,
@@ -279,24 +322,4 @@ final class HangoutDetailViewModel: ViewModelType {
             .emit(to: input.selectedUserID)
             .disposed(by: disposeBag)
     }
-}
-
-private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) -> RemoteConfigValues? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getBappyUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getBappyUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }

@@ -88,7 +88,7 @@ extension Reactive where Base: UIActivityIndicatorView {
 
 extension Reactive where Base: ProgressHUD {
     public static var showTranscluentLoader: Binder<Bool> {
-        return Binder(UIApplication.shared) { _, show in
+        return Binder(ProgressHUD.shared) { _, show in
             if show {
                 ProgressHUD.animationType = .horizontalCirclesPulse
                 ProgressHUD.colorBackground = .black.withAlphaComponent(0.1)
@@ -101,7 +101,7 @@ extension Reactive where Base: ProgressHUD {
     }
     
     public static var showYellowLoader: Binder<Bool> {
-        return Binder(UIApplication.shared) { _, show in
+        return Binder(ProgressHUD.shared) { _, show in
             if show {
                 ProgressHUD.animationType = .horizontalCirclesPulse
                 ProgressHUD.colorBackground = .bappyYellow

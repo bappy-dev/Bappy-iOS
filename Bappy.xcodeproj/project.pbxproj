@@ -104,13 +104,15 @@
 		A7202D592898B9EF00878012 /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7202D582898B9EF00878012 /* Example.swift */; };
 		A72838F22862F7F500BBBD9C /* HomeLocaleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F12862F7F500BBBD9C /* HomeLocaleViewController.swift */; };
 		A72838F5286301F100BBBD9C /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F4286301F100BBBD9C /* Hangout.swift */; };
+		A72964C3289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */; };
+		A72964C8289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */; };
 		A72C06C6283666820068897C /* HangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06C5283666820068897C /* HangoutCell.swift */; };
 		A72C06CC283733E50068897C /* ParticipantImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06CB283733E50068897C /* ParticipantImageCell.swift */; };
 		A72C06CE28373A360068897C /* HangoutDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72C06CD28373A360068897C /* HangoutDetailViewController.swift */; };
 		A72E6F022893BDF300E06BED /* Alertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F012893BDF300E06BED /* Alertable.swift */; };
 		A72E6F0B2894113E00E06BED /* DefaultNetworkCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F0A2894113E00E06BED /* DefaultNetworkCheckRepository.swift */; };
 		A72E6F0D2894149B00E06BED /* NetworkCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F0C2894149B00E06BED /* NetworkCheckRepository.swift */; };
-		A72E6F0F2897FEFA00E06BED /* ReportSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F0E2897FEFA00E06BED /* ReportSuccessViewController.swift */; };
+		A72E6F0F2897FEFA00E06BED /* SuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F0E2897FEFA00E06BED /* SuccessViewController.swift */; };
 		A72E6F17289805D200E06BED /* success.json in Resources */ = {isa = PBXBuildFile; fileRef = A72E6F16289805D200E06BED /* success.json */; };
 		A72E6F1928980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F1828980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift */; };
 		A72E6F1B28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F1A28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift */; };
@@ -376,13 +378,15 @@
 		A7202D582898B9EF00878012 /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
 		A72838F12862F7F500BBBD9C /* HomeLocaleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocaleViewController.swift; sourceTree = "<group>"; };
 		A72838F4286301F100BBBD9C /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
+		A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateHangoutRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A72C06C5283666820068897C /* HangoutCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutCell.swift; sourceTree = "<group>"; };
 		A72C06CB283733E50068897C /* ParticipantImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantImageCell.swift; sourceTree = "<group>"; };
 		A72C06CD28373A360068897C /* HangoutDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutDetailViewController.swift; sourceTree = "<group>"; };
 		A72E6F012893BDF300E06BED /* Alertable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alertable.swift; sourceTree = "<group>"; };
 		A72E6F0A2894113E00E06BED /* DefaultNetworkCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNetworkCheckRepository.swift; sourceTree = "<group>"; };
 		A72E6F0C2894149B00E06BED /* NetworkCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCheckRepository.swift; sourceTree = "<group>"; };
-		A72E6F0E2897FEFA00E06BED /* ReportSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSuccessViewController.swift; sourceTree = "<group>"; };
+		A72E6F0E2897FEFA00E06BED /* SuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessViewController.swift; sourceTree = "<group>"; };
 		A72E6F16289805D200E06BED /* success.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		A72E6F1828980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateProfileRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A72E6F1A28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateProfileResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
@@ -701,7 +705,8 @@
 				A7F52CED2864AD50002523D4 /* LikeButton */,
 				A7751B00288007A700F23241 /* BappyAlert */,
 				A7E13A5228888CF800413AE2 /* BappyDropdown */,
-				A7BEDFAD289891DB0081EE0B /* NoInternetConnectionView.swift */,
+				A72964C0289A5F6300970807 /* NoInternetConnection */,
+				A72964C9289A7DDC00970807 /* SuccessView */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -800,6 +805,61 @@
 				A7F52CE1286459CB002523D4 /* SubViews */,
 			);
 			path = Locale;
+			sourceTree = "<group>";
+		};
+		A72964C0289A5F6300970807 /* NoInternetConnection */ = {
+			isa = PBXGroup;
+			children = (
+				A7BEDFAD289891DB0081EE0B /* NoInternetConnectionView.swift */,
+			);
+			path = NoInternetConnection;
+			sourceTree = "<group>";
+		};
+		A72964C1289A651C00970807 /* CreateHangoutDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */,
+				A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */,
+			);
+			path = CreateHangoutDTO;
+			sourceTree = "<group>";
+		};
+		A72964C4289A676500970807 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				A70B0D6A286C739E009EBF33 /* CreateUserDTO */,
+				A70C3CBF286A206700BB7219 /* CurrentUserDTO */,
+				A70C3CD1286B4E1400BB7219 /* UserProfileDTO */,
+				A7751AF7287EB58D00F23241 /* GPSSettingDTO */,
+				A7FB695828986A20007B5DCF /* UpdateProfileDTO */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		A72964C5289A676D00970807 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				A71E27D32868D2B1001DA96B /* MapsDTO */,
+				A71E27D42868D2BB001DA96B /* MapImageDTO */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		A72964C6289A677300970807 /* Hangout */ = {
+			isa = PBXGroup;
+			children = (
+				A72964C1289A651C00970807 /* CreateHangoutDTO */,
+				A73BC9A9287598A500FB9FA9 /* HangoutsDTO */,
+			);
+			path = Hangout;
+			sourceTree = "<group>";
+		};
+		A72964C9289A7DDC00970807 /* SuccessView */ = {
+			isa = PBXGroup;
+			children = (
+				A72E6F0E2897FEFA00E06BED /* SuccessViewController.swift */,
+			);
+			path = SuccessView;
 			sourceTree = "<group>";
 		};
 		A72C06CF28373A3B0068897C /* Hangout */ = {
@@ -930,7 +990,6 @@
 				A7E13A552888904400413AE2 /* ReportViewModel.swift */,
 				A75B11BE283C9BDD00C49597 /* SubViews */,
 				A75B11C1283C9C0000C49597 /* SubComponents */,
-				A7FB695928986A59007B5DCF /* PopUpView */,
 			);
 			path = Report;
 			sourceTree = "<group>";
@@ -1171,14 +1230,9 @@
 		A76EEE7E2850B13600A2CFF6 /* DataMapping */ = {
 			isa = PBXGroup;
 			children = (
-				A70B0D6A286C739E009EBF33 /* CreateUserDTO */,
-				A70C3CBF286A206700BB7219 /* CurrentUserDTO */,
-				A70C3CD1286B4E1400BB7219 /* UserProfileDTO */,
-				A71E27D32868D2B1001DA96B /* MapsDTO */,
-				A71E27D42868D2BB001DA96B /* MapImageDTO */,
-				A73BC9A9287598A500FB9FA9 /* HangoutsDTO */,
-				A7751AF7287EB58D00F23241 /* GPSSettingDTO */,
-				A7FB695828986A20007B5DCF /* UpdateProfileDTO */,
+				A72964C4289A676500970807 /* User */,
+				A72964C5289A676D00970807 /* Map */,
+				A72964C6289A677300970807 /* Hangout */,
 			);
 			path = DataMapping;
 			sourceTree = "<group>";
@@ -2037,14 +2091,6 @@
 			path = UpdateProfileDTO;
 			sourceTree = "<group>";
 		};
-		A7FB695928986A59007B5DCF /* PopUpView */ = {
-			isa = PBXGroup;
-			children = (
-				A72E6F0E2897FEFA00E06BED /* ReportSuccessViewController.swift */,
-			);
-			path = PopUpView;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2240,9 +2286,10 @@
 				A785030B285A193B000FA592 /* HangoutMakePictureViewModel.swift in Sources */,
 				A7E13A562888904400413AE2 /* ReportViewModel.swift in Sources */,
 				A70C3CCD286B4DF300BB7219 /* UserProfileResponseDTO+Mapping.swift in Sources */,
-				A72E6F0F2897FEFA00E06BED /* ReportSuccessViewController.swift in Sources */,
+				A72E6F0F2897FEFA00E06BED /* SuccessViewController.swift in Sources */,
 				A7615E3228589CF300A09B2B /* SelectNationalityViewModel.swift in Sources */,
 				A71E27CE2868D17A001DA96B /* DefaultGoogleMapImageRepository.swift in Sources */,
+				A72964C8289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift in Sources */,
 				A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */,
 				A71411CF28985F8A002D4714 /* DeleteAccountSecondPageViewModel.swift in Sources */,
 				A76EEE862852CF5000A2CFF6 /* ProgressHUD.swift in Sources */,
@@ -2276,6 +2323,7 @@
 				A71411D228985F8A002D4714 /* DeleteAccountViewController.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
 				A70C3CC9286B4CBD00BB7219 /* UserProfileRepository.swift in Sources */,
+				A72964C3289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift in Sources */,
 				A7A6AFFE2844DB6000911861 /* HangoutMakeTimePickerView.swift in Sources */,
 				A7F52D042866CFE0002523D4 /* OpenMapPopupViewModel.swift in Sources */,
 				A71432DC2861F7CF00380DF7 /* SelectLanguageViewModel.swift in Sources */,

@@ -5,33 +5,11 @@
 //  Created by 정동천 on 2022/06/08.
 //
 
-import UIKit
+import Foundation
+import UIKit.UIImage
 
+// MARK: - User
 struct APIEndpoints {
-    static func searchGoogleMapList(with mapsRequestDTO: MapsRequestDTO) -> Endpoint<MapsResponseDTO> {
-        return Endpoint(
-            baseURL: GOOGLE_MAP_API_BASEURL,
-            path: "maps/api/place/textsearch/json?",
-            method: .get,
-            queryParameters: mapsRequestDTO)
-    }
-    
-    static func searchGoogleMapNextList(with mapsRequestDTO: MapsNextRequestDTO) -> Endpoint<MapsResponseDTO> {
-        return Endpoint(
-            baseURL: GOOGLE_MAP_API_BASEURL,
-            path: "maps/api/place/textsearch/json?",
-            method: .get,
-            queryParameters: mapsRequestDTO)
-    }
-    
-    static func getGoogleMapImage(with mapImageRequestDTO: MapImageRequestDTO) -> Endpoint<Data> {
-        return Endpoint(
-            baseURL: GOOGLE_MAP_API_BASEURL,
-            path: "maps/api/staticmap?",
-            method: .get,
-            queryParameters: mapImageRequestDTO)
-    }
-    
     static func getCurrentUser() -> Endpoint<CurrentUserResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -56,14 +34,6 @@ struct APIEndpoints {
             contentType: .multipart)
     }
     
-    static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {
-        return Endpoint(
-            baseURL: BAPPY_API_BASEURL,
-            path: "hangouts",
-            method: .get,
-            queryParameters: hangoutsRequestDTO)
-    }
-    
     static func updateProfile(with updateProfileRequestDTO: UpdateProfileRequestDTO, image: UIImage?) -> Endpoint<UpdateProfileResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -81,5 +51,52 @@ struct APIEndpoints {
             method: .put,
             bodyParameters: gpsSettingRequestDTO,
             contentType: .urlencoded)
+    }
+}
+    
+// MARK: - Map
+extension APIEndpoints {
+    static func searchGoogleMapList(with mapsRequestDTO: MapsRequestDTO) -> Endpoint<MapsResponseDTO> {
+        return Endpoint(
+            baseURL: GOOGLE_MAP_API_BASEURL,
+            path: "maps/api/place/textsearch/json?",
+            method: .get,
+            queryParameters: mapsRequestDTO)
+    }
+    
+    static func searchGoogleMapNextList(with mapsRequestDTO: MapsNextRequestDTO) -> Endpoint<MapsResponseDTO> {
+        return Endpoint(
+            baseURL: GOOGLE_MAP_API_BASEURL,
+            path: "maps/api/place/textsearch/json?",
+            method: .get,
+            queryParameters: mapsRequestDTO)
+    }
+    
+    static func getGoogleMapImage(with mapImageRequestDTO: MapImageRequestDTO) -> Endpoint<Data> {
+        return Endpoint(
+            baseURL: GOOGLE_MAP_API_BASEURL,
+            path: "maps/api/staticmap?",
+            method: .get,
+            queryParameters: mapImageRequestDTO)
+    }
+}
+// MARK: - Hangout
+extension APIEndpoints {
+    static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangouts",
+            method: .get,
+            queryParameters: hangoutsRequestDTO)
+    }
+    
+    static func createHangout(with createHangoutRequestDTO: CreateHangoutRequestDTO, image: UIImage) -> Endpoint<CreateHangoutResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout",
+            method: .post,
+            bodyParameters: createHangoutRequestDTO,
+            images: [image],
+            contentType: .multipart)
     }
 }

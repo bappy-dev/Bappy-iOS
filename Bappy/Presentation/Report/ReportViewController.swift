@@ -182,7 +182,9 @@ extension ReportViewController {
         
         viewModel.output.showSuccessView
             .emit(onNext: { [weak self] _ in
-                let viewController = ReportSuccessViewController()
+                let title = "Thanks for reporting!"
+                let message = "Your report might have\nprevented next victim"
+                let viewController = SuccessViewController(title: title, message: message)
                 viewController.modalPresentationStyle = .fullScreen
                 viewController.setDismissCompletion {
                     self?.navigationController?.popViewController(animated: false)

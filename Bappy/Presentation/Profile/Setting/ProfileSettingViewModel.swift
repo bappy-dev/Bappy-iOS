@@ -99,12 +99,12 @@ final class ProfileSettingViewModel: ViewModelType {
             .share()
         
         remoteConfigValuesResult
-            .compactMap(getRemoteConfigValuesError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         remoteConfigValuesResult
-            .compactMap(getRemoteConfigValues)
+            .compactMap(getValue)
             .map(\.reasonsForWithdrawl)
             .bind(to: reasonsForWithdrawl$)
             .disposed(by: disposeBag)
@@ -122,14 +122,4 @@ final class ProfileSettingViewModel: ViewModelType {
             .emit(to: deleteAccountButtonTapped$)
             .disposed(by: disposeBag)
     }
-}
-
-private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) -> RemoteConfigValues? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }

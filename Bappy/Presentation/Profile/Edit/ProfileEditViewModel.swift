@@ -176,13 +176,13 @@ final class ProfileEditViewModel: ViewModelType {
             .share()
         
         edittingResult
-            .compactMap(getEdittingError)
+            .compactMap(getErrorDescription)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
-            .bind(onNext: { print("ERROR: \($0)") })
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         let userResult = edittingResult
-            .compactMap(getEditting)
+            .compactMap(getValue)
             .map { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
@@ -190,12 +190,12 @@ final class ProfileEditViewModel: ViewModelType {
             .share()
         
         userResult
-            .compactMap(getUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         userResult
-            .compactMap(getUser)
+            .compactMap(getValue)
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
@@ -245,26 +245,6 @@ final class ProfileEditViewModel: ViewModelType {
             .emit(to: input.edittedInterests)
             .disposed(by: disposeBag)
     }
-}
-
-private func getEditting(_ result: Result<Bool, Error>) -> Bool? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getEdittingError(_ result: Result<Bool, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }
 
 // MARK: - ProfileLanguageViewModelDelegate

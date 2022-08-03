@@ -41,13 +41,3 @@ final class SignInAlertController: BappyAlertController {
         self.addAction(signInAction)
     }
 }
-
-private func getValue(_ result: Result<Void, Error>) -> Void? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getError(_ result: Result<Void, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}

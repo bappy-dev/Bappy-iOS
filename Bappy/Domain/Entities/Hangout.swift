@@ -30,29 +30,6 @@ struct Hangout: Equatable, Identifiable {
     let participantIDs: [Info]
     var userHasLiked: Bool
     
-    var googleMapURL: URL? {
-        let baseURL = GOOGLE_MAP_DIR_BASEURL
-        let path = "?"
-        let queries = [
-            "api=1",
-            "destination=\(placeName)",
-            "destination_place_id=\(placeID)"
-        ]
-        let urlString = baseURL + path + queries.joined(separator: "&")
-        return urlString
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-            .flatMap { URL(string: $0) }
-    }
-    
-    var kakaoMapURL: URL? {
-        let baseURL = KAKAO_MAP_DIR_BASEURL
-        let query = "\(placeName),\(coordinates.latitude),\(coordinates.longitude)"
-        let urlString = baseURL + query
-        return urlString
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-            .flatMap { URL(string: $0) }
-    }
-    
     static func == (lhs: Hangout, rhs: Hangout) -> Bool {
         return lhs.id == rhs.id
     }
@@ -65,6 +42,7 @@ extension Hangout {
     }
     
     enum State: String { case available, closed, expired, preview }
+    
     enum Category: Int {
         case All, Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
         
@@ -84,6 +62,7 @@ extension Hangout {
             }
         }
     }
+    
     enum Sorting: Int {
         case Newest, Nearest, ManyViews, manyHearts, lessSeats
         

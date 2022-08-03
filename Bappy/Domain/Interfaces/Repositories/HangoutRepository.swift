@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import UIKit.UIImage
 import RxSwift
 
 protocol HangoutRepository {
-    func fetchHangouts(param: (sorting: String?, category: String?, coordinates: String?, token: String)) -> Single<Result<[Hangout], Error>>
+    func fetchHangouts(sorting: Hangout.Sorting?, category: Hangout.Category?, coordinates: String?) -> Single<Result<[Hangout], Error>>
+    func createHangout(hangout: Hangout) -> Single<Result<Bool, Error>>
 }

@@ -133,14 +133,14 @@ final class LocaleSettingViewModel: ViewModelType {
             .share()
         
         locationsResult
-            .compactMap(getLocationsError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         // Location의 선택여부는 서버 값과 gps가 꺼져있을 때로 한 번 더 논리 오류 체크
         Observable
             .combineLatest(
-                locationsResult.compactMap(getLocations),
+                locationsResult.compactMap(getValue),
                 userGPSWithAuthorization$
             )
             .map { locations, element -> [Location] in
@@ -184,8 +184,8 @@ final class LocaleSettingViewModel: ViewModelType {
             .filter { $0 == .authorizedWhenInUse }
             .map { _ in true }
             .flatMap(dependency.bappyAuthRepository.updateGPSSetting)
-            .compactMap(getGPSError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         // 2. On/Off - 권한 요청
@@ -201,8 +201,8 @@ final class LocaleSettingViewModel: ViewModelType {
             .filter { $1 }
             .map { !$0.gps }
             .flatMap(dependency.bappyAuthRepository.updateGPSSetting)
-            .compactMap(getGPSError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         // Child
@@ -215,20 +215,6 @@ final class LocaleSettingViewModel: ViewModelType {
             .emit(to: localeButtonTapped$)
             .disposed(by: disposeBag)
     }
-}
-private func getLocations(_ result: Result<[Location], Error>) -> [Location]? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getLocationsError(_ result: Result<[Location], Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getGPSError(_ result: Result<Bool, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }
 
 // MARK: - LocaleSearchViewModelDelegate

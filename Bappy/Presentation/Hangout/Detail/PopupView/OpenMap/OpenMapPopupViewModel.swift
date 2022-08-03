@@ -12,8 +12,7 @@ import RxCocoa
 final class OpenMapPopupViewModel: ViewModelType {
     
     struct Dependency {
-        var googleMapURL: URL?
-        var kakaoMapURL: URL?
+        var hangout: Hangout
     }
     
     struct Input {
@@ -31,8 +30,7 @@ final class OpenMapPopupViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let googleMapURL$: BehaviorSubject<URL?>
-    private let kakaoMapURL$: BehaviorSubject<URL?>
+    private let hangout$: BehaviorSubject<Hangout>
     
     private let googleMapButtonTapped$ = PublishSubject<Void>()
     private let kakaoMapButtonTapped$ = PublishSubject<Void>()
@@ -41,15 +39,34 @@ final class OpenMapPopupViewModel: ViewModelType {
         self.dependency = dependency
         
         // MARK: Streams
-        let googleMapURL$ = BehaviorSubject<URL?>(value: dependency.googleMapURL)
-        let kakaoMapURL$ = BehaviorSubject<URL?>(value: dependency.kakaoMapURL)
+        let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
         
         let openGoogleMap = googleMapButtonTapped$
-            .withLatestFrom(googleMapURL$)
-            .asSignal(onErrorJustReturn: dependency.googleMapURL)
+            .withLatestFrom(hangout$)
+            .map {
+                getURL(
+                    baseURL: GOOGLE_MAP_DIR_BASEURL,
+                    path: "?",
+                    queries: [
+                        "api=1",
+                        "destination=\($0.placeName)",
+                        "destination_place_id=\($0.placeID)"
+                    ])
+            }
+            .asSignal(onErrorJustReturn: nil)
         let openKakaoMap = kakaoMapButtonTapped$
-            .withLatestFrom(kakaoMapURL$)
-            .asSignal(onErrorJustReturn: dependency.kakaoMapURL)
+            .withLatestFrom(hangout$)
+            .map {
+                getURL(
+                    baseURL: GOOGLE_MAP_DIR_BASEURL,
+                    path: "?",
+                    queries: [
+                        "api=1",
+                        "destination=\($0.placeName)",
+                        "destination_place_id=\($0.placeID)"
+                    ])
+            }
+            .asSignal(onErrorJustReturn: nil)
         
         
         // MARK: Input & Output
@@ -64,7 +81,16 @@ final class OpenMapPopupViewModel: ViewModelType {
         )
         
         // MARK: Bindind
-        self.googleMapURL$ = googleMapURL$
-        self.kakaoMapURL$ = kakaoMapURL$
+        self.hangout$ = hangout$
     }
+}
+
+private func getURL(baseURL: String, path: String?, queries: [String]?) -> URL? {
+    var urlString = baseURL
+    if let path = path { urlString += path }
+    if let queries = queries { urlString += queries.joined(separator: "&") }
+    
+    return urlString
+        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        .flatMap { URL(string: $0) }
 }

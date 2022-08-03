@@ -241,13 +241,27 @@ final class HangoutMakeViewModel: ViewModelType {
                     limit$.compactMap { $0 }
                 )
             )
-            .map {
-                Hangout(
-                    id: "preview", state: .preview, title: $0.1,
-                    meetTime: $0.2.toString(dateFormat: "dd. MMM. HH:mm"), language: $1.1, placeID: $0.3.id, placeName: $0.3.name, plan: $1.0, limitNumber: $1.3, coordinates: $0.3.coordinates, postImageURL: nil, openchatURL: URL(string: $1.2), mapImageURL: nil, participantIDs: [.init(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL)], userHasLiked: false)
+            .map { first, second -> Hangout in
+                return Hangout(
+                    id: "preview",
+                    state: .preview,
+                    title: first.1,
+                    meetTime: first.2.toString(dateFormat: "dd. MMM. HH:mm"),
+                    language: second.1,
+                    placeID: first.3.id,
+                    placeName: first.3.name,
+                    plan: second.0,
+                    limitNumber: second.3,
+                    coordinates: first.3.coordinates,
+                    postImageURL: nil,
+                    openchatURL: URL(string: second.2),
+                    mapImageURL: nil,
+                    participantIDs: [.init(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL)],
+                    userHasLiked: false)
             }
             .share()
         
+        // Goolge Map Image 불러오기
         let result = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
             .filter { $0.0 + 1 == $0.1 }
@@ -260,29 +274,38 @@ final class HangoutMakeViewModel: ViewModelType {
             .flatMap { $0 }
             .share()
         
+        result
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
         let value = result
             .compactMap(getValue)
             .share()
         
-        result
-            .compactMap(getError)
-            .bind(onNext: { print("ERROR: \($0)")})
-            .disposed(by: disposeBag)
-        
+        // 행아웃 Preview 모드
         value
             .withLatestFrom(Observable.combineLatest(
                 currentUser$, hangout, picture$.compactMap { $0 }
-            )) { ($1.0, $1.1, $1.2, $0) }
-            .map(getHangoutDetailViewModel)
+            )) { mapImage, element -> HangoutDetailViewModel in
+                let dependency = HangoutDetailViewModel.Dependency(
+                    currentUser: element.0,
+                    hangout: element.1,
+                    postImage: element.2,
+                    mapImage: mapImage)
+                return HangoutDetailViewModel(dependency: dependency)
+            }
             .bind(to: showHangoutPreview$)
             .disposed(by: disposeBag)
         
+        // 다음 페이지
         continueButtonTappedWithPage
             .filter { $0.0 + 1 < $0.1 }
             .map { $0.0 + 1 }
             .bind(to: page$)
             .disposed(by: disposeBag)
         
+        // 이전 페이지
         backButtonTappedWithPage
             .filter { $0 > 0 }
             .map { $0 - 1 }
@@ -439,28 +462,6 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
     case 7: return isOpenchatValid
     case 8: return isLimitValid
     default: return false}
-}
-
-private func getHangoutDetailViewModel(dependency: (user: BappyUser, hangout: Hangout, postImage: UIImage, mapImage: UIImage)) -> HangoutDetailViewModel {
-        let dependency = HangoutDetailViewModel.Dependency(
-            firebaseRepository: DefaultFirebaseRepository.shared,
-            userProfileRepository: DefaultUserProfileRepository(),
-            currentUser: dependency.user,
-            hangout: dependency.hangout,
-            postImage: dependency.postImage,
-            mapImage: dependency.mapImage
-        )
-        return HangoutDetailViewModel(dependency: dependency)
-}
-
-private func getValue(_ result: Result<UIImage?, Error>) -> UIImage? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getError(_ result: Result<UIImage?, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }
 
 // MARK: - SearchPlaceViewModelDelegate

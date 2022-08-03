@@ -199,6 +199,7 @@ extension HangoutDetailViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showOpenMapView
+            .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let popupView = OpenMapPopupViewController(viewModel: viewModel)
                 popupView.modalPresentationStyle = .overCurrentContext
@@ -234,6 +235,23 @@ extension HangoutDetailViewController {
                 let viewController = ProfileViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showCreateSuccessView
+            .emit(onNext: { [weak self] _ in
+                let title = "Successfully Created!"
+                let message = "Your hangout is succesfully created\nPlease check if your openchat is valid"
+                let viewController = SuccessViewController(title: title, message: message)
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.setDismissCompletion {
+                    _ = self?.navigationController?.popToRootViewController(animated: false)
+                }
+                self?.present(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showYellowLoader)
             .disposed(by: disposeBag)
     }
 }

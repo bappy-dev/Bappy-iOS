@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-protocol ViewModelType {
+public protocol ViewModelType: AnyObject, ReactiveCompatible {
     associatedtype Dependency
     associatedtype Input
     associatedtype Output
@@ -20,4 +20,24 @@ protocol ViewModelType {
     var output: Output { get }
     
     init(dependency: Dependency)
+}
+
+extension ViewModelType {
+    func getValue<T: Any>(_ result: Result<T, Error>) -> T? {
+        guard case .success(let value) = result else { return nil }
+        return value
+    }
+    
+    func getErrorDescription<T: Any>(_ result: Result<T, Error>) -> String? {
+        guard case .failure(let error) = result else { return nil }
+        return error.localizedDescription
+    }
+}
+
+extension Reactive where Base: ViewModelType {
+    public var debugError: Binder<String> {
+        return Binder(self.base) { _, description in
+            print("ERROR: \(description)")
+        }
+    }
 }

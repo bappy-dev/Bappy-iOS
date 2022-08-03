@@ -19,10 +19,9 @@ final class DefaultHangoutRepository {
 }
 
 extension DefaultHangoutRepository: HangoutRepository {
-    
-    func fetchHangouts(param: (sorting: String?, category: String?, coordinates: String?, token: String)) -> Single<Result<[Hangout], Error>> {
+    func fetchHangouts(sorting: Hangout.Sorting?, category: Hangout.Category?, coordinates: String?) -> Single<Result<[Hangout], Error>> {
 //        let requestDTO = HangoutsRequestDTO(sorting: nil, category: nil, coordinates: nil)
-//        let endpoint = APIEndpoints.getHangouts(with: requestDTO, token: token)
+//        let endpoint = APIEndpoints.getHangouts(with: requestDTO)
 //        return  provider.request(with: endpoint)
 //            .map { result -> Result<Hangout, Error> in
 //                switch result {
@@ -102,6 +101,26 @@ extension DefaultHangoutRepository: HangoutRepository {
                 single(.success(.success(hangouts)))
             }
             
+            return Disposables.create()
+        }
+    }
+    
+    func createHangout(hangout: Hangout) -> Single<Result<Bool, Error>> {
+//        let requestDTO = CreateHangoutRequestDTO()
+//        let endpoint = APIEndpoints.createHangout(with: requestDTO, image: picture)
+//        return provider.request(with: endpoint)
+//            .map { result -> Result<Bool, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    return .success(responseDTO.toDomain())
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        return Single<Result<Bool, Error>>.create { single in
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+                single(.success(.success(true)))
+            }
             return Disposables.create()
         }
     }
