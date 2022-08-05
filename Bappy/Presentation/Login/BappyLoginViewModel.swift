@@ -15,6 +15,12 @@ final class BappyLoginViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.firebaseRepository = firebaseRepository
+        }
     }
     
     struct Input {
@@ -41,7 +47,7 @@ final class BappyLoginViewModel: ViewModelType {
     private let authCredential$ = PublishSubject<AuthCredential>()
     private let skipButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
@@ -100,11 +106,7 @@ final class BappyLoginViewModel: ViewModelType {
         
         signInUser
             .filter { $0.state == .notRegistered }
-            .map { _ -> RegisterViewModel in
-                let dependency = RegisterViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository)
-                return RegisterViewModel(dependency: dependency)
-            }
+            .map { _ in RegisterViewModel() }
             .bind(to: showRegisterView$)
             .disposed(by: disposeBag)
         
@@ -128,8 +130,7 @@ final class BappyLoginViewModel: ViewModelType {
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: user)
                 return BappyTabBarViewModel(dependency: dependecy)
             }
             .bind(to: switchToSignInView$)

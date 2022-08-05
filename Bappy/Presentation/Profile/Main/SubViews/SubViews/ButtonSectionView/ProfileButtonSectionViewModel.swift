@@ -13,7 +13,6 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     
     struct Dependency {
         let user: BappyUser
-        let bappyAuthRepository: BappyAuthRepository
     }
     
     struct Input {

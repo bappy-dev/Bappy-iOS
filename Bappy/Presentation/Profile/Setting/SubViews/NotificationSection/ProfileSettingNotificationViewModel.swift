@@ -13,11 +13,9 @@ final class ProfileSettingNotificationViewModel: ViewModelType {
     
     struct Dependency {}
     
-    struct Input {
-    }
+    struct Input {}
     
-    struct Output {
-    }
+    struct Output {}
     
     let dependency: Dependency
     var disposeBag = DisposeBag()
@@ -30,11 +28,9 @@ final class ProfileSettingNotificationViewModel: ViewModelType {
         // MARK: Streams
         
         // MARK: Input & Output
-        self.input = Input(
-        )
+        self.input = Input()
         
-        self.output = Output(
-        )
+        self.output = Output()
         
         // MARK: Bindind
     }

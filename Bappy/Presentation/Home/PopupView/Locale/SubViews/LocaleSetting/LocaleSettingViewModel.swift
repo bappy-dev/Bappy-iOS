@@ -15,6 +15,12 @@ final class LocaleSettingViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let locationRepsitory: LocationRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             locationRepsitory: LocationRepository = DefaultLocationRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.locationRepsitory = locationRepsitory
+        }
     }
     
     struct SubViewModels {
@@ -56,7 +62,7 @@ final class LocaleSettingViewModel: ViewModelType {
     private let showSearchView$ = PublishSubject<LocaleSearchViewModel?>()
     private let showAuthorizationAlert$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
             headerViewModel: LocaleSettingHeaderViewModel(dependency: .init())
@@ -99,9 +105,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         editingDidBegin$
             .map { _ -> LocaleSearchViewModel? in
-                let dependency = LocaleSearchViewModel.Dependency(
-                    googleMapRepository: DefaultGoogleMapsRepository())
-                let viewModel = LocaleSearchViewModel(dependency: dependency)
+                let viewModel = LocaleSearchViewModel()
                 viewModel.delegate = self
                 return viewModel
             }

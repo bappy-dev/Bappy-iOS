@@ -15,6 +15,12 @@ final class ProfileEditViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
+        
+        init(user: BappyUser,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.user = user
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct SubViewModels {
@@ -199,8 +205,7 @@ final class ProfileEditViewModel: ViewModelType {
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: user)
                 return BappyTabBarViewModel(dependency: dependecy)
             }
             .bind(to: switchToMainView$)

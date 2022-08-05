@@ -15,7 +15,15 @@ final class HomeListViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let hangoutRepository: HangoutRepository
-        var locationRepository: LocationRepository
+        let locationRepository: LocationRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             locationRepository: LocationRepository = DefaultLocationRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.hangoutRepository = hangoutRepository
+            self.locationRepository = locationRepository
+        }
     }
     
     struct SubViewModels {
@@ -66,11 +74,11 @@ final class HomeListViewModel: ViewModelType {
     
     private let showSortingView$ = PublishSubject<SortingOrderViewModel?>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            topViewModel: HomeListTopViewModel(dependency: .init()),
-            topSubViewModel: HomeListTopSubViewModel(dependency: .init())
+            topViewModel: HomeListTopViewModel(),
+            topSubViewModel: HomeListTopSubViewModel()
         )
         
         // MARK: Streams
@@ -82,12 +90,7 @@ final class HomeListViewModel: ViewModelType {
         let hangouts = hangouts$
             .asDriver(onErrorJustReturn: [])
         let showLocaleView = localeButtonTapped$
-            .map { _ -> HomeLocaleViewModel in
-                let dependency = HomeLocaleViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    locationRepsitory: dependency.locationRepository)
-                return HomeLocaleViewModel(dependency: dependency)
-            }
+            .map { _ in HomeLocaleViewModel() }
             .asSignal(onErrorJustReturn: nil)
         let showSearchView = searchButtonTapped$
             .map { _ -> HomeSearchViewModel in
@@ -102,8 +105,6 @@ final class HomeListViewModel: ViewModelType {
             .withLatestFrom(currentUser$.compactMap { $0 }) { (user: $1, hangout: $0) }
             .map { element -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
-                    firebaseRepository: DefaultFirebaseRepository.shared,
-                    userProfileRepository: DefaultUserProfileRepository(),
                     currentUser: element.user,
                     hangout: element.hangout)
                 return HangoutDetailViewModel(dependency: dependency)

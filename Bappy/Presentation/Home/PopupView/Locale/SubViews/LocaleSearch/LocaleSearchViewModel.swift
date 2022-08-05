@@ -19,6 +19,10 @@ final class LocaleSearchViewModel: ViewModelType {
         let googleMapRepository: GoogleMapsRepository
         var key: String { Bundle.main.googleMapAPIKey }
         var language: String { "en" }
+        
+        init(googleMapRepository: GoogleMapsRepository = DefaultGoogleMapsRepository()) {
+            self.googleMapRepository = googleMapRepository
+        }
     }
     
     struct Input {
@@ -60,7 +64,7 @@ final class LocaleSearchViewModel: ViewModelType {
     private let showLoader$ = PublishSubject<Bool>()
     private let popView$ = PublishSubject<Void>()
     
-    init(dependency: Dependency = .init(googleMapRepository: DefaultGoogleMapsRepository())) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

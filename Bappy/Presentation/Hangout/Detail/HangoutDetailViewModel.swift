@@ -11,22 +11,14 @@ import RxCocoa
 
 final class HangoutDetailViewModel: ViewModelType {
     
-    struct SubViewModels {
-        let imageSectionViewModel: HangoutImageSectionViewModel
-        let mainSectionViewModel: HangoutMainSectionViewModel
-        let mapSectionViewModel: HangoutMapSectionViewModel
-        let planSectionViewModel: HangoutPlanSectionViewModel
-        let participantsSectionViewModel: HangoutParticipantsSectionViewModel
-    }
-    
     struct Dependency {
-        let firebaseRepository: FirebaseRepository
-        let userProfileRepository: UserProfileRepository
-        let hangoutRepository: HangoutRepository
         var currentUser: BappyUser
         var hangout: Hangout
         var postImage: UIImage?
         var mapImage: UIImage?
+        let firebaseRepository: FirebaseRepository
+        let userProfileRepository: UserProfileRepository
+        let hangoutRepository: HangoutRepository
         
         var isUserParticipating: Bool {
             return hangout.participantIDs
@@ -42,21 +34,29 @@ final class HangoutDetailViewModel: ViewModelType {
             case .available: return isUserParticipating ? .cancel : .join }
         }
         
-        init(firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared,
-             userProfileRepository: UserProfileRepository = DefaultUserProfileRepository(),
-             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
-             currentUser: BappyUser,
+        init(currentUser: BappyUser,
              hangout: Hangout,
              postImage: UIImage? = nil,
-             mapImage: UIImage? = nil) {
-            self.firebaseRepository = firebaseRepository
-            self.userProfileRepository = userProfileRepository
-            self.hangoutRepository = hangoutRepository
+             mapImage: UIImage? = nil,
+             firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared,
+              userProfileRepository: UserProfileRepository = DefaultUserProfileRepository(),
+              hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
             self.currentUser = currentUser
             self.hangout = hangout
             self.postImage = postImage
             self.mapImage = mapImage
+            self.firebaseRepository = firebaseRepository
+            self.userProfileRepository = userProfileRepository
+            self.hangoutRepository = hangoutRepository
         }
+    }
+    
+    struct SubViewModels {
+        let imageSectionViewModel: HangoutImageSectionViewModel
+        let mainSectionViewModel: HangoutMainSectionViewModel
+        let mapSectionViewModel: HangoutMapSectionViewModel
+        let planSectionViewModel: HangoutPlanSectionViewModel
+        let participantsSectionViewModel: HangoutParticipantsSectionViewModel
     }
     
     struct Input {
@@ -84,10 +84,10 @@ final class HangoutDetailViewModel: ViewModelType {
     }
     
     let dependency: Dependency
+    let subViewModels: SubViewModels
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-    let subViewModels: SubViewModels
     
     private let hangoutButtonState$: BehaviorSubject<HangoutButton.State>
     private let isUserParticipating$: BehaviorSubject<Bool>
@@ -112,27 +112,18 @@ final class HangoutDetailViewModel: ViewModelType {
     
     init(dependency: Dependency) {
         let imageDependency = HangoutImageSectionViewModel.Dependency(
-            isPreviewMode: dependency.hangout.state == .preview,
-            postImageURL: dependency.hangout.postImageURL,
-            postImage: dependency.postImage,
-            userHasLiked: dependency.hangout.userHasLiked)
+            hangout: dependency.hangout,
+            postImage: dependency.postImage)
         let mainDependency = HangoutMainSectionViewModel.Dependency(
-            isUserParticipating: dependency.isUserParticipating,
-            title: dependency.hangout.title,
-            meetTime: dependency.hangout.meetTime,
-            language: dependency.hangout.language,
-            placeName: dependency.hangout.placeName,
-            openchatURL: dependency.hangout.openchatURL)
+            hangout: dependency.hangout,
+            isUserParticipating: dependency.isUserParticipating)
         let mapDependency = HangoutMapSectionViewModel.Dependency(
-            isPreviewModel: dependency.hangout.state == .preview,
-            placeName: dependency.hangout.placeName,
-            mapImageURL: dependency.hangout.mapImageURL,
+            hangout: dependency.hangout,
             mapImage: dependency.mapImage)
         let planDependency = HangoutPlanSectionViewModel.Dependency(
-            plan: dependency.hangout.plan)
+            hangout: dependency.hangout)
         let participantsDependency = HangoutParticipantsSectionViewModel.Dependency(
-            limitNumber: dependency.hangout.limitNumber,
-            participantIDs: dependency.hangout.participantIDs)
+            hangout: dependency.hangout)
         
         self.dependency = dependency
         self.subViewModels = SubViewModels(
@@ -314,8 +305,7 @@ final class HangoutDetailViewModel: ViewModelType {
             .map { user -> ProfileViewModel in
                 let dependency = ProfileViewModel.Dependency(
                     user: user,
-                    authorization: .view,
-                    bappyAuthRepository: DefaultBappyAuthRepository.shared)
+                    authorization: .view)
                 return ProfileViewModel(dependency: dependency)
             }
             .bind(to: showUserProfile$)

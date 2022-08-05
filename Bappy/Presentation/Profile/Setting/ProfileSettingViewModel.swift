@@ -15,6 +15,12 @@ final class ProfileSettingViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.firebaseRepository = firebaseRepository
+        }
     }
     
     struct SubViewModels {
@@ -49,7 +55,7 @@ final class ProfileSettingViewModel: ViewModelType {
     private let logoutButtonTapped$ = PublishSubject<Void>()
     private let deleteAccountButtonTapped$ = PublishSubject<Void>()
   
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
             notificationViewModel: ProfileSettingNotificationViewModel(),

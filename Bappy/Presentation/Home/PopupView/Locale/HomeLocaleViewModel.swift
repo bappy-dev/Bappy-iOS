@@ -14,6 +14,12 @@ final class HomeLocaleViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let locationRepsitory: LocationRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             locationRepsitory: LocationRepository = DefaultLocationRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.locationRepsitory = locationRepsitory
+        }
     }
     
     struct SubViewModels {
@@ -40,13 +46,9 @@ final class HomeLocaleViewModel: ViewModelType {
     
     private let showAuthorizationAlert$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
-        self.subViewModels = SubViewModels(
-            settingViewModel: LocaleSettingViewModel(dependency: .init(
-                bappyAuthRepository: dependency.bappyAuthRepository,
-                locationRepsitory: dependency.locationRepsitory))
-        )
+        self.subViewModels = SubViewModels(settingViewModel: LocaleSettingViewModel())
         
         // MARK: Streams
         let dismissView = closeButtonTapped$

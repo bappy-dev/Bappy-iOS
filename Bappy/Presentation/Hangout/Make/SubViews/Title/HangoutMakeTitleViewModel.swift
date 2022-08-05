@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class HangoutMakeTitleViewModel: ViewModelType {
+    
     struct Dependency {
         var minimumLength: Int { 10 }
         var maximumLength: Int { 20 }

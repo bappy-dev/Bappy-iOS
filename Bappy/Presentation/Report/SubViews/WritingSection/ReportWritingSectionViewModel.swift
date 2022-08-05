@@ -37,7 +37,7 @@ final class ReportWritingSectionViewModel: ViewModelType {
     private let editingDidBegin$ = PublishSubject<Void>()
     private let detailText$ = PublishSubject<String>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

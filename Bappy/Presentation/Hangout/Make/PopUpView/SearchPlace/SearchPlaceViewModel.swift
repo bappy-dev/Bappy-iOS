@@ -20,6 +20,10 @@ final class SearchPlaceViewModel: ViewModelType {
         let googleMapsRepository: GoogleMapsRepository
         var key: String { Bundle.main.googleMapAPIKey }
         var language: String { "en" }
+        
+        init(googleMapsRepository: GoogleMapsRepository = DefaultGoogleMapsRepository()) {
+            self.googleMapsRepository = googleMapsRepository
+        }
     }
     
     struct Input {
@@ -61,7 +65,7 @@ final class SearchPlaceViewModel: ViewModelType {
     
     private let showLoader$ = PublishSubject<Bool>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

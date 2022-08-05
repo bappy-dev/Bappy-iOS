@@ -17,6 +17,14 @@ final class ProfileViewModel: ViewModelType {
         let user: BappyUser
         let authorization: ProfileAuthorization
         let bappyAuthRepository: BappyAuthRepository
+        
+        init(user: BappyUser,
+             authorization: ProfileAuthorization,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.user = user
+            self.authorization = authorization
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct SubViewModels {
@@ -67,12 +75,7 @@ final class ProfileViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            headerViewModel: ProfileHeaderViewModel(
-                dependency: .init(
-                    user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository
-                )
-            )
+            headerViewModel: ProfileHeaderViewModel(dependency: .init(user: dependency.user))
         )
         
         // MARK: Streams
@@ -133,12 +136,7 @@ final class ProfileViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         settingButtonTapped$
-            .map { _ -> ProfileSettingViewModel in
-                let dependency = ProfileSettingViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: DefaultFirebaseRepository.shared)
-                return ProfileSettingViewModel(dependency: dependency)
-            }
+            .map { _ in ProfileSettingViewModel() }
             .bind(to: showSettingView$)
             .disposed(by: disposeBag)
         
@@ -147,8 +145,7 @@ final class ProfileViewModel: ViewModelType {
             .map { user -> ProfileDetailViewModel in
                 let dependency = ProfileDetailViewModel.Dependency(
                     user: user,
-                    authorization: dependency.authorization,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    authorization: dependency.authorization)
                 return ProfileDetailViewModel(dependency: dependency)
             }
             .bind(to: showDetailView$)

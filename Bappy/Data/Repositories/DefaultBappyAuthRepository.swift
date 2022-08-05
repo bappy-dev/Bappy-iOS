@@ -84,6 +84,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             userBirth: birth.toString(dateFormat: "yyyy.MM.dd"),
             userNationality: countryCode
         )
+        
         let endpoint = APIEndpoints.createUser(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { [weak self] result -> Result<BappyUser, Error> in
@@ -112,6 +113,19 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //
 //            return Disposables.create()
 //        }
+    }
+    
+    func deleteUser() -> Single<Result<Bool, Error>> {
+        let endpoint = APIEndpoints.deleteUser()
+        return  provider.request(with: endpoint)
+            .map { result -> Result<Bool, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    return .success(responseDTO.toDomain())
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
     }
     
     func updateProfile(affiliation: String?,

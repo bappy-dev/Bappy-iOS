@@ -33,6 +33,13 @@ struct APIEndpoints {
             contentType: .multipart)
     }
     
+    static func deleteUser() -> Endpoint<DeleteUserResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user",
+            method: .delete)
+    }
+    
     static func updateProfile(with updateProfileRequestDTO: UpdateProfileRequestDTO, data: Data?) -> Endpoint<UpdateProfileResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -61,6 +68,8 @@ struct APIEndpoints {
             contentType: .urlencoded)
     }
 }
+
+
     
 // MARK: - Map
 extension APIEndpoints {
@@ -88,6 +97,9 @@ extension APIEndpoints {
             queryParameters: mapImageRequestDTO)
     }
 }
+
+
+
 // MARK: - Hangout
 extension APIEndpoints {
     static func fetchHangouts(with hangoutsRequestDTO: FetchHangoutsRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
@@ -105,6 +117,31 @@ extension APIEndpoints {
             method: .post,
             bodyParameters: createHangoutRequestDTO,
             imageDatas: [data],
+            contentType: .multipart)
+    }
+    
+    static func deleteHangout(id hangoutID: String) -> Endpoint<DeleteHangoutResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout/\(hangoutID)",
+            method: .delete)
+    }
+    
+    static func likeHangout(id hangoutID: String, hasUserLiked: Bool) -> Endpoint<LikeHangoutResponseDTO> {
+        let path = hasUserLiked ? "hangout/like/\(hangoutID)" : "hangout/nolike/\(hangoutID)"
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: path,
+            method: .get)
+    }
+    
+    static func updateHangoutParticipation(with updateHangoutParticipationRequestDTO: UpdateHangoutParticipationRequestDTO,
+                            id hangoutID: String) -> Endpoint<UpdateHangoutParticipationResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout/\(hangoutID)",
+            method: .put,
+            bodyParameters: updateHangoutParticipationRequestDTO,
             contentType: .multipart)
     }
     

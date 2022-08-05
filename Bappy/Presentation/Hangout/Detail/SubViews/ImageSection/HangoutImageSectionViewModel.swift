@@ -12,10 +12,11 @@ import RxCocoa
 final class HangoutImageSectionViewModel: ViewModelType {
     
     struct Dependency {
-        var isPreviewMode: Bool
-        var postImageURL: URL?
+        var hangout: Hangout
         var postImage: UIImage?
-        var userHasLiked: Bool
+        var isPreviewMode: Bool { hangout.state == .preview }
+        var postImageURL: URL? { hangout.postImageURL }
+        var userHasLiked: Bool { hangout.userHasLiked }
     }
     
     struct Input {

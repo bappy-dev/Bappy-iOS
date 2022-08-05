@@ -120,6 +120,11 @@
 		A72E6F17289805D200E06BED /* success.json in Resources */ = {isa = PBXBuildFile; fileRef = A72E6F16289805D200E06BED /* success.json */; };
 		A72E6F1928980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F1828980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift */; };
 		A72E6F1B28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72E6F1A28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift */; };
+		A739AB8E289CE72C00C6CE90 /* DeleteHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB8D289CE72C00C6CE90 /* DeleteHangoutResponseDTO+Mapping.swift */; };
+		A739AB93289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB92289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift */; };
+		A739AB95289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB94289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift */; };
+		A739AB9A289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB99289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift */; };
+		A739AB9D289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB9C289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift */; };
 		A73BC9A02875933500FB9FA9 /* HangoutRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC99F2875933500FB9FA9 /* HangoutRepository.swift */; };
 		A73BC9A22875977F00FB9FA9 /* DefaultHangoutRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9A12875977F00FB9FA9 /* DefaultHangoutRepository.swift */; };
 		A73BC9A62875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9A52875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift */; };
@@ -398,6 +403,11 @@
 		A72E6F16289805D200E06BED /* success.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		A72E6F1828980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateProfileRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A72E6F1A28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateProfileResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739AB8D289CE72C00C6CE90 /* DeleteHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739AB92289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateHangoutParticipationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739AB94289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateHangoutParticipationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739AB99289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LikeHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739AB9C289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteUserResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A73BC99F2875933500FB9FA9 /* HangoutRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutRepository.swift; sourceTree = "<group>"; };
 		A73BC9A12875977F00FB9FA9 /* DefaultHangoutRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHangoutRepository.swift; sourceTree = "<group>"; };
 		A73BC9A52875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutsRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
@@ -836,6 +846,7 @@
 			isa = PBXGroup;
 			children = (
 				A70B0D6A286C739E009EBF33 /* CreateUserDTO */,
+				A739AB9B289CEDE100C6CE90 /* DeleteUserDTO */,
 				A70C3CBF286A206700BB7219 /* FetchCurrentUserDTO */,
 				A70C3CD1286B4E1400BB7219 /* FetchProfileDTO */,
 				A7FB695828986A20007B5DCF /* UpdateProfileDTO */,
@@ -859,6 +870,9 @@
 			children = (
 				A72964C1289A651C00970807 /* CreateHangoutDTO */,
 				A73BC9A9287598A500FB9FA9 /* FetchHangoutsDTO */,
+				A739AB8C289CE71700C6CE90 /* DeleteHangoutDTO */,
+				A739AB98289CEA9E00C6CE90 /* LikeHangoutDTO */,
+				A739AB91289CE87200C6CE90 /* UpdateHangoutParticipationDTO */,
 				A72964CA289AEEEB00970807 /* ReportHangoutDTO */,
 			);
 			path = Hangout;
@@ -960,6 +974,39 @@
 				A7F52CF02865C339002523D4 /* SortingOrderCell.swift */,
 			);
 			path = SortingOrder;
+			sourceTree = "<group>";
+		};
+		A739AB8C289CE71700C6CE90 /* DeleteHangoutDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A739AB8D289CE72C00C6CE90 /* DeleteHangoutResponseDTO+Mapping.swift */,
+			);
+			path = DeleteHangoutDTO;
+			sourceTree = "<group>";
+		};
+		A739AB91289CE87200C6CE90 /* UpdateHangoutParticipationDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A739AB92289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift */,
+				A739AB94289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift */,
+			);
+			path = UpdateHangoutParticipationDTO;
+			sourceTree = "<group>";
+		};
+		A739AB98289CEA9E00C6CE90 /* LikeHangoutDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A739AB99289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift */,
+			);
+			path = LikeHangoutDTO;
+			sourceTree = "<group>";
+		};
+		A739AB9B289CEDE100C6CE90 /* DeleteUserDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A739AB9C289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift */,
+			);
+			path = DeleteUserDTO;
 			sourceTree = "<group>";
 		};
 		A73BC9A9287598A500FB9FA9 /* FetchHangoutsDTO */ = {
@@ -2247,6 +2294,7 @@
 				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
 				A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */,
 				A7751AFD2880033B00F23241 /* BappyAlertController.swift in Sources */,
+				A739AB93289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift in Sources */,
 				A71411C528985F8A002D4714 /* ProfileDetailLanguageViewModel.swift in Sources */,
 				A71411BA28985F8A002D4714 /* ProfileEditMainViewModel.swift in Sources */,
 				A71411CD28985F8A002D4714 /* DeleteAccountFirstPageViewModel.swift in Sources */,
@@ -2299,6 +2347,7 @@
 				A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */,
 				A73BC9C0287B176900FB9FA9 /* LocationRepository.swift in Sources */,
 				A73BC9AD28759F0500FB9FA9 /* HomeListTopSubViewModel.swift in Sources */,
+				A739AB9A289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift in Sources */,
 				A78502F32859C6B8000FA592 /* HangoutMakeViewModel.swift in Sources */,
 				A7850305285A183A000FA592 /* HangoutMakeLanguageViewModel.swift in Sources */,
 				A717323C28361F580073E702 /* TitleTopView.swift in Sources */,
@@ -2392,6 +2441,7 @@
 				A753CB73284E415200167450 /* OpenMapPopupViewController.swift in Sources */,
 				A78502FD285A181A000FA592 /* HangoutMakeTimeViewModel.swift in Sources */,
 				A75B11C3283CB14B00C49597 /* BappyDropdownView.swift in Sources */,
+				A739AB9D289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift in Sources */,
 				A71411C428985F8A002D4714 /* ProfileDetailLanguageView.swift in Sources */,
 				A7A6B0062845010200911861 /* SearchPlaceCell.swift in Sources */,
 				A7A6B00A2845A5D900911861 /* HangoutMakePictureView.swift in Sources */,
@@ -2419,6 +2469,7 @@
 				A73BC9C9287D7E0E00FB9FA9 /* LocaleSearchViewModel.swift in Sources */,
 				A71411B528985F8A002D4714 /* ProfileEditIntroduceView.swift in Sources */,
 				A77F4BC8282B93090046921B /* SelectionButton.swift in Sources */,
+				A739AB95289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift in Sources */,
 				A71411A728985F8A002D4714 /* CustomerServiceButton.swift in Sources */,
 				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
 				A71411B028985F8A002D4714 /* ProfileLanguageViewController.swift in Sources */,
@@ -2438,6 +2489,7 @@
 				A71411CE28985F8A002D4714 /* DeleteAccountFirstPageView.swift in Sources */,
 				A7850303285A1833000FA592 /* HangoutMakePlanViewModel.swift in Sources */,
 				A71411D428985F8A002D4714 /* ProfileSettingServiceViewModel.swift in Sources */,
+				A739AB8E289CE72C00C6CE90 /* DeleteHangoutResponseDTO+Mapping.swift in Sources */,
 				A76EEE792850AD6100A2CFF6 /* Map.swift in Sources */,
 				A70C3CD7286B5B8400BB7219 /* HomeListViewModel.swift in Sources */,
 				A7E13A58288890D700413AE2 /* ReportWritingSectionViewModel.swift in Sources */,

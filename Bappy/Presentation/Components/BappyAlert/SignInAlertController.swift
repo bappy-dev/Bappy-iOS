@@ -30,10 +30,7 @@ final class SignInAlertController: BappyAlertController {
                     switch result {
                     case .success():
                         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-                        let dependency = BappyLoginViewModel.Dependency(
-                            bappyAuthRepository: DefaultBappyAuthRepository.shared,
-                            firebaseRepository: firebaseRepository)
-                        let viewModel = BappyLoginViewModel(dependency: dependency)
+                        let viewModel = BappyLoginViewModel()
                         sceneDelegate?.switchRootViewToSignInView(viewModel: viewModel)
                     case .failure(let error): print("ERROR: \(error)") }
                 }

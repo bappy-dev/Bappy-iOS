@@ -12,7 +12,8 @@ import RxCocoa
 final class HangoutPlanSectionViewModel: ViewModelType {
     
     struct Dependency {
-        var plan: String
+        var hangout: Hangout
+        var plan: String { hangout.plan }
     }
     
     struct Input {}

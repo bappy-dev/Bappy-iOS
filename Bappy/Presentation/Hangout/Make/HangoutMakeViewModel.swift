@@ -11,6 +11,19 @@ import RxCocoa
 
 final class HangoutMakeViewModel: ViewModelType {
     
+    struct Dependency {
+        var currentUser: BappyUser
+        let googleMapImageRepository: GoogleMapImageRepository
+        var numOfPage: Int { 9 }
+        var key: String { Bundle.main.googleMapAPIKey }
+        
+        init(currentUser: BappyUser,
+             googleMapImageRepository: GoogleMapImageRepository = DefaultGoogleMapImageRepository()) {
+            self.currentUser = currentUser
+            self.googleMapImageRepository = googleMapImageRepository
+        }
+    }
+    
     struct SubViewModels {
         let categoryViewModel: HangoutMakeCategoryViewModel
         let titleViewModel: HangoutMakeTitleViewModel
@@ -22,13 +35,6 @@ final class HangoutMakeViewModel: ViewModelType {
         let openchatViewModel: HangoutMakeOpenchatViewModel
         let limitViewModel: HangoutMakeLimitViewModel
         let continueButtonViewModel: ContinueButtonViewModel
-    }
-    
-    struct Dependency {
-        let googleMapImageRepository: GoogleMapImageRepository
-        var currentUser: BappyUser
-        var numOfPage: Int { 9 }
-        var key: String { Bundle.main.googleMapAPIKey }
     }
     
     struct Input {
@@ -72,10 +78,10 @@ final class HangoutMakeViewModel: ViewModelType {
     }
     
     let dependency: Dependency
+    let subViewModels: SubViewModels
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-    let subViewModels: SubViewModels
     
     private let page$ = BehaviorSubject<Int>(value: 0)
     private let currentUser$: BehaviorSubject<BappyUser>
@@ -353,9 +359,7 @@ final class HangoutMakeViewModel: ViewModelType {
         
         subViewModels.placeViewModel.output.showSearchPlaceView
             .map { _ -> SearchPlaceViewModel in
-                let dependency = SearchPlaceViewModel.Dependency(
-                    googleMapsRepository: DefaultGoogleMapsRepository())
-                let viewModel = SearchPlaceViewModel(dependency: dependency)
+                let viewModel = SearchPlaceViewModel()
                 viewModel.delegate = self
                 return viewModel
             }

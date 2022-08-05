@@ -22,7 +22,7 @@ final class HomeSearchViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

@@ -31,7 +31,7 @@ final class LocaleSettingHeaderViewModel: ViewModelType {
     private let isUserUsingGPS$ = BehaviorSubject<Bool>(value: false)
     private let localeButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

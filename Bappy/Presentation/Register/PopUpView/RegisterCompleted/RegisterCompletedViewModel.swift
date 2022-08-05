@@ -15,6 +15,12 @@ final class RegisterCompletedViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
+        
+        init(user: BappyUser,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.user = user
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct Input {
@@ -63,8 +69,7 @@ final class RegisterCompletedViewModel: ViewModelType {
             .map { _  -> BappyTabBarViewModel in
                 let dependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: dependency.user)
                 return BappyTabBarViewModel(dependency: dependency)
             }
             .bind(to: switchToMainView$)
@@ -74,13 +79,9 @@ final class RegisterCompletedViewModel: ViewModelType {
             .map { _  -> EditViewModels in
                 let tabBarDependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
-                    user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: dependency.user)
                 let tabBarViewModel = BappyTabBarViewModel(dependency: tabBarDependency)
-                let editDependency = ProfileEditViewModel.Dependency(
-                    user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
-                let editViewModel = ProfileEditViewModel(dependency: editDependency)
+                let editViewModel = ProfileEditViewModel(dependency: .init(user: dependency.user))
                 return EditViewModels(tabBarViewModel, editViewModel)
             }
             .bind(to: moveToEditProfileView$)

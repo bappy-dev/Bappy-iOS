@@ -13,7 +13,6 @@ final class ProfileHeaderViewModel: ViewModelType {
     
     struct Dependency {
         let user: BappyUser
-        let bappyAuthRepository: BappyAuthRepository
         var name: String { "Bappy" }
         var flag: String {  "🇺🇸"  }
         var gender: String { "Other" }
@@ -54,13 +53,7 @@ final class ProfileHeaderViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            buttonSectionViewModel: ProfileButtonSectionViewModel(
-                dependency: .init(
-                    user: dependency.user,
-                    bappyAuthRepository: dependency.bappyAuthRepository
-                )
-            )
-        )
+            buttonSectionViewModel: ProfileButtonSectionViewModel(dependency: .init(user: dependency.user)))
         
         // MARK: Streams
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)

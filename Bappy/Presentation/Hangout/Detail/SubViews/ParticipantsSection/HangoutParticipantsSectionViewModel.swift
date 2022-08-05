@@ -12,8 +12,9 @@ import RxCocoa
 final class HangoutParticipantsSectionViewModel: ViewModelType {
     
     struct Dependency {
-        var limitNumber: Int
-        var participantIDs: [Hangout.Info]
+        var hangout: Hangout
+        var limitNumber: Int { hangout.limitNumber }
+        var participantIDs: [Hangout.Info] { hangout.participantIDs }
     }
     
     struct Input {

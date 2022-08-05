@@ -85,8 +85,7 @@ final class ReportViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            writingViewModel: ReportWritingSectionViewModel(
-                dependency: .init()),
+            writingViewModel: ReportWritingSectionViewModel(),
             imageViewModel: ReportImageSectionViewModel(
                 dependency: .init(maxNumOfImages: dependency.maxNumOfImages)),
             dropdownViewModel: BappyDropdownViewModel(

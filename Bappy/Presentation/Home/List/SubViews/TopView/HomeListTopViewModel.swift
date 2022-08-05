@@ -34,7 +34,7 @@ final class HomeListTopViewModel: ViewModelType {
     private let searchButtonTapped$ = PublishSubject<Void>()
     private let filterButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

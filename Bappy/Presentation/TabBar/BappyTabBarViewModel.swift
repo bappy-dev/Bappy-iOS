@@ -14,7 +14,15 @@ final class BappyTabBarViewModel: ViewModelType {
     struct Dependency {
         var selectedIndex: Int
         var user: BappyUser
-        var bappyAuthRepository: BappyAuthRepository
+        let bappyAuthRepository: BappyAuthRepository
+        
+        init(selectedIndex: Int,
+             user: BappyUser,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.selectedIndex = selectedIndex
+            self.user = user
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct SubViewModels {
@@ -57,15 +65,10 @@ final class BappyTabBarViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            homeListViewModel: HomeListViewModel(dependency: .init(
-                bappyAuthRepository: dependency.bappyAuthRepository,
-                hangoutRepository: DefaultHangoutRepository(),
-                locationRepository: DefaultLocationRepository.shared)
-            ),
+            homeListViewModel: HomeListViewModel(),
             profileViewModel: ProfileViewModel(dependency: .init(
                 user: dependency.user,
-                authorization: .edit,
-                bappyAuthRepository: dependency.bappyAuthRepository)
+                authorization: .edit)
             )
         )
         
@@ -84,11 +87,7 @@ final class BappyTabBarViewModel: ViewModelType {
         let showWriteView = writeButtonTapped$
             .withLatestFrom(currentUser$)
             .filter { $0.state == .normal }
-            .map { user -> HangoutMakeViewModel in
-                let dependency = HangoutMakeViewModel.Dependency(
-                    googleMapImageRepository: DefaultGoogleMapImageRepository(),
-                    currentUser: user)
-                return HangoutMakeViewModel(dependency: dependency)}
+            .map { HangoutMakeViewModel(dependency: .init(currentUser: $0)) }
             .asSignal(onErrorJustReturn: nil)
         let showSignInAlert = writeButtonTapped$
             .withLatestFrom(currentUser$)
