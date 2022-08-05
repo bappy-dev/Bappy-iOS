@@ -9,5 +9,5 @@ import Foundation
 import RxSwift
 
 protocol UserProfileRepository {
-    func fetchBappyUser(id: String) -> Single<Result<BappyUser, Error>>
+    func fetchUserProfile(id: String) -> Single<Result<BappyUser, Error>>
 }

@@ -1,5 +1,5 @@
 //
-//  CurrentUserResponseDTO+Mapping.swift
+//  FetchCurrentUserResponseDTO+Mapping.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/28.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct CurrentUserResponseDTO: Decodable {
+struct FetchCurrentUserResponseDTO: Decodable {
     
     let user: UserDTO
     
@@ -17,7 +17,7 @@ struct CurrentUserResponseDTO: Decodable {
     }
 }
 
-extension CurrentUserResponseDTO {
+extension FetchCurrentUserResponseDTO {
     struct UserDTO: Decodable {
         let id: String?
         let name: String?
@@ -51,7 +51,7 @@ extension CurrentUserResponseDTO {
     }
 }
 
-extension CurrentUserResponseDTO {
+extension FetchCurrentUserResponseDTO {
     func toDomain() -> BappyUser {
         print("DEBUG: user response \(user)")
         var state: UserState {

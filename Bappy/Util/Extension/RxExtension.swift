@@ -56,6 +56,11 @@ extension Reactive where Base: UIViewController {
             .map { _ in }
     }
     
+    var touchesBegan: Observable<Void> {
+        return methodInvoked(#selector(UIViewController.touchesBegan))
+            .map { _ in }
+    }
+    
     var showProgress: Binder<Bool> {
         return Binder(self.base) { view, isUserInteractionEnabled in
             ProgressHUD.show(interaction: isUserInteractionEnabled)

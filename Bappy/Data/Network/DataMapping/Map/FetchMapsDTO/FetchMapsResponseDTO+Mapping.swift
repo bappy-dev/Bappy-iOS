@@ -1,5 +1,5 @@
 //
-//  MapsResponseDTO+Mapping.swift
+//  FetchMapsResponseDTO+Mapping.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/08.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct MapsResponseDTO: Decodable {
+struct FetchMapsResponseDTO: Decodable {
     
     let nextPageToken: String?
     let maps: [MapDTO]
@@ -18,7 +18,7 @@ struct MapsResponseDTO: Decodable {
     }
 }
 
-extension MapsResponseDTO {
+extension FetchMapsResponseDTO {
     struct MapDTO: Decodable {
         let id: String
         let name: String
@@ -54,7 +54,7 @@ extension MapsResponseDTO {
     }
 }
 
-extension MapsResponseDTO {
+extension FetchMapsResponseDTO {
     func toDomain() -> MapPage {
         let maps = maps
             .map {

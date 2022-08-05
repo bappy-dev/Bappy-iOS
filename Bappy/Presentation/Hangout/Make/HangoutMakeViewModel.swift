@@ -265,11 +265,11 @@ final class HangoutMakeViewModel: ViewModelType {
         let result = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
             .filter { $0.0 + 1 == $0.1 }
-            .withLatestFrom(
-                Observable.combineLatest(key$, place$.compactMap { $0 })
-            ) { ($1.0, $1.1.coordinates.latitude, $1.1.coordinates.longitude) }
+            .withLatestFrom(Observable.combineLatest(
+                key$, place$.compactMap { $0.map(\.coordinates) }
+            ))
             .do { [weak self] _ in self?.showLoader$.onNext(true) }
-            .map(dependency.googleMapImageRepository.fetchMapImage)
+            .map(dependency.googleMapImageRepository.fetchMapImageData)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .flatMap { $0 }
             .share()
@@ -278,13 +278,14 @@ final class HangoutMakeViewModel: ViewModelType {
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
-        let value = result
+
+        let mapImage = result
             .compactMap(getValue)
+            .map(UIImage.init)
             .share()
         
         // 행아웃 Preview 모드
-        value
+        mapImage
             .withLatestFrom(Observable.combineLatest(
                 currentUser$, hangout, picture$.compactMap { $0 }
             )) { mapImage, element -> HangoutDetailViewModel in

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit.UIImage
 
 enum ContentType {
     case urlencoded, multipart, none
@@ -18,7 +17,7 @@ protocol Requestable {
     var method: HttpMethod { get }
     var queryParameters: Encodable? { get }
     var bodyParameters: Encodable? { get }
-    var images: [UIImage]? { get }
+    var imageDatas: [Data]? { get }
     var headers: [String: String]? { get }
     var contentType: ContentType { get }
     var sampleData: Data? { get }
@@ -108,9 +107,8 @@ extension Requestable {
             }
         }
         
-        if let images = images, !images.isEmpty {
-            for image in images {
-                guard let imageData = image.jpegData(compressionQuality: 1.0) else { continue }
+        if let imageDatas = imageDatas, !imageDatas.isEmpty {
+            for imageData in imageDatas {
                 data.append(convertFileData(fieldName: "file",
                                             fileName: "\(UUID().uuidString).jpg",
                                             mimeType: "image/jpg",

@@ -6,18 +6,17 @@
 //
 
 import Foundation
-import UIKit.UIImage
 
 // MARK: - User
 struct APIEndpoints {
-    static func getCurrentUser() -> Endpoint<CurrentUserResponseDTO> {
+    static func fetchCurrentUser() -> Endpoint<FetchCurrentUserResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "auth/login",
             method: .get)
     }
     
-    static func getBappyUser(with userProfileRequestDTO: BappyUserRequestDTO) -> Endpoint<BappyUserResponseDTO> {
+    static func fetchUserProfile(with userProfileRequestDTO: FetchProfileRequestDTO) -> Endpoint<FetchProfileResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "auth/login",
@@ -34,17 +33,17 @@ struct APIEndpoints {
             contentType: .multipart)
     }
     
-    static func updateProfile(with updateProfileRequestDTO: UpdateProfileRequestDTO, image: UIImage?) -> Endpoint<UpdateProfileResponseDTO> {
+    static func updateProfile(with updateProfileRequestDTO: UpdateProfileRequestDTO, data: Data?) -> Endpoint<UpdateProfileResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "user",
             method: .put,
             bodyParameters: updateProfileRequestDTO,
-            images: image.map { [$0] },
+            imageDatas: data.map { [$0] },
             contentType: .multipart)
     }
     
-    static func updateGPSSetting(with gpsSettingRequestDTO: GPSSettingRequestDTO) -> Endpoint<GPSSettingResponseDTO> {
+    static func updateGPSSetting(with gpsSettingRequestDTO: UpdateGPSSettingRequestDTO) -> Endpoint<UpdateGPSSettingResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "place/gps",
@@ -52,11 +51,20 @@ struct APIEndpoints {
             bodyParameters: gpsSettingRequestDTO,
             contentType: .urlencoded)
     }
+    
+    static func updateFCMToken(with updateFCMTokenRequestDTO: UpdateFCMTokenRequestDTO) -> Endpoint<UpdateFCMTokenResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/fcmToken",
+            method: .put,
+            bodyParameters: updateFCMTokenRequestDTO,
+            contentType: .urlencoded)
+    }
 }
     
 // MARK: - Map
 extension APIEndpoints {
-    static func searchGoogleMapList(with mapsRequestDTO: MapsRequestDTO) -> Endpoint<MapsResponseDTO> {
+    static func searchGoogleMapList(with mapsRequestDTO: FetchMapsRequestDTO) -> Endpoint<FetchMapsResponseDTO> {
         return Endpoint(
             baseURL: GOOGLE_MAP_API_BASEURL,
             path: "maps/api/place/textsearch/json?",
@@ -64,7 +72,7 @@ extension APIEndpoints {
             queryParameters: mapsRequestDTO)
     }
     
-    static func searchGoogleMapNextList(with mapsRequestDTO: MapsNextRequestDTO) -> Endpoint<MapsResponseDTO> {
+    static func searchGoogleMapNextList(with mapsRequestDTO: FetchMapsNextRequestDTO) -> Endpoint<FetchMapsResponseDTO> {
         return Endpoint(
             baseURL: GOOGLE_MAP_API_BASEURL,
             path: "maps/api/place/textsearch/json?",
@@ -72,7 +80,7 @@ extension APIEndpoints {
             queryParameters: mapsRequestDTO)
     }
     
-    static func getGoogleMapImage(with mapImageRequestDTO: MapImageRequestDTO) -> Endpoint<Data> {
+    static func fetchGoogleMapImage(with mapImageRequestDTO: FetchMapImageRequestDTO) -> Endpoint<Data> {
         return Endpoint(
             baseURL: GOOGLE_MAP_API_BASEURL,
             path: "maps/api/staticmap?",
@@ -82,7 +90,7 @@ extension APIEndpoints {
 }
 // MARK: - Hangout
 extension APIEndpoints {
-    static func getHangouts(with hangoutsRequestDTO: HangoutsRequestDTO) -> Endpoint<HangoutsResponseDTO> {
+    static func fetchHangouts(with hangoutsRequestDTO: FetchHangoutsRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangouts",
@@ -90,13 +98,23 @@ extension APIEndpoints {
             queryParameters: hangoutsRequestDTO)
     }
     
-    static func createHangout(with createHangoutRequestDTO: CreateHangoutRequestDTO, image: UIImage) -> Endpoint<CreateHangoutResponseDTO> {
+    static func createHangout(with createHangoutRequestDTO: CreateHangoutRequestDTO, data: Data) -> Endpoint<CreateHangoutResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangout",
             method: .post,
             bodyParameters: createHangoutRequestDTO,
-            images: [image],
+            imageDatas: [data],
+            contentType: .multipart)
+    }
+    
+    static func reportHangout(with reportHangoutRequestDTO: ReportHangoutRequestDTO, datas: [Data]?) -> Endpoint<ReportHangoutResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "report",
+            method: .post,
+            bodyParameters: reportHangoutRequestDTO,
+            imageDatas: datas,
             contentType: .multipart)
     }
 }

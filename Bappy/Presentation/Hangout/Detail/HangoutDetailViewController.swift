@@ -87,8 +87,8 @@ final class HangoutDetailViewController: UIViewController {
     
     // MARK: Helpers
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
-        guard let navigationController = navigationController as? BappyNavigationViewController else { return }
-        navigationController.statusBarStyle = statusBarStyle
+        let navigationController = navigationController?.tabBarController?.navigationController as? BappyNavigationViewController
+        navigationController?.statusBarStyle = statusBarStyle
     }
     
     private func configure() {

@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/07/06.
 //
 
-import UIKit
+import Foundation
 import RxSwift
 import RxCocoa
 
@@ -105,9 +105,32 @@ extension DefaultHangoutRepository: HangoutRepository {
         }
     }
     
-    func createHangout(hangout: Hangout) -> Single<Result<Bool, Error>> {
-//        let requestDTO = CreateHangoutRequestDTO()
-//        let endpoint = APIEndpoints.createHangout(with: requestDTO, image: picture)
+    func createHangout(hangout: Hangout, imageData: Data) -> Single<Result<Bool, Error>> {
+        let requestDTO = CreateHangoutRequestDTO()
+        let endpoint = APIEndpoints.createHangout(with: requestDTO, data: imageData)
+        return provider.request(with: endpoint)
+            .map { result -> Result<Bool, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    return .success(responseDTO.toDomain())
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+//        return Single<Result<Bool, Error>>.create { single in
+//            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+//                single(.success(.success(true)))
+//            }
+//            return Disposables.create()
+//        }
+    }
+    
+    func reportHangout(hangoutID: String, reportType: String, detail: String, imageDatas: [Data]?) -> Single<Result<Bool, Error>> {
+//        let requestDTO = ReportHangoutRequestDTO(
+//            hangoutID: hangoutID,
+//            reportTitle: reportType,
+//            reportDetail: detail)
+//        let endpoint = APIEndpoints.reportHangout(with: requestDTO, datas: imageDatas)
 //        return provider.request(with: endpoint)
 //            .map { result -> Result<Bool, Error> in
 //                switch result {

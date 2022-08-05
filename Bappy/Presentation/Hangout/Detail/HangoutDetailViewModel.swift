@@ -93,6 +93,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let isUserParticipating$: BehaviorSubject<Bool>
     private let currentUser$: BehaviorSubject<BappyUser>
     private let hangout$: BehaviorSubject<Hangout>
+    private let postImage$: BehaviorSubject<UIImage?>
     private let reasonsForReport$ = BehaviorSubject<[String]?>(value: nil)
     
     private let backButtonTapped$ = PublishSubject<Void>()
@@ -147,6 +148,7 @@ final class HangoutDetailViewModel: ViewModelType {
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
         let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
+        let postImage$ = BehaviorSubject<UIImage?>(value: dependency.postImage)
         
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
@@ -180,10 +182,11 @@ final class HangoutDetailViewModel: ViewModelType {
         let showReportView = reportButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 != .create }
-            .withLatestFrom(reasonsForReport$)
-            .compactMap { reasons -> ReportViewModel? in
-                guard let reasons = reasons else { return nil }
-                let dependency = ReportViewModel.Dependency(dropdownList: reasons)
+            .withLatestFrom(hangout$.map(\.id))
+            .withLatestFrom(reasonsForReport$) { id, list -> ReportViewModel? in
+                guard let list = list else { return nil }
+                let dependency = ReportViewModel.Dependency(
+                    hangoutID: id, dropdownList: list)
                 return ReportViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
@@ -226,6 +229,7 @@ final class HangoutDetailViewModel: ViewModelType {
         self.isUserParticipating$ = isUserParticipating$
         self.currentUser$ = currentUser$
         self.hangout$ = hangout$
+        self.postImage$ = postImage$
         
         // Cancel 버튼이 눌러졌을 때..
         hangoutButtonTapped$
@@ -253,7 +257,9 @@ final class HangoutDetailViewModel: ViewModelType {
         let createResult = hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .create }
-            .withLatestFrom(hangout$)
+            .withLatestFrom(Observable.combineLatest(
+                hangout$, postImage$.compactMap { $0?.jpegData(compressionQuality: 1.0) }
+            ))
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap(dependency.hangoutRepository.createHangout)
             .do { [weak self] _ in self?.showYellowLoader$.onNext(false) }
@@ -292,7 +298,7 @@ final class HangoutDetailViewModel: ViewModelType {
             .filter { $1.state == .normal }
             .map(\.0)
             .do { [weak self] _ in self?.showTranscluentLoader$.onNext(true) }
-            .flatMap(dependency.userProfileRepository.fetchBappyUser)
+            .flatMap(dependency.userProfileRepository.fetchUserProfile)
             .do { [weak self] _ in self?.showTranscluentLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()

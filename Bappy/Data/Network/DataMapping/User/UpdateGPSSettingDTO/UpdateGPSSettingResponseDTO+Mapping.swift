@@ -1,13 +1,13 @@
 //
-//  UpdateProfileResponseDTO+Mapping.swift
+//  UpdateGPSSettingResponseDTO+Mapping.swift
 //  Bappy
 //
-//  Created by 정동천 on 2022/08/01.
+//  Created by 정동천 on 2022/07/13.
 //
 
 import Foundation
 
-struct UpdateProfileResponseDTO: Decodable {
+struct UpdateGPSSettingResponseDTO: Decodable {
     
     let hasUpdated: Bool
     
@@ -16,7 +16,7 @@ struct UpdateProfileResponseDTO: Decodable {
     }
 }
 
-extension UpdateProfileResponseDTO {
+extension UpdateGPSSettingResponseDTO {
     func toDomain() -> Bool {
         return hasUpdated
     }

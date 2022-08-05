@@ -78,7 +78,7 @@ extension SceneDelegate {
                                   animated: Bool = false,
                                   completion: ((UINavigationController?) -> Void)? = nil) {
         let naviRootViewController = BappyTabBarController(viewModel: viewModel)
-        let viewController = UINavigationController(rootViewController: naviRootViewController)
+        let viewController = BappyNavigationViewController(rootViewController: naviRootViewController)
         viewController.navigationBar.isHidden = true
         self.window?.rootViewController = viewController
         window?.makeKeyAndVisible()

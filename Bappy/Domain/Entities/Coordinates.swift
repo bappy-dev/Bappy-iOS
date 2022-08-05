@@ -5,9 +5,9 @@
 //  Created by 정동천 on 2022/06/27.
 //
 
-import UIKit
+import Foundation
 
 struct Coordinates {
-    let latitude: CGFloat
-    let longitude: CGFloat
+    let latitude: Double
+    let longitude: Double
 }

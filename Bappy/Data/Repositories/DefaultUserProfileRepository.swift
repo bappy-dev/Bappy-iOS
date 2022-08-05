@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/28.
 //
 
-import UIKit
+import Foundation
 import RxSwift
 import RxCocoa
 
@@ -19,9 +19,9 @@ final class DefaultUserProfileRepository {
 }
 
 extension DefaultUserProfileRepository: UserProfileRepository {
-    func fetchBappyUser(id: String) -> Single<Result<BappyUser, Error>> {
-//        let requestDTO = BappyUserRequestDTO(id: id)
-//        let endpoint = APIEndpoints.getBappyUser(with: requestDTO)
+    func fetchUserProfile(id: String) -> Single<Result<BappyUser, Error>> {
+//        let requestDTO = FetchProfileRequestDTO(id: id)
+//        let endpoint = APIEndpoints.fetchUserProfile(with: requestDTO)
 //        return  provider.request(with: endpoint)
 //            .map { result -> Result<BappyUser, Error> in
 //                switch result {
@@ -49,11 +49,11 @@ extension DefaultUserProfileRepository: UserProfileRepository {
                 numOfJoinedHangouts: 3,
                 numOfMadeHangouts: 5,
                 numOfLikedHangouts: 10)
-            
+
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
                 single(.success(.success(user)))
             }
-            
+
             return Disposables.create()
         }
     }

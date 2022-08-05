@@ -89,13 +89,9 @@ final class ReportWritingSectionView: UIView {
         return label
     }()
     
-    private let dropdownView: BappyDropdownView
-    
     // MARK: Lifecycle
     init(viewModel: ReportWritingSectionViewModel) {
-        let dropdownViewModel = viewModel.subViewModels.dropdownViewModel
         self.viewModel = viewModel
-        self.dropdownView = BappyDropdownView(viewModel: dropdownViewModel)
         super.init(frame: .zero)
         
         configure()
@@ -107,38 +103,9 @@ final class ReportWritingSectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func didTextChange() {
-        reportingDetailPlaceholderLabel.isHidden = !reportingDetailTextView.text.isEmpty
-    }
-    
     // MARK: Helpers
-    private func openDropdown() {
-        UIView.animate(withDuration: 0.3) {
-            self.dropdownView.snp.updateConstraints {
-                $0.height.equalTo(175.0)
-            }
-            self.layoutIfNeeded()
-        }
-    }
-    
-    func closeDropdown() {
-        UIView.animate(withDuration: 0.3) {
-            self.dropdownView.snp.updateConstraints {
-                $0.height.equalTo(0)
-            }
-            self.layoutIfNeeded()
-        }
-    }
-    
     private func configure() {
         self.backgroundColor = .white
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didTextChange),
-            name: UITextView.textDidChangeNotification,
-            object: nil)
     }
     
     private func layout() {
@@ -196,14 +163,6 @@ final class ReportWritingSectionView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalToSuperview().inset(8.0)
         }
-        
-        self.addSubview(dropdownView)
-        dropdownView.snp.makeConstraints {
-            $0.top.equalTo(reportingTypeBackgroundView.snp.bottom).offset(5.0)
-            $0.leading.equalToSuperview().inset(26.0)
-            $0.trailing.equalToSuperview().inset(44.0)
-            $0.height.equalTo(0)
-        }
     }
 }
 
@@ -222,15 +181,8 @@ extension ReportWritingSectionView {
             .bind(to: viewModel.input.detailText)
             .disposed(by: disposeBag)
         
-        viewModel.output.openDropdown
-            .emit(onNext: { [weak self] _ in self?.openDropdown() })
-            .disposed(by: disposeBag)
         
-        viewModel.output.closeDropdown
-            .emit(onNext: { [weak self] _ in self?.closeDropdown() })
-            .disposed(by: disposeBag)
-        
-        viewModel.output.dropdownText
+        viewModel.output.reportingType
             .emit(to: reportingTypeTextField.rx.text)
             .disposed(by: disposeBag)
         

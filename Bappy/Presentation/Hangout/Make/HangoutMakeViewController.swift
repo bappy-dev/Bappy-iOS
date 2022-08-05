@@ -290,7 +290,8 @@ extension HangoutMakeViewController {
                             return
                         }
                         if let photo = items.singlePhoto {
-                            self.viewModel.input.picture.onNext(photo.modifiedImage)
+                            let edittedImage = photo.modifiedImage?.downSize(newWidth: 1000)
+                            self.viewModel.input.picture.onNext(edittedImage)
                         }
                         picker.dismiss(animated: true)
                     }

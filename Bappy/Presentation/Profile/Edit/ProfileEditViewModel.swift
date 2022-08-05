@@ -167,9 +167,9 @@ final class ProfileEditViewModel: ViewModelType {
                 edittedLanguages$,
                 edittedPersonalities$,
                 edittedInterests$,
-                edittedImage$
+                edittedImage$.map { $0.flatMap { $0.jpegData(compressionQuality: 1.0) } }
             ))
-            .filter { $0.0 != nil || $0.1 != nil || $0.2 != nil || $0.3 != nil || $0.4 != nil || $0.5 != nil }
+            .filter(shouldBeUpdate)
             .do { [weak self] _ in self?.showLoader$.onNext(true) }
             .flatMap(dependency.bappyAuthRepository.updateProfile)
             .observe(on: MainScheduler.asyncInstance)
@@ -180,7 +180,7 @@ final class ProfileEditViewModel: ViewModelType {
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         let userResult = edittingResult
             .compactMap(getValue)
             .map { _ in }
@@ -188,12 +188,12 @@ final class ProfileEditViewModel: ViewModelType {
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
-        
+
         userResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         userResult
             .compactMap(getValue)
             .map { user -> BappyTabBarViewModel in
@@ -245,6 +245,10 @@ final class ProfileEditViewModel: ViewModelType {
             .emit(to: input.edittedInterests)
             .disposed(by: disposeBag)
     }
+}
+
+private func shouldBeUpdate(first: Any?, second: Any?, third: Any?, fourth: Any?, fifth: Any?, sixth: Any?) -> Bool {
+    return first != nil || second != nil || third != nil ||  fourth != nil || fifth != nil ||  sixth != nil
 }
 
 // MARK: - ProfileLanguageViewModelDelegate

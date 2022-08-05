@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/08.
 //
 
-import UIKit
+import Foundation
 
 struct Map: Equatable, Identifiable {
     typealias Identifier = String

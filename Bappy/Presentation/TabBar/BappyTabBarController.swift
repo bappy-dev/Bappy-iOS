@@ -79,11 +79,11 @@ final class BappyTabBarController: UITabBarController {
     
     private func configureViewController(homeListViewModel: HomeListViewModel, profileViewModel: ProfileViewModel) {
         let homeListRootViewController = HomeListViewController(viewModel: homeListViewModel)
-        let homeListViewController = BappyNavigationViewController(rootViewController: homeListRootViewController)
+        let homeListViewController = UINavigationController(rootViewController: homeListRootViewController)
         homeListViewController.navigationBar.isHidden = true
         
         let profileRootViewController = ProfileViewController(viewModel: profileViewModel)
-        let profileViewController = BappyNavigationViewController(rootViewController:  profileRootViewController)
+        let profileViewController = UINavigationController(rootViewController:  profileRootViewController)
         profileViewController.navigationBar.isHidden = true
         
         viewControllers = [homeListViewController, profileViewController]

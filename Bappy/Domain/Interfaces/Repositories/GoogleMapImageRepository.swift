@@ -5,9 +5,9 @@
 //  Created by 정동천 on 2022/06/27.
 //
 
-import UIKit
+import Foundation
 import RxSwift
 
 protocol GoogleMapImageRepository {
-    func fetchMapImage(param: (key: String, latitude: CGFloat, longitude: CGFloat)) -> Single<Result<UIImage?, Error>>
+    func fetchMapImageData(key: String, coordinates: Coordinates) -> Single<Result<Data, Error>>
 }

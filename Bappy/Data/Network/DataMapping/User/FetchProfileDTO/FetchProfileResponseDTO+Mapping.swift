@@ -1,5 +1,5 @@
 //
-//  UserProfileResponseDTO+Mapping.swift
+//  FetchProfileResponseDTO+Mapping.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/28.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BappyUserResponseDTO: Decodable {
+struct FetchProfileResponseDTO: Decodable {
     
     let user: UserDTO
     
@@ -16,7 +16,7 @@ struct BappyUserResponseDTO: Decodable {
     }
 }
 
-extension BappyUserResponseDTO {
+extension FetchProfileResponseDTO {
     struct UserDTO: Decodable {
         let id: String?
         let name: String?
@@ -48,7 +48,7 @@ extension BappyUserResponseDTO {
     }
 }
 
-extension BappyUserResponseDTO {
+extension FetchProfileResponseDTO {
     func toDomain() -> BappyUser {
         let profileImageURL = user.profileImageFilename
             .flatMap { URL(string: "\(BAPPY_API_BASEURL)static-file/\($0)") }

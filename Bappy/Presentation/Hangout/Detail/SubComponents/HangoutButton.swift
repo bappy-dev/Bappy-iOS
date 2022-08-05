@@ -42,7 +42,7 @@ final class HangoutButton: UIButton {
             self.isEnabled = true
             
         case .expired, .closed:
-            self.backgroundColor = .bappyLightgray
+            self.backgroundColor = .bappyGray.withAlphaComponent(0.15)
             self.setBappyTitle(
                 title: state.rawValue.uppercased(),
                 font: .roboto(size: 28.0, family: .Bold),

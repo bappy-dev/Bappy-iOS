@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/28.
 //
 
-import UIKit
+import Foundation
 import RxSwift
 import RxCocoa
 
@@ -23,7 +23,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     var currentUser: BehaviorSubject<BappyUser?> { currentUser$ }
     
     func fetchCurrentUser() -> Single<Result<BappyUser, Error>> {
-        let endpoint = APIEndpoints.getCurrentUser()
+        let endpoint = APIEndpoints.fetchCurrentUser()
         return  provider.request(with: endpoint)
             .map { [weak self] result -> Result<BappyUser, Error> in
                 switch result {
@@ -51,7 +51,6 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                personalities: [.Empathatic, .Talkative, .Spontaneous],
 //                interests: [.Culture, .Travel, .Language]
 //            )
-////            let user = BappyUser(id: UUID().uuidString, state: .notRegistered)
 //            self.currentUser$.onNext(user)
 //
 //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
@@ -120,7 +119,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
                        languages: [Language]?,
                        personalities: [Persnoality]?,
                        interests: [Hangout.Category]?,
-                       image: UIImage?) -> Single<Result<Bool, Error>> {
+                       data: Data?) -> Single<Result<Bool, Error>> {
         let languages = languages
             .map { $0.joined(separator: ",") }
         let interests = interests
@@ -133,7 +132,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             userLanguages: languages,
             userInterests: interests,
             userPersonalities: personalities)
-        let endpoint = APIEndpoints.updateProfile(with: requestDTO, image: image)
+        let endpoint = APIEndpoints.updateProfile(with: requestDTO, data: data)
         return  provider.request(with: endpoint)
             .map { result -> Result<Bool, Error> in
                 switch result {
@@ -147,7 +146,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     }
     
     func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>> {
-        let requestDTO = GPSSettingRequestDTO(gps: setting)
+        let requestDTO = UpdateGPSSettingRequestDTO(gps: setting)
         let endpoint = APIEndpoints.updateGPSSetting(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { [weak self] result -> Result<Bool, Error> in
@@ -184,35 +183,45 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //        }
     }
     
+    func updateFCMToken(_ fcmToken: String) -> Single<Result<Bool, Error>> {
+        let requestDTO = UpdateFCMTokenRequestDTO(fcmToken: fcmToken)
+        let endpoint = APIEndpoints.updateFCMToken(with: requestDTO)
+        return  provider.request(with: endpoint)
+            .map { result -> Result<Bool, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    return .success(responseDTO.toDomain())
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
+    
     func fetchUserLocations() -> Single<Result<[Location], Error>> {
         return Single<Result<[Location], Error>>.create { single in
             let locations = [
                 Location(
                     name: "Centum Station",
                     address: "210 Haeun-daero, Haeundae-gu, Busan, South Korea",
-                    latitude: 35.179495,
-                    longitude: 129.124544,
+                    coordinates: Coordinates(latitude: 35.179495, longitude: 129.124544),
                     isSelected: false
                 ),
                 Location(
                     name: "Pusan National University",
                     address: "2 Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan, South Korea",
-                    latitude: 35.2339681,
-                    longitude: 129.0806855,
+                    coordinates: Coordinates(latitude: 35.2339681, longitude: 129.0806855),
                     isSelected: true
                 ),
                 Location(
                     name: "Dongseong-ro",
                     address: "Dongseong-ro, Jung-gu, Daegu, South Korea",
-                    latitude: 35.8715163,
-                    longitude: 128.5959431,
+                    coordinates: Coordinates(latitude: 35.8715163, longitude: 128.5959431),
                     isSelected: false
                 ),
                 Location(
                     name: "Pangyo-dong",
                     address: "Pangyo-dong, Bundang-gu, Seongnam-si, Gyeonggi-do, South Korea",
-                    latitude: 37.3908894,
-                    longitude: 127.0967915,
+                    coordinates: Coordinates(latitude: 37.3908894, longitude: 127.0967915),
                     isSelected: false
                 ),
             ]

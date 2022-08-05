@@ -1,5 +1,5 @@
 //
-//  MapImageRequestDTO+Mapping.swift
+//  FetchMapImageRequestDTO+Mapping.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/27.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MapImageRequestDTO: Encodable {
+struct FetchMapImageRequestDTO: Encodable {
     let key: String
     let size: String
     let zoom: String

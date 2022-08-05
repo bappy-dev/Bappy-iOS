@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/13.
 //
 
-import UIKit
+import Foundation
 
 enum Gender: String { case Male, Female, Other }
 enum UserState { case normal, anonymous, notRegistered, abuser }

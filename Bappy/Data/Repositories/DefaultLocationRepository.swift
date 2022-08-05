@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/07/10.
 //
 
-import UIKit
+import Foundation
 import RxSwift
 import RxCocoa
 import CoreLocation
