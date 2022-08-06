@@ -187,16 +187,16 @@ extension ProfileButtonSectionView {
             .bind(to: viewModel.input.likedButtonTapped)
             .disposed(by: disposeBag)
         
-        viewModel.output.numOfJoined
-            .emit(to: numOfjoinedLabel.rx.text)
+        viewModel.output.numOfJoinedHangouts
+            .drive(numOfjoinedLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.numOfMade
-            .emit(to: numOfMadeLabel.rx.text)
+        viewModel.output.numOfMadeHangouts
+            .drive(numOfMadeLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.numOfLiked
-            .emit(to: numOfLikedLabel.rx.text)
+        viewModel.output.numOfLikedHangouts
+            .drive(numOfLikedLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.selectedIndex

@@ -44,12 +44,12 @@ final class ProfileHangoutHolderView: UIView {
         
         let vStackView = UIStackView(arrangedSubviews: arrangedSubviews)
         vStackView.axis = .vertical
-        vStackView.spacing = 11.0
+        vStackView.spacing = 18.0
         vStackView.distribution = .fillEqually
         
         self.addSubview(vStackView)
         vStackView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(15.0)
+            $0.top.bottom.equalToSuperview().inset(9.0)
             $0.leading.equalToSuperview().inset(7.0)
             $0.trailing.equalToSuperview().inset(13.0)
         }

@@ -49,7 +49,7 @@ final class NoHangoutsView: UIView {
         self.addSubview(bappyImageView)
         bappyImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(70.0)
-            $0.leading.trailing.equalToSuperview().inset(70.0)
+            $0.leading.trailing.lessThanOrEqualToSuperview().inset(70.0)
         }
         
         self.addSubview(messageLabel)

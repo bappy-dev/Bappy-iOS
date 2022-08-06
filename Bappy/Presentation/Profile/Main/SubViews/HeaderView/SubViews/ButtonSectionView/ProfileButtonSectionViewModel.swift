@@ -15,17 +15,19 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     
     struct Input {
         var selectedIndex: AnyObserver<Int> // <-> Parent
-        var user: AnyObserver<BappyUser?> // <-> Parent
+        var numOfJoinedHangouts: AnyObserver<Int?> // <-> Parent
+        var numOfMadeHangouts: AnyObserver<Int?> // <-> Parent
+        var numOfLikedHangouts: AnyObserver<Int?> // <-> Parent
         var joinedButtonTapped: AnyObserver<Void> // <-> View
         var madeButtonTapped: AnyObserver<Void> // <-> View
         var likedButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
-        var numOfJoined: Signal<String> // <-> View
-        var numOfMade: Signal<String> // <-> View
-        var numOfLiked: Signal<String> // <-> View
         var selectedIndex: Signal<Int> // <-> View
+        var numOfJoinedHangouts: Driver<String> // <-> View
+        var numOfMadeHangouts: Driver<String> // <-> View
+        var numOfLikedHangouts: Driver<String> // <-> View
         var selectedButtonIndex: Signal<Int> // <-> Parent
     }
     
@@ -35,7 +37,9 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     let output: Output
     
     private let selectedIndex$ = PublishSubject<Int>()
-    private let user$ = BehaviorSubject<BappyUser?>(value: nil)
+    private let numOfJoinedHangouts$ = BehaviorSubject<Int?>(value: nil)
+    private let numOfMadeHangouts$ = BehaviorSubject<Int?>(value: nil)
+    private let numOfLikedHangouts$ = BehaviorSubject<Int?>(value: nil)
     private let joinedButtonTapped$ = PublishSubject<Void>()
     private let madeButtonTapped$ = PublishSubject<Void>()
     private let likedButtonTapped$ = PublishSubject<Void>()
@@ -44,27 +48,20 @@ final class ProfileButtonSectionViewModel: ViewModelType {
         self.dependency = dependency
         
         // MARK: Streams
-        
-        let numOfJoined = user$
-            .compactMap { $0 }
-            .map(\.numOfJoinedHangouts)
-            .map { $0 ?? 0}
-            .map(String.init)
-            .asSignal(onErrorJustReturn: "0")
-        let numOfMade = user$
-            .compactMap { $0 }
-            .map(\.numOfMadeHangouts)
-            .map { $0 ?? 0}
-            .map(String.init)
-            .asSignal(onErrorJustReturn: "0")
-        let numOfLiked = user$
-            .compactMap { $0 }
-            .map(\.numOfLikedHangouts)
-            .map { $0 ?? 0}
-            .map(String.init)
-            .asSignal(onErrorJustReturn: "0")
         let selectedIndex = selectedIndex$
             .asSignal(onErrorJustReturn: 0)
+        let numOfJoinedHangouts = numOfJoinedHangouts$
+            .map { $0 ?? 0 }
+            .map(String.init)
+            .asDriver(onErrorJustReturn: "0")
+        let numOfMadeHangouts = numOfMadeHangouts$
+            .map { $0 ?? 0 }
+            .map(String.init)
+            .asDriver(onErrorJustReturn: "0")
+        let numOfLikedHangouts = numOfLikedHangouts$
+            .map { $0 ?? 0 }
+            .map(String.init)
+            .asDriver(onErrorJustReturn: "0")
         let selectedButtonIndex = Observable
             .merge(
                 joinedButtonTapped$.map { 0 },
@@ -76,17 +73,19 @@ final class ProfileButtonSectionViewModel: ViewModelType {
         // MARK: Input & Output
         self.input = Input(
             selectedIndex: selectedIndex$.asObserver(),
-            user: user$.asObserver(),
+            numOfJoinedHangouts: numOfJoinedHangouts$.asObserver(),
+            numOfMadeHangouts: numOfMadeHangouts$.asObserver(),
+            numOfLikedHangouts: numOfLikedHangouts$.asObserver(),
             joinedButtonTapped: joinedButtonTapped$.asObserver(),
             madeButtonTapped: madeButtonTapped$.asObserver(),
             likedButtonTapped: likedButtonTapped$.asObserver()
         )
         
         self.output = Output(
-            numOfJoined: numOfJoined,
-            numOfMade: numOfMade,
-            numOfLiked: numOfLiked,
             selectedIndex: selectedIndex,
+            numOfJoinedHangouts: numOfJoinedHangouts,
+            numOfMadeHangouts: numOfMadeHangouts,
+            numOfLikedHangouts: numOfLikedHangouts,
             selectedButtonIndex: selectedButtonIndex
         )
         

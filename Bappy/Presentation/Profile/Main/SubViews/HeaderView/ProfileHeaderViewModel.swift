@@ -21,6 +21,9 @@ final class ProfileHeaderViewModel: ViewModelType {
     
     struct Input {
         var selectedIndex: AnyObserver<Int> // <-> Parent
+        var numOfJoinedHangouts: AnyObserver<Int?> // <-> Parent
+        var numOfMadeHangouts: AnyObserver<Int?> // <-> Parent
+        var numOfLikedHangouts: AnyObserver<Int?> // <-> Parent
         var user: AnyObserver<BappyUser?> // <-> Parent
         var moreButtonTapped: AnyObserver<Void> // <-> View
         var selectedButtonIndex: AnyObserver<Int> // <-> Child
@@ -33,8 +36,10 @@ final class ProfileHeaderViewModel: ViewModelType {
         var genderAndBirth: Signal<String?> // <-> View
         var moreButtonTapped: Signal<Void> // <-> Parent
         var selectedButtonIndex: Signal<Int> // <-> Parent
-        var user: Signal<BappyUser?> // <-> Child
         var selectedIndex: Signal<Int> // <-> Child
+        var numOfJoinedHangouts: Driver<Int?> // <-> Child
+        var numOfMadeHangouts: Driver<Int?> // <-> Child
+        var numOfLikedHangouts: Driver<Int?> // <-> Child
     }
     
     let dependency: Dependency
@@ -44,6 +49,9 @@ final class ProfileHeaderViewModel: ViewModelType {
     let output: Output
    
     private let selectedIndex$ = PublishSubject<Int>()
+    private let numOfJoinedHangouts$ = BehaviorSubject<Int?>(value: nil)
+    private let numOfMadeHangouts$ = BehaviorSubject<Int?>(value: nil)
+    private let numOfLikedHangouts$ = BehaviorSubject<Int?>(value: nil)
     private let user$ = BehaviorSubject<BappyUser?>(value: nil)
     private let moreButtonTapped$ = PublishSubject<Void>()
     private let selectedButtonIndex$ = PublishSubject<Int>()
@@ -75,14 +83,24 @@ final class ProfileHeaderViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let selectedButtonIndex = selectedButtonIndex$
             .asSignal(onErrorJustReturn: 0)
-        let user = user$
-            .asSignal(onErrorJustReturn: nil)
         let selectedIndex = selectedIndex$
             .asSignal(onErrorJustReturn: 0)
+        let numOfJoinedHangouts = numOfJoinedHangouts$
+            .skip(1)
+            .asDriver(onErrorJustReturn: nil)
+        let numOfMadeHangouts = numOfMadeHangouts$
+            .skip(1)
+            .asDriver(onErrorJustReturn: nil)
+        let numOfLikedHangouts = numOfLikedHangouts$
+            .skip(1)
+            .asDriver(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
             selectedIndex: selectedIndex$.asObserver(),
+            numOfJoinedHangouts: numOfJoinedHangouts$.asObserver(),
+            numOfMadeHangouts: numOfMadeHangouts$.asObserver(),
+            numOfLikedHangouts: numOfLikedHangouts$.asObserver(),
             user: user$.asObserver(),
             moreButtonTapped: moreButtonTapped$.asObserver(),
             selectedButtonIndex: selectedButtonIndex$.asObserver()
@@ -95,8 +113,10 @@ final class ProfileHeaderViewModel: ViewModelType {
             genderAndBirth: genderAndBirth,
             moreButtonTapped: moreButtonTapped,
             selectedButtonIndex: selectedButtonIndex,
-            user: user,
-            selectedIndex: selectedIndex
+            selectedIndex: selectedIndex,
+            numOfJoinedHangouts: numOfJoinedHangouts,
+            numOfMadeHangouts: numOfMadeHangouts,
+            numOfLikedHangouts: numOfLikedHangouts
         )
         
         // MARK: Bindind
@@ -105,9 +125,16 @@ final class ProfileHeaderViewModel: ViewModelType {
             .emit(to: subViewModels.buttonSectionViewModel.input.selectedIndex)
             .disposed(by: disposeBag)
         
-        output.user
-            .compactMap { $0 }
-            .emit(to: subViewModels.buttonSectionViewModel.input.user)
+        output.numOfJoinedHangouts
+            .drive(subViewModels.buttonSectionViewModel.input.numOfJoinedHangouts)
+            .disposed(by: disposeBag)
+        
+        output.numOfMadeHangouts
+            .drive(subViewModels.buttonSectionViewModel.input.numOfMadeHangouts)
+            .disposed(by: disposeBag)
+        
+        output.numOfLikedHangouts
+            .drive(subViewModels.buttonSectionViewModel.input.numOfLikedHangouts)
             .disposed(by: disposeBag)
         
         subViewModels.buttonSectionViewModel.output.selectedButtonIndex
