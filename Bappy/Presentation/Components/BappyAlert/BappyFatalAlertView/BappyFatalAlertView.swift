@@ -1,5 +1,5 @@
 //
-//  NoInternetConnectionView.swift
+//  BappyFatalAlertView.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/08/02.
@@ -8,11 +8,14 @@
 import UIKit
 import SnapKit
 
-final class NoInternetConnectionView: UIView {
+final class BappyFatalAlertView: UIView {
     
     // MARK: Properties
     private let maxDimmedAlpha: CGFloat = 0.3
     private let dimmedView = UIView()
+    private let alertTitle: String
+    private let alertMessage: String
+    private let actionTitle: String
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -25,7 +28,6 @@ final class NoInternetConnectionView: UIView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "No Internet Connection\n"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 24.0, family: .Medium)
         label.textAlignment = .center
@@ -42,7 +44,6 @@ final class NoInternetConnectionView: UIView {
     
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "\nPlease check your internet\nconnection and try again\n"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 16.0)
         label.textAlignment = .center
@@ -50,9 +51,8 @@ final class NoInternetConnectionView: UIView {
         return label
     }()
     
-    private let retryButtonLabel: UILabel = {
+    private let actionButtonLabel: UILabel = {
         let label = UILabel()
-        label.text = "Retry"
         label.font = .roboto(size: 20.0, family: .Medium)
         label.textColor = .bappyBrown
         label.textAlignment = .center
@@ -60,7 +60,7 @@ final class NoInternetConnectionView: UIView {
         return label
     }()
     
-    private let retryButton: UIButton = {
+    private let actionButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .bappyYellow
         button.layer.cornerRadius = 22.0
@@ -69,7 +69,10 @@ final class NoInternetConnectionView: UIView {
     }()
     
     // MARK: Lifecycle
-    init() {
+    init(title: String, message: String, actionTitle: String) {
+        self.alertTitle = title
+        self.alertMessage = message
+        self.actionTitle = actionTitle
         super.init(frame: UIScreen.main.bounds)
         
         configure()
@@ -114,11 +117,14 @@ final class NoInternetConnectionView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .clear
+        titleLabel.text = alertTitle
+        messageLabel.text = alertMessage
+        actionButtonLabel.text = actionTitle
     }
     
     private func layout() {
         let vArrangedSubviews: [UIView] = [
-            titleLabel, bappyImageView, messageLabel, retryButton
+            titleLabel, bappyImageView, messageLabel, actionButton
         ]
         let vStackView = UIStackView(arrangedSubviews: vArrangedSubviews)
         vStackView.axis = .vertical
@@ -144,8 +150,8 @@ final class NoInternetConnectionView: UIView {
             $0.bottom.equalToSuperview().inset(25.0)
         }
         
-        retryButton.addSubview(retryButtonLabel)
-        retryButtonLabel.snp.makeConstraints {
+        actionButton.addSubview(actionButtonLabel)
+        actionButtonLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalTo(44.0)
         }
@@ -153,9 +159,9 @@ final class NoInternetConnectionView: UIView {
 }
 
 // MARK: - Methods
-extension NoInternetConnectionView {
+extension BappyFatalAlertView {
     func show(_ handler: (() -> Void)? = nil) {
-        retryButton.addAction(UIAction { [weak self] _ in
+        actionButton.addAction(UIAction { [weak self] _ in
             self?.animateDismissView { handler?() }
         }, for: .touchUpInside)
         

@@ -251,7 +251,7 @@
 		A7A6B01E2845D31600911861 /* HangoutMakeOpenchatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6B01D2845D31600911861 /* HangoutMakeOpenchatView.swift */; };
 		A7A6B0202845D33600911861 /* HangoutMakeLimitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A6B01F2845D33600911861 /* HangoutMakeLimitView.swift */; };
 		A7B64484284625BB00A509AB /* SelectLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B64483284625BB00A509AB /* SelectLanguageViewController.swift */; };
-		A7BEDFAE289891DB0081EE0B /* NoInternetConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BEDFAD289891DB0081EE0B /* NoInternetConnectionView.swift */; };
+		A7BEDFAE289891DB0081EE0B /* BappyFatalAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BEDFAD289891DB0081EE0B /* BappyFatalAlertView.swift */; };
 		A7CE0F98284898B40063458F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A7CE0F97284898B40063458F /* GoogleSignIn */; };
 		A7CE0F9D2848D3F30063458F /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = A7CE0F9C2848D3F30063458F /* FacebookCore */; };
 		A7CE0F9F2848D3F30063458F /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = A7CE0F9E2848D3F30063458F /* FacebookLogin */; };
@@ -529,7 +529,7 @@
 		A7A6B01D2845D31600911861 /* HangoutMakeOpenchatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeOpenchatView.swift; sourceTree = "<group>"; };
 		A7A6B01F2845D33600911861 /* HangoutMakeLimitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeLimitView.swift; sourceTree = "<group>"; };
 		A7B64483284625BB00A509AB /* SelectLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLanguageViewController.swift; sourceTree = "<group>"; };
-		A7BEDFAD289891DB0081EE0B /* NoInternetConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetConnectionView.swift; sourceTree = "<group>"; };
+		A7BEDFAD289891DB0081EE0B /* BappyFatalAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyFatalAlertView.swift; sourceTree = "<group>"; };
 		A7CE0FA1284B37D60063458F /* HomeListTopSubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListTopSubView.swift; sourceTree = "<group>"; };
 		A7CE0FA5284C7E710063458F /* GoogleMap-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleMap-Info.plist"; sourceTree = "<group>"; };
 		A7CE0FA7284C7F010063458F /* Bappy++Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bappy++Bundle.swift"; sourceTree = "<group>"; };
@@ -735,7 +735,6 @@
 				A7F52CED2864AD50002523D4 /* LikeButton */,
 				A7751B00288007A700F23241 /* BappyAlert */,
 				A7E13A5228888CF800413AE2 /* BappyDropdown */,
-				A72964C0289A5F6300970807 /* NoInternetConnection */,
 				A72964C9289A7DDC00970807 /* SuccessView */,
 			);
 			path = Components;
@@ -827,6 +826,31 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
+		A7240D96289EBE45008654A5 /* BappyFatalAlertView */ = {
+			isa = PBXGroup;
+			children = (
+				A7BEDFAD289891DB0081EE0B /* BappyFatalAlertView.swift */,
+			);
+			path = BappyFatalAlertView;
+			sourceTree = "<group>";
+		};
+		A7240D97289EBE52008654A5 /* AlertController */ = {
+			isa = PBXGroup;
+			children = (
+				A7751AFC2880033B00F23241 /* BappyAlertController.swift */,
+				A7751AFE288005E600F23241 /* BappyAlertAction.swift */,
+			);
+			path = AlertController;
+			sourceTree = "<group>";
+		};
+		A7240D98289EBE5A008654A5 /* SignInAlertController */ = {
+			isa = PBXGroup;
+			children = (
+				A7E740FC2891359F00D09EE1 /* SignInAlertController.swift */,
+			);
+			path = SignInAlertController;
+			sourceTree = "<group>";
+		};
 		A72838F32862FCFC00BBBD9C /* Locale */ = {
 			isa = PBXGroup;
 			children = (
@@ -835,14 +859,6 @@
 				A7F52CE1286459CB002523D4 /* SubViews */,
 			);
 			path = Locale;
-			sourceTree = "<group>";
-		};
-		A72964C0289A5F6300970807 /* NoInternetConnection */ = {
-			isa = PBXGroup;
-			children = (
-				A7BEDFAD289891DB0081EE0B /* NoInternetConnectionView.swift */,
-			);
-			path = NoInternetConnection;
 			sourceTree = "<group>";
 		};
 		A72964C1289A651C00970807 /* CreateHangoutDTO */ = {
@@ -1381,9 +1397,9 @@
 		A7751B00288007A700F23241 /* BappyAlert */ = {
 			isa = PBXGroup;
 			children = (
-				A7751AFC2880033B00F23241 /* BappyAlertController.swift */,
-				A7751AFE288005E600F23241 /* BappyAlertAction.swift */,
-				A7E740FC2891359F00D09EE1 /* SignInAlertController.swift */,
+				A7240D96289EBE45008654A5 /* BappyFatalAlertView */,
+				A7240D97289EBE52008654A5 /* AlertController */,
+				A7240D98289EBE5A008654A5 /* SignInAlertController */,
 			);
 			path = BappyAlert;
 			sourceTree = "<group>";
@@ -2508,7 +2524,7 @@
 				A76C211E2843885F00044A34 /* BappyLoginViewController.swift in Sources */,
 				A769CD1D282A947B0086182C /* Extension.swift in Sources */,
 				A73BC9C2287C239000FB9FA9 /* PublicProvider.swift in Sources */,
-				A7BEDFAE289891DB0081EE0B /* NoInternetConnectionView.swift in Sources */,
+				A7BEDFAE289891DB0081EE0B /* BappyFatalAlertView.swift in Sources */,
 				A7A6B01C2845D30300911861 /* HangoutMakeLanguageView.swift in Sources */,
 				A7751AF6287EB58000F23241 /* UpdateGPSSettingRequestDTO+Mapping.swift in Sources */,
 				A76EEEA02854782900A2CFF6 /* LayoutVariable.swift in Sources */,

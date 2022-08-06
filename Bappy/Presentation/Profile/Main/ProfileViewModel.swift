@@ -131,7 +131,6 @@ final class ProfileViewModel: ViewModelType {
         let user = user$
             .asDriver(onErrorJustReturn: nil)
         let selectedIndex = selectedIndex$
-            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: 0)
         let hideHolderView = hideHolderView$
             .asSignal(onErrorJustReturn: true)
@@ -286,6 +285,7 @@ final class ProfileViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         subViewModels.headerViewModel.output.selectedButtonIndex
+            .distinctUntilChanged()
             .emit(to: input.selectedIndex)
             .disposed(by: disposeBag)
     }

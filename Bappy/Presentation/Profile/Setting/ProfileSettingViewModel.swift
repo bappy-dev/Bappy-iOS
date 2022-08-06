@@ -8,7 +8,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import CoreMIDI
 
 final class ProfileSettingViewModel: ViewModelType {
     
@@ -48,13 +47,14 @@ final class ProfileSettingViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let reasonsForWithdrawl$ = BehaviorSubject<[String]?>(value: nil)
-    
     private let backButtonTapped$ = PublishSubject<Void>()
     private let serviceButtonTapped$ = PublishSubject<Void>()
     private let logoutButtonTapped$ = PublishSubject<Void>()
     private let deleteAccountButtonTapped$ = PublishSubject<Void>()
-  
+    
+    private let switchToSignInView$ = PublishSubject<BappyLoginViewModel?>()
+    private let showDeleteAccountView$ = PublishSubject<DeleteAccountViewModel?>()
+    
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
@@ -65,22 +65,9 @@ final class ProfileSettingViewModel: ViewModelType {
         // MARK: Streams
         let showServiceView = serviceButtonTapped$
             .asSignal(onErrorJustReturn: Void())
-        let switchToSignInView = logoutButtonTapped$
-            .map { _ -> BappyLoginViewModel in
-                let dependency = BappyLoginViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository)
-                return BappyLoginViewModel(dependency: dependency)
-            }
+        let switchToSignInView = switchToSignInView$
             .asSignal(onErrorJustReturn: nil)
-        let showDeleteAccountView = deleteAccountButtonTapped$
-            .withLatestFrom(reasonsForWithdrawl$)
-            .compactMap { reasons -> DeleteAccountViewModel? in
-                guard let reasons = reasons else { return nil }
-                let dependency = DeleteAccountViewModel.Dependency(
-                    dropdownList: reasons)
-                return DeleteAccountViewModel(dependency: dependency)
-            }
+        let showDeleteAccountView = showDeleteAccountView$
             .asSignal(onErrorJustReturn: nil)
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
@@ -101,7 +88,25 @@ final class ProfileSettingViewModel: ViewModelType {
         )
         
         // MARK: Bindind
-        let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
+        // 로그아웃 Flow
+        let signOutResult = logoutButtonTapped$
+            .flatMap(dependency.firebaseRepository.signOut)
+            .share()
+        
+        signOutResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        signOutResult
+            .compactMap(getValue)
+            .map { _ in BappyLoginViewModel() }
+            .bind(to: switchToSignInView$)
+            .disposed(by: disposeBag)
+        
+        // 회원탈퇴뷰 탈퇴사유 리스트 FirebaseRemoteConfig로 불러오기
+        let remoteConfigValuesResult = deleteAccountButtonTapped$
+            .withLatestFrom(dependency.firebaseRepository.getRemoteConfigValues())
             .share()
         
         remoteConfigValuesResult
@@ -112,7 +117,12 @@ final class ProfileSettingViewModel: ViewModelType {
         remoteConfigValuesResult
             .compactMap(getValue)
             .map(\.reasonsForWithdrawl)
-            .bind(to: reasonsForWithdrawl$)
+            .map { reasons -> DeleteAccountViewModel? in
+                let dependency = DeleteAccountViewModel.Dependency(
+                    dropdownList: reasons)
+                return DeleteAccountViewModel(dependency: dependency)
+            }
+            .bind(to: showDeleteAccountView$)
             .disposed(by: disposeBag)
         
         // Child(Service)

@@ -18,6 +18,8 @@ final class ProfileTableView: UITableView {
             super.reloadData()
         }
         
+        layoutIfNeeded()
+        
         DispatchQueue.main.async {
             self.contentOffset = offset
         }
