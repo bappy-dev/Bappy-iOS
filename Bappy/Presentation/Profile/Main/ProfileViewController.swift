@@ -20,6 +20,8 @@ final class ProfileViewController: UIViewController {
     private let titleTopView = TitleTopView(title: "Profile", subTitle: "Bappy user")
     private let headerView: ProfileHeaderView
     private let settingButton = UIButton()
+    private let holderView = ProfileHangoutHolderView()
+    private let noHangoutsView = NoHangoutsView()
     
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
@@ -30,8 +32,8 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
-    private let tableView: UITableView = {
-        let tableView = UITableView()
+    private let tableView: ProfileTableView = {
+        let tableView = ProfileTableView()
         tableView.backgroundColor = .bappyLightgray
         tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.rowHeight = 157.0
@@ -74,7 +76,7 @@ final class ProfileViewController: UIViewController {
         
         setStatusBarStyle(statusBarStyle: .darkContent)
     }
-    
+
     // MARK: Helpers
     private func showSignInAlert() {
         self.addChild(signInAlert)
@@ -97,6 +99,7 @@ final class ProfileViewController: UIViewController {
         headerView.frame.size.height = 352.0
         settingButton.setImage(UIImage(named: "profile_setting"), for: .normal)
         settingButton.isHidden = true
+        tableView.tableFooterView = noHangoutsView
     }
     
     private func layout() {
@@ -126,6 +129,12 @@ final class ProfileViewController: UIViewController {
             $0.leading.equalToSuperview().inset(7.3)
             $0.width.height.equalTo(44.0)
         }
+        
+        tableView.addSubview(holderView)
+        holderView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
@@ -142,6 +151,10 @@ extension ProfileViewController {
             .filter { $0.y < 0 }
             .map { CGPoint(x: $0.x, y: 0) }
             .bind(to: tableView.rx.contentOffset)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
             .disposed(by: disposeBag)
         
         settingButton.rx.tap
@@ -162,9 +175,14 @@ extension ProfileViewController {
                     withIdentifier: reuseIdentifier,
                     for: IndexPath(row: row, section: 0)
                 ) as! ProfileHangoutCell
+                cell.bind(with: item)
                 cell.selectionStyle = .none
                 return cell
             }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hideNoHangoutsView
+            .emit(to: noHangoutsView.rx.hide)
             .disposed(by: disposeBag)
         
         viewModel.output.showSettingView
@@ -177,10 +195,20 @@ extension ProfileViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.showDetailView
+        viewModel.output.showProfileDetailView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let viewController = ProfileDetailViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showHangoutDetailView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = HangoutDetailViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .fullScreen
                 viewController.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(viewController, animated: true)
@@ -203,6 +231,11 @@ extension ProfileViewController {
             .emit(onNext: { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hideHolderView
+            .distinctUntilChanged()
+            .emit(to: holderView.rx.isHidden)
             .disposed(by: disposeBag)
     }
 }

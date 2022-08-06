@@ -25,7 +25,6 @@ final class ProfileHangoutCell: UITableViewCell {
         label.font = .roboto(size: 22.0, family: .Bold)
         label.textColor = .bappyBrown
         label.lineBreakMode = .byTruncatingTail
-        label.text = "Who wants to go eat?"
         return label
     }()
     
@@ -68,6 +67,19 @@ final class ProfileHangoutCell: UITableViewCell {
         return imageView
     }()
     
+    private let disabledView: UIView = {
+        let disabledView = UIView()
+        disabledView.backgroundColor = UIColor(white: 0.5, alpha: 0.3)
+        return disabledView
+    }()
+    
+    private let disabledImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.backgroundColor = .clear
+        return imageView
+    }()
+    
     private let frameView = UIView()
     
     // MARK: Lifecycle
@@ -88,6 +100,7 @@ final class ProfileHangoutCell: UITableViewCell {
         contentView.backgroundColor = .clear
         frameView.backgroundColor = .white
         frameView.layer.cornerRadius = 9.0
+        frameView.clipsToBounds = true
         
         postImageView.kf.setImage(with: URL(string: EXAMPLE_IMAGE3_URL))
     }
@@ -148,6 +161,31 @@ final class ProfileHangoutCell: UITableViewCell {
             $0.leading.equalTo(postImageView.snp.trailing).offset(9.7)
             $0.width.equalTo(131.0)
             $0.height.equalTo(26.0)
+        }
+        
+        frameView.addSubview(disabledView)
+        disabledView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        disabledView.addSubview(disabledImageView)
+        disabledImageView.snp.makeConstraints {
+            $0.edges.equalTo(postImageView).inset(10.0)
+        }
+    }
+}
+
+// MARK: - Bind
+extension ProfileHangoutCell {
+    func bind(with hangout: Hangout) {
+        postImageView.kf.setImage(with: hangout.postImageURL)
+        titleLabel.text = hangout.title
+        timeLabel.text = hangout.meetTime
+        placeLabel.text = hangout.placeName
+        
+        disabledView.isHidden = (hangout.state == .available)
+        if hangout.state != .available {
+            disabledImageView.image = UIImage(named: "hangout_\(hangout.state.rawValue)")
         }
     }
 }

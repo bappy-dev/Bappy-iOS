@@ -11,22 +11,22 @@ import RxCocoa
 
 final class ProfileButtonSectionViewModel: ViewModelType {
     
-    struct Dependency {
-        let user: BappyUser
-    }
+    struct Dependency {}
     
     struct Input {
-        var user: AnyObserver<BappyUser> // <-> Parent
+        var selectedIndex: AnyObserver<Int> // <-> Parent
+        var user: AnyObserver<BappyUser?> // <-> Parent
         var joinedButtonTapped: AnyObserver<Void> // <-> View
         var madeButtonTapped: AnyObserver<Void> // <-> View
         var likedButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
-        var numOfJoined: Driver<String> // <-> View
-        var numOfMade: Driver<String> // <-> View
-        var numOfLiked: Driver<String> // <-> View
-        var selectedIndex: Driver<Int> // <-> View, Parent
+        var numOfJoined: Signal<String> // <-> View
+        var numOfMade: Signal<String> // <-> View
+        var numOfLiked: Signal<String> // <-> View
+        var selectedIndex: Signal<Int> // <-> View
+        var selectedButtonIndex: Signal<Int> // <-> Parent
     }
     
     let dependency: Dependency
@@ -34,39 +34,48 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let user$: BehaviorSubject<BappyUser>
+    private let selectedIndex$ = PublishSubject<Int>()
+    private let user$ = BehaviorSubject<BappyUser?>(value: nil)
     private let joinedButtonTapped$ = PublishSubject<Void>()
     private let madeButtonTapped$ = PublishSubject<Void>()
     private let likedButtonTapped$ = PublishSubject<Void>()
-
-    private let selectedIndex$ = BehaviorSubject<Int>(value: 0)
   
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
-        let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         
         let numOfJoined = user$
+            .compactMap { $0 }
             .map(\.numOfJoinedHangouts)
-            .map { $0 ?? 0 }
+            .map { $0 ?? 0}
             .map(String.init)
-            .asDriver(onErrorJustReturn: "0")
+            .asSignal(onErrorJustReturn: "0")
         let numOfMade = user$
+            .compactMap { $0 }
             .map(\.numOfMadeHangouts)
-            .map { $0 ?? 0 }
+            .map { $0 ?? 0}
             .map(String.init)
-            .asDriver(onErrorJustReturn: "0")
+            .asSignal(onErrorJustReturn: "0")
         let numOfLiked = user$
+            .compactMap { $0 }
             .map(\.numOfLikedHangouts)
-            .map { $0 ?? 0 }
+            .map { $0 ?? 0}
             .map(String.init)
-            .asDriver(onErrorJustReturn: "0")
+            .asSignal(onErrorJustReturn: "0")
         let selectedIndex = selectedIndex$
-            .asDriver(onErrorJustReturn: 0)
+            .asSignal(onErrorJustReturn: 0)
+        let selectedButtonIndex = Observable
+            .merge(
+                joinedButtonTapped$.map { 0 },
+                madeButtonTapped$.map { 1 },
+                likedButtonTapped$.map { 2 }
+            )
+            .asSignal(onErrorJustReturn: 0)
         
         // MARK: Input & Output
         self.input = Input(
+            selectedIndex: selectedIndex$.asObserver(),
             user: user$.asObserver(),
             joinedButtonTapped: joinedButtonTapped$.asObserver(),
             madeButtonTapped: madeButtonTapped$.asObserver(),
@@ -77,12 +86,11 @@ final class ProfileButtonSectionViewModel: ViewModelType {
             numOfJoined: numOfJoined,
             numOfMade: numOfMade,
             numOfLiked: numOfLiked,
-            selectedIndex: selectedIndex
+            selectedIndex: selectedIndex,
+            selectedButtonIndex: selectedButtonIndex
         )
         
         // MARK: Bindind
-        self.user$ = user$
-        
         Observable
             .merge(
                 joinedButtonTapped$.map { 0 },

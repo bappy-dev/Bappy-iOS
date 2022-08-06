@@ -110,6 +110,14 @@ extension APIEndpoints {
             queryParameters: hangoutsRequestDTO)
     }
     
+    static func fetchHangouts(with fetchHangoutsOfUserRequestDTO: FetchHangoutsOfUserRequestDTO) -> Endpoint<FetchHangoutsOfUserResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "",
+            method: .get,
+            queryParameters: fetchHangoutsOfUserRequestDTO)
+    }
+    
     static func createHangout(with createHangoutRequestDTO: CreateHangoutRequestDTO, data: Data) -> Endpoint<CreateHangoutResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -120,14 +128,14 @@ extension APIEndpoints {
             contentType: .multipart)
     }
     
-    static func deleteHangout(id hangoutID: String) -> Endpoint<DeleteHangoutResponseDTO> {
+    static func deleteHangout(hangoutID: String) -> Endpoint<DeleteHangoutResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangout/\(hangoutID)",
             method: .delete)
     }
     
-    static func likeHangout(id hangoutID: String, hasUserLiked: Bool) -> Endpoint<LikeHangoutResponseDTO> {
+    static func likeHangout(hangoutID: String, hasUserLiked: Bool) -> Endpoint<LikeHangoutResponseDTO> {
         let path = hasUserLiked ? "hangout/like/\(hangoutID)" : "hangout/nolike/\(hangoutID)"
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -136,7 +144,7 @@ extension APIEndpoints {
     }
     
     static func updateHangoutParticipation(with updateHangoutParticipationRequestDTO: UpdateHangoutParticipationRequestDTO,
-                            id hangoutID: String) -> Endpoint<UpdateHangoutParticipationResponseDTO> {
+                            hangoutID: String) -> Endpoint<UpdateHangoutParticipationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangout/\(hangoutID)",

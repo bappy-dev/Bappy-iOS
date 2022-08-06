@@ -120,22 +120,25 @@ extension ProfileHeaderView {
             .disposed(by: disposeBag)
         
         viewModel.output.profileImageURL
-            .drive(onNext: { [weak self] url in
+            .emit(onNext: { [weak self] url in
                 let placeHolder = UIImage(named: "no_profile_l")
                 self?.profileImageView.kf.setImage(with: url, placeholder: placeHolder)
             })
             .disposed(by: disposeBag)
         
         viewModel.output.name
-            .drive(nameLabel.rx.text)
+            .compactMap { $0 }
+            .emit(to: nameLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.flag
-            .drive(flagLabel.rx.text)
+            .compactMap { $0 }
+            .emit(to: flagLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.genderAndBirth
-            .drive(genderAndBirthLabel.rx.text)
+            .compactMap { $0 }
+            .emit(to: genderAndBirthLabel.rx.text)
             .disposed(by: disposeBag)
     }
 }

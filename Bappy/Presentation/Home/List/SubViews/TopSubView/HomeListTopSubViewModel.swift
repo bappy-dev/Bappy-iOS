@@ -22,7 +22,7 @@ final class HomeListTopSubViewModel: ViewModelType {
     struct Input {
         var itemSelected: AnyObserver<IndexPath> // <-> View
         var sortingButtonTapped: AnyObserver<Void> // <-> View
-        var sorting: AnyObserver<Hangout.Sorting> // <-> Parent
+        var sorting: AnyObserver<Hangout.SortingOrder> // <-> Parent
     }
     
     struct Output {
@@ -36,7 +36,7 @@ final class HomeListTopSubViewModel: ViewModelType {
     
     private let itemSelected$ = PublishSubject<IndexPath>()
     private let sortingButtonTapped$ = PublishSubject<Void>()
-    private let sorting$ = BehaviorSubject<Hangout.Sorting>(value: .Newest)
+    private let sorting$ = BehaviorSubject<Hangout.SortingOrder>(value: .Newest)
     
     private let category$: BehaviorSubject<Hangout.Category>
     
@@ -56,7 +56,7 @@ final class HomeListTopSubViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let sorting = sorting$
             .map { $0.description }
-            .asDriver(onErrorJustReturn: Hangout.Sorting.Newest.description)
+            .asDriver(onErrorJustReturn: Hangout.SortingOrder.Newest.description)
         let categories = category$
             .withLatestFrom(categories$) { category, categories -> [Dictionary<Hangout.Category, Bool>.Element] in
                 return categories.flatMap { [$0: $0 == category] }

@@ -98,7 +98,6 @@ final class HangoutCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .center
         imageView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
-        
         return imageView
     }()
     
@@ -218,7 +217,7 @@ extension HangoutCell {
         postImageView.kf.setImage(with: hangout.postImageURL)
         likeButton.isSelected = hangout.userHasLiked
         
-        disabledImageView.isHidden = hangout.state == .available
+        disabledImageView.isHidden = (hangout.state == .available)
         if hangout.state != .available {
             disabledImageView.image = UIImage(named: "hangout_\(hangout.state.rawValue)")
         }

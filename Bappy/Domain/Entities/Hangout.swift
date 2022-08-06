@@ -63,7 +63,7 @@ extension Hangout {
         }
     }
     
-    enum Sorting: Int {
+    enum SortingOrder: Int {
         case Newest, Nearest, ManyViews, manyHearts, lessSeats
         
         var description: String {
@@ -73,6 +73,18 @@ extension Hangout {
             case .ManyViews: return "Many views"
             case .manyHearts: return "Many hearts"
             case .lessSeats: return "Less seats"
+            }
+        }
+    }
+    
+    enum UserProfileType: Int {
+        case Joined, Made, Liked
+        
+        var description: String {
+            switch self {
+            case .Joined: return "joined"
+            case .Made: return "made"
+            case .Liked: return "liked"
             }
         }
     }

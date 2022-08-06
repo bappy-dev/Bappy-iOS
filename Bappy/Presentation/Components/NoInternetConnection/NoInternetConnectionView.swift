@@ -80,10 +80,6 @@ final class NoInternetConnectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        print("DEBUG: deinit..")
-    }
-    
     // MARK: Animations
     private func animateShowDimmedView() {
         dimmedView.backgroundColor = .black

@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol SortingOrderViewModelDelegate: AnyObject {
-    func selectedSorting(_ sorting: Hangout.Sorting)
+    func selectedSorting(_ sorting: Hangout.SortingOrder)
 }
 
 final class SortingOrderViewModel: ViewModelType {
@@ -18,7 +18,7 @@ final class SortingOrderViewModel: ViewModelType {
     weak var delegate: SortingOrderViewModelDelegate?
     
     struct Dependency {
-        var sortingList: [Hangout.Sorting] {
+        var sortingList: [Hangout.SortingOrder] {
             [.Newest, .Nearest, .ManyViews, .manyHearts, .lessSeats]
         }
     }
@@ -28,7 +28,7 @@ final class SortingOrderViewModel: ViewModelType {
     }
     
     struct Output {
-        var sortingList: Driver<[Hangout.Sorting]> // <-> View
+        var sortingList: Driver<[Hangout.SortingOrder]> // <-> View
         var popView: Signal<Void> // <-> View
     }
     
@@ -37,7 +37,7 @@ final class SortingOrderViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let sortingList$: BehaviorSubject<[Hangout.Sorting]>
+    private let sortingList$: BehaviorSubject<[Hangout.SortingOrder]>
     
     private let itemSelected$ = PublishSubject<IndexPath>()
     
@@ -45,7 +45,7 @@ final class SortingOrderViewModel: ViewModelType {
         self.dependency = dependency
         
         // MARK: Streams
-        let sortingList$ = BehaviorSubject<[Hangout.Sorting]>(value: dependency.sortingList)
+        let sortingList$ = BehaviorSubject<[Hangout.SortingOrder]>(value: dependency.sortingList)
         
         let sortingList = sortingList$
             .asDriver(onErrorJustReturn: dependency.sortingList)

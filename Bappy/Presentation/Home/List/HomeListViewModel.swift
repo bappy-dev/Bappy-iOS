@@ -48,7 +48,7 @@ final class HomeListViewModel: ViewModelType {
         var showSearchView: Signal<HomeSearchViewModel?> // <-> View
         var showSortingView: Signal<SortingOrderViewModel?> // <-> View
         var showDetailView: Signal<HangoutDetailViewModel?> // <-> View
-        var sorting: Driver<Hangout.Sorting> // <-> Child(TopSub)
+        var sorting: Driver<Hangout.SortingOrder> // <-> Child(TopSub)
     }
     
     var dependency: Dependency
@@ -58,7 +58,7 @@ final class HomeListViewModel: ViewModelType {
     let subViewModels: SubViewModels
     
     private let currentUser$: BehaviorSubject<BappyUser?>
-    private let sorting$ = BehaviorSubject<Hangout.Sorting>(value: .Newest)
+    private let sorting$ = BehaviorSubject<Hangout.SortingOrder>(value: .Newest)
     private let category$ = BehaviorSubject<Hangout.Category>(value: .All)
     private let location$: BehaviorSubject<CLLocationCoordinate2D?>
     
@@ -223,7 +223,7 @@ final class HomeListViewModel: ViewModelType {
 
 // MARK: - SortingOrderViewModelDelegate
 extension HomeListViewModel: SortingOrderViewModelDelegate {
-    func selectedSorting(_ sorting: Hangout.Sorting) {
+    func selectedSorting(_ sorting: Hangout.SortingOrder) {
         sorting$.onNext(sorting)
     }
 }

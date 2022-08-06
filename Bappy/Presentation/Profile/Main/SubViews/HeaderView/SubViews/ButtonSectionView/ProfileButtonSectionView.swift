@@ -188,20 +188,19 @@ extension ProfileButtonSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.numOfJoined
-            .drive(numOfjoinedLabel.rx.text)
+            .emit(to: numOfjoinedLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.numOfMade
-            .drive(numOfMadeLabel.rx.text)
+            .emit(to: numOfMadeLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.numOfLiked
-            .drive(numOfLikedLabel.rx.text)
+            .emit(to: numOfLikedLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.selectedIndex
-            .distinctUntilChanged()
-            .drive(onNext: { [weak self] index in
+            .emit(onNext: { [weak self] index in
                 self?.updateYellowBarLayout(index: index)
             })
             .disposed(by: disposeBag)

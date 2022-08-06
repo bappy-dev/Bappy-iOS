@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/07/06.
 //
 
-import UIKit
+import Foundation
 
 struct FetchHangoutsResponseDTO: Decodable {}
 

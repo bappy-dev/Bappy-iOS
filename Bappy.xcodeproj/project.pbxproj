@@ -125,6 +125,12 @@
 		A739AB95289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB94289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift */; };
 		A739AB9A289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB99289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift */; };
 		A739AB9D289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB9C289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift */; };
+		A739ABA0289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739AB9F289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift */; };
+		A739ABA2289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739ABA1289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift */; };
+		A739ABA4289D758300C6CE90 /* ProfileHangoutCellHolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739ABA3289D758300C6CE90 /* ProfileHangoutCellHolderView.swift */; };
+		A739ABA6289D7BF400C6CE90 /* ProfileHangoutHolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739ABA5289D7BF400C6CE90 /* ProfileHangoutHolderView.swift */; };
+		A739ABA9289D874200C6CE90 /* NoHangoutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739ABA8289D874200C6CE90 /* NoHangoutsView.swift */; };
+		A739ABAC289E159F00C6CE90 /* ProfileTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A739ABAB289E159F00C6CE90 /* ProfileTableView.swift */; };
 		A73BC9A02875933500FB9FA9 /* HangoutRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC99F2875933500FB9FA9 /* HangoutRepository.swift */; };
 		A73BC9A22875977F00FB9FA9 /* DefaultHangoutRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9A12875977F00FB9FA9 /* DefaultHangoutRepository.swift */; };
 		A73BC9A62875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9A52875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift */; };
@@ -408,6 +414,12 @@
 		A739AB94289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateHangoutParticipationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A739AB99289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LikeHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A739AB9C289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteUserResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739AB9F289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutsOfUserRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739ABA1289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutsOfUserResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A739ABA3289D758300C6CE90 /* ProfileHangoutCellHolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHangoutCellHolderView.swift; sourceTree = "<group>"; };
+		A739ABA5289D7BF400C6CE90 /* ProfileHangoutHolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHangoutHolderView.swift; sourceTree = "<group>"; };
+		A739ABA8289D874200C6CE90 /* NoHangoutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoHangoutsView.swift; sourceTree = "<group>"; };
+		A739ABAB289E159F00C6CE90 /* ProfileTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableView.swift; sourceTree = "<group>"; };
 		A73BC99F2875933500FB9FA9 /* HangoutRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutRepository.swift; sourceTree = "<group>"; };
 		A73BC9A12875977F00FB9FA9 /* DefaultHangoutRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHangoutRepository.swift; sourceTree = "<group>"; };
 		A73BC9A52875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutsRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
@@ -868,6 +880,7 @@
 		A72964C6289A677300970807 /* Hangout */ = {
 			isa = PBXGroup;
 			children = (
+				A739AB9E289D07CD00C6CE90 /* FetchHangoutsOfUserDTO */,
 				A72964C1289A651C00970807 /* CreateHangoutDTO */,
 				A73BC9A9287598A500FB9FA9 /* FetchHangoutsDTO */,
 				A739AB8C289CE71700C6CE90 /* DeleteHangoutDTO */,
@@ -1007,6 +1020,32 @@
 				A739AB9C289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift */,
 			);
 			path = DeleteUserDTO;
+			sourceTree = "<group>";
+		};
+		A739AB9E289D07CD00C6CE90 /* FetchHangoutsOfUserDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A739AB9F289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift */,
+				A739ABA1289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift */,
+			);
+			path = FetchHangoutsOfUserDTO;
+			sourceTree = "<group>";
+		};
+		A739ABA7289D7C0800C6CE90 /* HolderView */ = {
+			isa = PBXGroup;
+			children = (
+				A739ABA5289D7BF400C6CE90 /* ProfileHangoutHolderView.swift */,
+				A739ABA3289D758300C6CE90 /* ProfileHangoutCellHolderView.swift */,
+			);
+			path = HolderView;
+			sourceTree = "<group>";
+		};
+		A739ABAA289D874500C6CE90 /* NoHangoutsView */ = {
+			isa = PBXGroup;
+			children = (
+				A739ABA8289D874200C6CE90 /* NoHangoutsView.swift */,
+			);
+			path = NoHangoutsView;
 			sourceTree = "<group>";
 		};
 		A73BC9A9287598A500FB9FA9 /* FetchHangoutsDTO */ = {
@@ -1874,6 +1913,7 @@
 				A71411A528985F8A002D4714 /* ProfileViewController.swift */,
 				A71411A628985F8A002D4714 /* ProfileViewModel.swift */,
 				A7FB693728986707007B5DCF /* SubViews */,
+				A7FB6955289869A0007B5DCF /* SubComponents */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -1882,7 +1922,8 @@
 			isa = PBXGroup;
 			children = (
 				A7FB69392898671B007B5DCF /* HeaderView */,
-				A7FB693828986714007B5DCF /* SubViews */,
+				A739ABA7289D7C0800C6CE90 /* HolderView */,
+				A739ABAA289D874500C6CE90 /* NoHangoutsView */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -1900,6 +1941,7 @@
 			children = (
 				A714119F28985F8A002D4714 /* ProfileHeaderView.swift */,
 				A71411A028985F8A002D4714 /* ProfileHeaderViewModel.swift */,
+				A7FB693828986714007B5DCF /* SubViews */,
 			);
 			path = HeaderView;
 			sourceTree = "<group>";
@@ -2152,7 +2194,6 @@
 			children = (
 				A714116E28985F8A002D4714 /* ProfileEditMainView.swift */,
 				A714116D28985F8A002D4714 /* ProfileEditMainViewModel.swift */,
-				A7FB6955289869A0007B5DCF /* SubComponents */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -2161,6 +2202,7 @@
 			isa = PBXGroup;
 			children = (
 				A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */,
+				A739ABAB289E159F00C6CE90 /* ProfileTableView.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -2318,6 +2360,7 @@
 				A76EEE60284E69FE00A2CFF6 /* ContinueButtonView.swift in Sources */,
 				A72838F5286301F100BBBD9C /* Hangout.swift in Sources */,
 				A70C3CCB286B4CD200BB7219 /* DefaultUserProfileRepository.swift in Sources */,
+				A739ABA0289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift in Sources */,
 				A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */,
 				A71E27CC2868CFD8001DA96B /* GoogleMapImageRepository.swift in Sources */,
 				A7A6B0202845D33600911861 /* HangoutMakeLimitView.swift in Sources */,
@@ -2367,6 +2410,8 @@
 				A7F52CF72865FFAA002523D4 /* HangoutMainSectionViewModel.swift in Sources */,
 				A7850307285A1840000FA592 /* HangoutMakeOpenchatViewModel.swift in Sources */,
 				A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */,
+				A739ABA9289D874200C6CE90 /* NoHangoutsView.swift in Sources */,
+				A739ABA2289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift in Sources */,
 				A76EEE71285065B700A2CFF6 /* URLSessionable.swift in Sources */,
 				A73BC9B5287ABFE400FB9FA9 /* SortingOrderViewModel.swift in Sources */,
 				A785030B285A193B000FA592 /* HangoutMakePictureViewModel.swift in Sources */,
@@ -2427,6 +2472,7 @@
 				A7751B062886F66800F23241 /* DefaultNotificationRepository.swift in Sources */,
 				A7CE0FA2284B37D60063458F /* HomeListTopSubView.swift in Sources */,
 				A71411B428985F8A002D4714 /* ProfileEditIntroduceViewModel.swift in Sources */,
+				A739ABA4289D758300C6CE90 /* ProfileHangoutCellHolderView.swift in Sources */,
 				A776B93A285B1F0A005496DC /* HangoutMakeTimePickerViewModel.swift in Sources */,
 				A71411DC28985F8A002D4714 /* ProfileButtonSectionViewModel.swift in Sources */,
 				A76EEE692850659600A2CFF6 /* NetworkError.swift in Sources */,
@@ -2479,6 +2525,7 @@
 				A76EEE6F285065AD00A2CFF6 /* Endpoint.swift in Sources */,
 				A73BC9C7287D7E0700FB9FA9 /* LocaleSettingViewModel.swift in Sources */,
 				A70C3CC3286AF24200BB7219 /* FirebaseRepository.swift in Sources */,
+				A739ABAC289E159F00C6CE90 /* ProfileTableView.swift in Sources */,
 				A7751AFB287EBDD900F23241 /* NetworkConstant.swift in Sources */,
 				A71E27C528683ADF001DA96B /* GoogleMapsRepository.swift in Sources */,
 				A7A6B00C2845A7E200911861 /* HangoutPictureCell.swift in Sources */,
@@ -2506,6 +2553,7 @@
 				A72E6F0B2894113E00E06BED /* DefaultNetworkCheckRepository.swift in Sources */,
 				A75B11BB283C8A4000C49597 /* ReportWritingSectionView.swift in Sources */,
 				A7615E2D28579BE900A09B2B /* RxKeyboard.swift in Sources */,
+				A739ABA6289D7BF400C6CE90 /* ProfileHangoutHolderView.swift in Sources */,
 				A7F52CDD28637692002523D4 /* BappyLikeButton.swift in Sources */,
 				A76EEE822850B18100A2CFF6 /* FetchMapsResponseDTO+Mapping.swift in Sources */,
 				A7751AF2287EADA800F23241 /* LocaleSettingHeaderViewModel.swift in Sources */,
