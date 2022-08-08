@@ -179,16 +179,18 @@ extension HangoutDetailViewController {
         hangoutButton.rx.tap
             .bind(to: viewModel.input.hangoutButtonTapped)
             .disposed(by: disposeBag)
-        
+
         reportButton.rx.tap
             .bind(to: viewModel.input.reportButtonTapped)
             .disposed(by: disposeBag)
-        
+
         scrollView.rx.didScroll
             .withLatestFrom(scrollView.rx.contentOffset)
-            .map { $0.y }
+            .map(\.y)
             .filter { $0 <= 0 }
-            .map { self.imageSectionView.frame.height - $0 }
+            .map { [weak self] y -> CGFloat in
+                let imageHeight = self?.imageSectionView.frame.height ?? 0
+                return imageHeight - y }
             .bind(to: viewModel.input.imageHeight)
             .disposed(by: disposeBag)
         
@@ -206,21 +208,21 @@ extension HangoutDetailViewController {
                 self?.present(popupView, animated: false)
             })
             .disposed(by: disposeBag)
-        
+
         viewModel.output.hangoutButtonState
             .emit(to: hangoutButton.rx.hangoutState)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showSignInAlert
             .compactMap { $0 }
             .emit(to: self.rx.showSignInAlert)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showCancelAlert
             .compactMap { $0 }
             .emit(to: self.rx.showAlert)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showReportView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
@@ -228,7 +230,7 @@ extension HangoutDetailViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showUserProfile
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
@@ -236,7 +238,7 @@ extension HangoutDetailViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showCreateSuccessView
             .emit(onNext: { [weak self] _ in
                 let title = "Successfully Created!"
@@ -249,14 +251,13 @@ extension HangoutDetailViewController {
                 self?.present(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showYellowLoader
             .emit(to: ProgressHUD.rx.showYellowLoader)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showTranscluentLoader
             .emit(to: ProgressHUD.rx.showTranscluentLoader)
             .disposed(by: disposeBag)
-
     }
 }

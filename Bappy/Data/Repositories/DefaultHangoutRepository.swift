@@ -19,11 +19,16 @@ final class DefaultHangoutRepository {
 }
 
 extension DefaultHangoutRepository: HangoutRepository {
-    func fetchHangouts(sorting: Hangout.SortingOrder?, category: Hangout.Category?, coordinates: String?) -> Single<Result<[Hangout], Error>> {
-//        let requestDTO = FetchHangoutsRequestDTO(sorting: sorting?.description, category: category?.description, coordinates: coordinates)
+    func fetchHangouts(page: Int, sorting: Hangout.SortingOrder, category: Hangout.Category, coordinates: Coordinates?) -> Single<Result<HangoutPage, Error>> {
+//        let coordinates = coordinates.flatMap { "\($0.latitude),\($0.longitude)" }
+//        let requestDTO = FetchHangoutsRequestDTO(
+//            page: page,
+//            sorting: sorting.description,
+//            category: category.description,
+//            coordinates: coordinates)
 //        let endpoint = APIEndpoints.fetchHangouts(with: requestDTO)
 //        return  provider.request(with: endpoint)
-//            .map { result -> Result<[Hangout], Error> in
+//            .map { result -> Result<HangoutPage, Error> in
 //                switch result {
 //                case .success(let responseDTO):
 //                    return .success(responseDTO.toDomain())
@@ -32,11 +37,11 @@ extension DefaultHangoutRepository: HangoutRepository {
 //                }
 //            }
         
-        return Single<Result<[Hangout], Error>>.create { single in
+        return Single<Result<HangoutPage, Error>>.create { single in
             let hangouts: [Hangout] = [
                 Hangout(
                     id: "abc", state: .available, title: "Who wants to go eat?",
-                    meetTime: "01. JUL. 19:00", language: "English",
+                    meetTime: "01. JUL. 19:00".toDate(format: "dd. MMM. HH:mm")!, language: "English",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -51,7 +56,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                     userHasLiked: true),
                 Hangout(
                     id: "def", state: .available, title: "Who wants to go eat?",
-                    meetTime: "03. JUL. 18:00", language: "Korean",
+                    meetTime: "03. JUL. 18:00".toDate(format: "dd. MMM. HH:mm")!, language: "Korean",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -66,7 +71,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                     userHasLiked: false),
                 Hangout(
                     id: "def", state: .closed, title: "Who wants to go eat?",
-                    meetTime: "02. JUL. 18:00", language: "English",
+                    meetTime: "02. JUL. 18:00".toDate(format: "dd. MMM. HH:mm")!, language: "English",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -81,7 +86,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                     userHasLiked: false),
                 Hangout(
                     id: "abc", state: .expired, title: "Who wants to go eat?",
-                    meetTime: "01. JUL. 19:00", language: "English",
+                    meetTime: "01. JUL. 19:00".toDate(format: "dd. MMM. HH:mm")!, language: "English",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -95,9 +100,13 @@ extension DefaultHangoutRepository: HangoutRepository {
                     ],
                     userHasLiked: true),
             ]
+            var hangoutList = hangouts + hangouts
+            hangoutList.shuffle()
+            let totalPage = 3
+            let hangoutPage = HangoutPage(totalPage: totalPage, hangouts: hangoutList)
             
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-                single(.success(.success(hangouts)))
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+                single(.success(.success(hangoutPage)))
             }
             
             return Disposables.create()
@@ -120,7 +129,7 @@ extension DefaultHangoutRepository: HangoutRepository {
             let joinedHangouts: [Hangout] = [
                 Hangout(
                     id: "abc", state: .available, title: "Who wants to go eat?",
-                    meetTime: "01. JUL. 19:00", language: "English",
+                    meetTime: "01. JUL. 19:00".toDate(format: "dd. MMM. HH:mm")!, language: "English",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -135,7 +144,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                     userHasLiked: true),
                 Hangout(
                     id: "def", state: .available, title: "Who wants to go eat?",
-                    meetTime: "03. JUL. 18:00", language: "Korean",
+                    meetTime: "03. JUL. 15:00".toDate(format: "dd. MMM. HH:mm")!, language: "Korean",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -150,7 +159,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                     userHasLiked: false),
                 Hangout(
                     id: "def", state: .closed, title: "Who wants to go eat?",
-                    meetTime: "02. JUL. 18:00", language: "English",
+                    meetTime: "02. JUL. 18:00".toDate(format: "dd. MMM. HH:mm")!, language: "English",
                     placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                     placeName: "Pusan University",
                     plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -168,7 +177,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                 let likedHangouts: [Hangout] = [
                     Hangout(
                         id: "abc", state: .available, title: "Who wants to go eat?",
-                        meetTime: "01. JUL. 19:00", language: "English",
+                        meetTime: "01. JUL. 11:00".toDate(format: "dd. MMM. HH:mm")!, language: "English",
                         placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                         placeName: "Pusan University",
                         plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -183,7 +192,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                         userHasLiked: true),
                     Hangout(
                         id: "def", state: .available, title: "Who wants to go eat?",
-                        meetTime: "03. JUL. 18:00", language: "Korean",
+                        meetTime: "03. JUL. 18:00".toDate(format: "dd. MMM. HH:mm")!, language: "Korean",
                         placeID: "ChIJddvJ8eqTaDURk21no4Umdvo",
                         placeName: "Pusan University",
                         plan: "Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join? Hey guys, this is LIly. I want to go on a picnic. This Saturday to Haeundae Anyone wanna join?",
@@ -198,7 +207,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                         userHasLiked: false),
             ]
             
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.6) {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
                 switch profileType {
                 case .Joined: single(.success(.success(joinedHangouts)))
                 case .Made: single(.success(.success(madeHangouts)))
@@ -243,16 +252,22 @@ extension DefaultHangoutRepository: HangoutRepository {
     }
     
     func likeHangout(hangoutID: String, hasUserLiked: Bool) -> Single<Result<Bool, Error>> {
-        let endpoint = APIEndpoints.likeHangout(hangoutID: hangoutID, hasUserLiked: hasUserLiked)
-        return provider.request(with: endpoint)
-            .map { result -> Result<Bool, Error> in
-                switch result {
-                case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
-                case .failure(let error):
-                    return .failure(error)
-                }
+        return Single<Result<Bool, Error>>.create { single in
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                single(.success(.success(true)))
             }
+            return Disposables.create()
+        }
+//        let endpoint = APIEndpoints.likeHangout(hangoutID: hangoutID, hasUserLiked: hasUserLiked)
+//        return provider.request(with: endpoint)
+//            .map { result -> Result<Bool, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    return .success(responseDTO.toDomain())
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
     }
     
     func joinHangout(hangoutID: String) -> Single<Result<Bool, Error>> {

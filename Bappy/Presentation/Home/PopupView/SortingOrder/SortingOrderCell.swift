@@ -19,8 +19,8 @@ final class SortingOrderCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        setBackgroundView()
         configure()
+        setBackgroundView()
     }
 
     required init?(coder: NSCoder) {
@@ -35,7 +35,7 @@ final class SortingOrderCell: UITableViewCell {
         let tintedView = UIView()
         tintedView.backgroundColor = .bappyYellow
         tintedView.layer.cornerRadius = 15.5
-        tintedView.addBappyShadow(shadowOffsetHeight: 1.0)
+        tintedView.addBappyShadow(shadowOffsetHeight: 1.0, shouldSetShadowPath: false)
 
         backgroundView.addSubview(tintedView)
         tintedView.snp.makeConstraints {

@@ -14,13 +14,12 @@ final class HangoutImageSectionViewModel: ViewModelType {
     struct Dependency {
         var hangout: Hangout
         var postImage: UIImage?
-        var isPreviewMode: Bool { hangout.state == .preview }
-        var postImageURL: URL? { hangout.postImageURL }
-        var userHasLiked: Bool { hangout.userHasLiked }
     }
     
     struct Input {
+        var hangout: AnyObserver<Hangout> // <-> Parent
         var imageHeight: AnyObserver<CGFloat> // <-> Parent
+        var likeButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
@@ -28,6 +27,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
         var image: Signal<UIImage?> // <-> View
         var userHasLiked: Driver<Bool> // <-> View
         var imageHeight: Signal<CGFloat> // <-> View
+        var likeButtonTapped: Signal<Void> // <-> Parent
     }
     
     let dependency: Dependency
@@ -35,51 +35,52 @@ final class HangoutImageSectionViewModel: ViewModelType {
     let input: Input
     let output: Output
     
-    private let isPreviewMode$: BehaviorSubject<Bool>
-    private let postImageURL$: BehaviorSubject<URL?>
+    private let hangout$: BehaviorSubject<Hangout>
     private let postImage$: BehaviorSubject<UIImage?>
-    private let userHasLiked$: BehaviorSubject<Bool>
     
     private let imageHeight$ = PublishSubject<CGFloat>()
+    private let likeButtonTapped$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // MARK: Streams
-        let isPreviewMode$ = BehaviorSubject<Bool>(value: dependency.isPreviewMode)
-        let postImageURL$ = BehaviorSubject<URL?>(value: dependency.postImageURL)
+        let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
         let postImage$ = BehaviorSubject<UIImage?>(value: dependency.postImage)
-        let userHasLiked$ = BehaviorSubject<Bool>(value: dependency.userHasLiked)
         
-        let imageURL = isPreviewMode$
-            .filter { !$0 }
-            .withLatestFrom(postImageURL$)
+        let imageURL = hangout$
+            .filter { $0.state != .preview }
+            .map(\.postImageURL)
             .asSignal(onErrorJustReturn: nil)
-        let image = isPreviewMode$
-            .filter { $0 }
+        let image = hangout$
+            .filter { $0.state == .preview }
             .withLatestFrom(postImage$)
             .asSignal(onErrorJustReturn: nil)
-        let userHasLiked = userHasLiked$
+        let userHasLiked = hangout$
+            .map(\.userHasLiked)
             .asDriver(onErrorJustReturn: false)
         let imageHeight = imageHeight$
             .asSignal(onErrorJustReturn: 0)
+        let likeButtonTapped = likeButtonTapped$
+            .asSignal(onErrorJustReturn: Void())
         
         // MARK: Input & Output
         self.input = Input(
-            imageHeight: imageHeight$.asObserver()
+            hangout: hangout$.asObserver(),
+            imageHeight: imageHeight$.asObserver(),
+            likeButtonTapped: likeButtonTapped$.asObserver()
         )
         
         self.output = Output(
             imageURL: imageURL,
             image: image,
             userHasLiked: userHasLiked,
-            imageHeight: imageHeight
+            imageHeight: imageHeight,
+            likeButtonTapped: likeButtonTapped
         )
         
         // MARK: Bindind
-        self.isPreviewMode$ = isPreviewMode$
-        self.postImageURL$ = postImageURL$
+        self.hangout$ = hangout$
         self.postImage$ = postImage$
-        self.userHasLiked$ = userHasLiked$
     }
 }

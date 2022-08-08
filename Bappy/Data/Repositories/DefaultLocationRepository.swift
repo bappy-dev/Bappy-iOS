@@ -20,12 +20,13 @@ final class DefaultLocationRepository {
         return manager
     }()
 
-    private let location$ = BehaviorSubject<CLLocationCoordinate2D?>(value: nil)
+    private let location$ = BehaviorSubject<Coordinates?>(value: nil)
     private let authorization$: BehaviorSubject<CLAuthorizationStatus>
 
     private init() {
         self.locationManager.rx.didUpdateLocations
             .compactMap { $0.last?.coordinate }
+            .map { Coordinates(latitude: $0.latitude, longitude: $0.longitude) }
             .bind(onNext: self.location$.onNext)
             .disposed(by: disposeBag)
         let authorizationStatus = locationManager.authorizationStatus
@@ -40,7 +41,7 @@ final class DefaultLocationRepository {
 extension DefaultLocationRepository: LocationRepository {
 
     static let shared = DefaultLocationRepository()
-    var location: BehaviorSubject<CLLocationCoordinate2D?> { location$ }
+    var location: BehaviorSubject<Coordinates?> { location$ }
     var authorization: BehaviorSubject<CLAuthorizationStatus> { authorization$ }
 
     func requestAuthorization() -> Observable<CLAuthorizationStatus> {

@@ -104,6 +104,12 @@ class BappyAlertController: UIViewController {
         animatePresentContainer()
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Events
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if canDismissByTouch && !hasCancelButton {
@@ -174,7 +180,7 @@ class BappyAlertController: UIViewController {
                 action.handler?(action)
             }
         }, for: .touchUpInside)
-        button.addBappyShadow()
+        button.addBappyShadow(shouldSetShadowPath: false)
         
         let label = getAlertLabel(action)
         button.addSubview(label)
@@ -205,10 +211,13 @@ class BappyAlertController: UIViewController {
         return button
     }
     
+    private func configureShadow() {
+        containerView.addBappyShadow()
+    }
+
     private func confiugre() {
         self.modalPresentationStyle = .overCurrentContext
         view.backgroundColor = .clear
-        containerView.addBappyShadow()
         
         titleLabel.isHidden = (alertTitle == nil)
         titleLabel.text = alertTitle

@@ -102,7 +102,7 @@
 		A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEF283555B90052C60A /* HomeListViewController.swift */; };
 		A7202D522898B84B00878012 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7202D512898B84B00878012 /* GoogleService-Info.plist */; };
 		A7202D592898B9EF00878012 /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7202D582898B9EF00878012 /* Example.swift */; };
-		A72838F22862F7F500BBBD9C /* HomeLocaleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F12862F7F500BBBD9C /* HomeLocaleViewController.swift */; };
+		A72838F22862F7F500BBBD9C /* HomeLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */; };
 		A72838F5286301F100BBBD9C /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F4286301F100BBBD9C /* Hangout.swift */; };
 		A72964C3289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */; };
 		A72964C8289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */; };
@@ -137,7 +137,7 @@
 		A73BC9A82875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9A72875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift */; };
 		A73BC9AB28759F0000FB9FA9 /* HomeListTopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9AA28759F0000FB9FA9 /* HomeListTopViewModel.swift */; };
 		A73BC9AD28759F0500FB9FA9 /* HomeListTopSubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9AC28759F0500FB9FA9 /* HomeListTopSubViewModel.swift */; };
-		A73BC9B12875A49000FB9FA9 /* HomeLocaleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B02875A49000FB9FA9 /* HomeLocaleViewModel.swift */; };
+		A73BC9B12875A49000FB9FA9 /* HomeLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B02875A49000FB9FA9 /* HomeLocationViewModel.swift */; };
 		A73BC9B32875A4D500FB9FA9 /* HomeSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B22875A4D500FB9FA9 /* HomeSearchViewModel.swift */; };
 		A73BC9B5287ABFE400FB9FA9 /* SortingOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B4287ABFE400FB9FA9 /* SortingOrderViewModel.swift */; };
 		A73BC9BA287B168400FB9FA9 /* CLLocationManager+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B9287B168400FB9FA9 /* CLLocationManager+Rx.swift */; };
@@ -171,6 +171,10 @@
 		A769CCFC282A8EF30086182C /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFB282A8EF30086182C /* SnapKit */; };
 		A769CCFF282A8F100086182C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A769CCFE282A8F100086182C /* Kingfisher */; };
 		A769CD1D282A947B0086182C /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A769CD1C282A947B0086182C /* Extension.swift */; };
+		A76AE72A289ED47800A8EB9B /* HomeListHolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE729289ED47800A8EB9B /* HomeListHolderView.swift */; };
+		A76AE72D289ED4AF00A8EB9B /* HangoutCellHolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE72C289ED4AF00A8EB9B /* HangoutCellHolderView.swift */; };
+		A76AE72F289FB5B900A8EB9B /* HangoutCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE72E289FB5B900A8EB9B /* HangoutCellViewModel.swift */; };
+		A76AE73128A05D4900A8EB9B /* like.json in Resources */ = {isa = PBXBuildFile; fileRef = A76AE73028A05D4900A8EB9B /* like.json */; };
 		A76C211E2843885F00044A34 /* BappyLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76C211D2843885F00044A34 /* BappyLoginViewController.swift */; };
 		A76C212328439B5300044A34 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A76C212228439B5300044A34 /* FirebaseAnalytics */; };
 		A76C212528439B5300044A34 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A76C212428439B5300044A34 /* FirebaseAuth */; };
@@ -391,7 +395,7 @@
 		A7202D512898B84B00878012 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A7202D572898B9C900878012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A7202D582898B9EF00878012 /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
-		A72838F12862F7F500BBBD9C /* HomeLocaleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocaleViewController.swift; sourceTree = "<group>"; };
+		A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocationViewController.swift; sourceTree = "<group>"; };
 		A72838F4286301F100BBBD9C /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
 		A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateHangoutRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
@@ -426,7 +430,7 @@
 		A73BC9A72875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A73BC9AA28759F0000FB9FA9 /* HomeListTopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListTopViewModel.swift; sourceTree = "<group>"; };
 		A73BC9AC28759F0500FB9FA9 /* HomeListTopSubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListTopSubViewModel.swift; sourceTree = "<group>"; };
-		A73BC9B02875A49000FB9FA9 /* HomeLocaleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocaleViewModel.swift; sourceTree = "<group>"; };
+		A73BC9B02875A49000FB9FA9 /* HomeLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocationViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B22875A4D500FB9FA9 /* HomeSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSearchViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B4287ABFE400FB9FA9 /* SortingOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingOrderViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B9287B168400FB9FA9 /* CLLocationManager+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Rx.swift"; sourceTree = "<group>"; };
@@ -457,6 +461,10 @@
 		A769CCE6282A8C310086182C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A769CCE9282A8C310086182C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A769CD1C282A947B0086182C /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		A76AE729289ED47800A8EB9B /* HomeListHolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListHolderView.swift; sourceTree = "<group>"; };
+		A76AE72C289ED4AF00A8EB9B /* HangoutCellHolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutCellHolderView.swift; sourceTree = "<group>"; };
+		A76AE72E289FB5B900A8EB9B /* HangoutCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutCellViewModel.swift; sourceTree = "<group>"; };
+		A76AE73028A05D4900A8EB9B /* like.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = like.json; sourceTree = "<group>"; };
 		A76C211D2843885F00044A34 /* BappyLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyLoginViewController.swift; sourceTree = "<group>"; };
 		A76EEE5F284E69FE00A2CFF6 /* ContinueButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueButtonView.swift; sourceTree = "<group>"; };
 		A76EEE682850659600A2CFF6 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -598,6 +606,7 @@
 			isa = PBXGroup;
 			children = (
 				A72C06C5283666820068897C /* HangoutCell.swift */,
+				A76AE72E289FB5B900A8EB9B /* HangoutCellViewModel.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -851,14 +860,14 @@
 			path = SignInAlertController;
 			sourceTree = "<group>";
 		};
-		A72838F32862FCFC00BBBD9C /* Locale */ = {
+		A72838F32862FCFC00BBBD9C /* HomeLocation */ = {
 			isa = PBXGroup;
 			children = (
-				A72838F12862F7F500BBBD9C /* HomeLocaleViewController.swift */,
-				A73BC9B02875A49000FB9FA9 /* HomeLocaleViewModel.swift */,
+				A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */,
+				A73BC9B02875A49000FB9FA9 /* HomeLocationViewModel.swift */,
 				A7F52CE1286459CB002523D4 /* SubViews */,
 			);
-			path = Locale;
+			path = HomeLocation;
 			sourceTree = "<group>";
 		};
 		A72964C1289A651C00970807 /* CreateHangoutDTO */ = {
@@ -1153,6 +1162,7 @@
 			isa = PBXGroup;
 			children = (
 				A72E6F16289805D200E06BED /* success.json */,
+				A76AE73028A05D4900A8EB9B /* like.json */,
 			);
 			path = Lottie;
 			sourceTree = "<group>";
@@ -1246,12 +1256,12 @@
 			children = (
 				A769CCE8282A8C310086182C /* LaunchScreen.storyboard */,
 				A70B0D65286C57AC009EBF33 /* Initial */,
-				A71EBAF328355BFA0052C60A /* TabBar */,
-				A76C212A2843A69000044A34 /* Login */,
-				A7FB693028986697007B5DCF /* Profile */,
 				A769CD02282A8F7A0086182C /* Register */,
-				A72C06CF28373A3B0068897C /* Hangout */,
+				A76C212A2843A69000044A34 /* Login */,
+				A71EBAF328355BFA0052C60A /* TabBar */,
 				A71EBAF628355C230052C60A /* Home */,
+				A72C06CF28373A3B0068897C /* Hangout */,
+				A7FB693028986697007B5DCF /* Profile */,
 				A75B11B9283C75C500C49597 /* Report */,
 				A717323D28361F5F0073E702 /* Components */,
 			);
@@ -1280,6 +1290,15 @@
 				A72E6F052893D99300E06BED /* Example */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		A76AE72B289ED47E00A8EB9B /* HolderView */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE729289ED47800A8EB9B /* HomeListHolderView.swift */,
+				A76AE72C289ED4AF00A8EB9B /* HangoutCellHolderView.swift */,
+			);
+			path = HolderView;
 			sourceTree = "<group>";
 		};
 		A76C212A2843A69000044A34 /* Login */ = {
@@ -1668,7 +1687,7 @@
 		A7B6448D284663D000A509AB /* PopupView */ = {
 			isa = PBXGroup;
 			children = (
-				A72838F32862FCFC00BBBD9C /* Locale */,
+				A72838F32862FCFC00BBBD9C /* HomeLocation */,
 				A731AC032873440A00C81E30 /* SortingOrder */,
 			);
 			path = PopupView;
@@ -1708,6 +1727,7 @@
 			children = (
 				A73BC9AE28759F0C00FB9FA9 /* TopView */,
 				A73BC9AF28759F1300FB9FA9 /* TopSubView */,
+				A76AE72B289ED47E00A8EB9B /* HolderView */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -2326,6 +2346,7 @@
 				A769CCEA282A8C310086182C /* LaunchScreen.storyboard in Resources */,
 				A7EB7832282AB79B00E3E965 /* Roboto-Bold.ttf in Resources */,
 				A71732382836171F0073E702 /* logo.png in Resources */,
+				A76AE73128A05D4900A8EB9B /* like.json in Resources */,
 				A7EB7830282AB79200E3E965 /* Roboto-Black.ttf in Resources */,
 				A769CCE7282A8C310086182C /* Assets.xcassets in Resources */,
 				A72E6F17289805D200E06BED /* success.json in Resources */,
@@ -2399,7 +2420,7 @@
 				A70C3CCF286B4DFF00BB7219 /* FetchProfileRequestDTO+Mapping.swift in Sources */,
 				A72E6F022893BDF300E06BED /* Alertable.swift in Sources */,
 				A71411A828985F8A002D4714 /* CustomerServiceViewController.swift in Sources */,
-				A73BC9B12875A49000FB9FA9 /* HomeLocaleViewModel.swift in Sources */,
+				A73BC9B12875A49000FB9FA9 /* HomeLocationViewModel.swift in Sources */,
 				A71411B628985F8A002D4714 /* ProfileEditLanguageViewModel.swift in Sources */,
 				A71432CD2860AB5A00380DF7 /* SelectionLabel.swift in Sources */,
 				A76EEE802850B17400A2CFF6 /* FetchMapsRequestDTO+Mapping.swift in Sources */,
@@ -2440,7 +2461,7 @@
 				A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */,
 				A71411CF28985F8A002D4714 /* DeleteAccountSecondPageViewModel.swift in Sources */,
 				A76EEE862852CF5000A2CFF6 /* ProgressHUD.swift in Sources */,
-				A72838F22862F7F500BBBD9C /* HomeLocaleViewController.swift in Sources */,
+				A72838F22862F7F500BBBD9C /* HomeLocationViewController.swift in Sources */,
 				A71411D528985F8A002D4714 /* ProfileSettingNotificationViewModel.swift in Sources */,
 				A7F52CEC2864A66F002523D4 /* Location.swift in Sources */,
 				A70B0D69286C7395009EBF33 /* CreateUserResponseDTO+Mapping.swift in Sources */,
@@ -2487,6 +2508,7 @@
 				A7E13A5A288890DC00413AE2 /* ReportImageSectionViewModel.swift in Sources */,
 				A7751B062886F66800F23241 /* DefaultNotificationRepository.swift in Sources */,
 				A7CE0FA2284B37D60063458F /* HomeListTopSubView.swift in Sources */,
+				A76AE72A289ED47800A8EB9B /* HomeListHolderView.swift in Sources */,
 				A71411B428985F8A002D4714 /* ProfileEditIntroduceViewModel.swift in Sources */,
 				A739ABA4289D758300C6CE90 /* ProfileHangoutCellHolderView.swift in Sources */,
 				A776B93A285B1F0A005496DC /* HangoutMakeTimePickerViewModel.swift in Sources */,
@@ -2494,6 +2516,7 @@
 				A76EEE692850659600A2CFF6 /* NetworkError.swift in Sources */,
 				A71411CB28985F8A002D4714 /* ProfileDetailInterestsViewModel.swift in Sources */,
 				A73BC9BC287B16C000FB9FA9 /* RxCLLocationManagerDelegateProxy.swift in Sources */,
+				A76AE72F289FB5B900A8EB9B /* HangoutCellViewModel.swift in Sources */,
 				A70B0D60286C567A009EBF33 /* BappyInitialViewController.swift in Sources */,
 				A76EEE73285065BC00A2CFF6 /* Provider.swift in Sources */,
 				A7F52CFB2865FFBE002523D4 /* HangoutPlanSectionViewModel.swift in Sources */,
@@ -2525,6 +2548,7 @@
 				A769CD1D282A947B0086182C /* Extension.swift in Sources */,
 				A73BC9C2287C239000FB9FA9 /* PublicProvider.swift in Sources */,
 				A7BEDFAE289891DB0081EE0B /* BappyFatalAlertView.swift in Sources */,
+				A76AE72D289ED4AF00A8EB9B /* HangoutCellHolderView.swift in Sources */,
 				A7A6B01C2845D30300911861 /* HangoutMakeLanguageView.swift in Sources */,
 				A7751AF6287EB58000F23241 /* UpdateGPSSettingRequestDTO+Mapping.swift in Sources */,
 				A76EEEA02854782900A2CFF6 /* LayoutVariable.swift in Sources */,

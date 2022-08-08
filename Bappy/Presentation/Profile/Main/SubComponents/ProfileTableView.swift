@@ -11,6 +11,14 @@ import RxCocoa
 
 final class ProfileTableView: UITableView {
     
+    private var hasUpdatedConstraints: Bool = false
+    
+    override func updateConstraints() {
+        super.updateConstraints()
+        
+        hasUpdatedConstraints = true
+    }
+    
     override func reloadData() {
         let offset = contentOffset
  
@@ -18,7 +26,9 @@ final class ProfileTableView: UITableView {
             super.reloadData()
         }
         
-        layoutIfNeeded()
+        if hasUpdatedConstraints {
+            layoutIfNeeded()
+        }
         
         DispatchQueue.main.async {
             self.contentOffset = offset

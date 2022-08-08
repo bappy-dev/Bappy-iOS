@@ -29,6 +29,7 @@ final class SortingOrderViewController: UIViewController {
         tableView.rowHeight = 45.0
         tableView.separatorInset = .init(top: 0, left: 17.0, bottom: 0, right: 16.0)
         tableView.backgroundColor = .bappyLightgray
+        tableView.isScrollEnabled = false
         return tableView
     }()
    
@@ -45,6 +46,12 @@ final class SortingOrderViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
     }
     
     // MARK: Events
@@ -70,7 +77,7 @@ final class SortingOrderViewController: UIViewController {
         }
     }
     
-    private func animateDismissView() {
+    private func animateDismissView(completion: (() -> Void)? = nil) {
         UIView.animate(withDuration: 0.3) {
             self.containerView.snp.updateConstraints {
                 $0.height.equalTo(0)
@@ -83,16 +90,20 @@ final class SortingOrderViewController: UIViewController {
             self.dimmedView.alpha = 0
         } completion: { _ in
             self.dismiss(animated: false)
+            completion?()
         }
     }
     
     // MARK: Helpers
+    private func configureShadow() {
+        containerView.addBappyShadow(shadowOffsetHeight: 3.0)
+    }
+    
     private func configure() {
         view.backgroundColor = .clear
         containerView.backgroundColor = .clear
         tableView.layer.cornerRadius = 6.0
         tableView.clipsToBounds = true
-        containerView.addBappyShadow(shadowOffsetHeight: 3.0)
     }
     
     private func layout() {
@@ -143,8 +154,13 @@ extension SortingOrderViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.output.popView
-            .emit(onNext: { [weak self] _ in self?.animateDismissView() })
+        viewModel.output.popViewWithSorting
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] sorting in
+                self?.animateDismissView(completion: {
+                    self?.viewModel.delegate?.selectedSorting(sorting)
+                })
+            })
             .disposed(by: disposeBag)
     }
 }

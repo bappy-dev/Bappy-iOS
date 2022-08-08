@@ -49,12 +49,21 @@ final class HangoutMapSectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Helpers
+    private func configureShadow() {
+        backgroundView.addBappyShadow(shadowOffsetHeight: 1.0)
+    }
+    
     private func configure() {
         self.backgroundColor = .white
         backgroundView.backgroundColor = .white
         backgroundView.layer.cornerRadius = 15.0
-        backgroundView.addBappyShadow(shadowOffsetHeight: 1.0)
     }
     
     private func layout() {

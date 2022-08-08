@@ -15,7 +15,9 @@ final class HangoutMainSectionViewModel: ViewModelType {
         var hangout: Hangout
         var isUserParticipating: Bool
         var title: String { hangout.title }
-        var meetTime: String { hangout.meetTime }
+        var meetTime: String {
+            hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
+        }
         var language: Language { hangout.language }
         var placeName: String { hangout.placeName }
         var openchatURL: URL? { hangout.openchatURL }

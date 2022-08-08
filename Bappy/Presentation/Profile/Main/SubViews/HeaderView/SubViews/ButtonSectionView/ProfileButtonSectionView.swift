@@ -26,7 +26,6 @@ final class ProfileButtonSectionView: UIView {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.backgroundColor = .white
-        stackView.addBappyShadow()
         return stackView
     }()
     
@@ -94,8 +93,18 @@ final class ProfileButtonSectionView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureShadow()
+    }
 
     // MARK: Helpers
+    private func configureShadow() {
+        hStackView.addBappyShadow()
+    }
+    
     private func updateYellowBarLayout(index: Int) {
         UIView.animate(withDuration: 0.3) {
             self.yellowView.snp.updateConstraints {

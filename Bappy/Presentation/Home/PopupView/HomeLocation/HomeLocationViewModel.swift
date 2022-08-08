@@ -1,5 +1,5 @@
 //
-//  HomeLocaleViewModel.swift
+//  LocationSettingViewModel.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/07/06.
@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class HomeLocaleViewModel: ViewModelType {
+final class HomeLocationViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository

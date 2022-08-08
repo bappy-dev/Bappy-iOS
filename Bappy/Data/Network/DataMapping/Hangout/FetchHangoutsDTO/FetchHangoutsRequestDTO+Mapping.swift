@@ -8,7 +8,8 @@
 import Foundation
 
 struct FetchHangoutsRequestDTO: Encodable {
-    let sorting: String?
-    let category: String?
+    let page: Int
+    let sorting: String
+    let category: String
     let coordinates: String?
 }

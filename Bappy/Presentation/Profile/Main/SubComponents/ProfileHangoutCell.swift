@@ -180,7 +180,7 @@ extension ProfileHangoutCell {
     func bind(with hangout: Hangout) {
         postImageView.kf.setImage(with: hangout.postImageURL)
         titleLabel.text = hangout.title
-        timeLabel.text = hangout.meetTime
+        timeLabel.text = hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
         placeLabel.text = hangout.placeName
         
         disabledView.isHidden = (hangout.state == .available)

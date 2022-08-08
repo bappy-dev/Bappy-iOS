@@ -1,5 +1,5 @@
 //
-//  HomeLocaleViewController.swift
+//  HomeLocationViewController.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/22.
@@ -10,10 +10,10 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class HomeLocaleViewController: UIViewController {
+final class HomeLocationViewController: UIViewController {
     
     // MARK: Properties
-    private let viewModel: HomeLocaleViewModel
+    private let viewModel: HomeLocationViewModel
     private let disposeBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
@@ -32,7 +32,7 @@ final class HomeLocaleViewController: UIViewController {
     private let childViewController: UINavigationController
 
     // MARK: Lifecycle
-    init(viewModel: HomeLocaleViewModel) {
+    init(viewModel: HomeLocationViewModel) {
         let settingViewModel = viewModel.subViewModels.settingViewModel
         let rootViewController = LocaleSettingViewController(viewModel: settingViewModel)
         self.childViewController = UINavigationController(rootViewController: rootViewController)
@@ -124,7 +124,7 @@ final class HomeLocaleViewController: UIViewController {
 }
 
 // MARK: - Bind
-extension HomeLocaleViewController {
+extension HomeLocationViewController {
     private func bind() {
         viewModel.output.dismissView
             .emit(onNext: { [weak self] in self?.animateDismissView() })

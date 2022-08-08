@@ -92,20 +92,30 @@ final class BappyTabBarController: UITabBarController {
     private func configure() {
         writeButton.setImage(UIImage(named: "tab_write"), for: .normal)
         tabBar.backgroundColor = .white
+        tabBar.isTranslucent = true
     }
     
     private func layout() {
         guard let items = tabBar.items else { return }
         for item in items { item.isEnabled = false }
         
-        let hStackView = UIStackView(arrangedSubviews: [homeButton, profileButton])
-        hStackView.axis = .horizontal
-        hStackView.distribution = .fillEqually
-        hStackView.spacing = 70.0
+        let toolBar = UIToolbar()
         
-        tabBar.addSubview(hStackView)
-        hStackView.snp.makeConstraints {
+        tabBar.addSubview(toolBar)
+        toolBar.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        
+        toolBar.addSubview(homeButton)
+        homeButton.snp.makeConstraints {
+            $0.top.leading.bottom.equalToSuperview()
+            $0.trailing.equalTo(toolBar.snp.centerX).offset(-35.0)
+        }
+        
+        toolBar.addSubview(profileButton)
+        profileButton.snp.makeConstraints {
+            $0.top.bottom.trailing.equalToSuperview()
+            $0.leading.equalTo(toolBar.snp.centerX).offset(35.0)
         }
         
         homeButton.addSubview(homeImageView)

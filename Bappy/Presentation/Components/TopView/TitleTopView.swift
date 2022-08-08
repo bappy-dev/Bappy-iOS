@@ -43,10 +43,20 @@ final class TitleTopView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Helpers
+    private func configureShadow() {
+        self.addBappyShadow()
+        titleView.addBappyShadow()
+    }
+    
     private func configure() {
         self.backgroundColor = .bappyYellow
-        self.addBappyShadow()
         
         titleView.backgroundColor = .white
         titleView.layer.cornerRadius = 15.0

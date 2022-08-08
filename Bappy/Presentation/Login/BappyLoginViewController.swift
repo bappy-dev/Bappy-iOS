@@ -50,7 +50,6 @@ final class BappyLoginViewController: UIViewController {
             font: .roboto(size: 18.0, family: .Bold),
             color: .bappyGray)
         button.adjustsImageWhenHighlighted = false
-        button.addBappyShadow()
         return button
     }()
     
@@ -64,7 +63,6 @@ final class BappyLoginViewController: UIViewController {
             font: .roboto(size: 18.0, family: .Bold),
             color: .white)
         button.adjustsImageWhenHighlighted = false
-        button.addBappyShadow()
         return button
     }()
     
@@ -78,7 +76,6 @@ final class BappyLoginViewController: UIViewController {
             font: .roboto(size: 18.0, family: .Bold),
             color: .white)
         button.adjustsImageWhenHighlighted = false
-        button.addBappyShadow()
         return button
     }()
     
@@ -115,9 +112,16 @@ final class BappyLoginViewController: UIViewController {
         super.viewWillLayoutSubviews()
         
         setButtonImageInset()
+        configureShadow()
     }
     
     // MARK: Helpers
+    private func configureShadow() {
+        googleLoginButton.addBappyShadow()
+        facebookLoginButton.addBappyShadow()
+        appleLoginButton.addBappyShadow()
+    }
+    
     private func setButtonImageInset() {
         for button in [googleLoginButton, facebookLoginButton, appleLoginButton] {
             guard let titleWidth = button.titleLabel?.frame.width else { return }

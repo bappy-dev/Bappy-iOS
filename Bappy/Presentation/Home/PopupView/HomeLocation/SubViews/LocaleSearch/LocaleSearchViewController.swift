@@ -1,5 +1,5 @@
 //
-//  LocaleSettingViewController.swift
+//  LocaleSearchViewController.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/06/23.
@@ -9,23 +9,13 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
-import RxDataSources
 
-private let reuseIdentifier = "LocaleSettingCell"
-typealias LocaleSettingSectionDataSource = RxTableViewSectionedAnimatedDataSource<LocaleSettingSection>
-final class LocaleSettingViewController: UIViewController {
+private let reuseIdentifier = "SearchPlaceCell"
+final class LocaleSearchViewController: UIViewController {
     
     // MARK: Properties
-    private let viewModel: LocaleSettingViewModel
+    private let viewModel: LocaleSearchViewModel
     private let disposeBag = DisposeBag()
-    
-    private let closeButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "  Close", style: .plain, target: nil, action: nil)
-        button.setTitleTextAttributes([
-            .font: UIFont.roboto(size: 18.0, family: .Medium)
-            ], for: .normal)
-        return button
-    }()
     
     private let searchTextField: UITextField = {
         let textField = UITextField()
@@ -40,41 +30,27 @@ final class LocaleSettingViewController: UIViewController {
         containerView.addSubview(imageView)
         textField.leftView = containerView
         textField.leftViewMode = .unlessEditing
+        textField.returnKeyType = .search
         return textField
     }()
     
     private let tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.register(LocaleSettingCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.rowHeight = 75.0
+        let tableView = UITableView()
+        tableView.register(SearchPlaceCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorInset = .init(top: 0, left: 20.0, bottom: 0, right: 20.0)
         tableView.backgroundColor = .bappyLightgray
         tableView.keyboardDismissMode = .interactive
         return tableView
     }()
     
-    private let dataSource: LocaleSettingSectionDataSource = {
-        let dataSource = LocaleSettingSectionDataSource { dataSource, tableView, indexPath, location -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: reuseIdentifier,
-                for: indexPath
-            ) as! LocaleSettingCell
-            cell.bind(with: location)
-            cell.selectionStyle = .none
-            return cell
-        }
-        dataSource.canEditRowAtIndexPath = { _, _ in true }
-        return dataSource
-    }()
-    
     private let topSectionView = UIView()
-    private let currentLocaleView: LocaleSettingHeaderView
+    private let bottomSpinner = UIActivityIndicatorView(style: .medium)
+    private let noResultView = NoResultView()
     
     // MARK: Lifecycle
-    init(viewModel: LocaleSettingViewModel) {
-        let headerViewModel = viewModel.subViewModels.headerViewModel
+    init(viewModel: LocaleSearchViewModel) {
         self.viewModel = viewModel
-        self.currentLocaleView = LocaleSettingHeaderView(viewModel: headerViewModel)
         super.init(nibName: nil, bundle: nil)
         
         configure()
@@ -86,6 +62,18 @@ final class LocaleSettingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        
+        searchTextField.becomeFirstResponder()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Events
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -94,19 +82,20 @@ final class LocaleSettingViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func configureShadow() {
+        topSectionView.addBappyShadow(shadowOffsetHeight: 1.0)
+    }
+    
     private func configure() {
-        navigationItem.title = "Address Setting"
-   
-        navigationItem.leftBarButtonItem = closeButton
-        
-        let backItem = UIBarButtonItem(title: "Setting", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem = backItem
+        navigationItem.title = "Search Address"
         
         view.backgroundColor = .bappyLightgray
-        tableView.tableHeaderView = currentLocaleView
-        currentLocaleView.frame.size.height = 90.0
         topSectionView.backgroundColor = .white
-        topSectionView.addBappyShadow(shadowOffsetHeight: 1.0)
+        tableView.backgroundView = noResultView
+        noResultView.isHidden = true
+        bottomSpinner.hidesWhenStopped = true
+        tableView.tableFooterView = bottomSpinner
+        bottomSpinner.startAnimating()
     }
     
     private func layout() {
@@ -116,8 +105,7 @@ final class LocaleSettingViewController: UIViewController {
         
         view.addSubview(topSectionView)
         topSectionView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.leading.trailing.equalToSuperview()
         }
         
         topSectionView.addSubview(searchBackgroundView)
@@ -146,35 +134,69 @@ final class LocaleSettingViewController: UIViewController {
 }
 
 // MARK: - Bind
-extension LocaleSettingViewController {
+extension LocaleSearchViewController {
     private func bind() {
-        self.rx.viewWillAppear
-            .bind(to: viewModel.input.viewWillAppear)
+        searchTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
             .disposed(by: disposeBag)
         
-        searchTextField.rx.controlEvent(.editingDidBegin)
-            .do { _ in self.searchTextField.resignFirstResponder() }
-            .bind(to: viewModel.input.editingDidBegin)
+        searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.input.searchButtonClicked)
             .disposed(by: disposeBag)
         
-        closeButton.rx.tap
-            .bind(to: viewModel.input.closeButtonTapped)
+        tableView.rx.willDisplayCell
+            .map { $0.indexPath }
+            .bind(to: viewModel.input.willDisplayIndex)
             .disposed(by: disposeBag)
         
-        tableView.rx.itemDeleted
-            .bind(to: viewModel.input.itemDeleted)
+        tableView.rx.prefetchRows
+            .bind(to: viewModel.input.prefetchRows)
             .disposed(by: disposeBag)
         
-        viewModel.output.localeSettingSection
-            .drive(tableView.rx.items(dataSource: dataSource))
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
             .disposed(by: disposeBag)
         
-        viewModel.output.showSearchView
-            .compactMap { $0 }
-            .emit(onNext: { [weak self] viewModel in
-                let viewController = LocaleSearchViewController(viewModel: viewModel)
-                self?.navigationController?.pushViewController(viewController, animated: true)
+        viewModel.output.maps
+            .drive(tableView.rx.items) { tableView, row, map in
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: IndexPath(row: row, section: 0)
+                ) as! SearchPlaceCell
+                cell.setupCell(with: map)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldHideNoResultView
+            .skip(1)
+            .distinctUntilChanged()
+            .emit(to: noResultView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showTranscluentLoader)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.shouldSpinnerAnimating
+            .distinctUntilChanged()
+            .drive(bottomSpinner.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                self?.tableView.contentInset.bottom = height
+                self?.tableView.verticalScrollIndicatorInsets.bottom = height
+            }).disposed(by: disposeBag)
     }
 }

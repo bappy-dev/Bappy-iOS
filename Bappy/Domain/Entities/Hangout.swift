@@ -5,7 +5,7 @@
 //  Created by 정동천 on 2022/06/22.
 //
 
-import UIKit
+import Foundation
 
 struct Hangout: Equatable, Identifiable {
     typealias Identifier = String
@@ -14,7 +14,7 @@ struct Hangout: Equatable, Identifiable {
     let state: State
     
     let title: String
-    let meetTime: String
+    let meetTime: Date
     let language: Language
     let placeID: String
     let placeName: String

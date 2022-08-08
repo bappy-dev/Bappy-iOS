@@ -116,6 +116,12 @@ final class RegisterCompletedViewController: UIViewController {
         animatePresentContainer()
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Animations
     private func playAnimation() {
         animationView.play()
@@ -151,9 +157,12 @@ final class RegisterCompletedViewController: UIViewController {
     }
     
     // MARK: Helpers
+    private func configureShadow() {
+        containerView.addBappyShadow(shadowOffsetHeight: 2.0)
+    }
+    
     private func configure() {
         view.backgroundColor = .clear
-        containerView.addBappyShadow(shadowOffsetHeight: 2.0)
     }
     
     private func layout() {

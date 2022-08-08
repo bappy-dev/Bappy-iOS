@@ -37,7 +37,6 @@ final class ReportViewController: UIViewController {
     private let reportButton: UIButton = {
         let button = UIButton(type: .system)
         button.layer.cornerRadius = 25.0
-        button.addBappyShadow()
         return button
     }()
     
@@ -79,6 +78,12 @@ final class ReportViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         setStatusBarStyle(statusBarStyle: .darkContent)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
     }
 
     // MARK: Helpers
@@ -123,6 +128,10 @@ final class ReportViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
+    }
+    
+    private func configureShadow() {
+        reportButton.addBappyShadow()
     }
 
     private func configure() {

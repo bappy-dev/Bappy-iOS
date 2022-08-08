@@ -29,7 +29,7 @@ final class SortingOrderViewModel: ViewModelType {
     
     struct Output {
         var sortingList: Driver<[Hangout.SortingOrder]> // <-> View
-        var popView: Signal<Void> // <-> View
+        var popViewWithSorting: Signal<Hangout.SortingOrder?> // <-> View
     }
     
     let dependency: Dependency
@@ -41,7 +41,9 @@ final class SortingOrderViewModel: ViewModelType {
     
     private let itemSelected$ = PublishSubject<IndexPath>()
     
-    init(dependency: Dependency) {
+    private let popViewWithSorting$ = PublishSubject<Hangout.SortingOrder?>()
+    
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
@@ -49,9 +51,8 @@ final class SortingOrderViewModel: ViewModelType {
         
         let sortingList = sortingList$
             .asDriver(onErrorJustReturn: dependency.sortingList)
-        let popView = itemSelected$
-            .map { _ in }
-            .asSignal(onErrorJustReturn: Void())
+        let popViewWithSorting = popViewWithSorting$
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -60,7 +61,7 @@ final class SortingOrderViewModel: ViewModelType {
         
         self.output = Output(
             sortingList: sortingList,
-            popView: popView
+            popViewWithSorting: popViewWithSorting
         )
         
         // MARK: Bindind
@@ -68,9 +69,7 @@ final class SortingOrderViewModel: ViewModelType {
         
         itemSelected$
             .withLatestFrom(sortingList$) { ($1[$0.row]) }
-            .bind(onNext: { [weak self] sorting in
-                self?.delegate?.selectedSorting(sorting)
-            })
+            .bind(to: popViewWithSorting$)
             .disposed(by: disposeBag)
     }
 }

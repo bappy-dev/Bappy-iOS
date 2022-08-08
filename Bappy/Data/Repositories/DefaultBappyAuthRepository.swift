@@ -41,7 +41,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             let user = BappyUser(
                 id: "abc",
                 state: .normal,
-                isUserUsingGPS: true,
+                isUserUsingGPS: false,
                 name: "David",
                 gender: .Male,
                 birth: Date(),
@@ -162,41 +162,41 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     }
     
     func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>> {
-        let requestDTO = UpdateGPSSettingRequestDTO(gps: setting)
-        let endpoint = APIEndpoints.updateGPSSetting(with: requestDTO)
-        return  provider.request(with: endpoint)
-            .map { [weak self] result -> Result<Bool, Error> in
-                guard let self = self,
-                      var user = try self.currentUser.value()
-                else { return .failure(NetworkError.emptyUser) }
-                switch result {
-                case .success(let responseDTO):
-                    let isSucceeded = responseDTO.toDomain()
-                    user.isUserUsingGPS = setting
-                    self.currentUser.onNext(user)
-                    return .success(isSucceeded)
-                case .failure(let error):
-                    return .failure(error)
-                }
-            }
-        
-//        return Single<Result<Bool, Error>>.create { single in
-//            do {
-//                guard var user = try self.currentUser.value()
-//                else { return Disposables.create() }
-//                user.isUserUsingGPS = setting
-//                self.currentUser$.onNext(user)
-//
-//                DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                    single(.success(.success(true)))
+//        let requestDTO = UpdateGPSSettingRequestDTO(gps: setting)
+//        let endpoint = APIEndpoints.updateGPSSetting(with: requestDTO)
+//        return  provider.request(with: endpoint)
+//            .map { [weak self] result -> Result<Bool, Error> in
+//                guard let self = self,
+//                      var user = try self.currentUser.value()
+//                else { return .failure(NetworkError.emptyUser) }
+//                switch result {
+//                case .success(let responseDTO):
+//                    let isSucceeded = responseDTO.toDomain()
+//                    user.isUserUsingGPS = setting
+//                    self.currentUser.onNext(user)
+//                    return .success(isSucceeded)
+//                case .failure(let error):
+//                    return .failure(error)
 //                }
-//
-//            } catch {
-//                single(.failure(NetworkError.emptyUser))
 //            }
-//
-//            return Disposables.create()
-//        }
+        
+        return Single<Result<Bool, Error>>.create { single in
+            do {
+                guard var user = try self.currentUser.value()
+                else { return Disposables.create() }
+                user.isUserUsingGPS = setting
+                self.currentUser$.onNext(user)
+
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                    single(.success(.success(true)))
+                }
+
+            } catch {
+                single(.failure(NetworkError.emptyUser))
+            }
+
+            return Disposables.create()
+        }
     }
     
     func updateFCMToken(_ fcmToken: String) -> Single<Result<Bool, Error>> {
@@ -226,7 +226,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
                     name: "Pusan National University",
                     address: "2 Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan, South Korea",
                     coordinates: Coordinates(latitude: 35.2339681, longitude: 129.0806855),
-                    isSelected: true
+                    isSelected: false
                 ),
                 Location(
                     name: "Dongseong-ro",

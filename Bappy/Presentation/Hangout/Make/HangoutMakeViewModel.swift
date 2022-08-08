@@ -252,7 +252,7 @@ final class HangoutMakeViewModel: ViewModelType {
                     id: "preview",
                     state: .preview,
                     title: first.1,
-                    meetTime: first.2.toString(dateFormat: "dd. MMM. HH:mm"),
+                    meetTime: first.2,
                     language: second.1,
                     placeID: first.3.id,
                     placeName: first.3.name,
@@ -294,16 +294,18 @@ final class HangoutMakeViewModel: ViewModelType {
         mapImage
             .withLatestFrom(Observable.combineLatest(
                 currentUser$, hangout, picture$.compactMap { $0 }
-            )) { mapImage, element -> HangoutDetailViewModel in
+            )) { (mapImage: $0, user: $1.0, hangout: $1.1, postImage: $1.2) }
+            .map { element -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
-                    currentUser: element.0,
-                    hangout: element.1,
-                    postImage: element.2,
-                    mapImage: mapImage)
+                    currentUser: element.user,
+                    hangout: element.hangout,
+                    postImage: element.postImage,
+                    mapImage: element.mapImage)
                 return HangoutDetailViewModel(dependency: dependency)
             }
             .bind(to: showHangoutPreview$)
             .disposed(by: disposeBag)
+
         
         // 다음 페이지
         continueButtonTappedWithPage

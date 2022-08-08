@@ -22,7 +22,6 @@ final class BappyFatalAlertView: UIView {
         view.backgroundColor = .white
         view.layer.cornerRadius = 20.0
         view.isHidden = true
-        view.addBappyShadow()
         return view
     }()
     
@@ -64,7 +63,6 @@ final class BappyFatalAlertView: UIView {
         let button = UIButton()
         button.backgroundColor = .bappyYellow
         button.layer.cornerRadius = 22.0
-        button.addBappyShadow()
         return button
     }()
     
@@ -81,6 +79,12 @@ final class BappyFatalAlertView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureShadow()
     }
     
     // MARK: Animations
@@ -115,6 +119,11 @@ final class BappyFatalAlertView: UIView {
     }
     
     // MARK: Helpers
+    private func configureShadow() {
+        containerView.addBappyShadow()
+        actionButton.addBappyShadow()
+    }
+    
     private func configure() {
         self.backgroundColor = .clear
         titleLabel.text = alertTitle

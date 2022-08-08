@@ -65,6 +65,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var reportButtonTapped: AnyObserver<Void> // <-> View
         var imageHeight: AnyObserver<CGFloat> // <-> View
         var cancelAlertButtonTapped: AnyObserver<Void> // <-> View
+        var likeButtonTapped: AnyObserver<Void> // <-> Child(Image)
         var mapButtonTapped: AnyObserver<Void> // <-> Child(Map)
         var selectedUserID: AnyObserver<String> // <-> Child(Participants)
     }
@@ -81,6 +82,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showCreateSuccessView: Signal<Void> // <-> View
         var showYellowLoader: Signal<Bool> // <-> View
         var showTranscluentLoader: Signal<Bool> // <-> View
+        var hangout: Signal<Hangout?> // <-> Child(Image), CellViewModel
     }
     
     let dependency: Dependency
@@ -101,6 +103,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let reportButtonTapped$ = PublishSubject<Void>()
     private let imageHeight$ = PublishSubject<CGFloat>()
     private let cancelAlertButtonTapped$ = PublishSubject<Void>()
+    private let likeButtonTapped$ = PublishSubject<Void>()
     private let mapButtonTapped$ = PublishSubject<Void>()
     private let selectedUserID$ = PublishSubject<String>()
     
@@ -189,6 +192,10 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let showTranscluentLoader = showTranscluentLoader$
             .asSignal(onErrorJustReturn: false)
+        let hangout = hangout$
+            .skip(1)
+            .map(Hangout?.init)
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -197,6 +204,7 @@ final class HangoutDetailViewModel: ViewModelType {
             reportButtonTapped: reportButtonTapped$.asObserver(),
             imageHeight: imageHeight$.asObserver(),
             cancelAlertButtonTapped: cancelAlertButtonTapped$.asObserver(),
+            likeButtonTapped: likeButtonTapped$.asObserver(),
             mapButtonTapped: mapButtonTapped$.asObserver(),
             selectedUserID: selectedUserID$.asObserver()
         )
@@ -212,7 +220,8 @@ final class HangoutDetailViewModel: ViewModelType {
             showUserProfile: showUserProfile,
             showCreateSuccessView: showCreateSuccessView,
             showYellowLoader: showYellowLoader,
-            showTranscluentLoader: showTranscluentLoader
+            showTranscluentLoader: showTranscluentLoader,
+            hangout: hangout
         )
         
         // MARK: Bindind
@@ -311,9 +320,45 @@ final class HangoutDetailViewModel: ViewModelType {
             .bind(to: showUserProfile$)
             .disposed(by: disposeBag)
         
+        // 좋아요 버튼 Flow
+        let likeFlow = likeButtonTapped$
+            .withLatestFrom(hangout$) { (id: $1.id, like: !$1.userHasLiked) }
+            .share()
+        
+        let likeResult = likeFlow
+            .flatMap(dependency.hangoutRepository.likeHangout)
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        likeResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        likeResult
+            .compactMap(getValue)
+            .withLatestFrom(likeFlow)
+            .withLatestFrom(hangout$) { (like: $0.like, hangout: $1) }
+            .map { element -> Hangout in
+                var hangout = element.hangout
+                hangout.userHasLiked = element.like
+                return hangout
+            }
+            .bind(to: hangout$)
+            .disposed(by: disposeBag)
+        
         // Child(Image)
+        hangout
+            .compactMap { $0 }
+            .emit(to: subViewModels.imageSectionViewModel.input.hangout)
+            .disposed(by: disposeBag)
+        
         imageHeight
             .emit(to: subViewModels.imageSectionViewModel.input.imageHeight)
+            .disposed(by: disposeBag)
+        
+        subViewModels.imageSectionViewModel.output.likeButtonTapped
+            .emit(to: input.likeButtonTapped)
             .disposed(by: disposeBag)
         
         // Child(Map)

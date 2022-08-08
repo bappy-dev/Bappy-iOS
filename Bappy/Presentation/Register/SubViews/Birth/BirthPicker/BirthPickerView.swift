@@ -46,11 +46,19 @@ final class BirthPickerView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        configureShadow()
+    }
+    
     // MARK: Helpers
+    private func configureShadow() {
+        self.addBappyShadow(shadowOffsetHeight: 3.5)
+    }
+    
     private func configure() {
         self.backgroundColor = .white
         self.layer.cornerRadius = 5.0
-        self.addBappyShadow(shadowOffsetHeight: 3.5)
+        
     }
     
     private func layout() {

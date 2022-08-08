@@ -42,11 +42,20 @@ final class BappyDropdownView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Helpers
+    private func configureShadow() {
+        self.addBappyShadow()
+    }
+    
     private func configure() {
         self.backgroundColor = .bappyLightgray
         self.layer.cornerRadius = 23.0
-        self.addBappyShadow()
     }
     
     private func layout() {
