@@ -311,7 +311,7 @@ extension HangoutMakeViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showLoader
-            .emit(to: ProgressHUD.rx.showTranscluentLoader)
+            .emit(to: ProgressHUD.rx.showTranslucentLoader)
             .disposed(by: disposeBag)
         
         viewModel.output.showHangoutPreview

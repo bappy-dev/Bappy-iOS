@@ -256,8 +256,8 @@ extension HangoutDetailViewController {
             .emit(to: ProgressHUD.rx.showYellowLoader)
             .disposed(by: disposeBag)
 
-        viewModel.output.showTranscluentLoader
-            .emit(to: ProgressHUD.rx.showTranscluentLoader)
+        viewModel.output.showTranslucentLoader
+            .emit(to: ProgressHUD.rx.showTranslucentLoader)
             .disposed(by: disposeBag)
     }
 }

@@ -20,6 +20,7 @@ final class DefaultBappyAuthRepository {
         // 로그인시 fcmToken 서버에 백그라운드 업로드
         currentUser$
             .compactMap { $0 }
+            .take(1)
             .withLatestFrom(fcmToken$.compactMap { $0 })
             .bind(onNext: updateFCMToken)
             .disposed(by: disposeBag)
@@ -271,51 +272,91 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     }
     
     func createLocation(location: Location) -> Single<Result<Bool, Error>> {
-        let requestDTO = CreateLocationRequestDTO(
-            locationID: location.identity,
-            locationName: location.name,
-            locationAddress: location.address,
-            latitude: location.coordinates.latitude,
-            longitude: location.coordinates.longitude,
-            isSelected: location.isSelected)
-        let endpoint = APIEndpoints.createLocation(with: requestDTO)
-        return  provider.request(with: endpoint)
-            .map { result -> Result<Bool, Error> in
-                switch result {
-                case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
-                case .failure(let error):
-                    return .failure(error)
-                }
+//        let requestDTO = CreateLocationRequestDTO(
+//            locationID: location.identity,
+//            locationName: location.name,
+//            locationAddress: location.address,
+//            latitude: location.coordinates.latitude,
+//            longitude: location.coordinates.longitude,
+//            isSelected: location.isSelected)
+//        let endpoint = APIEndpoints.createLocation(with: requestDTO)
+//        return  provider.request(with: endpoint)
+//            .map { result -> Result<Bool, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    return .success(responseDTO.toDomain())
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        
+        // Sample Data
+        return Single<Result<Bool, Error>>.create { single in
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                single(.success(.success(true)))
             }
+
+            return Disposables.create()
+        }
     }
     
     func deleteLocation(id: String) -> Single<Result<Bool, Error>> {
-        let requestDTO = DeleteLocationRequestDTO(locationID: id)
-        let endpoint = APIEndpoints.deleteLocation(with: requestDTO)
-        return  provider.request(with: endpoint)
-            .map { result -> Result<Bool, Error> in
-                switch result {
-                case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
-                case .failure(let error):
-                    return .failure(error)
-                }
+//        let requestDTO = DeleteLocationRequestDTO(locationID: id)
+//        let endpoint = APIEndpoints.deleteLocation(with: requestDTO)
+//        return  provider.request(with: endpoint)
+//            .map { result -> Result<Bool, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    return .success(responseDTO.toDomain())
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        
+        // Sample Data
+        return Single<Result<Bool, Error>>.create { single in
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                single(.success(.success(true)))
             }
+
+            return Disposables.create()
+        }
     }
     
     func selectLocation(id: String, isSelected: Bool) -> Single<Result<Bool, Error>> {
-        let requestDTO = SelectLocationRequestDTO(locationID: id, isSelected: isSelected)
-        let endpoint = APIEndpoints.selectLocation(with: requestDTO)
-        return  provider.request(with: endpoint)
-            .map { result -> Result<Bool, Error> in
-                switch result {
-                case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
-                case .failure(let error):
-                    return .failure(error)
+//        let requestDTO = SelectLocationRequestDTO(locationID: id, isSelected: isSelected)
+//        let endpoint = APIEndpoints.selectLocation(with: requestDTO)
+//        return  provider.request(with: endpoint)
+//            .map { [weak self] result -> Result<Bool, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    if let self = self,
+//                       var user = try self.currentUser$.value(),
+//                        isSelected {
+//                        user.isUserUsingGPS = false
+//                        self.currentUser$.onNext(user)
+//                    }
+//                    return .success(responseDTO.toDomain())
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        
+        // Sample Data
+        return Single<Result<Bool, Error>>.create { [weak self] single in
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                if let self = self,
+                   var user = try! self.currentUser$.value(),
+                    isSelected {
+                    user.isUserUsingGPS = false
+                    self.currentUser$.onNext(user)
                 }
+                
+                single(.success(.success(true)))
             }
+
+            return Disposables.create()
+        }
     }
     
     func fetchNotificationSetting() -> Single<Result<NotificationSetting, Error>> {

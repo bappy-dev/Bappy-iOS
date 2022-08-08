@@ -105,7 +105,7 @@ extension Reactive where Base: UIActivityIndicatorView {
 }
 
 extension Reactive where Base: ProgressHUD {
-    public static var showTranscluentLoader: Binder<Bool> {
+    public static var showTranslucentLoader: Binder<Bool> {
         return Binder(ProgressHUD.shared) { _, show in
             if show {
                 ProgressHUD.animationType = .horizontalCirclesPulse

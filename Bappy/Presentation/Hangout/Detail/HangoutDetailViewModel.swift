@@ -81,7 +81,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showUserProfile: Signal<ProfileViewModel?> // <-> View
         var showCreateSuccessView: Signal<Void> // <-> View
         var showYellowLoader: Signal<Bool> // <-> View
-        var showTranscluentLoader: Signal<Bool> // <-> View
+        var showTranslucentLoader: Signal<Bool> // <-> View
         var hangout: Signal<Hangout?> // <-> Child(Image), CellViewModel
     }
     
@@ -111,7 +111,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     private let showCreateSuccessView$ = PublishSubject<Void>()
     private let showYellowLoader$ = PublishSubject<Bool>()
-    private let showTranscluentLoader$ = PublishSubject<Bool>()
+    private let showTranslucentLoader$ = PublishSubject<Bool>()
     
     init(dependency: Dependency) {
         let imageDependency = HangoutImageSectionViewModel.Dependency(
@@ -190,7 +190,7 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let showYellowLoader = showYellowLoader$
             .asSignal(onErrorJustReturn: false)
-        let showTranscluentLoader = showTranscluentLoader$
+        let showTranslucentLoader = showTranslucentLoader$
             .asSignal(onErrorJustReturn: false)
         let hangout = hangout$
             .skip(1)
@@ -220,7 +220,7 @@ final class HangoutDetailViewModel: ViewModelType {
             showUserProfile: showUserProfile,
             showCreateSuccessView: showCreateSuccessView,
             showYellowLoader: showYellowLoader,
-            showTranscluentLoader: showTranscluentLoader,
+            showTranslucentLoader: showTranslucentLoader,
             hangout: hangout
         )
         
@@ -235,12 +235,12 @@ final class HangoutDetailViewModel: ViewModelType {
         hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .cancel }
-            .map { _ -> Alert in
+            .map { [weak self] _ -> Alert in
                 let title = "Will you really cancel?\nPlease leave the chat room first!"
                 let message = "Bappy friends are looking\nforward to seeing you"
                 let actionTitle = "Cancel"
                 let action = Alert.Action(
-                    actionTitle: actionTitle) { [weak self] in
+                    actionTitle: actionTitle) {
                         self?.input.cancelAlertButtonTapped.onNext(Void())
                     }
                 return Alert(
@@ -252,7 +252,7 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .bind(to: showCancelAlert$)
             .disposed(by: disposeBag)
-        
+
         // Create 버튼이 눌러졌을 때..
         let createResult = hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
@@ -265,49 +265,49 @@ final class HangoutDetailViewModel: ViewModelType {
             .do { [weak self] _ in self?.showYellowLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
-        
+
         createResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         createResult
             .compactMap(getValue)
             .map { _ in }
             .bind(to: showCreateSuccessView$)
             .disposed(by: disposeBag)
-        
+
         // FirebaseRemoteConfig로 행아웃 신고사유 리스트 불러오기
         let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
             .share()
-        
+
         remoteConfigValuesResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         remoteConfigValuesResult
             .compactMap(getValue)
             .map(\.reasonsForReport)
             .bind(to: reasonsForReport$)
             .disposed(by: disposeBag)
-        
+
         // 참가자 셀 탭 했을 때..
         let bappyUserResult = selectedUserID$
             .withLatestFrom(currentUser$) { ($0, $1)}
             .filter { $1.state == .normal }
             .map(\.0)
-            .do { [weak self] _ in self?.showTranscluentLoader$.onNext(true) }
+            .do { [weak self] _ in self?.showTranslucentLoader$.onNext(true) }
             .flatMap(dependency.userProfileRepository.fetchUserProfile)
-            .do { [weak self] _ in self?.showTranscluentLoader$.onNext(false) }
+            .do { [weak self] _ in self?.showTranslucentLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
-        
+
         bappyUserResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         // 탭한 참가자 프로필로 이동
         bappyUserResult
             .compactMap(getValue)
@@ -319,22 +319,22 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .bind(to: showUserProfile$)
             .disposed(by: disposeBag)
-        
+
         // 좋아요 버튼 Flow
         let likeFlow = likeButtonTapped$
             .withLatestFrom(hangout$) { (id: $1.id, like: !$1.userHasLiked) }
             .share()
-        
+
         let likeResult = likeFlow
             .flatMap(dependency.hangoutRepository.likeHangout)
             .observe(on: MainScheduler.asyncInstance)
             .share()
-        
+
         likeResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         likeResult
             .compactMap(getValue)
             .withLatestFrom(likeFlow)
@@ -346,26 +346,26 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .bind(to: hangout$)
             .disposed(by: disposeBag)
-        
+
         // Child(Image)
         hangout
             .compactMap { $0 }
             .emit(to: subViewModels.imageSectionViewModel.input.hangout)
             .disposed(by: disposeBag)
-        
+
         imageHeight
             .emit(to: subViewModels.imageSectionViewModel.input.imageHeight)
             .disposed(by: disposeBag)
-        
+
         subViewModels.imageSectionViewModel.output.likeButtonTapped
             .emit(to: input.likeButtonTapped)
             .disposed(by: disposeBag)
-        
+
         // Child(Map)
         subViewModels.mapSectionViewModel.output.mapButtonTapped
             .emit(to: input.mapButtonTapped)
             .disposed(by: disposeBag)
-        
+
         // Child(Participants)
         subViewModels.participantsSectionViewModel.output.selectedUserID
             .compactMap { $0 }

@@ -64,6 +64,12 @@ final class LocaleSettingViewController: UIViewController {
             return cell
         }
         dataSource.canEditRowAtIndexPath = { _, _ in true }
+        dataSource.decideViewTransition = { _, _, changeSets  in
+            if !changeSets.isEmpty {
+                return RxDataSources.ViewTransition.animated
+            }
+            return RxDataSources.ViewTransition.reload
+        }
         return dataSource
     }()
     
@@ -162,12 +168,16 @@ extension LocaleSettingViewController {
             .disposed(by: disposeBag)
         
         searchTextField.rx.controlEvent(.editingDidBegin)
-            .do { _ in self.searchTextField.resignFirstResponder() }
+            .do { [weak self] _ in self?.searchTextField.resignFirstResponder() }
             .bind(to: viewModel.input.editingDidBegin)
             .disposed(by: disposeBag)
         
         closeButton.rx.tap
             .bind(to: viewModel.input.closeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
             .disposed(by: disposeBag)
         
         tableView.rx.itemDeleted

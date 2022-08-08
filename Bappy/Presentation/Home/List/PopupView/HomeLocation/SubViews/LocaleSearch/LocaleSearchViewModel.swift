@@ -9,19 +9,18 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol LocaleSearchViewModelDelegate: AnyObject {
-    func mapSelected(map: Map)
-}
-
 final class LocaleSearchViewModel: ViewModelType {
     
     struct Dependency {
         let googleMapRepository: GoogleMapsRepository
+        let bappyAuthRepository: BappyAuthRepository
         var key: String { Bundle.main.googleMapAPIKey }
         var language: String { "en" }
         
-        init(googleMapRepository: GoogleMapsRepository = DefaultGoogleMapsRepository()) {
+        init(googleMapRepository: GoogleMapsRepository = DefaultGoogleMapsRepository(),
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
             self.googleMapRepository = googleMapRepository
+            self.bappyAuthRepository = bappyAuthRepository
         }
     }
     
@@ -42,7 +41,6 @@ final class LocaleSearchViewModel: ViewModelType {
         var popView: Signal<Void> // <-> View
     }
     
-    weak var delegate: LocaleSearchViewModelDelegate?
     let dependency: Dependency
     var disposeBag = DisposeBag()
     let input: Input
@@ -81,6 +79,7 @@ final class LocaleSearchViewModel: ViewModelType {
                 searchButtonClicked$,
                 itemSelected$.map { _ in }
             )
+            .debug("SearchViewModel")
             .asSignal(onErrorJustReturn: Void())
         let showLoader = showLoader$.asSignal(onErrorJustReturn: false)
         let shouldSpinnerAnimating = nextPageToken$
@@ -180,13 +179,30 @@ final class LocaleSearchViewModel: ViewModelType {
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
-        itemSelected$
+        let createLocationResult = itemSelected$
+            .do { [weak self] _ in self?.showLoader$.onNext(true) }
             .withLatestFrom(maps$) { $1[$0.row] }
-            .do { _ in self.popView$.onNext(Void()) }
-            .bind(onNext: { [weak self] map in
-                self?.delegate?.mapSelected(map: map)
-            })
+            .map {
+                Location(
+                    identity: $0.id,
+                    name: $0.name,
+                    address: $0.address,
+                    coordinates: $0.coordinates,
+                    isSelected: false)
+            }
+            .flatMap(dependency.bappyAuthRepository.createLocation)
+            .do { [weak self] _ in self?.showLoader$.onNext(false) }
+            .share()
+        
+        createLocationResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
+        createLocationResult
+            .compactMap(getValue)
+            .map { _ in }
+            .bind(to: popView$)
+            .disposed(by: disposeBag)
     }
 }
