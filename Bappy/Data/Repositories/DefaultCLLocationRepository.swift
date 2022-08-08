@@ -1,5 +1,5 @@
 //
-//  DefaultLocationRepository.swift
+//  DefaultCLLocationRepository.swift
 //  Bappy
 //
 //  Created by 정동천 on 2022/07/10.
@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import CoreLocation
 
-final class DefaultLocationRepository {
+final class DefaultCLLocationRepository {
 
     private let disposeBag = DisposeBag()
     private let locationManager: CLLocationManager = {
@@ -38,9 +38,9 @@ final class DefaultLocationRepository {
     }
 }
 
-extension DefaultLocationRepository: LocationRepository {
+extension DefaultCLLocationRepository: CLLocationRepository {
 
-    static let shared = DefaultLocationRepository()
+    static let shared = DefaultCLLocationRepository()
     var location: BehaviorSubject<Coordinates?> { location$ }
     var authorization: BehaviorSubject<CLAuthorizationStatus> { authorization$ }
 

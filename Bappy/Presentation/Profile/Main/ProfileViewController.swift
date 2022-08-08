@@ -237,5 +237,9 @@ extension ProfileViewController {
             .distinctUntilChanged()
             .emit(to: holderView.rx.isHidden)
             .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showTranscluentLoader)
+            .disposed(by: disposeBag)
     }
 }

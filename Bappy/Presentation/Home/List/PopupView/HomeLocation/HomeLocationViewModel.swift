@@ -13,10 +13,10 @@ final class HomeLocationViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
-        let locationRepsitory: LocationRepository
+        let locationRepsitory: CLLocationRepository
         
         init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
-             locationRepsitory: LocationRepository = DefaultLocationRepository.shared) {
+             locationRepsitory: CLLocationRepository = DefaultCLLocationRepository.shared) {
             self.bappyAuthRepository = bappyAuthRepository
             self.locationRepsitory = locationRepsitory
         }
@@ -56,12 +56,12 @@ final class HomeLocationViewModel: ViewModelType {
         let showAuthorizationAlert = showAuthorizationAlert$
             .map { _ -> Alert in
                 let title = "Permission Denied"
-                let message = "Please Turn On Location Service\nto Allow \"Bappy\"\nto Determine Your Location"
+                let message = "Please turn on location\nservice to allow \"Bappy\"\nto Determine Your Location"
                 let actionTitle = "Setting"
                 
                 let action = Alert.Action(
                     actionTitle: actionTitle,
-                    actionStyle: .disclosure) {
+                    actionStyle: .default) {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                     }
                 

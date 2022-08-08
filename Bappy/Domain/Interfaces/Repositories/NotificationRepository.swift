@@ -12,5 +12,6 @@ import UserNotifications
 protocol NotificationRepository {
     static var shared: Self { get }
     var authorization: BehaviorSubject<UNAuthorizationStatus?> { get }
-    func requestAuthorization(options: UNAuthorizationOptions)
+    func requestAuthorization(completion: ((Result<UNAuthorizationStatus, Error>) -> Void)?)
+    func requestAuthorization() -> Single<Result<UNAuthorizationStatus, Error>>
 }

@@ -14,10 +14,10 @@ final class LocaleSettingViewModel: ViewModelType {
     
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
-        let locationRepsitory: LocationRepository
+        let locationRepsitory: CLLocationRepository
         
         init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
-             locationRepsitory: LocationRepository = DefaultLocationRepository.shared) {
+             locationRepsitory: CLLocationRepository = DefaultCLLocationRepository.shared) {
             self.bappyAuthRepository = bappyAuthRepository
             self.locationRepsitory = locationRepsitory
         }
@@ -133,7 +133,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         let locationsResult = viewWillAppear$
             .map { _ in }
-            .flatMap(dependency.bappyAuthRepository.fetchUserLocations)
+            .flatMap(dependency.bappyAuthRepository.fetchLocations)
             .share()
         
         locationsResult

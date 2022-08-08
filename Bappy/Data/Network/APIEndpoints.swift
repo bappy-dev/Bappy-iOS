@@ -67,6 +67,22 @@ struct APIEndpoints {
             bodyParameters: updateFCMTokenRequestDTO,
             contentType: .urlencoded)
     }
+    
+    static func fetchNotificationSetting() -> Endpoint<FetchNotificationSettingResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/notification",
+            method: .get)
+    }
+    
+    static func updateNotificationSetting(with updateNotificationSettingRequestDTO: UpdateNotificationSettingRequestDTO) -> Endpoint<UpdateNotificationSettingResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/notification",
+            method: .put,
+            bodyParameters: updateNotificationSettingRequestDTO,
+            contentType: .urlencoded)
+    }
 }
 
 
@@ -161,5 +177,41 @@ extension APIEndpoints {
             bodyParameters: reportHangoutRequestDTO,
             imageDatas: datas,
             contentType: .multipart)
+    }
+}
+
+// MARK: - Location
+extension APIEndpoints {
+    static func fetchLocations() -> Endpoint<FetchLocationsResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/locations",
+            method: .get)
+    }
+    
+    static func createLocation(with createLocationRequestDTO: CreateLocationRequestDTO) -> Endpoint<CreateLocationResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/location",
+            method: .post,
+            bodyParameters: createLocationRequestDTO,
+            contentType: .urlencoded)
+    }
+    
+    static func deleteLocation(with deleteLocationRequestDTO: DeleteLocationRequestDTO) -> Endpoint<DeleteLocationResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/location",
+            method: .delete,
+            queryParameters: deleteLocationRequestDTO)
+    }
+    
+    static func selectLocation(with selectLocationRequestDTO: SelectLocationRequestDTO) -> Endpoint<SelectLocationResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "user/location",
+            method: .delete,
+            bodyParameters: selectLocationRequestDTO,
+            contentType: .urlencoded)
     }
 }

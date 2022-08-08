@@ -105,7 +105,7 @@ final class LocaleSettingViewController: UIViewController {
     }
     
     private func configure() {
-        navigationItem.title = "Address Setting"
+        navigationItem.title = "Location Setting"
    
         navigationItem.leftBarButtonItem = closeButton
         

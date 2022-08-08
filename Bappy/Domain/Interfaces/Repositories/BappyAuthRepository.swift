@@ -17,6 +17,13 @@ protocol BappyAuthRepository {
     func deleteUser() -> Single<Result<Bool, Error>>
     func updateProfile(affiliation: String?, introduce: String?, languages: [Language]?, personalities: [Persnoality]?, interests: [Hangout.Category]?, data: Data?) -> Single<Result<Bool, Error>>
     func updateGPSSetting(to setting: Bool) -> Single<Result<Bool, Error>>
-    func updateFCMToken(_ fcmToken: String) -> Single<Result<Bool, Error>>
-    func fetchUserLocations() -> Single<Result<[Location], Error>>
+    func registerFCMToken(_ fcmToken: String)
+    
+    func fetchLocations() -> Single<Result<[Location], Error>>
+    func createLocation(location: Location) -> Single<Result<Bool, Error>>
+    func deleteLocation(id: String) -> Single<Result<Bool, Error>>
+    func selectLocation(id: String, isSelected: Bool) -> Single<Result<Bool, Error>>
+    
+    func fetchNotificationSetting() -> Single<Result<NotificationSetting, Error>>
+    func updateNotificationSetting(myHangout: Bool?, newHangout: Bool?) -> Single<Result<Bool, Error>>
 }

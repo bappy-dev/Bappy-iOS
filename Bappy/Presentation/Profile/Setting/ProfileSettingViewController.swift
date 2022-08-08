@@ -118,5 +118,10 @@ extension ProfileSettingViewController {
                 self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.output.showAuthorizationAlert
+            .compactMap { $0 }
+            .emit(to: self.rx.showAlert)
+            .disposed(by: disposeBag)
     }
 }

@@ -142,8 +142,8 @@
 		A73BC9B5287ABFE400FB9FA9 /* SortingOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B4287ABFE400FB9FA9 /* SortingOrderViewModel.swift */; };
 		A73BC9BA287B168400FB9FA9 /* CLLocationManager+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B9287B168400FB9FA9 /* CLLocationManager+Rx.swift */; };
 		A73BC9BC287B16C000FB9FA9 /* RxCLLocationManagerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9BB287B16C000FB9FA9 /* RxCLLocationManagerDelegateProxy.swift */; };
-		A73BC9BE287B173600FB9FA9 /* DefaultLocationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9BD287B173600FB9FA9 /* DefaultLocationRepository.swift */; };
-		A73BC9C0287B176900FB9FA9 /* LocationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9BF287B176900FB9FA9 /* LocationRepository.swift */; };
+		A73BC9BE287B173600FB9FA9 /* DefaultCLLocationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9BD287B173600FB9FA9 /* DefaultCLLocationRepository.swift */; };
+		A73BC9C0287B176900FB9FA9 /* CLLocationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9BF287B176900FB9FA9 /* CLLocationRepository.swift */; };
 		A73BC9C2287C239000FB9FA9 /* PublicProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9C1287C239000FB9FA9 /* PublicProvider.swift */; };
 		A73BC9C4287C239900FB9FA9 /* BappyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9C3287C239900FB9FA9 /* BappyProvider.swift */; };
 		A73BC9C7287D7E0700FB9FA9 /* LocaleSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9C6287D7E0700FB9FA9 /* LocaleSettingViewModel.swift */; };
@@ -175,6 +175,18 @@
 		A76AE72D289ED4AF00A8EB9B /* HangoutCellHolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE72C289ED4AF00A8EB9B /* HangoutCellHolderView.swift */; };
 		A76AE72F289FB5B900A8EB9B /* HangoutCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE72E289FB5B900A8EB9B /* HangoutCellViewModel.swift */; };
 		A76AE73128A05D4900A8EB9B /* like.json in Resources */ = {isa = PBXBuildFile; fileRef = A76AE73028A05D4900A8EB9B /* like.json */; };
+		A76AE73328A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73228A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift */; };
+		A76AE73628A0F1B300A8EB9B /* NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73528A0F1B300A8EB9B /* NotificationSetting.swift */; };
+		A76AE73828A0F27900A8EB9B /* UpdateNotificationSettingResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73728A0F27900A8EB9B /* UpdateNotificationSettingResponseDTO+Mapping.swift */; };
+		A76AE73A28A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73928A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift */; };
+		A76AE73D28A0F98B00A8EB9B /* SettingSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73C28A0F98B00A8EB9B /* SettingSwitch.swift */; };
+		A76AE73F28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73E28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift */; };
+		A76AE74328A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74228A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift */; };
+		A76AE74528A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74428A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift */; };
+		A76AE74828A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74728A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift */; };
+		A76AE74A28A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */; };
+		A76AE75328A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE75228A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift */; };
+		A76AE75528A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE75428A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift */; };
 		A76C211E2843885F00044A34 /* BappyLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76C211D2843885F00044A34 /* BappyLoginViewController.swift */; };
 		A76C212328439B5300044A34 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A76C212228439B5300044A34 /* FirebaseAnalytics */; };
 		A76C212528439B5300044A34 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A76C212428439B5300044A34 /* FirebaseAuth */; };
@@ -435,8 +447,8 @@
 		A73BC9B4287ABFE400FB9FA9 /* SortingOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingOrderViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B9287B168400FB9FA9 /* CLLocationManager+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Rx.swift"; sourceTree = "<group>"; };
 		A73BC9BB287B16C000FB9FA9 /* RxCLLocationManagerDelegateProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxCLLocationManagerDelegateProxy.swift; sourceTree = "<group>"; };
-		A73BC9BD287B173600FB9FA9 /* DefaultLocationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLocationRepository.swift; sourceTree = "<group>"; };
-		A73BC9BF287B176900FB9FA9 /* LocationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRepository.swift; sourceTree = "<group>"; };
+		A73BC9BD287B173600FB9FA9 /* DefaultCLLocationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCLLocationRepository.swift; sourceTree = "<group>"; };
+		A73BC9BF287B176900FB9FA9 /* CLLocationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationRepository.swift; sourceTree = "<group>"; };
 		A73BC9C1287C239000FB9FA9 /* PublicProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicProvider.swift; sourceTree = "<group>"; };
 		A73BC9C3287C239900FB9FA9 /* BappyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyProvider.swift; sourceTree = "<group>"; };
 		A73BC9C6287D7E0700FB9FA9 /* LocaleSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleSettingViewModel.swift; sourceTree = "<group>"; };
@@ -465,6 +477,18 @@
 		A76AE72C289ED4AF00A8EB9B /* HangoutCellHolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutCellHolderView.swift; sourceTree = "<group>"; };
 		A76AE72E289FB5B900A8EB9B /* HangoutCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutCellViewModel.swift; sourceTree = "<group>"; };
 		A76AE73028A05D4900A8EB9B /* like.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = like.json; sourceTree = "<group>"; };
+		A76AE73228A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchNotificationSettingResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE73528A0F1B300A8EB9B /* NotificationSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSetting.swift; sourceTree = "<group>"; };
+		A76AE73728A0F27900A8EB9B /* UpdateNotificationSettingResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateNotificationSettingResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE73928A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateNotificationSettingRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE73C28A0F98B00A8EB9B /* SettingSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSwitch.swift; sourceTree = "<group>"; };
+		A76AE73E28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchLocationsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE74228A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE74428A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateLocationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE74728A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteLocationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE75228A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelectLocationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE75428A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelectLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76C211D2843885F00044A34 /* BappyLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyLoginViewController.swift; sourceTree = "<group>"; };
 		A76EEE5F284E69FE00A2CFF6 /* ContinueButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueButtonView.swift; sourceTree = "<group>"; };
 		A76EEE682850659600A2CFF6 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -767,7 +791,7 @@
 				A70C3CC8286B4CBD00BB7219 /* UserProfileRepository.swift */,
 				A70C3CC2286AF24200BB7219 /* FirebaseRepository.swift */,
 				A73BC99F2875933500FB9FA9 /* HangoutRepository.swift */,
-				A73BC9BF287B176900FB9FA9 /* LocationRepository.swift */,
+				A73BC9BF287B176900FB9FA9 /* CLLocationRepository.swift */,
 				A7751B032886F52300F23241 /* NotificationRepository.swift */,
 				A72E6F0C2894149B00E06BED /* NetworkCheckRepository.swift */,
 			);
@@ -791,7 +815,7 @@
 				A70C3CCA286B4CD200BB7219 /* DefaultUserProfileRepository.swift */,
 				A70C3CC0286AEB1300BB7219 /* DefaultFirebaseRepository.swift */,
 				A73BC9A12875977F00FB9FA9 /* DefaultHangoutRepository.swift */,
-				A73BC9BD287B173600FB9FA9 /* DefaultLocationRepository.swift */,
+				A73BC9BD287B173600FB9FA9 /* DefaultCLLocationRepository.swift */,
 				A7751B052886F66800F23241 /* DefaultNotificationRepository.swift */,
 				A72E6F0A2894113E00E06BED /* DefaultNetworkCheckRepository.swift */,
 			);
@@ -830,7 +854,6 @@
 			children = (
 				A7CE0FA02849F4F10063458F /* List */,
 				A71432DA2860CB7900380DF7 /* Search */,
-				A7B6448D284663D000A509AB /* PopupView */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -889,6 +912,8 @@
 				A7FB695828986A20007B5DCF /* UpdateProfileDTO */,
 				A7751AF7287EB58D00F23241 /* UpdateGPSSettingDTO */,
 				A72964CF289AF18800970807 /* UpdateFCMTokenDTO */,
+				A76AE73428A0F0E000A8EB9B /* FetchNotificationSettingDTO */,
+				A76AE73B28A0F29100A8EB9B /* UpdateNotificationSettingDTO */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -1118,6 +1143,7 @@
 				A76EEE782850AD6000A2CFF6 /* Map.swift */,
 				A7F52CEB2864A66F002523D4 /* Location.swift */,
 				A72838F4286301F100BBBD9C /* Hangout.swift */,
+				A76AE73528A0F1B300A8EB9B /* NotificationSetting.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -1301,6 +1327,69 @@
 			path = HolderView;
 			sourceTree = "<group>";
 		};
+		A76AE73428A0F0E000A8EB9B /* FetchNotificationSettingDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE73228A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift */,
+			);
+			path = FetchNotificationSettingDTO;
+			sourceTree = "<group>";
+		};
+		A76AE73B28A0F29100A8EB9B /* UpdateNotificationSettingDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE73928A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift */,
+				A76AE73728A0F27900A8EB9B /* UpdateNotificationSettingResponseDTO+Mapping.swift */,
+			);
+			path = UpdateNotificationSettingDTO;
+			sourceTree = "<group>";
+		};
+		A76AE74028A1317B00A8EB9B /* FetchLocationsDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE73E28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift */,
+			);
+			path = FetchLocationsDTO;
+			sourceTree = "<group>";
+		};
+		A76AE74128A1318800A8EB9B /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE74028A1317B00A8EB9B /* FetchLocationsDTO */,
+				A76AE74628A131CC00A8EB9B /* CreateLocationDTO */,
+				A76AE74B28A131FE00A8EB9B /* DeleteLocationDTO */,
+				A76AE75628A137E000A8EB9B /* SelectLocationDTO */,
+			);
+			path = Location;
+			sourceTree = "<group>";
+		};
+		A76AE74628A131CC00A8EB9B /* CreateLocationDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE74428A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift */,
+				A76AE74228A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift */,
+			);
+			path = CreateLocationDTO;
+			sourceTree = "<group>";
+		};
+		A76AE74B28A131FE00A8EB9B /* DeleteLocationDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE74728A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift */,
+				A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */,
+			);
+			path = DeleteLocationDTO;
+			sourceTree = "<group>";
+		};
+		A76AE75628A137E000A8EB9B /* SelectLocationDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE75228A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift */,
+				A76AE75428A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift */,
+			);
+			path = SelectLocationDTO;
+			sourceTree = "<group>";
+		};
 		A76C212A2843A69000044A34 /* Login */ = {
 			isa = PBXGroup;
 			children = (
@@ -1382,6 +1471,7 @@
 				A72964C4289A676500970807 /* User */,
 				A72964C5289A676D00970807 /* Map */,
 				A72964C6289A677300970807 /* Hangout */,
+				A76AE74128A1318800A8EB9B /* Location */,
 			);
 			path = DataMapping;
 			sourceTree = "<group>";
@@ -1700,6 +1790,7 @@
 				A70C3CD6286B5B8400BB7219 /* HomeListViewModel.swift */,
 				A7D80C292860343600F9951A /* SubViews */,
 				A709061F2855F5620096E9A0 /* SubComponents */,
+				A7B6448D284663D000A509AB /* PopupView */,
 			);
 			path = List;
 			sourceTree = "<group>";
@@ -2049,6 +2140,7 @@
 			children = (
 				A714119728985F8A002D4714 /* ProfileSettingNotificationView.swift */,
 				A714119628985F8A002D4714 /* ProfileSettingNotificationViewModel.swift */,
+				A76AE73C28A0F98B00A8EB9B /* SettingSwitch.swift */,
 			);
 			path = NotificationSection;
 			sourceTree = "<group>";
@@ -2372,6 +2464,7 @@
 				A7A6B01E2845D31600911861 /* HangoutMakeOpenchatView.swift in Sources */,
 				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
 				A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */,
+				A76AE74328A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift in Sources */,
 				A7751AFD2880033B00F23241 /* BappyAlertController.swift in Sources */,
 				A739AB93289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift in Sources */,
 				A71411C528985F8A002D4714 /* ProfileDetailLanguageViewModel.swift in Sources */,
@@ -2385,6 +2478,7 @@
 				A71411A928985F8A002D4714 /* ProfileLanguageViewModel.swift in Sources */,
 				A71E27D628698779001DA96B /* Coordinates.swift in Sources */,
 				A717323128355ED90073E702 /* HomeListTopView.swift in Sources */,
+				A76AE73D28A0F98B00A8EB9B /* SettingSwitch.swift in Sources */,
 				A7CE0FA8284C7F010063458F /* Bappy++Bundle.swift in Sources */,
 				A7F52CE328645A00002523D4 /* LocaleSettingHeaderView.swift in Sources */,
 				A71411D728985F8A002D4714 /* ProfileSettingViewController.swift in Sources */,
@@ -2396,6 +2490,7 @@
 				A709062D28570D7D0096E9A0 /* RegisterCompletedViewController.swift in Sources */,
 				A76EEE60284E69FE00A2CFF6 /* ContinueButtonView.swift in Sources */,
 				A72838F5286301F100BBBD9C /* Hangout.swift in Sources */,
+				A76AE74A28A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift in Sources */,
 				A70C3CCB286B4CD200BB7219 /* DefaultUserProfileRepository.swift in Sources */,
 				A739ABA0289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift in Sources */,
 				A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */,
@@ -2412,6 +2507,7 @@
 				A71411C628985F8A002D4714 /* ProfileDetailAffiliationView.swift in Sources */,
 				A70C3CC5286B2FC000BB7219 /* BappyTabBarViewModel.swift in Sources */,
 				A71411D128985F8A002D4714 /* DeleteAccountViewModel.swift in Sources */,
+				A76AE74528A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift in Sources */,
 				A76EEE6D285065A800A2CFF6 /* Responsable.swift in Sources */,
 				A71411B128985F8A002D4714 /* ProfileEditViewController.swift in Sources */,
 				A7090624285616D50096E9A0 /* CountryCell.swift in Sources */,
@@ -2423,9 +2519,10 @@
 				A73BC9B12875A49000FB9FA9 /* HomeLocationViewModel.swift in Sources */,
 				A71411B628985F8A002D4714 /* ProfileEditLanguageViewModel.swift in Sources */,
 				A71432CD2860AB5A00380DF7 /* SelectionLabel.swift in Sources */,
+				A76AE75528A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift in Sources */,
 				A76EEE802850B17400A2CFF6 /* FetchMapsRequestDTO+Mapping.swift in Sources */,
 				A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */,
-				A73BC9C0287B176900FB9FA9 /* LocationRepository.swift in Sources */,
+				A73BC9C0287B176900FB9FA9 /* CLLocationRepository.swift in Sources */,
 				A73BC9AD28759F0500FB9FA9 /* HomeListTopSubViewModel.swift in Sources */,
 				A739AB9A289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift in Sources */,
 				A78502F32859C6B8000FA592 /* HangoutMakeViewModel.swift in Sources */,
@@ -2441,6 +2538,7 @@
 				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,
 				A78C536A283BB58F00CC41F5 /* HangoutParticipantsSectionView.swift in Sources */,
 				A78502F5285A0A44000FA592 /* HangoutMakeCategoryView.swift in Sources */,
+				A76AE73828A0F27900A8EB9B /* UpdateNotificationSettingResponseDTO+Mapping.swift in Sources */,
 				A70C3CBE286A1D5600BB7219 /* FetchCurrentUserResponseDTO+Mapping.swift in Sources */,
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
 				A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */,
@@ -2484,6 +2582,7 @@
 				A7D80C20285CDBC300F9951A /* SearchPlaceViewModel.swift in Sources */,
 				A73BC9A82875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift in Sources */,
 				A71411CC28985F8A002D4714 /* ProfileDetailViewModel.swift in Sources */,
+				A76AE73628A0F1B300A8EB9B /* NotificationSetting.swift in Sources */,
 				A76EEE7728507AD400A2CFF6 /* APIEndpoints.swift in Sources */,
 				A73BC9BA287B168400FB9FA9 /* CLLocationManager+Rx.swift in Sources */,
 				A71411DD28985F8A002D4714 /* ProfileButtonSectionView.swift in Sources */,
@@ -2517,6 +2616,8 @@
 				A71411CB28985F8A002D4714 /* ProfileDetailInterestsViewModel.swift in Sources */,
 				A73BC9BC287B16C000FB9FA9 /* RxCLLocationManagerDelegateProxy.swift in Sources */,
 				A76AE72F289FB5B900A8EB9B /* HangoutCellViewModel.swift in Sources */,
+				A76AE73F28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift in Sources */,
+				A76AE74828A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift in Sources */,
 				A70B0D60286C567A009EBF33 /* BappyInitialViewController.swift in Sources */,
 				A76EEE73285065BC00A2CFF6 /* Provider.swift in Sources */,
 				A7F52CFB2865FFBE002523D4 /* HangoutPlanSectionViewModel.swift in Sources */,
@@ -2559,6 +2660,7 @@
 				A71411A728985F8A002D4714 /* CustomerServiceButton.swift in Sources */,
 				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
 				A71411B028985F8A002D4714 /* ProfileLanguageViewController.swift in Sources */,
+				A76AE73328A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift in Sources */,
 				A71411C228985F8A002D4714 /* ProfileDetailIntroduceView.swift in Sources */,
 				A71411BC28985F8A002D4714 /* ProfileEditInterestsView.swift in Sources */,
 				A71411C728985F8A002D4714 /* ProfileDetailAffiliationViewModel.swift in Sources */,
@@ -2587,6 +2689,7 @@
 				A71411C928985F8A002D4714 /* ProfileDetailMainView.swift in Sources */,
 				A717323F283631860073E702 /* BappyNavigationViewController.swift in Sources */,
 				A73BC9C4287C239900FB9FA9 /* BappyProvider.swift in Sources */,
+				A76AE73A28A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift in Sources */,
 				A70B0D5E286C02A5009EBF33 /* BappyLoginViewModel.swift in Sources */,
 				A71411C128985F8A002D4714 /* ProfileDetailPersonalityView.swift in Sources */,
 				A75B11BD283C993C00C49597 /* ReportImageSectionView.swift in Sources */,
@@ -2600,8 +2703,9 @@
 				A75B11CA283CF74600C49597 /* RegisterSuccessViewController.swift in Sources */,
 				A71411BB28985F8A002D4714 /* ProfileEditMainView.swift in Sources */,
 				A7B64484284625BB00A509AB /* SelectLanguageViewController.swift in Sources */,
+				A76AE75328A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift in Sources */,
 				A78502F02859A2FF000FA592 /* BirthPickerGradientView.swift in Sources */,
-				A73BC9BE287B173600FB9FA9 /* DefaultLocationRepository.swift in Sources */,
+				A73BC9BE287B173600FB9FA9 /* DefaultCLLocationRepository.swift in Sources */,
 				A71411CA28985F8A002D4714 /* ProfileDetailInterestsView.swift in Sources */,
 				A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */,
 				A78502FF285A1827000FA592 /* HangoutMakePlaceViewModel.swift in Sources */,

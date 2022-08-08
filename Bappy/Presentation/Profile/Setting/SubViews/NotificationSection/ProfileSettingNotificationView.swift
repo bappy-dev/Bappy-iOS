@@ -16,6 +16,10 @@ final class ProfileSettingNotificationView: UIView {
     private let viewModel: ProfileSettingNotificationViewModel
     private let disposeBag = DisposeBag()
     
+    private let notificationSwitch = SettingSwitch()
+    private let myHangoutSwitch = SettingSwitch()
+    private let newHangoutSwitch = SettingSwitch()
+    
     private let notificationImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -29,12 +33,6 @@ final class ProfileSettingNotificationView: UIView {
         label.textColor = .bappyBrown
         label.text = "Notification"
         return label
-    }()
-
-    private let notificationSwitch: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "setting_switch_on"), for: .normal)
-        return button
     }()
 
     private let myHangoutLabel: UILabel = {
@@ -53,12 +51,6 @@ final class ProfileSettingNotificationView: UIView {
         return label
     }()
 
-    private let myHangoutSwitch: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "setting_switch_on"), for: .normal)
-        return button
-    }()
-    
     private let newHangoutLabel: UILabel = {
         let label = UILabel()
         label.text = "New Hangout"
@@ -73,12 +65,6 @@ final class ProfileSettingNotificationView: UIView {
         label.textColor = .bappyBrown
         label.font = .roboto(size: 13.0)
         return label
-    }()
-
-    private let newHangoutSwitch: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "setting_switch_on"), for: .normal)
-        return button
     }()
     
     // MARK: Lifecycle
@@ -180,6 +166,28 @@ final class ProfileSettingNotificationView: UIView {
 // MARK: - Bind
 extension ProfileSettingNotificationView {
     private func bind() {
+        notificationSwitch.rx.tap
+            .bind(to: viewModel.input.notificationSwitchTapped)
+            .disposed(by: disposeBag)
         
+        myHangoutSwitch.rx.tap
+            .bind(to: viewModel.input.myHangoutSwitchTapped)
+            .disposed(by: disposeBag)
+        
+        newHangoutSwitch.rx.tap
+            .bind(to: viewModel.input.newHangoutSwitchTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.notificationSwitchState
+            .drive(notificationSwitch.rx.isOn)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.myHangoutSwitchState
+            .drive(myHangoutSwitch.rx.isOn)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.newHangoutSwitchtate
+            .drive(newHangoutSwitch.rx.isOn)
+            .disposed(by: disposeBag)
     }
 }

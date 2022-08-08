@@ -15,11 +15,11 @@ final class HomeListViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let hangoutRepository: HangoutRepository
-        let locationRepository: LocationRepository
+        let locationRepository: CLLocationRepository
         
         init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
              hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
-             locationRepository: LocationRepository = DefaultLocationRepository.shared) {
+             locationRepository: CLLocationRepository = DefaultCLLocationRepository.shared) {
             self.bappyAuthRepository = bappyAuthRepository
             self.hangoutRepository = hangoutRepository
             self.locationRepository = locationRepository

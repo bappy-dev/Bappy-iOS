@@ -84,14 +84,31 @@ final class SortingOrderViewController: UIViewController {
             }
             self.view.layoutIfNeeded()
         }
-        
+
         dimmedView.alpha = maxDimmedAlpha
         UIView.animate(withDuration: 0.3) {
+            self.containerView.alpha = 0
             self.dimmedView.alpha = 0
         } completion: { _ in
             self.dismiss(animated: false)
             completion?()
         }
+//        UIView.animate(withDuration: 0.3) {
+//            self.dimmedView.alpha = 0
+//
+//            self.containerView.snp.updateConstraints {
+//                $0.height.equalTo(0)
+//            }
+//            self.view.layoutIfNeeded()
+//            self.containerView.alpha = 0
+//
+//        } completion: { _ in
+//
+//            DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
+//                self?.dismiss(animated: false)
+//            }
+//            completion?()
+//        }
     }
     
     // MARK: Helpers

@@ -12,11 +12,14 @@ import RxCocoa
 final class ProfileSettingViewModel: ViewModelType {
     
     struct Dependency {
+        var notificationSetting: NotificationSetting
         let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
         
-        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+        init(notificationSetting: NotificationSetting,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
              firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared) {
+            self.notificationSetting = notificationSetting
             self.bappyAuthRepository = bappyAuthRepository
             self.firebaseRepository = firebaseRepository
         }
@@ -29,6 +32,7 @@ final class ProfileSettingViewModel: ViewModelType {
     
     struct Input {
         var backButtonTapped: AnyObserver<Void> // <-> View
+        var showAuthorizationAlert: AnyObserver<Void> // <-> Child(Noti)
         var serviceButtonTapped: AnyObserver<Void> // <-> Child(Service)
         var logoutButtonTapped: AnyObserver<Void> // <-> Child(Service)
         var deleteAccountButtonTapped: AnyObserver<Void> // <-> Child(Service)
@@ -39,6 +43,7 @@ final class ProfileSettingViewModel: ViewModelType {
         var switchToSignInView: Signal<BappyLoginViewModel?> // <-> View
         var showDeleteAccountView: Signal<DeleteAccountViewModel?> // <-> View
         var popView: Signal<Void> // <-> View
+        var showAuthorizationAlert: Signal<Alert?> // <-> View
     }
     
     let dependency: Dependency
@@ -48,6 +53,7 @@ final class ProfileSettingViewModel: ViewModelType {
     let output: Output
     
     private let backButtonTapped$ = PublishSubject<Void>()
+    private let showAuthorizationAlert$ = PublishSubject<Void>()
     private let serviceButtonTapped$ = PublishSubject<Void>()
     private let logoutButtonTapped$ = PublishSubject<Void>()
     private let deleteAccountButtonTapped$ = PublishSubject<Void>()
@@ -55,10 +61,11 @@ final class ProfileSettingViewModel: ViewModelType {
     private let switchToSignInView$ = PublishSubject<BappyLoginViewModel?>()
     private let showDeleteAccountView$ = PublishSubject<DeleteAccountViewModel?>()
     
-    init(dependency: Dependency = Dependency()) {
+    init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            notificationViewModel: ProfileSettingNotificationViewModel(),
+            notificationViewModel: ProfileSettingNotificationViewModel(
+                dependency: .init(notificationSetting: dependency.notificationSetting)),
             serviceViewModel: ProfileSettingServiceViewModel()
         )
         
@@ -71,10 +78,32 @@ final class ProfileSettingViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
+        let showAuthorizationAlert = showAuthorizationAlert$
+            .map { _ -> Alert in
+                let title = "Permission Denied"
+                let message = "Please turn on notification\nservice to allow \"Bappy\"\nto give you notification."
+                let actionTitle = "Setting"
+                
+                let action = Alert.Action(
+                    actionTitle: actionTitle,
+                    actionStyle: .default) {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    }
+                
+                return Alert(
+                    title: title,
+                    message: message,
+                    bappyStyle: .happy,
+                    canCancel: true,
+                    action: action
+                    )
+            }
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
             backButtonTapped: backButtonTapped$.asObserver(),
+            showAuthorizationAlert: showAuthorizationAlert$.asObserver(),
             serviceButtonTapped: serviceButtonTapped$.asObserver(),
             logoutButtonTapped: logoutButtonTapped$.asObserver(),
             deleteAccountButtonTapped: deleteAccountButtonTapped$.asObserver()
@@ -84,7 +113,8 @@ final class ProfileSettingViewModel: ViewModelType {
             showServiceView: showServiceView,
             switchToSignInView: switchToSignInView,
             showDeleteAccountView: showDeleteAccountView,
-            popView: popView
+            popView: popView,
+            showAuthorizationAlert: showAuthorizationAlert
         )
         
         // MARK: Bindind
@@ -125,17 +155,22 @@ final class ProfileSettingViewModel: ViewModelType {
             .bind(to: showDeleteAccountView$)
             .disposed(by: disposeBag)
         
+        // Child(Noti)
+        subViewModels.notificationViewModel.output.showAuthorizationAlert
+            .emit(to: input.showAuthorizationAlert)
+            .disposed(by: disposeBag)
+        
         // Child(Service)
         subViewModels.serviceViewModel.output.serviceButtonTapped
-            .emit(to: serviceButtonTapped$)
+            .emit(to: input.serviceButtonTapped)
             .disposed(by: disposeBag)
         
         subViewModels.serviceViewModel.output.logoutButtonTapped
-            .emit(to: logoutButtonTapped$)
+            .emit(to: input.logoutButtonTapped)
             .disposed(by: disposeBag)
         
         subViewModels.serviceViewModel.output.deleteAccountButtonTapped
-            .emit(to: deleteAccountButtonTapped$)
+            .emit(to: input.deleteAccountButtonTapped)
             .disposed(by: disposeBag)
     }
 }

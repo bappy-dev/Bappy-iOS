@@ -57,6 +57,7 @@ final class ProfileViewModel: ViewModelType {
         var showAlert: Signal<Void> // <-> View
         var popView: Signal<Void> // <-> View
         var hideHolderView: Signal<Bool> // <-> View
+        var showLoader: Signal<Bool> // <-> View
         var user: Driver<BappyUser?> // <-> Child
         var selectedIndex: Driver<Int> // <-> Child
         var numOfJoinedHangouts: Driver<Int?> // <-> Child
@@ -91,6 +92,7 @@ final class ProfileViewModel: ViewModelType {
     private let showProfileDetailView$ = PublishSubject<ProfileDetailViewModel?>()
     private let showAlert$ = PublishSubject<Void>()
     private let hideHolderView$ = PublishSubject<Bool>()
+    private let showLoader$ = PublishSubject<Bool>()
     private let numOfJoinedHangouts$: BehaviorSubject<Int?>
     private let numOfMadeHangouts$: BehaviorSubject<Int?>
     private let numOfLikedHangouts$: BehaviorSubject<Int?>
@@ -143,6 +145,8 @@ final class ProfileViewModel: ViewModelType {
             .asDriver(onErrorJustReturn: 0)
         let hideHolderView = hideHolderView$
             .asSignal(onErrorJustReturn: true)
+        let showLoader = showLoader$
+            .asSignal(onErrorJustReturn: false)
         let numOfJoinedHangouts = numOfJoinedHangouts$
             .asDriver(onErrorJustReturn: dependency.user.numOfJoinedHangouts)
         let numOfMadeHangouts = numOfMadeHangouts$
@@ -174,6 +178,7 @@ final class ProfileViewModel: ViewModelType {
             showAlert: showAlert,
             popView: popView,
             hideHolderView: hideHolderView,
+            showLoader: showLoader,
             user: user,
             selectedIndex: selectedIndex,
             numOfJoinedHangouts: numOfJoinedHangouts,
@@ -292,9 +297,26 @@ final class ProfileViewModel: ViewModelType {
             .bind(to: likedHangouts$)
             .disposed(by: disposeBag)
             
-        // Setting 버튼
-        settingButtonTapped$
-            .map { _ in ProfileSettingViewModel() }
+        // Setting 버튼 Flow - 설정 상태 불러오기
+        let notificationSettingResult = settingButtonTapped$
+            .do { [weak self] _ in self?.showLoader$.onNext(true) }
+            .flatMap(dependency.bappyAuthRepository.fetchNotificationSetting)
+            .observe(on: MainScheduler.asyncInstance)
+            .do { [weak self] _ in self?.showLoader$.onNext(false) }
+            .share()
+        
+        notificationSettingResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        notificationSettingResult
+            .compactMap(getValue)
+            .map { setting -> ProfileSettingViewModel in
+                let dependency = ProfileSettingViewModel.Dependency(
+                    notificationSetting: setting)
+                return ProfileSettingViewModel(dependency: dependency)
+            }
             .bind(to: showSettingView$)
             .disposed(by: disposeBag)
         

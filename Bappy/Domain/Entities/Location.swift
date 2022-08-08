@@ -19,12 +19,12 @@ struct Location: Equatable, IdentifiableType {
     
     var isSelected: Bool
     
-    init(name: String, address: String, coordinates: Coordinates, isSelected: Bool) {
+    init(identity: String, name: String, address: String, coordinates: Coordinates, isSelected: Bool) {
+        self.identity = identity
         self.name = name
         self.address = address
         self.coordinates = coordinates
         self.isSelected = isSelected
-        self.identity = UUID().uuidString
     }
     
     static func == (lhs: Location, rhs: Location) -> Bool {
