@@ -187,6 +187,8 @@
 		A76AE74A28A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */; };
 		A76AE75328A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE75228A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift */; };
 		A76AE75528A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE75428A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift */; };
+		A76AE75828A23CAF00A8EB9B /* SearchHangoutsRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE75728A23CAF00A8EB9B /* SearchHangoutsRequestDTO+Mapping.swift */; };
+		A76AE75A28A23CB700A8EB9B /* SearchHangoutsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE75928A23CB700A8EB9B /* SearchHangoutsResponseDTO+Mapping.swift */; };
 		A76C211E2843885F00044A34 /* BappyLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76C211D2843885F00044A34 /* BappyLoginViewController.swift */; };
 		A76C212328439B5300044A34 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A76C212228439B5300044A34 /* FirebaseAnalytics */; };
 		A76C212528439B5300044A34 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A76C212428439B5300044A34 /* FirebaseAuth */; };
@@ -489,6 +491,8 @@
 		A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76AE75228A137CE00A8EB9B /* SelectLocationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelectLocationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76AE75428A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SelectLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE75728A23CAF00A8EB9B /* SearchHangoutsRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchHangoutsRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		A76AE75928A23CB700A8EB9B /* SearchHangoutsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchHangoutsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76C211D2843885F00044A34 /* BappyLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyLoginViewController.swift; sourceTree = "<group>"; };
 		A76EEE5F284E69FE00A2CFF6 /* ContinueButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueButtonView.swift; sourceTree = "<group>"; };
 		A76EEE682850659600A2CFF6 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -937,6 +941,7 @@
 				A739AB98289CEA9E00C6CE90 /* LikeHangoutDTO */,
 				A739AB91289CE87200C6CE90 /* UpdateHangoutParticipationDTO */,
 				A72964CA289AEEEB00970807 /* ReportHangoutDTO */,
+				A76AE75B28A23CBA00A8EB9B /* SearchHangoutsDTO */,
 			);
 			path = Hangout;
 			sourceTree = "<group>";
@@ -1388,6 +1393,15 @@
 				A76AE75428A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift */,
 			);
 			path = SelectLocationDTO;
+			sourceTree = "<group>";
+		};
+		A76AE75B28A23CBA00A8EB9B /* SearchHangoutsDTO */ = {
+			isa = PBXGroup;
+			children = (
+				A76AE75728A23CAF00A8EB9B /* SearchHangoutsRequestDTO+Mapping.swift */,
+				A76AE75928A23CB700A8EB9B /* SearchHangoutsResponseDTO+Mapping.swift */,
+			);
+			path = SearchHangoutsDTO;
 			sourceTree = "<group>";
 		};
 		A76C212A2843A69000044A34 /* Login */ = {
@@ -2533,6 +2547,7 @@
 				A71411AC28985F8A002D4714 /* LanguageSettingSection.swift in Sources */,
 				A71411BE28985F8A002D4714 /* ProfileEditViewModel.swift in Sources */,
 				A7F52CE528645A2A002523D4 /* LocaleSettingCell.swift in Sources */,
+				A76AE75A28A23CB700A8EB9B /* SearchHangoutsResponseDTO+Mapping.swift in Sources */,
 				A77F4BD8282BC5BE0046921B /* RegisterNationalityViewModel.swift in Sources */,
 				A78502FB285A1800000FA592 /* HangoutMakeTitleViewModel.swift in Sources */,
 				A77F430128306869008BC89A /* ViewModelType.swift in Sources */,
@@ -2652,6 +2667,7 @@
 				A76AE72D289ED4AF00A8EB9B /* HangoutCellHolderView.swift in Sources */,
 				A7A6B01C2845D30300911861 /* HangoutMakeLanguageView.swift in Sources */,
 				A7751AF6287EB58000F23241 /* UpdateGPSSettingRequestDTO+Mapping.swift in Sources */,
+				A76AE75828A23CAF00A8EB9B /* SearchHangoutsRequestDTO+Mapping.swift in Sources */,
 				A76EEEA02854782900A2CFF6 /* LayoutVariable.swift in Sources */,
 				A73BC9C9287D7E0E00FB9FA9 /* LocaleSearchViewModel.swift in Sources */,
 				A71411B528985F8A002D4714 /* ProfileEditIntroduceView.swift in Sources */,

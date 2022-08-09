@@ -100,6 +100,10 @@ final class HomeListViewController: UIViewController {
 // MARK: - Bind
 extension HomeListViewController {
     private func bind() {
+        self.rx.viewWillDisappear
+            .bind(to: viewModel.input.viewWillDisappear)
+            .disposed(by: disposeBag)
+        
         refreshControl.rx.controlEvent(.valueChanged)
             .bind(to: viewModel.input.refresh)
             .disposed(by: disposeBag)
@@ -137,7 +141,7 @@ extension HomeListViewController {
         viewModel.output.showSearchView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
-                let viewController = HomeSearchViewController()
+                let viewController = HomeSearchViewController(viewModel: viewModel)
                 viewController.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
@@ -207,6 +211,14 @@ extension HomeListViewController {
                     bappyStyle: .happy,
                     action: action)
                 self?.tabBarController?.showAlert(alert)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSignInAlert
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] title in
+                let alert = SignInAlertController(title: title)
+                self?.tabBarController?.present(alert, animated: false)
             })
             .disposed(by: disposeBag)
     }

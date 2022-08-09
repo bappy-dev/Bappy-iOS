@@ -89,48 +89,50 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     }
     
     func createUser(name: String, gender: Gender, birth: Date, countryCode: String) -> Single<Result<BappyUser, Error>> {
-        var userGender: String {
-            switch gender {
-            case .Male: return "0"
-            case .Female: return "1"
-            case .Other: return "2" }
-        }
-        
-        let requestDTO = CreateUserRequestDTO(
-            userName: name,
-            userGender: userGender,
-            userBirth: birth.toString(dateFormat: "yyyy.MM.dd"),
-            userNationality: countryCode
-        )
-        
-        let endpoint = APIEndpoints.createUser(with: requestDTO)
-        return  provider.request(with: endpoint)
-            .map { [weak self] result -> Result<BappyUser, Error> in
-                switch result {
-                case .success(let responseDTO):
-                    let user = responseDTO.toDomain()
-                    self?.currentUser$.onNext(user)
-                    return .success(user)
-                case .failure(let error):
-                    return .failure(error)
-                }
-            }
-//        return Single<Result<BappyUser, Error>>.create { single in
-//            let user = BappyUser(
-//                id: UUID().uuidString,
-//                state: .normal,
-//                name: name,
-//                gender: Gender(rawValue: gender) ?? .Other,
-//                birth: birth,
-//                nationality: Country(code: countryCode))
-//            self.currentUser$.onNext(user)
-//
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(user)))
-//            }
-//
-//            return Disposables.create()
+//        var userGender: String {
+//            switch gender {
+//            case .Male: return "0"
+//            case .Female: return "1"
+//            case .Other: return "2" }
 //        }
+//
+//        let requestDTO = CreateUserRequestDTO(
+//            userName: name,
+//            userGender: userGender,
+//            userBirth: birth.toString(dateFormat: "yyyy.MM.dd"),
+//            userNationality: countryCode
+//        )
+//
+//        let endpoint = APIEndpoints.createUser(with: requestDTO)
+//        return  provider.request(with: endpoint)
+//            .map { [weak self] result -> Result<BappyUser, Error> in
+//                switch result {
+//                case .success(let responseDTO):
+//                    let user = responseDTO.toDomain()
+//                    self?.currentUser$.onNext(user)
+//                    return .success(user)
+//                case .failure(let error):
+//                    return .failure(error)
+//                }
+//            }
+        
+        // Sample Data
+        return Single<Result<BappyUser, Error>>.create { single in
+            let user = BappyUser(
+                id: UUID().uuidString,
+                state: .normal,
+                name: name,
+                gender: Gender(rawValue: gender.rawValue) ?? .Other,
+                birth: birth,
+                nationality: Country(code: countryCode))
+            self.currentUser$.onNext(user)
+
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+                single(.success(.success(user)))
+            }
+
+            return Disposables.create()
+        }
     }
     
     func deleteUser() -> Single<Result<Bool, Error>> {
@@ -196,6 +198,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                }
 //            }
         
+        // Sample Data
         return Single<Result<Bool, Error>>.create { single in
             do {
                 guard var user = try self.currentUser.value()
@@ -231,6 +234,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                }
 //            }
         
+        // Sample Data
         return Single<Result<[Location], Error>>.create { single in
             let locations = [
                 Location(
@@ -351,7 +355,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
                     user.isUserUsingGPS = false
                     self.currentUser$.onNext(user)
                 }
-                
+
                 single(.success(.success(true)))
             }
 
@@ -371,13 +375,14 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                }
 //            }
         
+        // Sample Data
         return Single<Result<NotificationSetting, Error>>.create { single in
             let notificationSetting = NotificationSetting(myHangout: true, newHangout: false)
-            
+
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
                 single(.success(.success(notificationSetting)))
             }
-            
+
             return Disposables.create()
         }
     }
@@ -395,11 +400,12 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
 //                }
 //            }
         
+        // Sample Data
         return Single<Result<Bool, Error>>.create { single in
             DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
                 single(.success(.success(true)))
             }
-            
+
             return Disposables.create()
         }
     }

@@ -17,4 +17,5 @@ protocol HangoutRepository {
     func joinHangout(hangoutID: String) -> Single<Result<Bool, Error>>
     func cancelHangout(hangoutID: String) -> Single<Result<Bool, Error>>
     func reportHangout(hangoutID: String, reportType: String, detail: String, imageDatas: [Data]?) -> Single<Result<Bool, Error>>
+    func searchHangouts(query: String, page: Int) -> Single<Result<HangoutPage, Error>>
 }

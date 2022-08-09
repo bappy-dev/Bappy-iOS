@@ -7,17 +7,22 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
+private let reuseIdentifier = "HangoutCell"
 final class HomeSearchViewController: UIViewController {
     
     // MARK: Properties
-    private lazy var backButton: UIButton = {
+    private let viewModel: HomeSearchViewModel
+    private let disposeBag = DisposeBag()
+    
+    private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
         let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
         button.setImage(image, for: .normal)
         button.tintColor = .bappyBrown
-        button.addTarget(self, action: #selector(backButtonHandler), for: .touchUpInside)
         return button
     }()
     
@@ -40,20 +45,32 @@ final class HomeSearchViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
+        tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
         tableView.backgroundColor = .bappyLightgray
         tableView.keyboardDismissMode = .interactive
         return tableView
     }()
     
+    private let bottomSpinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.hidesWhenStopped = true
+        spinner.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        spinner.frame.size.height = 36.0
+        return spinner
+    }()
     private let searchBackgroundView = UIView()
     private let noResultView = NoResultView()
     
     // MARK: Lifecycle
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init(viewModel: HomeSearchViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         configure()
         layout()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -77,6 +94,7 @@ final class HomeSearchViewController: UIViewController {
         view.backgroundColor = .white
         searchBackgroundView.backgroundColor = .bappyLightgray
         searchBackgroundView.layer.cornerRadius = 17.5
+        tableView.tableFooterView = bottomSpinner
     }
     
     private func layout() {
@@ -106,5 +124,93 @@ final class HomeSearchViewController: UIViewController {
             $0.top.equalTo(searchBackgroundView.snp.bottom).offset(20.0)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+    }
+}
+
+extension HomeSearchViewController {
+    private func bind() {
+        searchTextField.rx.text.orEmpty
+            .bind(to: viewModel.input.text)
+            .disposed(by: disposeBag)
+        
+        searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: viewModel.input.searchButtonClicked)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.willDisplayCell
+            .map(\.indexPath.row)
+            .bind(to: viewModel.input.willDisplayRow)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.scrollToTop
+            .emit(to: tableView.rx.scrollToTop)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(to: viewModel.input.itemSelected)
+            .disposed(by: disposeBag)
+        
+        backButton.rx.tap
+            .bind(to: viewModel.input.backButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.cellViewModels
+            .drive(tableView.rx.items) { tableView, row, viewModel in
+                let indexPath = IndexPath(row: row, section: 0)
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseIdentifier,
+                    for: indexPath
+                ) as! HangoutCell
+                cell.bind(viewModel)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showDetailView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = HangoutDetailViewController(viewModel: viewModel)
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.hideNoResultView
+            .skip(1)
+            .distinctUntilChanged()
+            .emit(to: noResultView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.dismissKeyboard
+            .emit(to: view.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit(onNext: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showTranslucentLoader)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.spinnerAnimating
+            .distinctUntilChanged()
+            .emit(to: bottomSpinner.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.spinnerAnimating
+            .distinctUntilChanged()
+            .emit(onNext: { [weak self] animate in
+                self?.tableView.tableFooterView = animate ? self?.bottomSpinner : nil
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                self?.tableView.contentInset.bottom = height
+                self?.tableView.verticalScrollIndicatorInsets.bottom = height
+            }).disposed(by: disposeBag)
     }
 }

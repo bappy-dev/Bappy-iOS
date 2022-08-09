@@ -129,7 +129,7 @@ extension APIEndpoints {
     static func fetchHangouts(with fetchHangoutsOfUserRequestDTO: FetchHangoutsOfUserRequestDTO) -> Endpoint<FetchHangoutsOfUserResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "",
+            path: "hangouts",
             method: .get,
             queryParameters: fetchHangoutsOfUserRequestDTO)
     }
@@ -177,6 +177,14 @@ extension APIEndpoints {
             bodyParameters: reportHangoutRequestDTO,
             imageDatas: datas,
             contentType: .multipart)
+    }
+    
+    static func searchHangouts(with searchHangoutsRequestDTO: SearchHangoutsRequestDTO) -> Endpoint<SearchHangoutsResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout",
+            method: .get,
+            queryParameters: searchHangoutsRequestDTO)
     }
 }
 

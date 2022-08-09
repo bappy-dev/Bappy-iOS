@@ -37,6 +37,7 @@ final class HomeListViewModel: ViewModelType {
         var searchButtonTapped: AnyObserver<Void> // <-> Child(Top)
         var filterButtonTapped: AnyObserver<Void> // <-> Child(Top)
         var sortingButtonTapped: AnyObserver<Void> // <-> Child(TopSub)
+        var viewWillDisappear: AnyObserver<Bool> // <-> View
         var refresh: AnyObserver<Void> // <-> View
         var willDisplayRow: AnyObserver<Int> // <-> View
         var showDetailView: AnyObserver<HangoutDetailViewModel> // <-> CellViewModel
@@ -53,6 +54,7 @@ final class HomeListViewModel: ViewModelType {
         var endRefreshing: Signal<Void> // <-> View
         var spinnerAnimating: Signal<Bool> // <-> View
         var showLocationSettingAlert: Signal<Void> // <-> View
+        var showSignInAlert: Signal<String?> // <-> View
         var sorting: Driver<Hangout.SortingOrder> // <-> Child(TopSub)
     }
     
@@ -76,6 +78,7 @@ final class HomeListViewModel: ViewModelType {
     private let searchButtonTapped$ = PublishSubject<Void>()
     private let filterButtonTapped$ = PublishSubject<Void>()
     private let sortingButtonTapped$ = PublishSubject<Void>()
+    private let viewWillDisappear$ = PublishSubject<Bool>()
     private let refresh$ = PublishSubject<Void>()
     private let willDisplayRow$ = PublishSubject<Int>()
     private let showDetailView$ = PublishSubject<HangoutDetailViewModel>()
@@ -85,6 +88,7 @@ final class HomeListViewModel: ViewModelType {
     private let endRefreshing$ = PublishSubject<Void>()
     private let spinnerAnimating$ = PublishSubject<Bool>()
     private let showLocationSettingAlert$ = PublishSubject<Void>()
+    private let showSignInAlert$ = PublishSubject<Void>()
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
@@ -101,10 +105,17 @@ final class HomeListViewModel: ViewModelType {
         let cellViewModels = cellViewModels$
             .asDriver(onErrorJustReturn: [])
         let showLocaleView = localeButtonTapped$
+            .withLatestFrom(currentUser$)
+            .compactMap(\.?.state)
+            .filter { $0 == .normal }
             .map { _ in HomeLocationViewModel() }
             .asSignal(onErrorJustReturn: nil)
         let showSearchView = searchButtonTapped$
-            .map { _ in HomeSearchViewModel() }
+            .withLatestFrom(currentUser$.compactMap { $0 })
+            .map { user -> HomeSearchViewModel? in
+                let dependency = HomeSearchViewModel.Dependency(user: user)
+                return HomeSearchViewModel(dependency: dependency)
+            }
             .asSignal(onErrorJustReturn: nil)
         let showSortingView = showSortingView$
             .asSignal(onErrorJustReturn: nil)
@@ -121,6 +132,9 @@ final class HomeListViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let sorting = sorting$
             .asDriver(onErrorJustReturn: .Newest)
+        let showSignInAlert = showSignInAlert$
+            .map { _ in "Sign in to use location based services!" }
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -129,6 +143,7 @@ final class HomeListViewModel: ViewModelType {
             searchButtonTapped: searchButtonTapped$.asObserver(),
             filterButtonTapped: filterButtonTapped$.asObserver(),
             sortingButtonTapped: sortingButtonTapped$.asObserver(),
+            viewWillDisappear: viewWillDisappear$.asObserver(),
             refresh: refresh$.asObserver(),
             willDisplayRow: willDisplayRow$.asObserver(),
             showDetailView: showDetailView$.asObserver()
@@ -145,11 +160,21 @@ final class HomeListViewModel: ViewModelType {
             endRefreshing: endRefreshing,
             spinnerAnimating: spinnerAnimating,
             showLocationSettingAlert: showLocationSettingAlert,
+            showSignInAlert: showSignInAlert,
             sorting: sorting
         )
         
         // MARK: Bindind
         self.currentUser$ = currentUser$
+        
+        // Guest 모드시 위치 설정 불가
+        localeButtonTapped$
+            .withLatestFrom(currentUser$)
+            .compactMap(\.?.state)
+            .filter { $0 == .anonymous }
+            .map { _ in }
+            .bind(to: showSignInAlert$)
+            .disposed(by: disposeBag)
         
         // Page 1로 초기화
         Observable
@@ -193,7 +218,7 @@ final class HomeListViewModel: ViewModelType {
             .bind(to: hideHolderView$)
             .disposed(by: disposeBag)
         
-        // Error debuging
+        // Error 디버깅
         Observable
             .merge(newHangoutPageResult, extraHangoutPageResult)
             .compactMap(getErrorDescription)
@@ -298,7 +323,11 @@ final class HomeListViewModel: ViewModelType {
                 currentUser$.compactMap { $0 },
                 dependency.locationRepository.authorization
             )
-            .map { $0.0 == .Nearest && ($0.1.isUserUsingGPS ?? false) && $0.2 == .authorizedWhenInUse }
+            .map {
+                $0.0 == .Nearest &&
+                $0.1.isUserUsingGPS ?? false &&
+                $0.2 == .authorizedWhenInUse
+            }
             .distinctUntilChanged()
             .bind(onNext: dependency.locationRepository.turnGPSSetting)
             .disposed(by: disposeBag)
@@ -327,6 +356,12 @@ final class HomeListViewModel: ViewModelType {
                 return viewModel
             }
             .bind(to: showSortingView$)
+            .disposed(by: disposeBag)
+        
+        // ViewWillDisappear 호출 시 GPS 사용 끄기
+        viewWillDisappear$
+            .map { _ in false }
+            .bind(onNext: dependency.locationRepository.turnGPSSetting)
             .disposed(by: disposeBag)
         
         // Child(Top)
@@ -364,6 +399,11 @@ extension HomeListViewModel: SortingOrderViewModelDelegate {
             guard let user = try? currentUser$.value(),
                   let authorization = try? dependency.locationRepository.authorization.value()
             else { return }
+            guard user.state != .anonymous else {
+                showSignInAlert$.onNext(Void())
+                return
+            }
+            
             guard ((user.isUserUsingGPS ?? false) && authorization == .authorizedWhenInUse) || user.coordinates != nil else {
                 showLocationSettingAlert$.onNext(Void())
                 return
