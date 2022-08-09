@@ -89,9 +89,9 @@ extension SearchPlaceCell {
         placeImageView.kf.setImage(
             with: map.iconURL,
             placeholder: UIImage(named: "place"),
-            options: nil) { result in
+            options: nil) { [weak self] result in
                 guard case let Result.success(imageResult) = result else { return }
-                DispatchQueue.main.async { [weak self] in
+                DispatchQueue.main.async {
                     self?.placeImageView.image = imageResult.image.withRenderingMode(.alwaysTemplate)
                 }
             }

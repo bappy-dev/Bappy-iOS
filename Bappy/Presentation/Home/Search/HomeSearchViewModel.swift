@@ -170,8 +170,8 @@ final class HomeSearchViewModel: ViewModelType {
         newHangoutPage
             .map(\.hangouts)
             .withLatestFrom(user$) { (hangouts: $0, user: $1) }
-            .map { element -> [HangoutCellViewModel] in
-                element.hangouts.map { [weak self] hangout -> HangoutCellViewModel in
+            .map { [weak self] element -> [HangoutCellViewModel] in
+                element.hangouts.map { hangout -> HangoutCellViewModel in
                     let dependency = HangoutCellViewModel.Dependency(
                         user: element.user, hangout: hangout)
                     let viewModel = HangoutCellViewModel(dependency: dependency)
@@ -191,8 +191,8 @@ final class HomeSearchViewModel: ViewModelType {
         extraHangoutPage
             .map(\.hangouts)
             .withLatestFrom(user$) { (hangouts: $0, user: $1) }
-            .map { element -> [HangoutCellViewModel] in
-                element.hangouts.map { [weak self] hangout -> HangoutCellViewModel in
+            .map { [weak self] element -> [HangoutCellViewModel] in
+                element.hangouts.map { hangout -> HangoutCellViewModel in
                     let dependency = HangoutCellViewModel.Dependency(
                         user: element.user, hangout: hangout)
                     let viewModel = HangoutCellViewModel(dependency: dependency)

@@ -150,7 +150,8 @@ final class HangoutCell: UITableViewCell {
     }
     
     private func configure() {
-        contentView.backgroundColor = .white
+        self.backgroundColor = .clear
+        contentView.backgroundColor = .clear
         moreButton.setImage(UIImage(named: "cell_more"), for: .normal)
         contentView.addGestureRecognizer(doubleTapGesture)
     }
