@@ -21,7 +21,10 @@ final class DefaultNetworkCheckRepository {
     }
     
     private func showNetworkAlert(handler: (() -> Void)? = nil) {
-        let alertView = NoInternetConnectionView()
+        let title = "No Internet Connection\n"
+        let message = "\nPlease check your internet\nconnection and try again\n"
+        let actionTitle = "Retry"
+        let alertView = BappyFatalAlertView(title: title, message: message, actionTitle: actionTitle)
         alertView.show { handler?() }
     }
 }

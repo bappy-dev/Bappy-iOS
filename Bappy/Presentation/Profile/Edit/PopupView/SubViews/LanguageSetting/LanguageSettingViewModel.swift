@@ -132,7 +132,7 @@ final class LanguageSettingViewModel: ViewModelType {
         
         editingDidBegin$
             .map { _ ->  LanguageSearchViewModel in
-                let viewModel = LanguageSearchViewModel(dependency: .init())
+                let viewModel = LanguageSearchViewModel()
                 viewModel.delegate = self
                 return viewModel
             }

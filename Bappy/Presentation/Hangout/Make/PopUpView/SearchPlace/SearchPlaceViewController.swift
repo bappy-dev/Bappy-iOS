@@ -150,14 +150,12 @@ final class SearchPlaceViewController: UIViewController {
         bottomSpinner.hidesWhenStopped = true
         tableView.tableFooterView = bottomSpinner
         bottomSpinner.startAnimating()
+        bottomSpinner.frame.size.height = 44.0
+        searchBackgroundView.backgroundColor = .bappyLightgray
+        searchBackgroundView.layer.cornerRadius = 17.5
     }
     
     private func layout() {
-        searchBackgroundView.backgroundColor = .bappyLightgray
-        searchBackgroundView.layer.cornerRadius = 17.5
-        
-        bottomSpinner.frame.size.height = 44.0
-        
         view.addSubview(dimmedView)
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -263,7 +261,7 @@ extension SearchPlaceViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showLoader
-            .emit(to: ProgressHUD.rx.showTranscluentLoader)
+            .emit(to: ProgressHUD.rx.showTranslucentLoader)
             .disposed(by: disposeBag)
         
         viewModel.output.shouldSpinnerAnimating

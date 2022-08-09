@@ -8,17 +8,17 @@
 import UIKit
 import SnapKit
 import Kingfisher
-
-protocol HangoutCellDelegate: AnyObject {
-    func moreButtonTapped(indexPath: IndexPath)
-    func likeButtonTapped(indexPath: IndexPath)
-}
+import RxSwift
+import Lottie
 
 final class HangoutCell: UITableViewCell {
     
     // MARK: Properties
-    weak var delegate: HangoutCellDelegate?
-    var indexPath: IndexPath?
+    var state: Hangout.State = .closed {
+        didSet { configureState(state) }
+    }
+    
+    private var disposeBag = DisposeBag()
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
@@ -54,7 +54,6 @@ final class HangoutCell: UITableViewCell {
         let label = UILabel()
         label.font = .roboto(size: 17.0, family: .Medium)
         label.textColor = .white
-        label.addBappyShadow()
         return label
     }()
     
@@ -63,7 +62,6 @@ final class HangoutCell: UITableViewCell {
         label.font = .roboto(size: 17.0, family: .Medium)
         label.textColor = .white
         label.lineBreakMode = .byTruncatingTail
-        label.addBappyShadow()
         return label
     }()
     
@@ -74,18 +72,8 @@ final class HangoutCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var likeButton: BappyLikeButton = {
-        let button = BappyLikeButton()
-        button.addTarget(self, action: #selector(likeButtonHandler), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var moreButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "cell_more"), for: .normal)
-        button.addTarget(self, action: #selector(moreButtonHandler), for: .touchUpInside)
-        return button
-    }()
+    private let likeButton = BappyLikeButton()
+    private let moreButton = UIButton()
     
     private let transparentView: UIView = {
         let transparentView = UIView()
@@ -98,8 +86,22 @@ final class HangoutCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .center
         imageView.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
-        
         return imageView
+    }()
+    
+    private let doubleTapGesture: UITapGestureRecognizer = {
+        let gesture = UITapGestureRecognizer()
+        gesture.numberOfTapsRequired = 2
+        gesture.isEnabled = true
+        gesture.cancelsTouchesInView = false
+        return gesture
+    }()
+    
+    private let animationView: AnimationView = {
+        let animationView = AnimationView(name: "like")
+        animationView.contentMode = .scaleAspectFit
+        animationView.alpha = 0.5
+        return animationView
     }()
     
     // MARK: Lifecycle    
@@ -114,21 +116,44 @@ final class HangoutCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc
-    private func likeButtonHandler(_ button: UIButton) {
-        guard let indexPath = indexPath else { return }
-        delegate?.likeButtonTapped(indexPath: indexPath)
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureShadow()
     }
     
-    @objc func moreButtonHandler(_ button: UIButton) {
-        guard let indexPath = indexPath else { return }
-        delegate?.moreButtonTapped(indexPath: indexPath)
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.disposeBag = DisposeBag()
+    }
+    
+    // MARK: Animations
+    private func playAnimation() {
+        animationView.play()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.animationView.stop()
+        }
     }
     
     // MARK: Helpers
+    private func configureShadow() {
+        timeLabel.addBappyShadow()
+        placeLabel.addBappyShadow()
+    }
+    
+    private func configureState(_ state: Hangout.State) {
+        disabledImageView.isHidden = (state == .available)
+        if state != .available {
+            disabledImageView.image = UIImage(named: "hangout_\(state.rawValue)")
+        }
+    }
+    
     private func configure() {
-        contentView.backgroundColor = .white
+        self.backgroundColor = .clear
+        contentView.backgroundColor = .clear
+        moreButton.setImage(UIImage(named: "cell_more"), for: .normal)
+        contentView.addGestureRecognizer(doubleTapGesture)
     }
     
     private func layout() {
@@ -187,7 +212,7 @@ final class HangoutCell: UITableViewCell {
             $0.height.equalTo(32.0)
         }
         
-        contentView.addSubview(moreButton)
+        self.addSubview(moreButton)
         moreButton.snp.makeConstraints {
             $0.bottom.equalTo(postImageView).offset(-15.0)
             $0.trailing.equalToSuperview().inset(14.0)
@@ -195,7 +220,7 @@ final class HangoutCell: UITableViewCell {
             $0.height.equalTo(57.0)
         }
         
-        contentView.addSubview(likeButton)
+        self.addSubview(likeButton)
         likeButton.snp.makeConstraints {
             $0.top.equalToSuperview().inset(5.0)
             $0.trailing.equalToSuperview().inset(4.0)
@@ -206,21 +231,70 @@ final class HangoutCell: UITableViewCell {
         disabledImageView.snp.makeConstraints {
             $0.edges.equalTo(postImageView)
         }
+        
+        contentView.addSubview(animationView)
+        animationView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(600.0)
+        }
     }
 }
 
 // MARK: - Methods
 extension HangoutCell {
-    func bind(with hangout: Hangout) {
-        titleLabel.text = hangout.title
-        timeLabel.text = hangout.meetTime
-        placeLabel.text = hangout.placeName
-        postImageView.kf.setImage(with: hangout.postImageURL)
-        likeButton.isSelected = hangout.userHasLiked
+    func bind(_ viewModel: HangoutCellViewModel) {
+        moreButton.rx.tap
+            .bind(to: viewModel.input.moreButtonTapped)
+            .disposed(by: disposeBag)
         
-        disabledImageView.isHidden = hangout.state == .available
-        if hangout.state != .available {
-            disabledImageView.image = UIImage(named: "hangout_\(hangout.state.rawValue)")
+        likeButton.rx.tap
+            .bind(to: viewModel.input.likeButtonTapped)
+            .disposed(by: disposeBag)
+        
+        doubleTapGesture.rx.event
+            .map { _ in }
+            .bind(to: viewModel.input.doubleTap)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.title
+            .drive(titleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.time
+            .drive(timeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.place
+            .drive(placeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.postImageURL
+            .drive(onNext: { [weak self] url in
+                self?.postImageView.kf.setImage(with: url)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.userHasLiked
+            .drive(likeButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.state
+            .compactMap { $0 }
+            .drive(self.rx.state)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showAnimation
+            .emit(onNext: { [weak self] _ in
+                self?.playAnimation()
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
+extension Reactive where Base: HangoutCell {
+    var state: Binder<Hangout.State> {
+        return Binder(self.base) { base, state in
+            base.state = state
         }
     }
 }

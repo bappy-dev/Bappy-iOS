@@ -19,7 +19,7 @@ final class DefaultGoogleMapsRepository {
 
 extension DefaultGoogleMapsRepository: GoogleMapsRepository {
     public func fetchMapPage(param: (key: String, query: String, language: String)) -> Single<Result<MapPage, Error>> {
-        let requestDTO = MapsRequestDTO(key: param.key, query: param.query, language: param.language)
+        let requestDTO = FetchMapsRequestDTO(key: param.key, query: param.query, language: param.language)
         let endpoint = APIEndpoints.searchGoogleMapList(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { result -> Result<MapPage, Error> in
@@ -33,7 +33,7 @@ extension DefaultGoogleMapsRepository: GoogleMapsRepository {
     }
     
     public func fetchNextMapPage(param: (key: String, pageToken: String, language: String)) -> Single<Result<MapPage, Error>> {
-        let requestDTO = MapsNextRequestDTO(key: param.key, pagetoken: param.pageToken, language: param.language)
+        let requestDTO = FetchMapsNextRequestDTO(key: param.key, pagetoken: param.pageToken, language: param.language)
         let endpoint = APIEndpoints.searchGoogleMapNextList(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { result -> Result<MapPage, Error> in

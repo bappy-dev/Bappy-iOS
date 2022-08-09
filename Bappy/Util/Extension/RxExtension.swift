@@ -38,22 +38,46 @@ extension Reactive where Base: UIView {
             view.endEditing(true)
         }
     }
+    
+    var setHeight: Binder<CGFloat> {
+        return Binder(self.base) { view, height in
+            print("DEBUG: before view \(view.frame)")
+            view.frame.size.height = height
+            view.layoutIfNeeded()
+            print("DEBUG: after view \(view.frame)")
+        }
+    }
 }
 
 extension Reactive where Base: UIViewController {
-    var viewWillAppear: Observable<Bool> {
-        return methodInvoked(#selector(UIViewController.viewWillAppear))
+    var viewWillAppear: ControlEvent<Bool> {
+        let source = methodInvoked(#selector(UIViewController.viewWillAppear))
             .map { $0.first as? Bool ?? false }
+        return ControlEvent(events: source)
     }
     
-    var viewDidAppear: Observable<Bool> {
-        return methodInvoked(#selector(UIViewController.viewDidAppear))
+    var viewWillDisappear: ControlEvent<Bool> {
+        let source = methodInvoked(#selector(UIViewController.viewWillDisappear))
             .map { $0.first as? Bool ?? false }
+        return ControlEvent(events: source)
     }
     
-    var viewWillLayoutSubviews: Observable<Void> {
-        return methodInvoked(#selector(UIViewController.viewWillLayoutSubviews))
+    var viewDidAppear: ControlEvent<Bool> {
+        let source = methodInvoked(#selector(UIViewController.viewDidAppear))
+            .map { $0.first as? Bool ?? false }
+        return ControlEvent(events: source)
+    }
+    
+    var viewWillLayoutSubviews: ControlEvent<Void> {
+        let source = methodInvoked(#selector(UIViewController.viewWillLayoutSubviews))
             .map { _ in }
+        return ControlEvent(events: source)
+    }
+    
+    var touchesBegan: ControlEvent<Void> {
+        let source = methodInvoked(#selector(UIViewController.touchesBegan))
+            .map { _ in }
+        return ControlEvent(events: source)
     }
     
     var showProgress: Binder<Bool> {
@@ -87,8 +111,8 @@ extension Reactive where Base: UIActivityIndicatorView {
 }
 
 extension Reactive where Base: ProgressHUD {
-    public static var showTranscluentLoader: Binder<Bool> {
-        return Binder(UIApplication.shared) { _, show in
+    public static var showTranslucentLoader: Binder<Bool> {
+        return Binder(ProgressHUD.shared) { _, show in
             if show {
                 ProgressHUD.animationType = .horizontalCirclesPulse
                 ProgressHUD.colorBackground = .black.withAlphaComponent(0.1)
@@ -101,7 +125,7 @@ extension Reactive where Base: ProgressHUD {
     }
     
     public static var showYellowLoader: Binder<Bool> {
-        return Binder(UIApplication.shared) { _, show in
+        return Binder(ProgressHUD.shared) { _, show in
             if show {
                 ProgressHUD.animationType = .horizontalCirclesPulse
                 ProgressHUD.colorBackground = .bappyYellow

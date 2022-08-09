@@ -12,12 +12,15 @@ import RxCocoa
 final class HangoutMainSectionViewModel: ViewModelType {
     
     struct Dependency {
+        var hangout: Hangout
         var isUserParticipating: Bool
-        var title: String
-        var meetTime: String
-        var language: Language
-        var placeName: String
-        var openchatURL: URL?
+        var title: String { hangout.title }
+        var meetTime: String {
+            hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
+        }
+        var language: Language { hangout.language }
+        var placeName: String { hangout.placeName }
+        var openchatURL: URL? { hangout.openchatURL }
     }
     
     struct Input {

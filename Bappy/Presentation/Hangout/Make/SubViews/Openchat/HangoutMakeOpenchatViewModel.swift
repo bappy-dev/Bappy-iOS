@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class HangoutMakeOpenchatViewModel: ViewModelType {
+    
     struct Dependency {}
     
     struct Input {

@@ -15,6 +15,12 @@ final class ProfileEditViewModel: ViewModelType {
     struct Dependency {
         let user: BappyUser
         let bappyAuthRepository: BappyAuthRepository
+        
+        init(user: BappyUser,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.user = user
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct SubViewModels {
@@ -167,40 +173,39 @@ final class ProfileEditViewModel: ViewModelType {
                 edittedLanguages$,
                 edittedPersonalities$,
                 edittedInterests$,
-                edittedImage$
+                edittedImage$.map { $0.flatMap { $0.jpegData(compressionQuality: 1.0) } }
             ))
-            .filter { $0.0 != nil || $0.1 != nil || $0.2 != nil || $0.3 != nil || $0.4 != nil || $0.5 != nil }
+            .filter(shouldBeUpdate)
             .do { [weak self] _ in self?.showLoader$.onNext(true) }
             .flatMap(dependency.bappyAuthRepository.updateProfile)
             .observe(on: MainScheduler.asyncInstance)
             .share()
         
         edittingResult
-            .compactMap(getEdittingError)
+            .compactMap(getErrorDescription)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
-            .bind(onNext: { print("ERROR: \($0)") })
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         let userResult = edittingResult
-            .compactMap(getEditting)
+            .compactMap(getValue)
             .map { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
-        
+
         userResult
-            .compactMap(getUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         userResult
-            .compactMap(getUser)
+            .compactMap(getValue)
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: user)
                 return BappyTabBarViewModel(dependency: dependecy)
             }
             .bind(to: switchToMainView$)
@@ -247,24 +252,8 @@ final class ProfileEditViewModel: ViewModelType {
     }
 }
 
-private func getEditting(_ result: Result<Bool, Error>) -> Bool? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getEdittingError(_ result: Result<Bool, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
+private func shouldBeUpdate(first: Any?, second: Any?, third: Any?, fourth: Any?, fifth: Any?, sixth: Any?) -> Bool {
+    return first != nil || second != nil || third != nil ||  fourth != nil || fifth != nil ||  sixth != nil
 }
 
 // MARK: - ProfileLanguageViewModelDelegate

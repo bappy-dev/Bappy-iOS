@@ -100,13 +100,8 @@ extension ProfileSettingViewController {
         viewModel.output.switchToSignInView
             .compactMap { $0 }
             .emit(onNext: { viewModel in
-                do {
-                    try Auth.auth().signOut()
-                    guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-                    sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
-                } catch {
-                    fatalError("Failed sign out")
-                }
+                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+                sceneDelegate?.switchRootViewToSignInView(viewModel: viewModel)
             })
             .disposed(by: disposeBag)
         
@@ -122,6 +117,11 @@ extension ProfileSettingViewController {
             .emit(onNext: { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showAuthorizationAlert
+            .compactMap { $0 }
+            .emit(to: self.rx.showAlert)
             .disposed(by: disposeBag)
     }
 }

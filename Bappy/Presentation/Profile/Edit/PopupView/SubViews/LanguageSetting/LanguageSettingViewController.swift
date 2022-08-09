@@ -91,6 +91,12 @@ final class LanguageSettingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
+    }
+    
     // MARK: Helpers
     private func pushSearchView(viewModel: LanguageSearchViewModel) {
         view.endEditing(true)
@@ -100,6 +106,10 @@ final class LanguageSettingViewController: UIViewController {
     
     private func shouldHideEditButton(_ hide: Bool) {
         navigationItem.rightBarButtonItem = hide ? nil : editButton
+    }
+    
+    private func configureShadow() {
+        topSectionView.addBappyShadow(shadowOffsetHeight: 1.0)
     }
     
     private func configure() {
@@ -112,7 +122,6 @@ final class LanguageSettingViewController: UIViewController {
         
         view.backgroundColor = .bappyLightgray
         topSectionView.backgroundColor = .white
-        topSectionView.addBappyShadow(shadowOffsetHeight: 1.0)
     }
     
     private func layout() {

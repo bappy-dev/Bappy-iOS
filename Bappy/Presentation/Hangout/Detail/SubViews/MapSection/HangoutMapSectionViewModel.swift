@@ -12,10 +12,11 @@ import RxCocoa
 final class HangoutMapSectionViewModel: ViewModelType {
     
     struct Dependency {
-        var isPreviewModel: Bool
-        var placeName: String
-        var mapImageURL: URL?
+        var hangout: Hangout
         var mapImage: UIImage?
+        var isPreviewModel: Bool { hangout.state == .preview }
+        var placeName: String { hangout.placeName }
+        var mapImageURL: URL? { hangout.mapImageURL }
     }
     
     struct Input {

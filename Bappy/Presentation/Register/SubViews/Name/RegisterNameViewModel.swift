@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class RegisterNameViewModel: ViewModelType {
+    
     struct Dependency {
         var minimumLength: Int { 3 }
         var maximumLength: Int { 30 }

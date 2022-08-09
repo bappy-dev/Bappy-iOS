@@ -15,6 +15,12 @@ final class BappyLoginViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.firebaseRepository = firebaseRepository
+        }
     }
     
     struct Input {
@@ -41,7 +47,7 @@ final class BappyLoginViewModel: ViewModelType {
     private let authCredential$ = PublishSubject<AuthCredential>()
     private let skipButtonTapped$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
@@ -72,14 +78,14 @@ final class BappyLoginViewModel: ViewModelType {
             .share()
         
         signInFirebaseResult
-            .compactMap(getAuthError)
+            .compactMap(getErrorDescription)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
-            .bind(onNext: { print("ERROR: \($0)") })
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         // Back-end SignIn
         let signInUserResult = signInFirebaseResult
-            .map(getAuthResult)
+            .map(getValue)
             .compactMap { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .observe(on: MainScheduler.asyncInstance)
@@ -87,12 +93,12 @@ final class BappyLoginViewModel: ViewModelType {
             .share()
         
         signInUserResult
-            .compactMap(getUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         let signInUser = signInUserResult
-            .compactMap(getUser)
+            .compactMap(getValue)
             .share()
         
         let signInNormalUser = signInUser
@@ -100,11 +106,7 @@ final class BappyLoginViewModel: ViewModelType {
         
         signInUser
             .filter { $0.state == .notRegistered }
-            .map { _ -> RegisterViewModel in
-                let dependency = RegisterViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository)
-                return RegisterViewModel(dependency: dependency)
-            }
+            .map { _ in RegisterViewModel() }
             .bind(to: showRegisterView$)
             .disposed(by: disposeBag)
         
@@ -115,44 +117,23 @@ final class BappyLoginViewModel: ViewModelType {
             .share()
         
         let anonymousUser = anonymousResult
-            .map(getAuthResult)
+            .map(getValue)
             .compactMap { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchAnonymousUser)
         
         anonymousResult
-            .compactMap(getAuthError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         Observable.merge(signInNormalUser, anonymousUser)
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: user)
                 return BappyTabBarViewModel(dependency: dependecy)
             }
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)
     }
-}
- 
-private func getAuthResult(_ result: Result<AuthDataResult?, Error>) -> AuthDataResult? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getAuthError(_ result: Result<AuthDataResult?, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }

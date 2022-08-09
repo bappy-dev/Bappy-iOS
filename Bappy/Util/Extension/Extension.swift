@@ -84,12 +84,19 @@ extension UIFont {
 
 // MARK: - UIView
 extension UIView {
-    func addBappyShadow(shadowOffsetHeight: CGFloat = 2.0) {
+    func addBappyShadow(shadowOffsetHeight: CGFloat = 2.0, shouldSetShadowPath: Bool = true) {
         self.clipsToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: shadowOffsetHeight)
         self.layer.shadowOpacity = 0.25
         self.layer.shadowRadius = 1.0
+        // render 처리 비용이 비싸기 때문에 아래 코드를 추가하고, layer가 확정된 상태에서 이 함수를 호출해야함.
+        if shouldSetShadowPath {
+            self.layer.shadowPath = UIBezierPath(
+                roundedRect: self.bounds,
+                cornerRadius: self.layer.cornerRadius
+            ).cgPath
+        }
     }
 }
 

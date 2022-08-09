@@ -23,6 +23,7 @@ final class ReportViewController: UIViewController {
     private let contentView = UIView()
     private let writingSectionView: ReportWritingSectionView
     private let imageSectionView: ReportImageSectionView
+    private let dropdownView: BappyDropdownView
 
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
@@ -35,28 +36,32 @@ final class ReportViewController: UIViewController {
 
     private let reportButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = .bappyYellow
-        button.setBappyTitle(
-            title: "REPORT",
-            font: .roboto(size: 18.0, family: .Medium))
-        button.layer.cornerRadius = 11.5
-        button.addBappyShadow()
+        button.layer.cornerRadius = 25.0
         return button
+    }()
+    
+    private let tapGesture: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.numberOfTapsRequired = 1
+        tapGesture.isEnabled = true
+        tapGesture.cancelsTouchesInView = false
+        return tapGesture
     }()
 
     // MARK: Lifecycle
     init(viewModel: ReportViewModel) {
         let writingViewModel = viewModel.subViewModels.writingViewModel
         let imageViewModel = viewModel.subViewModels.imageViewModel
+        let dropdownViewModel = viewModel.subViewModels.dropdownViewModel
         self.viewModel = viewModel
         self.writingSectionView = ReportWritingSectionView(viewModel: writingViewModel)
         self.imageSectionView = ReportImageSectionView(viewModel: imageViewModel)
+        self.dropdownView = BappyDropdownView(viewModel: dropdownViewModel)
         super.init(nibName: nil, bundle: nil)
 
         configure()
         layout()
         bind()
-        addTapGestureOnScrollView()
     }
 
     required init?(coder: NSCoder) {
@@ -74,11 +79,11 @@ final class ReportViewController: UIViewController {
 
         setStatusBarStyle(statusBarStyle: .darkContent)
     }
-
-    // MARK: Actions
-    @objc
-    private func didTapScrollView() {
-        view.endEditing(true)
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        configureShadow()
     }
 
     // MARK: Helpers
@@ -90,22 +95,49 @@ final class ReportViewController: UIViewController {
         picker.delegate = self
         self.present(picker, animated: true)
     }
-    private func addTapGestureOnScrollView() {
-        let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapScrollView))
-        singleTapGestureRecognizer.numberOfTapsRequired = 1
-        singleTapGestureRecognizer.isEnabled = true
-        singleTapGestureRecognizer.cancelsTouchesInView = false
-        scrollView.addGestureRecognizer(singleTapGestureRecognizer)
-    }
 
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
-        guard let navigationController = navigationController as? BappyNavigationViewController else { return }
-        navigationController.statusBarStyle = statusBarStyle
+        let navigationController = navigationController?.tabBarController?.navigationController as? BappyNavigationViewController
+        navigationController?.statusBarStyle = statusBarStyle
+    }
+    
+    private func updateButtonState(isEnabled: Bool) {
+        let titleColor: UIColor = isEnabled ? .bappyBrown : .bappyGray
+        let backgroundColor: UIColor = isEnabled ? .bappyYellow : .bappyGray.withAlphaComponent(0.15)
+        reportButton.setBappyTitle(
+            title: "REPORT",
+            font: .roboto(size: 20.0, family: .Bold),
+            color: titleColor)
+        reportButton.backgroundColor = backgroundColor
+        reportButton.isEnabled = isEnabled
+    }
+    
+    private func openDropdown() {
+        UIView.animate(withDuration: 0.3) {
+            self.dropdownView.snp.updateConstraints {
+                $0.height.equalTo(175.0)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func closeDropdown() {
+        UIView.animate(withDuration: 0.3) {
+            self.dropdownView.snp.updateConstraints {
+                $0.height.equalTo(0)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    private func configureShadow() {
+        reportButton.addBappyShadow()
     }
 
     private func configure() {
         view.backgroundColor = .white
         scrollView.keyboardDismissMode = .interactive
+        scrollView.addGestureRecognizer(tapGesture)
     }
 
     private func layout() {
@@ -133,10 +165,10 @@ final class ReportViewController: UIViewController {
         
         contentView.addSubview(reportButton)
         reportButton.snp.makeConstraints {
-            $0.top.equalTo(imageSectionView.snp.bottom).offset(28.0)
+            $0.top.equalTo(imageSectionView.snp.bottom).offset(40.0)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(157.0)
-            $0.height.equalTo(43.0)
+            $0.width.equalTo(180.0)
+            $0.height.equalTo(50.0)
             $0.bottom.equalToSuperview().inset(42.0)
         }
 
@@ -153,18 +185,39 @@ final class ReportViewController: UIViewController {
             $0.leading.equalToSuperview().inset(7.3)
             $0.width.height.equalTo(44.0)
         }
+        
+        view.addSubview(dropdownView)
+        dropdownView.snp.makeConstraints {
+            $0.top.equalTo(writingSectionView).offset(172.0)
+            $0.leading.equalToSuperview().inset(26.0)
+            $0.trailing.equalToSuperview().inset(44.0)
+            $0.height.equalTo(0)
+        }
     }
 }
 
 // MARK: - Bind
 extension ReportViewController {
     private func bind() {
+        self.rx.touchesBegan
+            .bind(to: viewModel.input.touchesBegan)
+            .disposed(by: disposeBag)
+        
+        tapGesture.rx.event
+            .map { _ in }
+            .bind(to: viewModel.input.tapGestureEvent)
+            .disposed(by: disposeBag)
+        
         backButton.rx.tap
             .bind(to: viewModel.input.backButtonTapped)
             .disposed(by: disposeBag)
         
         reportButton.rx.tap
             .bind(to: viewModel.input.reportButtonTapped)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.endEditing
+            .emit(to: view.rx.endEditing)
             .disposed(by: disposeBag)
         
         viewModel.output.popView
@@ -182,13 +235,33 @@ extension ReportViewController {
         
         viewModel.output.showSuccessView
             .emit(onNext: { [weak self] _ in
-                let viewController = ReportSuccessViewController()
+                let title = "Thanks for reporting!"
+                let message = "Your report might have\nprevented next victim"
+                let viewController = SuccessViewController(title: title, message: message)
                 viewController.modalPresentationStyle = .fullScreen
                 viewController.setDismissCompletion {
                     self?.navigationController?.popViewController(animated: false)
                 }
                 self?.present(viewController, animated: true)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.isReportButtonEnabled
+            .drive(onNext: { [weak self] isEnabled in
+                self?.updateButtonState(isEnabled: isEnabled)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.openDropdownView
+            .emit(onNext: { [weak self] _ in self?.openDropdown() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.closeDropdownView
+            .emit(onNext: { [weak self] _ in self?.closeDropdown() })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showYellowLoader)
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight

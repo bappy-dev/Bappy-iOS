@@ -15,7 +15,6 @@ import FacebookCore
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let networkCheckRepository: NetworkCheckRepository = DefaultNetworkCheckRepository.shared
-
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         networkCheckRepository.startMonitoring()
@@ -29,9 +28,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Firebase Cloud Messaging
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
-        let authOptions: UNAuthorizationOptions = [.alert, .sound]
         
-        DefaultNotificationRepository.shared.requestAuthorization(options: authOptions)
+        DefaultNotificationRepository.shared.requestAuthorization(completion: nil)
         
         application.registerForRemoteNotifications()
         return true
@@ -92,11 +90,15 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging,
                    didReceiveRegistrationToken fcmToken: String?) {
         let dataDict: [String: String] = ["token": fcmToken ?? ""]
-        print("DEBUG: fcmToken -> \(fcmToken ?? "")")
         NotificationCenter.default.post(
             name: Notification.Name("FCMToken"),
             object: nil,
             userInfo: dataDict
         )
+        
+        if let fcmToken = fcmToken {
+            let bappyAuthRepository = DefaultBappyAuthRepository.shared
+            bappyAuthRepository.registerFCMToken(fcmToken)
+        }
     }
 }

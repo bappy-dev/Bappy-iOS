@@ -15,7 +15,15 @@ final class HomeListViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let hangoutRepository: HangoutRepository
-        var locationRepository: LocationRepository
+        let locationRepository: CLLocationRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             locationRepository: CLLocationRepository = DefaultCLLocationRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.hangoutRepository = hangoutRepository
+            self.locationRepository = locationRepository
+        }
     }
     
     struct SubViewModels {
@@ -29,18 +37,25 @@ final class HomeListViewModel: ViewModelType {
         var searchButtonTapped: AnyObserver<Void> // <-> Child(Top)
         var filterButtonTapped: AnyObserver<Void> // <-> Child(Top)
         var sortingButtonTapped: AnyObserver<Void> // <-> Child(TopSub)
-        var moreButtonTapped: AnyObserver<IndexPath> // <-> View
-        var likeButtonTapped: AnyObserver<IndexPath> // <-> View
+        var viewWillDisappear: AnyObserver<Bool> // <-> View
+        var refresh: AnyObserver<Void> // <-> View
+        var willDisplayRow: AnyObserver<Int> // <-> View
+        var showDetailView: AnyObserver<HangoutDetailViewModel> // <-> CellViewModel
     }
     
     struct Output {
         var scrollToTop: Signal<Void> // <-> View
-        var hangouts: Driver<[Hangout]> // <-> View
-        var showLocaleView: Signal<HomeLocaleViewModel?> // <-> View
+        var cellViewModels: Driver<[HangoutCellViewModel]> // <-> View
+        var showLocaleView: Signal<HomeLocationViewModel?> // <-> View
         var showSearchView: Signal<HomeSearchViewModel?> // <-> View
         var showSortingView: Signal<SortingOrderViewModel?> // <-> View
         var showDetailView: Signal<HangoutDetailViewModel?> // <-> View
-        var sorting: Driver<Hangout.Sorting> // <-> Child(TopSub)
+        var hideHolderView: Signal<Bool> // <-> View
+        var endRefreshing: Signal<Void> // <-> View
+        var spinnerAnimating: Signal<Bool> // <-> View
+        var showLocationSettingAlert: Signal<Void> // <-> View
+        var showSignInAlert: Signal<String?> // <-> View
+        var sorting: Driver<Hangout.SortingOrder> // <-> Child(TopSub)
     }
     
     var dependency: Dependency
@@ -50,67 +65,76 @@ final class HomeListViewModel: ViewModelType {
     let subViewModels: SubViewModels
     
     private let currentUser$: BehaviorSubject<BappyUser?>
-    private let sorting$ = BehaviorSubject<Hangout.Sorting>(value: .Newest)
+    private let page$ = BehaviorSubject<Int>(value: 1)
+    private let totalPage$ = BehaviorSubject<Int>(value: 1)
+    private let sorting$ = BehaviorSubject<Hangout.SortingOrder>(value: .Newest)
     private let category$ = BehaviorSubject<Hangout.Category>(value: .All)
-    private let location$: BehaviorSubject<CLLocationCoordinate2D?>
+    private let coordinates$ = BehaviorSubject<Coordinates?>(value: nil)
     
-    private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
+    private let cellViewModels$ = BehaviorSubject<[HangoutCellViewModel]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
     private let localeButtonTapped$ = PublishSubject<Void>()
     private let searchButtonTapped$ = PublishSubject<Void>()
     private let filterButtonTapped$ = PublishSubject<Void>()
     private let sortingButtonTapped$ = PublishSubject<Void>()
-    private let moreButtonTapped$ = PublishSubject<IndexPath>()
-    private let likeButtonTapped$ = PublishSubject<IndexPath>()
+    private let viewWillDisappear$ = PublishSubject<Bool>()
+    private let refresh$ = PublishSubject<Void>()
+    private let willDisplayRow$ = PublishSubject<Int>()
+    private let showDetailView$ = PublishSubject<HangoutDetailViewModel>()
     
     private let showSortingView$ = PublishSubject<SortingOrderViewModel?>()
+    private let hideHolderView$ = PublishSubject<Bool>()
+    private let endRefreshing$ = PublishSubject<Void>()
+    private let spinnerAnimating$ = PublishSubject<Bool>()
+    private let showLocationSettingAlert$ = PublishSubject<Void>()
+    private let showSignInAlert$ = PublishSubject<Void>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            topViewModel: HomeListTopViewModel(dependency: .init()),
-            topSubViewModel: HomeListTopSubViewModel(dependency: .init())
+            topViewModel: HomeListTopViewModel(),
+            topSubViewModel: HomeListTopSubViewModel()
         )
         
         // MARK: Streams
         let currentUser$ = dependency.bappyAuthRepository.currentUser
-        let location$ = dependency.locationRepository.location
         
         let scrollToTop = scrollToTop$
             .asSignal(onErrorJustReturn: Void())
-        let hangouts = hangouts$
+        let cellViewModels = cellViewModels$
             .asDriver(onErrorJustReturn: [])
         let showLocaleView = localeButtonTapped$
-            .map { _ -> HomeLocaleViewModel in
-                let dependency = HomeLocaleViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    locationRepsitory: dependency.locationRepository)
-                return HomeLocaleViewModel(dependency: dependency)
-            }
+            .withLatestFrom(currentUser$)
+            .compactMap(\.?.state)
+            .filter { $0 == .normal }
+            .map { _ in HomeLocationViewModel() }
             .asSignal(onErrorJustReturn: nil)
         let showSearchView = searchButtonTapped$
-            .map { _ -> HomeSearchViewModel in
-                let dependency = HomeSearchViewModel.Dependency()
+            .withLatestFrom(currentUser$.compactMap { $0 })
+            .map { user -> HomeSearchViewModel? in
+                let dependency = HomeSearchViewModel.Dependency(user: user)
                 return HomeSearchViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
         let showSortingView = showSortingView$
             .asSignal(onErrorJustReturn: nil)
-        let showDetailView = moreButtonTapped$
-            .withLatestFrom(hangouts) { $1[$0.row] }
-            .withLatestFrom(currentUser$.compactMap { $0 }) { (user: $1, hangout: $0) }
-            .map { element -> HangoutDetailViewModel in
-                let dependency = HangoutDetailViewModel.Dependency(
-                    firebaseRepository: DefaultFirebaseRepository.shared,
-                    userProfileRepository: DefaultUserProfileRepository(),
-                    currentUser: element.user,
-                    hangout: element.hangout)
-                return HangoutDetailViewModel(dependency: dependency)
-            }
+        let showDetailView = showDetailView$
+            .map(HangoutDetailViewModel?.init)
             .asSignal(onErrorJustReturn: nil)
+        let hideHolderView = hideHolderView$
+            .asSignal(onErrorJustReturn: true)
+        let endRefreshing = endRefreshing$
+            .asSignal(onErrorJustReturn: Void())
+        let spinnerAnimating = spinnerAnimating$
+            .asSignal(onErrorJustReturn: false)
+        let showLocationSettingAlert = showLocationSettingAlert$
+            .asSignal(onErrorJustReturn: Void())
         let sorting = sorting$
             .asDriver(onErrorJustReturn: .Newest)
+        let showSignInAlert = showSignInAlert$
+            .map { _ in "Sign in to use location based services!" }
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -119,78 +143,225 @@ final class HomeListViewModel: ViewModelType {
             searchButtonTapped: searchButtonTapped$.asObserver(),
             filterButtonTapped: filterButtonTapped$.asObserver(),
             sortingButtonTapped: sortingButtonTapped$.asObserver(),
-            moreButtonTapped: moreButtonTapped$.asObserver(),
-            likeButtonTapped: likeButtonTapped$.asObserver()
+            viewWillDisappear: viewWillDisappear$.asObserver(),
+            refresh: refresh$.asObserver(),
+            willDisplayRow: willDisplayRow$.asObserver(),
+            showDetailView: showDetailView$.asObserver()
         )
         
         self.output = Output(
             scrollToTop: scrollToTop,
-            hangouts: hangouts,
+            cellViewModels: cellViewModels,
             showLocaleView: showLocaleView,
             showSearchView: showSearchView,
             showSortingView: showSortingView,
             showDetailView: showDetailView,
+            hideHolderView: hideHolderView,
+            endRefreshing: endRefreshing,
+            spinnerAnimating: spinnerAnimating,
+            showLocationSettingAlert: showLocationSettingAlert,
+            showSignInAlert: showSignInAlert,
             sorting: sorting
         )
         
         // MARK: Bindind
         self.currentUser$ = currentUser$
-        self.location$ = location$
+        
+        // Guest 모드시 위치 설정 불가
+        localeButtonTapped$
+            .withLatestFrom(currentUser$)
+            .compactMap(\.?.state)
+            .filter { $0 == .anonymous }
+            .map { _ in }
+            .bind(to: showSignInAlert$)
+            .disposed(by: disposeBag)
+        
+        // Page 1로 초기화
+        Observable
+            .merge(
+                sorting$.map { _ in },
+                category$.map { _ in },
+                refresh$
+            )
+            .skip(3)
+            .map { _ in 1 }
+            .bind(to: page$)
+            .disposed(by: disposeBag)
+        
+        // 행아웃 불러오기 Flow
+        let hangoutFlow = page$
+            .withLatestFrom(Observable.combineLatest(
+                sorting$,
+                category$
+            )) { ($0, $1.0, $1.1) }
+            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
+            .share()
+        
+        // Page 1일 때 dataSource 새로 만들기
+        let newHangoutPageResult = hangoutFlow
+            .filter { $0.page == 1 }
+            .flatMap(dependency.hangoutRepository.fetchHangouts)
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        // Page 1보다 클 때 기존 dataSource에 추가하기
+        let extraHangoutPageResult = hangoutFlow
+            .filter { $0.page > 1 }
+            .flatMap(dependency.hangoutRepository.fetchHangouts)
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        // 최초 1회 dataSource 불러오면 Holder 숨기기
+        newHangoutPageResult
+            .take(1)
+            .map { _ in true }
+            .bind(to: hideHolderView$)
+            .disposed(by: disposeBag)
+        
+        // Error 디버깅
+        Observable
+            .merge(newHangoutPageResult, extraHangoutPageResult)
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        let newHangoutPage = newHangoutPageResult
+            .compactMap(getValue)
+            .share()
+        
+        let extraHangoutPage = extraHangoutPageResult
+            .compactMap(getValue)
+            .share()
+        
+        // totalPage 업데이트
+        Observable
+            .merge(newHangoutPage, extraHangoutPage)
+            .do { [weak self] _ in self?.endRefreshing$.onNext(Void()) }
+            .map(\.totalPage)
+            .bind(to: totalPage$)
+            .disposed(by: disposeBag)
+        
+        newHangoutPage
+            .map(\.hangouts)
+            .withLatestFrom(currentUser$.compactMap { $0 }) { (hangouts: $0, user: $1) }
+            .map { [weak self] element -> [HangoutCellViewModel] in
+                element.hangouts.map { hangout -> HangoutCellViewModel in
+                    let dependency = HangoutCellViewModel.Dependency(
+                        user: element.user, hangout: hangout)
+                    let viewModel = HangoutCellViewModel(dependency: dependency)
+                    if let self = self {
+                        viewModel.output.showDetailView
+                            .compactMap { $0 }
+                            .emit(to: self.showDetailView$)
+                            .disposed(by: viewModel.disposeBag)
+                    }
+                    return viewModel
+                }
+            }
+            .do { [weak self] _ in self?.scrollToTop$.onNext(Void()) }
+            .bind(to: cellViewModels$)
+            .disposed(by: disposeBag)
+        
+        extraHangoutPage
+            .map(\.hangouts)
+            .withLatestFrom(currentUser$.compactMap { $0 }) { (hangouts: $0, user: $1) }
+            .map { [weak self] element -> [HangoutCellViewModel] in
+                element.hangouts.map { hangout -> HangoutCellViewModel in
+                    let dependency = HangoutCellViewModel.Dependency(
+                        user: element.user, hangout: hangout)
+                    let viewModel = HangoutCellViewModel(dependency: dependency)
+                    if let self = self {
+                        viewModel.output.showDetailView
+                            .compactMap { $0 }
+                            .emit(to: self.showDetailView$)
+                            .disposed(by: viewModel.disposeBag)
+                    }
+                    return viewModel
+                }
+            }
+            .withLatestFrom(cellViewModels$) { $1 + $0 }
+            .bind(to: cellViewModels$)
+            .disposed(by: disposeBag)
+        
+        // willDisplayRow가 마지막 전 Cell의 인덱스를 건드리고, totalPage가 page 보다 클 때 page 1 증가 시키기
+        willDisplayRow$
+            .withLatestFrom(
+                cellViewModels$
+                    .map(\.count)
+                    .distinctUntilChanged()
+            ) { (row: $0, count: $1) }
+            .filter { $0.row == $0.count - 2 }
+            .withLatestFrom(page$)
+            .withLatestFrom(totalPage$) { (page: $0, totalPage: $1) }
+            .filter { $0.page < $0.totalPage }
+            .map { $0.page + 1 }
+            .bind(to: page$)
+            .disposed(by: disposeBag)
+        
+        // Spinner StarAnimating
+        Observable
+            .combineLatest(page$, totalPage$)
+            .map { $0 < $1 }
+            .filter { $0 }
+            .bind(to: spinnerAnimating$)
+            .disposed(by: disposeBag)
+        
+        // Spinner StopAnimating
+        Observable
+            .merge(newHangoutPage, extraHangoutPage)
+            .map(\.totalPage)
+            .withLatestFrom(page$) { (totalPage: $0, page: $1) }
+            .filter { $0.totalPage == $0.page }
+            .map { _ in false }
+            .bind(to: spinnerAnimating$)
+            .disposed(by: disposeBag)
         
         // User의 저장된 GPS가 true이고, 위치권한이 있을 때 실시간 위치정보 사용
-        currentUser$
-            .compactMap(\.?.isUserUsingGPS)
-            .withLatestFrom(dependency.locationRepository.authorization) { $0 && $1 == .authorizedWhenInUse }
+        Observable
+            .combineLatest(
+                sorting$,
+                currentUser$.compactMap { $0 },
+                dependency.locationRepository.authorization
+            )
+            .map {
+                $0.0 == .Nearest &&
+                $0.1.isUserUsingGPS ?? false &&
+                $0.2 == .authorizedWhenInUse
+            }
+            .distinctUntilChanged()
             .bind(onNext: dependency.locationRepository.turnGPSSetting)
             .disposed(by: disposeBag)
         
-        let hangoutsResult = Observable
+        Observable
             .combineLatest(
-                currentUser$.compactMap { $0 },
                 sorting$,
-                category$
+                Observable.merge(
+                    currentUser$.compactMap { $0 }.map(\.coordinates),
+                    dependency.locationRepository.location
+                )
             )
-            .map { ("\($0.1.rawValue)", "", "", "") }
-            .flatMap(dependency.hangoutRepository.fetchHangouts)
-            .share()
-        
-        hangoutsResult
-            .compactMap(getHangoutsError)
-            .bind(onNext: { print("ERROR: \($0)") })
-            .disposed(by: disposeBag)
-        
-        hangoutsResult
-            .compactMap(getHangouts)
-            .bind(to: hangouts$)
-            .disposed(by: disposeBag)
-        
-        let likeButtonFlow = likeButtonTapped$
-            .withLatestFrom(hangouts$) { (indexPath: $0, hangouts: $1) }
-            .share()
-        
-        likeButtonFlow
-            .map { element -> [Hangout] in
-                var hangouts = element.hangouts
-                let row = element.indexPath.row
-                var hangout = hangouts[row]
-                hangout.userHasLiked = !hangout.userHasLiked
-                hangouts[row] = hangout
-                return hangouts
+            .map { (sorting: $0.0, coordinates$: $0.1) }
+            .map { element -> Coordinates? in
+                guard element.sorting == .Nearest else { return nil }
+                return element.coordinates$
             }
-            .bind(to: hangouts$)
+            .bind(to: coordinates$)
             .disposed(by: disposeBag)
         
-//        likeButtonFlow
-//            .map(dependency.hangoutRepository.)
-        
+        // SortingOrderView 띄우기
         sortingButtonTapped$
             .map { _ -> SortingOrderViewModel in
-                let dependency = SortingOrderViewModel.Dependency()
-                let viewModel = SortingOrderViewModel(dependency: dependency)
+                let viewModel = SortingOrderViewModel()
                 viewModel.delegate = self
                 return viewModel
             }
             .bind(to: showSortingView$)
+            .disposed(by: disposeBag)
+        
+        // ViewWillDisappear 호출 시 GPS 사용 끄기
+        viewWillDisappear$
+            .map { _ in false }
+            .bind(onNext: dependency.locationRepository.turnGPSSetting)
             .disposed(by: disposeBag)
         
         // Child(Top)
@@ -221,21 +392,23 @@ final class HomeListViewModel: ViewModelType {
     }
 }
 
-private func getHangouts(_ result: Result<[Hangout], Error>) -> [Hangout]? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getHangoutsError(_ result: Result<[Hangout], Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
 // MARK: - SortingOrderViewModelDelegate
 extension HomeListViewModel: SortingOrderViewModelDelegate {
-    func selectedSorting(_ sorting: Hangout.Sorting) {
+    func selectedSorting(_ sorting: Hangout.SortingOrder) {
+        if sorting == .Nearest {
+            guard let user = try? currentUser$.value(),
+                  let authorization = try? dependency.locationRepository.authorization.value()
+            else { return }
+            guard user.state != .anonymous else {
+                showSignInAlert$.onNext(Void())
+                return
+            }
+            
+            guard ((user.isUserUsingGPS ?? false) && authorization == .authorizedWhenInUse) || user.coordinates != nil else {
+                showLocationSettingAlert$.onNext(Void())
+                return
+            }
+        }
         sorting$.onNext(sorting)
     }
 }
-
-

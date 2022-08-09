@@ -15,6 +15,14 @@ final class ProfileDetailViewModel: ViewModelType {
         let user: BappyUser
         let authorization: ProfileAuthorization
         let bappyAuthRepository: BappyAuthRepository
+        
+        init(user: BappyUser,
+             authorization: ProfileAuthorization,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.user = user
+            self.authorization = authorization
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct SubViewModels {

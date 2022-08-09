@@ -20,6 +20,7 @@ final class ProfileEditMainView: UIView {
     
     private let profileImageButton: UIButton = {
         let button = UIButton()
+        button.imageView?.contentMode = .scaleAspectFill
         button.clipsToBounds = true
         button.layer.cornerRadius = 29.5
         return button

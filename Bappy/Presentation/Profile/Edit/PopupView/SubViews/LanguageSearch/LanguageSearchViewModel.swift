@@ -55,7 +55,7 @@ final class LanguageSearchViewModel: ViewModelType {
     private let searchButtonClicked$ = PublishSubject<Void>()
     private let itemSelected$ = PublishSubject<IndexPath>()
   
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams

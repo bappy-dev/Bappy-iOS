@@ -5,26 +5,29 @@
 //  Created by 정동천 on 2022/06/23.
 //
 
-import UIKit
+import Foundation
 import Differentiator
 
 struct Location: Equatable, IdentifiableType {
+    typealias Identifier = String
     
-    let identity: String
+    let identity: Identifier
     let name: String
     let address: String
     
-    let latitude: CGFloat
-    let longitude: CGFloat
+    let coordinates: Coordinates
     
     var isSelected: Bool
     
-    init(name: String, address: String, latitude: CGFloat, longitude: CGFloat, isSelected: Bool) {
+    init(identity: String, name: String, address: String, coordinates: Coordinates, isSelected: Bool) {
+        self.identity = identity
         self.name = name
         self.address = address
-        self.latitude = latitude
-        self.longitude = longitude
+        self.coordinates = coordinates
         self.isSelected = isSelected
-        self.identity = UUID().uuidString
+    }
+    
+    static func == (lhs: Location, rhs: Location) -> Bool {
+        lhs.identity == rhs.identity
     }
 }

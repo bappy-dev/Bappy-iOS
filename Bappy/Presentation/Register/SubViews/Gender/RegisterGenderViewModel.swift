@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class RegisterGenderViewModel: ViewModelType {
+    
     struct Dependency {
         var gender: Gender
     }

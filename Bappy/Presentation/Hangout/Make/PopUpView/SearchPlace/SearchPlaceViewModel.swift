@@ -20,6 +20,10 @@ final class SearchPlaceViewModel: ViewModelType {
         let googleMapsRepository: GoogleMapsRepository
         var key: String { Bundle.main.googleMapAPIKey }
         var language: String { "en" }
+        
+        init(googleMapsRepository: GoogleMapsRepository = DefaultGoogleMapsRepository()) {
+            self.googleMapsRepository = googleMapsRepository
+        }
     }
     
     struct Input {
@@ -61,7 +65,7 @@ final class SearchPlaceViewModel: ViewModelType {
     
     private let showLoader$ = PublishSubject<Bool>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
@@ -166,7 +170,7 @@ final class SearchPlaceViewModel: ViewModelType {
             .share()
         
         let error = result
-            .compactMap(getError)
+            .compactMap(getErrorDescription)
         
         value
             .map { $0.maps }
@@ -180,7 +184,7 @@ final class SearchPlaceViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         error
-            .bind(onNext: { print("ERROR: \($0)")})
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         itemSelected$
@@ -190,14 +194,4 @@ final class SearchPlaceViewModel: ViewModelType {
             })
             .disposed(by: disposeBag)
     }
-}
-
-private func getValue(_ result: Result<MapPage, Error>) -> MapPage? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getError(_ result: Result<MapPage, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }

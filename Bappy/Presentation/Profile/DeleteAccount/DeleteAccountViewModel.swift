@@ -11,13 +11,13 @@ import RxCocoa
 
 final class DeleteAccountViewModel: ViewModelType {
     
+    struct Dependency {
+        var dropdownList: [String]
+    }
+    
     struct SubViewModels {
         let firstPageViewModel: DeleteAccountFirstPageViewModel
         let secondPageViewModel: DeleteAccountSecondPageViewModel
-    }
-    
-    struct Dependency {
-        var dropdownList: [String]
     }
     
     struct Input {
@@ -34,10 +34,10 @@ final class DeleteAccountViewModel: ViewModelType {
     }
     
     let dependency: Dependency
+    let subViewModels: SubViewModels
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-    let subViewModels: SubViewModels
     
     private let page$ = BehaviorSubject<Int>(value: 0)
     

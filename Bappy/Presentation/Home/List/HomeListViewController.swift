@@ -18,7 +18,31 @@ final class HomeListViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let topView: HomeListTopView
     private let topSubView: HomeListTopSubView
-    private let tableView = UITableView()
+    private let holderView = HomeListHolderView()
+    
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
+        return tableView
+    }()
+    
+    private let refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = .white
+        refreshControl.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        return refreshControl
+    }()
+    
+    private let bottomSpinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.hidesWhenStopped = true
+        spinner.startAnimating()
+        spinner.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        spinner.frame.size.height = 36.0
+        return spinner
+    }()
     
     // MARK: Lifecycle
     init(viewModel: HomeListViewModel) {
@@ -32,36 +56,17 @@ final class HomeListViewController: UIViewController {
         configure()
         layout()
         bind()
-        configureTableView()
-        configureRefreshControl()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: Actions
-    @objc func refresh() {
-        self.tableView.refreshControl?.endRefreshing()
-    }
 
     // MARK: Helpers
-    private func configureTableView() {
-        tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.separatorStyle = .none
-        tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
-    }
-    
-    private func configureRefreshControl() {
-        tableView.refreshControl = UIRefreshControl()
-        let refreshControl = tableView.refreshControl
-        refreshControl?.backgroundColor = .white
-        refreshControl?.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-        refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
-    }
-    
     private func configure() {
         view.backgroundColor = .white
+        tableView.refreshControl = refreshControl
+        tableView.tableFooterView = bottomSpinner
     }
     
     private func layout() {
@@ -83,26 +88,43 @@ final class HomeListViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+        
+        view.addSubview(holderView)
+        holderView.snp.makeConstraints {
+            $0.top.equalTo(topView.snp.bottom)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
 // MARK: - Bind
 extension HomeListViewController {
     private func bind() {
+        self.rx.viewWillDisappear
+            .bind(to: viewModel.input.viewWillDisappear)
+            .disposed(by: disposeBag)
+        
+        refreshControl.rx.controlEvent(.valueChanged)
+            .bind(to: viewModel.input.refresh)
+            .disposed(by: disposeBag)
+        
+        tableView.rx.willDisplayCell
+            .map(\.indexPath.row)
+            .bind(to: viewModel.input.willDisplayRow)
+            .disposed(by: disposeBag)
+        
         viewModel.output.scrollToTop
             .emit(to: tableView.rx.scrollToTop)
             .disposed(by: disposeBag)
         
-        viewModel.output.hangouts
-            .drive(tableView.rx.items) { tableView, row, hangout in
+        viewModel.output.cellViewModels
+            .drive(tableView.rx.items) { tableView, row, viewModel in
                 let indexPath = IndexPath(row: row, section: 0)
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: reuseIdentifier,
                     for: indexPath
                 ) as! HangoutCell
-                cell.delegate = self
-                cell.indexPath = indexPath
-                cell.bind(with: hangout)
+                cell.bind(viewModel)
                 return cell
             }
             .disposed(by: disposeBag)
@@ -110,7 +132,7 @@ extension HomeListViewController {
         viewModel.output.showLocaleView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
-                let viewController = HomeLocaleViewController(viewModel: viewModel)
+                let viewController = HomeLocationViewController(viewModel: viewModel)
                 viewController.modalPresentationStyle = .overCurrentContext
                 self?.tabBarController?.present(viewController, animated: false)
             })
@@ -119,7 +141,7 @@ extension HomeListViewController {
         viewModel.output.showSearchView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
-                let viewController = HomeSearchViewController()
+                let viewController = HomeSearchViewController(viewModel: viewModel)
                 viewController.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
@@ -147,16 +169,57 @@ extension HomeListViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - HangoutCellDelegate
-extension HomeListViewController: HangoutCellDelegate {
-    func moreButtonTapped(indexPath: IndexPath) {
-        viewModel.input.moreButtonTapped.onNext(indexPath)
-    }
-    
-    func likeButtonTapped(indexPath: IndexPath) {
-        viewModel.input.likeButtonTapped.onNext(indexPath)
+        
+        viewModel.output.hideHolderView
+            .distinctUntilChanged()
+            .emit(to: holderView.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.endRefreshing
+            .map { _ in false }
+            .emit(to: refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.spinnerAnimating
+            .distinctUntilChanged()
+            .emit(to: bottomSpinner.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.spinnerAnimating
+            .distinctUntilChanged()
+            .emit(onNext: { [weak self] animate in
+                self?.tableView.tableFooterView = animate ? self?.bottomSpinner : nil
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showLocationSettingAlert
+            .emit(onNext: { [weak self] _ in
+                let title = "Location setting is required"
+                let message = "Please set the location\nto view hangouts in the\n'Nearest' order."
+                let actionTitle = "Setting"
+                let action = Alert.Action(
+                    actionTitle: actionTitle,
+                    actionStyle: .disclosure) {
+                        let viewModel = HomeLocationViewModel()
+                        let viewController = HomeLocationViewController(viewModel: viewModel)
+                        viewController.modalPresentationStyle = .overCurrentContext
+                        self?.tabBarController?.present(viewController, animated: false)
+                    }
+                let alert = Alert(
+                    title: title,
+                    message: message,
+                    bappyStyle: .happy,
+                    action: action)
+                self?.tabBarController?.showAlert(alert)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showSignInAlert
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] title in
+                let alert = SignInAlertController(title: title)
+                self?.tabBarController?.present(alert, animated: false)
+            })
+            .disposed(by: disposeBag)
     }
 }

@@ -12,79 +12,61 @@ import RxCocoa
 final class ReportWritingSectionViewModel: ViewModelType {
     
     struct Dependency {
-        var dropdownList: [String]
         var maxLength: Int { 500 }
     }
     
-    struct SubViewModels {
-        let dropdownViewModel: BappyDropdownViewModel
-    }
-    
     struct Input {
+        var reportingType: AnyObserver<String> // <-> Parent
         var editingDidBegin: AnyObserver<Void> // <-> View
         var detailText: AnyObserver<String> // <-> View
     }
     
     struct Output {
-        var openDropdown: Signal<Void> // <-> View
-        var closeDropdown: Signal<Void> // <-> View
-        var dropdownText: Signal<String?> // <-> View
+        var reportingType: Signal<String?> // <-> View
         var shouldHidePlaceholder: Driver<Bool> // <-> View
-        var isReasonSelected: Signal<Bool> // <-> Parent
+        var openDropdownView: Signal<Void> // <-> Parent
+        var reportingDetail: Signal<String?> // <-> Parent
     }
     
     let dependency: Dependency
-    let subViewModels: SubViewModels
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
     
-    private let selectedText$ = PublishSubject<String?>()
-    
+    private let reportingType$ = PublishSubject<String>()
     private let editingDidBegin$ = PublishSubject<Void>()
     private let detailText$ = PublishSubject<String>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
-        self.subViewModels = SubViewModels(
-            dropdownViewModel: BappyDropdownViewModel(
-                dependency: .init(dropdownList: dependency.dropdownList)
-            )
-        )
         
         // MARK: Streams
-        let openDropdown = editingDidBegin$
-            .asSignal(onErrorJustReturn: Void())
-        let closeDropdown = selectedText$
-            .map { _ in }
-            .asSignal(onErrorJustReturn: Void())
-        let dropdownText = selectedText$
+        let reportingType = reportingType$
+            .map(String?.init)
             .asSignal(onErrorJustReturn: nil)
         let shouldHidePlaceholder = detailText$
             .map { !$0.isEmpty }
             .asDriver(onErrorJustReturn: true)
-            .startWith(false)
-        let isReasonSelected = selectedText$
-            .map { $0 != nil }
-            .asSignal(onErrorJustReturn: false)
+        let openDropdownView = editingDidBegin$
+            .asSignal(onErrorJustReturn: Void())
+        let reportingDetail = detailText$
+            .map(String?.init)
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
+            reportingType: reportingType$.asObserver(),
             editingDidBegin: editingDidBegin$.asObserver(),
             detailText: detailText$.asObserver()
         )
         
         self.output = Output(
-            openDropdown: openDropdown,
-            closeDropdown: closeDropdown,
-            dropdownText: dropdownText,
+            reportingType: reportingType,
             shouldHidePlaceholder: shouldHidePlaceholder,
-            isReasonSelected: isReasonSelected
+            openDropdownView: openDropdownView,
+            reportingDetail: reportingDetail
         )
         
         // MARK: Bindind
-        subViewModels.dropdownViewModel.output.selectedText
-            .emit(to: selectedText$)
-            .disposed(by: disposeBag)
     }
 }

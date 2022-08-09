@@ -32,32 +32,34 @@ final class HangoutButton: UIButton {
     
     // MARK: Helpers
     private func updateButtonState(_ state: State) {
-        switch state {
-        case .create, .join:
-            self.backgroundColor = .bappyYellow
-            self.setBappyTitle(
-                title: state.rawValue.uppercased(),
-                font: .roboto(size: 28.0, family: .Bold))
-            self.addBappyShadow()
-            self.isEnabled = true
-            
-        case .expired, .closed:
-            self.backgroundColor = .bappyLightgray
-            self.setBappyTitle(
-                title: state.rawValue.uppercased(),
-                font: .roboto(size: 28.0, family: .Bold),
-                color: .bappyGray)
-            self.clipsToBounds = true
-            self.isEnabled = false
-            
-        case .cancel:
-            self.backgroundColor = .bappyCoral
-            self.setBappyTitle(
-                title: state.rawValue.uppercased(),
-                font: .roboto(size: 28.0, family: .Bold),
-                color: .white)
-            self.addBappyShadow()
-            self.isEnabled = true
+        DispatchQueue.main.async {
+            switch state {
+            case .create, .join:
+                self.backgroundColor = .bappyYellow
+                self.setBappyTitle(
+                    title: state.rawValue.uppercased(),
+                    font: .roboto(size: 28.0, family: .Bold))
+                self.addBappyShadow()
+                self.isEnabled = true
+                
+            case .expired, .closed:
+                self.backgroundColor = .bappyGray.withAlphaComponent(0.15)
+                self.setBappyTitle(
+                    title: state.rawValue.uppercased(),
+                    font: .roboto(size: 28.0, family: .Bold),
+                    color: .bappyGray)
+                self.clipsToBounds = true
+                self.isEnabled = false
+                
+            case .cancel:
+                self.backgroundColor = .bappyCoral
+                self.setBappyTitle(
+                    title: state.rawValue.uppercased(),
+                    font: .roboto(size: 28.0, family: .Bold),
+                    color: .white)
+                self.addBappyShadow()
+                self.isEnabled = true
+            }
         }
     }
     

@@ -87,8 +87,8 @@ final class HangoutDetailViewController: UIViewController {
     
     // MARK: Helpers
     private func setStatusBarStyle(statusBarStyle: UIStatusBarStyle) {
-        guard let navigationController = navigationController as? BappyNavigationViewController else { return }
-        navigationController.statusBarStyle = statusBarStyle
+        let navigationController = navigationController?.tabBarController?.navigationController as? BappyNavigationViewController
+        navigationController?.statusBarStyle = statusBarStyle
     }
     
     private func configure() {
@@ -179,16 +179,18 @@ extension HangoutDetailViewController {
         hangoutButton.rx.tap
             .bind(to: viewModel.input.hangoutButtonTapped)
             .disposed(by: disposeBag)
-        
+
         reportButton.rx.tap
             .bind(to: viewModel.input.reportButtonTapped)
             .disposed(by: disposeBag)
-        
+
         scrollView.rx.didScroll
             .withLatestFrom(scrollView.rx.contentOffset)
-            .map { $0.y }
+            .map(\.y)
             .filter { $0 <= 0 }
-            .map { self.imageSectionView.frame.height - $0 }
+            .map { [weak self] y -> CGFloat in
+                let imageHeight = self?.imageSectionView.frame.height ?? 0
+                return imageHeight - y }
             .bind(to: viewModel.input.imageHeight)
             .disposed(by: disposeBag)
         
@@ -199,27 +201,28 @@ extension HangoutDetailViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.showOpenMapView
+            .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let popupView = OpenMapPopupViewController(viewModel: viewModel)
                 popupView.modalPresentationStyle = .overCurrentContext
                 self?.present(popupView, animated: false)
             })
             .disposed(by: disposeBag)
-        
+
         viewModel.output.hangoutButtonState
             .emit(to: hangoutButton.rx.hangoutState)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showSignInAlert
             .compactMap { $0 }
             .emit(to: self.rx.showSignInAlert)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showCancelAlert
             .compactMap { $0 }
             .emit(to: self.rx.showAlert)
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showReportView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
@@ -227,13 +230,34 @@ extension HangoutDetailViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-        
+
         viewModel.output.showUserProfile
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let viewController = ProfileViewController(viewModel: viewModel)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
+            .disposed(by: disposeBag)
+
+        viewModel.output.showCreateSuccessView
+            .emit(onNext: { [weak self] _ in
+                let title = "Successfully Created!"
+                let message = "Your hangout is succesfully created\nPlease check if your openchat is valid"
+                let viewController = SuccessViewController(title: title, message: message)
+                viewController.modalPresentationStyle = .fullScreen
+                viewController.setDismissCompletion {
+                    _ = self?.navigationController?.popToRootViewController(animated: false)
+                }
+                self?.present(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+
+        viewModel.output.showYellowLoader
+            .emit(to: ProgressHUD.rx.showYellowLoader)
+            .disposed(by: disposeBag)
+
+        viewModel.output.showTranslucentLoader
+            .emit(to: ProgressHUD.rx.showTranslucentLoader)
             .disposed(by: disposeBag)
     }
 }

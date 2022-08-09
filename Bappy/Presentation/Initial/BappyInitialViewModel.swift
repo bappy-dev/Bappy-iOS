@@ -14,6 +14,12 @@ final class BappyInitialViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         let firebaseRepository: FirebaseRepository
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+            self.firebaseRepository = firebaseRepository
+        }
     }
     
     struct Input {}
@@ -37,7 +43,7 @@ final class BappyInitialViewModel: ViewModelType {
 
     private let showAlert$ = PublishSubject<Alert?>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
@@ -68,12 +74,12 @@ final class BappyInitialViewModel: ViewModelType {
             .share()
         
         remoteConfigValuesResult
-            .compactMap(getRemoteConfigValuesError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         let remoteConfigValues = remoteConfigValuesResult
-            .compactMap(getRemoteConfigValues)
+            .compactMap(getValue)
             .share()
         
         // 앱 버전이 최소 버전 보다 작은 경우
@@ -138,10 +144,7 @@ final class BappyInitialViewModel: ViewModelType {
             .filter { !$0 }
             .map { _ -> BappyLoginViewModel in
                 print("DEBUG: Not Signed In")
-                let dependency = BappyLoginViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository)
-                return BappyLoginViewModel(dependency: dependency)
+                return BappyLoginViewModel()
             }
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)
@@ -157,8 +160,7 @@ final class BappyInitialViewModel: ViewModelType {
                 print("DEBUG: Sign In Guest Mode")
                 let dependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: user)
                 return BappyTabBarViewModel(dependency: dependency)
             }
             .bind(to: switchToMainView$)
@@ -176,26 +178,26 @@ final class BappyInitialViewModel: ViewModelType {
             .share()
     
         tokenResult
-            .map(getTokenError)
+            .map(getErrorDescription)
             .compactMap { $0 }
-            .bind(onNext: { print("ERROR: \($0.description)") })
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
     
         let userResult = tokenResult
-            .compactMap(getToken)
+            .compactMap(getValue)
             .map { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .observe(on: MainScheduler.asyncInstance)
             .share()
     
         userResult
-            .map(getUserError)
+            .map(getErrorDescription)
             .compactMap { $0 }
-            .bind(onNext: { print("ERROR: \($0.description)") })
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
     
         let user = userResult
-            .map(getUser)
+            .map(getValue)
             .compactMap { $0 }
             .share()
     
@@ -203,12 +205,7 @@ final class BappyInitialViewModel: ViewModelType {
             .filter { $0.state == .notRegistered }
             .map { _ in }
             .flatMap(dependency.firebaseRepository.signOut)
-            .map { _ -> BappyLoginViewModel in
-                let dependency = BappyLoginViewModel.Dependency(
-                    bappyAuthRepository: dependency.bappyAuthRepository,
-                    firebaseRepository: dependency.firebaseRepository)
-                return BappyLoginViewModel(dependency: dependency)
-            }
+            .map { _ in BappyLoginViewModel() }
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)
     
@@ -218,44 +215,13 @@ final class BappyInitialViewModel: ViewModelType {
             .map { user -> BappyTabBarViewModel in
                 let dependecy = BappyTabBarViewModel.Dependency(
                     selectedIndex: 0,
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository)
+                    user: user)
                 return BappyTabBarViewModel(dependency: dependecy)
             }
             .bind(to: switchToMainView$)
             .disposed(by: disposeBag)
         
     }
-}
-
-private func getRemoteConfigValues(_ result: Result<RemoteConfigValues, Error>) -> RemoteConfigValues? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getRemoteConfigValuesError(_ result: Result<RemoteConfigValues, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getToken(_ result: Result<String?, Error>) -> String? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getTokenError(_ result: Result<String?, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }
 
 private func checkCurrentVersion(with minimumVersion: String) -> Bool {

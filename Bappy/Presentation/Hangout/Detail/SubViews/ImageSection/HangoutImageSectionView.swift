@@ -70,6 +70,10 @@ final class HangoutImageSectionView: UIView {
 // MARK: - Bind
 extension HangoutImageSectionView {
     private func bind() {
+        likeButton.rx.tap
+            .bind(to: viewModel.input.likeButtonTapped)
+            .disposed(by: disposeBag)
+
         viewModel.output.imageURL
             .emit(onNext: { [weak self] url in
                 self?.postImageView.kf.setImage(with: url)

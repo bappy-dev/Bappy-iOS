@@ -11,10 +11,6 @@ import RxCocoa
 
 final class RegisterBirthViewModel: ViewModelType {
     
-    struct SubViewModels {
-        let birthPickerViewModel: BirthPickerViewModel
-    }
-    
     struct Dependency {
         var year: String { "2000" }
         var month: String { "06" }
@@ -36,6 +32,10 @@ final class RegisterBirthViewModel: ViewModelType {
         var date: String { "\(year)-\(month)-\(day)" }
     }
     
+    struct SubViewModels {
+        let birthPickerViewModel: BirthPickerViewModel
+    }
+    
     struct Input {
         var date: AnyObserver<Date?> // <-> Child(Picker)
     }
@@ -47,11 +47,10 @@ final class RegisterBirthViewModel: ViewModelType {
     }
     
     let dependency: Dependency
+    let subViewModels: SubViewModels
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
-        
-    let subViewModels: SubViewModels
     
     private let date$ = PublishSubject<Date?>()
     

@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class HangoutMakePlanViewModel: ViewModelType {
+    
     struct Dependency {
         var minimumLength: Int { 14 }
         var maximumLength: Int { 200 }

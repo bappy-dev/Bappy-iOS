@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 final class HangoutMakePictureViewModel: ViewModelType {
+    
     struct Dependency {}
     
     struct Input {

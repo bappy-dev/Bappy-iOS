@@ -11,24 +11,27 @@ import RxCocoa
 
 final class HangoutMakeTimeViewModel: ViewModelType {
     
-    struct SubViewModels {
-        let calendarPickerViewModel: HangoutMakeCalendarPickerViewModel
-        let timePickerViewModel: HangoutMakeTimePickerViewModel
-    }
-    
     struct Dependency {
         var minimumDate: Date {
             (Date() + 60 * 60).roundUpUnitDigitOfMinutes()
         }
+        
         var dateFormat: String { "M.d (E)" }
         var timeFormat: String { "a h:mm" }
+        
         var calendarText: String {
             minimumDate.toString(dateFormat: dateFormat)
         }
+        
         var timeText: String {
             let text = minimumDate.toString(dateFormat: timeFormat)
             return addDotAtTimeText(timeText: text)
         }
+    }
+    
+    struct SubViewModels {
+        let calendarPickerViewModel: HangoutMakeCalendarPickerViewModel
+        let timePickerViewModel: HangoutMakeTimePickerViewModel
     }
     
     struct Input {

@@ -14,6 +14,10 @@ final class RegisterViewModel: ViewModelType {
     struct Dependency {
         let bappyAuthRepository: BappyAuthRepository
         var numOfPage: Int { 4 }
+        
+        init(bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.bappyAuthRepository = bappyAuthRepository
+        }
     }
     
     struct SubViewModels {
@@ -79,7 +83,7 @@ final class RegisterViewModel: ViewModelType {
     
     private let showSelectNationalityView$ = PublishSubject<SelectNationalityViewModel?>()
     
-    init(dependency: Dependency) {
+    init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
             nameViewModel: RegisterNameViewModel(),
@@ -259,19 +263,13 @@ final class RegisterViewModel: ViewModelType {
             .share()
         
         result
-            .compactMap(getUserError)
-            .bind(onNext: { print("ERROR: \($0)") })
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
         result
-            .compactMap(getUser)
-            .map { user -> RegisterCompletedViewModel in
-                let dependency = RegisterCompletedViewModel.Dependency(
-                    user: user,
-                    bappyAuthRepository: dependency.bappyAuthRepository
-                )
-                return RegisterCompletedViewModel(dependency: dependency)
-            }
+            .compactMap(getValue)
+            .map { RegisterCompletedViewModel(dependency: .init(user: $0)) }
             .bind(to: showCompleteView$)
             .disposed(by: disposeBag)
         
@@ -295,16 +293,6 @@ private func shouldButtonEnabled(page: Int, isNameValid: Bool, isGenderValid: Bo
     case 3: return isNationalityValid
     default: return false
     }
-}
-
-private func getUser(_ result: Result<BappyUser, Error>) -> BappyUser? {
-    guard case .success(let value) = result else { return nil }
-    return value
-}
-
-private func getUserError(_ result: Result<BappyUser, Error>) -> String? {
-    guard case .failure(let error) = result else { return nil }
-    return error.localizedDescription
 }
 
 // MARK: - SelectNationalityViewModelDelegate
