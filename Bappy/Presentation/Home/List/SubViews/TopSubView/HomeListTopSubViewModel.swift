@@ -13,8 +13,8 @@ final class HomeListTopSubViewModel: ViewModelType {
     
     struct Dependency {
         var categories: [Hangout.Category] {
-            [.All, .Travel, .Study, .Sports, .Food,
-             .Drinks, .Cook, .Cook, .Culture,
+            [.All, .Travel, .Study, .Sports,
+             .Food, .Drinks, .Cook, .Culture,
              .Volunteer, .Language, .Crafting]
         }
     }
