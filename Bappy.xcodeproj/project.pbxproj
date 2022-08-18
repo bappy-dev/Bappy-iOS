@@ -100,7 +100,6 @@
 		A71E27D628698779001DA96B /* Coordinates.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71E27D528698779001DA96B /* Coordinates.swift */; };
 		A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEB283553890052C60A /* BappyTabBarController.swift */; };
 		A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEF283555B90052C60A /* HomeListViewController.swift */; };
-		A7202D522898B84B00878012 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7202D512898B84B00878012 /* GoogleService-Info.plist */; };
 		A7202D592898B9EF00878012 /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7202D582898B9EF00878012 /* Example.swift */; };
 		A72838F22862F7F500BBBD9C /* HomeLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */; };
 		A72838F5286301F100BBBD9C /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F4286301F100BBBD9C /* Hangout.swift */; };
@@ -251,6 +250,7 @@
 		A788CC662840682500490B0F /* HangoutMakeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC652840682400490B0F /* HangoutMakeViewController.swift */; };
 		A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */; };
 		A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */; };
+		A7895B4028AE07C00091DCF1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7895B3F28AE07BF0091DCF1 /* GoogleService-Info.plist */; };
 		A78C535E283B719800CC41F5 /* HangoutImageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */; };
 		A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535F283B741700CC41F5 /* HangoutImageCell.swift */; };
 		A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */; };
@@ -406,7 +406,6 @@
 		A71E27D528698779001DA96B /* Coordinates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinates.swift; sourceTree = "<group>"; };
 		A71EBAEB283553890052C60A /* BappyTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTabBarController.swift; sourceTree = "<group>"; };
 		A71EBAEF283555B90052C60A /* HomeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListViewController.swift; sourceTree = "<group>"; };
-		A7202D512898B84B00878012 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A7202D572898B9C900878012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A7202D582898B9EF00878012 /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
 		A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocationViewController.swift; sourceTree = "<group>"; };
@@ -547,6 +546,7 @@
 		A788CC652840682400490B0F /* HangoutMakeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeViewController.swift; sourceTree = "<group>"; };
 		A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeTitleView.swift; sourceTree = "<group>"; };
 		A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeTimeView.swift; sourceTree = "<group>"; };
+		A7895B3F28AE07BF0091DCF1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageSectionView.swift; sourceTree = "<group>"; };
 		A78C535F283B741700CC41F5 /* HangoutImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageCell.swift; sourceTree = "<group>"; };
 		A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMainSectionView.swift; sourceTree = "<group>"; };
@@ -1248,7 +1248,7 @@
 			children = (
 				A709061B285498080096E9A0 /* Bappy.entitlements */,
 				A7202D572898B9C900878012 /* Info.plist */,
-				A7202D512898B84B00878012 /* GoogleService-Info.plist */,
+				A7895B3F28AE07BF0091DCF1 /* GoogleService-Info.plist */,
 				A7CE0FA5284C7E710063458F /* GoogleMap-Info.plist */,
 				A7751B0128807B7300F23241 /* RemoteConfigValue.plist */,
 				A769CCF1282A8CB40086182C /* AppDelegate */,
@@ -2446,6 +2446,7 @@
 			files = (
 				A71732362836171A0073E702 /* bappy.png in Resources */,
 				A7EB7836282AB7B100E3E965 /* Roboto-Thin.ttf in Resources */,
+				A7895B4028AE07C00091DCF1 /* GoogleService-Info.plist in Resources */,
 				A7EB7808282AB51C00E3E965 /* Roboto-Medium.ttf in Resources */,
 				A7EB7834282AB7A900E3E965 /* Roboto-Regular.ttf in Resources */,
 				A7CE0FA6284C7E710063458F /* GoogleMap-Info.plist in Resources */,
@@ -2458,7 +2459,6 @@
 				A72E6F17289805D200E06BED /* success.json in Resources */,
 				A7751B0228807B7300F23241 /* RemoteConfigValue.plist in Resources */,
 				A7EB7806282AB48500E3E965 /* Roboto-Light.ttf in Resources */,
-				A7202D522898B84B00878012 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2879,7 +2879,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bappy/Info.plist;
@@ -2897,7 +2897,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2913,7 +2913,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bappy/Info.plist;
@@ -2931,7 +2931,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
