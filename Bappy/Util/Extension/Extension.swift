@@ -195,6 +195,39 @@ extension String {
     }
 }
 
+// MARK: - UIView
+extension UIView {
+    func addSubviews(_ views: [UIView]) {
+        for view in views {
+            self.addSubview(view)
+        }
+    }
+}
+
+// MARK: - UITableView
+extension UITableView {
+    func dequeueReusableCell<T: UITableViewCell>(for indexPath: IndexPath, with cellType: T.Type = T.self) -> T {
+        let identifier = "\(cellType)"
+        guard let cell = dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? T else {
+            fatalError("Failed to dequeue a view with identifier \(identifier) matching type \(cellType.self).")
+        }
+        
+        return cell
+    }
+}
+
+// MARK: - UICollectionView
+extension UICollectionView {
+    func dequeueReusableCell<T: UICollectionViewCell>(for indexPath: IndexPath, with cellType: T.Type = T.self) -> T {
+        let identifier = "\(cellType)"
+        guard let  cell = dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? T else {
+            fatalError("Failed to dequeue a view with identifier \(identifier) matching type \(cellType.self).")
+        }
+        
+        return cell
+    }
+}
+
 // MARK: - UIButton
 extension UIButton {
     func setBappyTitle(title: String,
