@@ -103,7 +103,7 @@ final class RegisterViewModel: ViewModelType {
         let pageContentOffset = page$.map(getContentOffset)
             .asDriver(onErrorJustReturn: .zero)
         let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
-                                                resultSelector: getProgression)
+                                               resultSelector: getProgression)
             .asDriver(onErrorJustReturn: .zero)
         let initProgression = viewDidAppear$
             .withLatestFrom(progression)
@@ -194,7 +194,7 @@ final class RegisterViewModel: ViewModelType {
             .emit(to: subViewModels.nameViewModel.input.keyboardWithButtonHeight)
             .disposed(by: disposeBag)
         
-        subViewModels.nameViewModel.output.modifiedName
+        subViewModels.nameViewModel.output.userName
             .emit(to: name$)
             .disposed(by: disposeBag)
         

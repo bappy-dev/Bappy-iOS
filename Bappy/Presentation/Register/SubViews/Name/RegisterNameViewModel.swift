@@ -24,8 +24,9 @@ final class RegisterNameViewModel: ViewModelType {
     
     struct Output {
         var isValid: Driver<Bool>
-        var modifiedName: Signal<String>
         var shouldHideRule: Signal<Bool>
+        var userName: Signal<String>
+        var isThreeOrThirty: Signal<Bool>
         var keyboardWithButtonHeight: Signal<CGFloat>
     }
     
@@ -47,18 +48,33 @@ final class RegisterNameViewModel: ViewModelType {
         let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         let maximumLength$ = BehaviorSubject<Int>(value: dependency.maximumLength)
         
-        let isNameValid = name$
-            .withLatestFrom(minimumLength$, resultSelector: validation)
+        let isNameValid = Observable.combineLatest(name$, minimumLength$, maximumLength$)
+            .map { validation(name: $0, minimumLength: $1, maximumLength: $2)}
             .share()
+        
+        let isThreeOrThirty = name$
+            .map { $0.count }
+            .map { cnt -> Bool? in
+                if cnt > 30 {
+                    return false
+                } else if cnt <= 3 {
+                    return true
+                }
+                return nil
+            }.asSignal(onErrorJustReturn: nil)
+            .compactMap{ $0 }
+        
         let isValid = isNameValid
             .asDriver(onErrorJustReturn: false)
-        let modifiedName = name$
-            .withLatestFrom(maximumLength$, resultSelector: removeExcessString)
+        
+        let userName = name$
             .asSignal(onErrorJustReturn: "")
+        
         let shouldHideRule = Observable
             .combineLatest(editingDidBegin$, isNameValid) { $1 }
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
+        
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         
@@ -70,8 +86,9 @@ final class RegisterNameViewModel: ViewModelType {
         )
         self.output = Output(
             isValid: isValid,
-            modifiedName: modifiedName,
             shouldHideRule: shouldHideRule,
+            userName: userName,
+            isThreeOrThirty: isThreeOrThirty,
             keyboardWithButtonHeight: keyboardWithButtonHeight
         )
         
@@ -81,13 +98,6 @@ final class RegisterNameViewModel: ViewModelType {
     }
 }
 
-private func validation(name: String, minimumLength: Int) -> Bool {
-    return name.count >= minimumLength
-}
-
-private func removeExcessString(name: String, maximumLength: Int) -> String {
-    guard name.count > maximumLength else { return name }
-    let startIndex = name.startIndex
-    let lastIndex = name.index(startIndex, offsetBy: maximumLength)
-    return String(name[startIndex..<lastIndex])
+private func validation(name: String, minimumLength: Int, maximumLength: Int) -> Bool {
+    return name.count >= minimumLength && name.count <= maximumLength
 }
