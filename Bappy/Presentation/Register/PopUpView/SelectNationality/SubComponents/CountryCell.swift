@@ -11,6 +11,8 @@ import SnapKit
 final class CountryCell: UITableViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "CountryCell"
+    
     var country: Country? {
         didSet {
             guard let country = country else { return }

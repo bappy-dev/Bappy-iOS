@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "HangoutCell"
 final class HomeListViewController: UIViewController {
     
     // MARK: Properties
@@ -22,7 +21,7 @@ final class HomeListViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(HangoutCell.self, forCellReuseIdentifier: HangoutCell.reuseIdentifier)
         tableView.separatorStyle = .none
         tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
         return tableView
@@ -118,16 +117,9 @@ extension HomeListViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.cellViewModels
-            .drive(tableView.rx.items) { tableView, row, viewModel in
-                let indexPath = IndexPath(row: row, section: 0)
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIdentifier,
-                    for: indexPath
-                ) as! HangoutCell
+            .drive(tableView.rx.items(cellIdentifier: HangoutCell.reuseIdentifier, cellType: HangoutCell.self)) { _, viewModel, cell in
                 cell.bind(viewModel)
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         viewModel.output.showLocaleView
             .compactMap { $0 }

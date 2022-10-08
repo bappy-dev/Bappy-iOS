@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "CountryCell"
 final class SelectNationalityViewController: UIViewController {
     
     // MARK: Properties
@@ -66,7 +65,7 @@ final class SelectNationalityViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(CountryCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(CountryCell.self, forCellReuseIdentifier: CountryCell.reuseIdentifier)
         tableView.rowHeight = 41.5
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
         tableView.keyboardDismissMode = .interactive
@@ -214,15 +213,9 @@ extension SelectNationalityViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.searchedCountries
-            .drive(tableView.rx.items) { tableView, row, country in
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIdentifier,
-                    for: IndexPath(row: row, section: 0)
-                ) as! CountryCell
+            .drive(tableView.rx.items(cellIdentifier: CountryCell.reuseIdentifier, cellType: CountryCell.self)) { _, country, cell in
                 cell.country = country
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         viewModel.output.dismiss
             .emit(onNext: { [weak self] _ in

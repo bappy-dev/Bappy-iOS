@@ -12,6 +12,8 @@ import Kingfisher
 final class SearchPlaceCell: UITableViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "SearchPlaceCell"
+    
     private let placeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .bappyBrown

@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIndentifier = "SortingOrderCell"
 final class SortingOrderViewController: UIViewController {
     
     // MARK: Properties
@@ -25,7 +24,7 @@ final class SortingOrderViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(SortingOrderCell.self, forCellReuseIdentifier: reuseIndentifier)
+        tableView.register(SortingOrderCell.self, forCellReuseIdentifier: SortingOrderCell.reuseIndentifier)
         tableView.rowHeight = 45.0
         tableView.separatorInset = .init(top: 0, left: 17.0, bottom: 0, right: 16.0)
         tableView.backgroundColor = .bappyLightgray
@@ -145,15 +144,9 @@ extension SortingOrderViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.sortingList
-            .drive(tableView.rx.items) { tableView, row, sorting in
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIndentifier,
-                    for: IndexPath(row: row, section: 0)
-                ) as! SortingOrderCell
+            .drive(tableView.rx.items(cellIdentifier: SortingOrderCell.reuseIndentifier, cellType: SortingOrderCell.self)) { _, sorting, cell in
                 cell.text = sorting.description
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         viewModel.output.popViewWithSorting
             .compactMap { $0 }

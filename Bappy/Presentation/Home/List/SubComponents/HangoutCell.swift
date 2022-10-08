@@ -14,6 +14,8 @@ import Lottie
 final class HangoutCell: UITableViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "HangoutCell"
+    
     var state: Hangout.State = .closed {
         didSet { configureState(state) }
     }

@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "HomeListCategoryCell"
 final class HomeListTopSubView: UIView {
     
     // MARK: Properties
@@ -27,7 +26,7 @@ final class HomeListTopSubView: UIView {
         flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 20.0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.register(HomeListCategoryCell.self,
-                                forCellWithReuseIdentifier: reuseIdentifier)
+                                forCellWithReuseIdentifier: HomeListCategoryCell.reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
@@ -144,15 +143,9 @@ extension HomeListTopSubView {
             .disposed(by: disposeBag)
         
         viewModel.output.categories
-            .drive(collectionView.rx.items) { collectionView, item, element in
-                let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: reuseIdentifier,
-                    for: IndexPath(item: item, section: 0)
-                ) as! HomeListCategoryCell
+            .drive(collectionView.rx.items(cellIdentifier: HomeListCategoryCell.reuseIdentifier, cellType: HomeListCategoryCell.self)) { _, element, cell in
                 cell.bind(with: element.key)
                 cell.isCellSelected = element.value
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 }

@@ -11,6 +11,8 @@ import SnapKit
 final class SortingOrderCell: UITableViewCell {
     
     // MARK: Properties
+    static let reuseIndentifier = "SortingOrderCell"
+    
     var text: String = "" {
         didSet { self.textLabel?.text = text }
     }
