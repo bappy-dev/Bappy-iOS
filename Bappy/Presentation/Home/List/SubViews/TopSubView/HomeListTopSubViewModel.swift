@@ -13,7 +13,7 @@ final class HomeListTopSubViewModel: ViewModelType {
     
     struct Dependency {
         var categories: [Hangout.Category] {
-            [.All, .Travel, .Study, .Sports,
+            [.ALL, .Travel, .Study, .Sports,
              .Food, .Drinks, .Cook, .Culture,
              .Volunteer, .Language, .Crafting]
         }
@@ -50,7 +50,7 @@ final class HomeListTopSubViewModel: ViewModelType {
         
         // MARK: Streams
         let categories$ = BehaviorSubject<[Hangout.Category]>(value: dependency.categories)
-        let category$ = BehaviorSubject<Hangout.Category>(value: .All)
+        let category$ = BehaviorSubject<Hangout.Category>(value: .ALL)
         
         let sortingButtonTapped = sortingButtonTapped$
             .asSignal(onErrorJustReturn: Void())
@@ -63,7 +63,7 @@ final class HomeListTopSubViewModel: ViewModelType {
             }
             .asDriver(onErrorJustReturn: [])
         let category = category$
-            .asDriver(onErrorJustReturn: .All)
+            .asDriver(onErrorJustReturn: .ALL)
         
         // MARK: Input & Output
         self.input = Input(

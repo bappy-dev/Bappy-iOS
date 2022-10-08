@@ -52,13 +52,13 @@ final class CountryCell: UITableViewCell {
     }
     
     private func layout() {
-        contentView.addSubview(countryLabel)
+        self.contentView.addSubviews([countryLabel, countryFlagLabel])
+        
         countryLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(10.0)
             $0.centerY.equalToSuperview()
         }
         
-        contentView.addSubview(countryFlagLabel)
         countryFlagLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(15.0)

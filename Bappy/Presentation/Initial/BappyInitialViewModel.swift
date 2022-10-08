@@ -40,7 +40,7 @@ final class BappyInitialViewModel: ViewModelType {
     
     private let firbaseSignInState$: BehaviorSubject<Bool>
     private let isAnonymousUser$: BehaviorSubject<Bool>
-
+    
     private let showAlert$ = PublishSubject<Alert?>()
     
     init(dependency: Dependency = Dependency()) {
@@ -110,7 +110,7 @@ final class BappyInitialViewModel: ViewModelType {
                     bappyStyle: .happy,
                     canDismissByTouch: false,
                     action: action
-                    )
+                )
             }
             .bind(to: showAlert$)
             .disposed(by: disposeBag)
@@ -135,7 +135,7 @@ final class BappyInitialViewModel: ViewModelType {
         
         let startFlow = notice
             .filter { !$0.hasNotice }
-            .map { _ in }
+            .map { _ in () }
             .share()
         
         // Not Sign In
@@ -149,7 +149,6 @@ final class BappyInitialViewModel: ViewModelType {
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)
         
-    
         // Check Guest Mode
         startFlow
             .withLatestFrom(isAnonymousUser$)
@@ -170,26 +169,26 @@ final class BappyInitialViewModel: ViewModelType {
         let tokenResult = startFlow
             .withLatestFrom(
                 Observable
-                .combineLatest(firbaseSignInState$, isAnonymousUser$)
+                    .combineLatest(firbaseSignInState$, isAnonymousUser$)
             )
             .filter { $0.0 && !$0.1 }
             .map { _ in }
             .flatMap(dependency.firebaseRepository.getIDTokenForcingRefresh)
             .share()
-    
+        
         tokenResult
             .map(getErrorDescription)
             .compactMap { $0 }
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-    
+        
         let userResult = tokenResult
             .compactMap(getValue)
             .map { _ in }
             .flatMap(dependency.bappyAuthRepository.fetchCurrentUser)
             .observe(on: MainScheduler.asyncInstance)
             .share()
-    
+        
         userResult
             .map(getErrorDescription)
             .compactMap { $0 }
@@ -220,7 +219,6 @@ final class BappyInitialViewModel: ViewModelType {
             }
             .bind(to: switchToMainView$)
             .disposed(by: disposeBag)
-        
     }
 }
 

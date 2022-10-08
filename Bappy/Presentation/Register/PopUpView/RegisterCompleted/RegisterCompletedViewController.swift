@@ -166,24 +166,24 @@ final class RegisterCompletedViewController: UIViewController {
     }
     
     private func layout() {
-        view.addSubview(dimmedView)
+        view.addSubviews([dimmedView, containerView])
+        containerView.addSubviews([titleLabel, bappyImageView, captionLabel, okButton, laterButton, animationView])
+        okButton.addSubview(forwardImageView)
+        
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
-        view.addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(27.0)
         }
         
-        containerView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(46.0)
             $0.leading.trailing.equalToSuperview().inset(21.0)
         }
         
-        containerView.addSubview(bappyImageView)
         bappyImageView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(13.0)
             $0.centerX.equalToSuperview()
@@ -191,13 +191,11 @@ final class RegisterCompletedViewController: UIViewController {
             $0.height.equalTo(164.0)
         }
         
-        containerView.addSubview(captionLabel)
         captionLabel.snp.makeConstraints {
             $0.top.equalTo(bappyImageView.snp.bottom).offset(30.0)
             $0.centerX.equalToSuperview()
         }
         
-        containerView.addSubview(okButton)
         okButton.snp.makeConstraints {
             $0.top.equalTo(captionLabel.snp.bottom).offset(14.0)
             $0.leading.equalToSuperview().inset(44.0)
@@ -205,13 +203,11 @@ final class RegisterCompletedViewController: UIViewController {
             $0.height.equalTo(42.0)
         }
         
-        okButton.addSubview(forwardImageView)
         forwardImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(18.0)
         }
         
-        containerView.addSubview(laterButton)
         laterButton.snp.makeConstraints {
             $0.top.equalTo(okButton.snp.bottom)
             $0.centerX.equalToSuperview()
@@ -219,7 +215,6 @@ final class RegisterCompletedViewController: UIViewController {
             $0.bottom.equalToSuperview().inset(5.0)
         }
         
-        containerView.addSubview(animationView)
         animationView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalTo(containerView.snp.top)

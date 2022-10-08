@@ -59,13 +59,12 @@ final class RegisterGenderView: UIView {
         stackView.distribution = .fillEqually
         stackView.axis = .horizontal
         
-        self.addSubview(genderCaptionLabel)
+        self.addSubviews([genderCaptionLabel, stackView])
         genderCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
             $0.leading.equalToSuperview().inset(43.0)
         }
    
-        self.addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.top.equalTo(genderCaptionLabel.snp.bottom).offset(80.0)
             $0.leading.trailing.equalToSuperview().inset(23.0)

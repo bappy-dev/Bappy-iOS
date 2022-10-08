@@ -77,13 +77,14 @@ final class BirthPickerView: UIView {
         clipView.clipsToBounds = true
         clipView.backgroundColor = .white
         
-        self.addSubview(clipView)
+        self.addSubviews([clipView, doneButton])
+        clipView.addSubviews([selectView, birthStackView, topGradientView, bottomGradientView])
+        
         clipView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(40.0)
             $0.leading.trailing.equalToSuperview()
         }
         
-        clipView.addSubview(selectView)
         selectView.snp.makeConstraints {
             $0.height.equalTo(38.0)
             $0.centerY.equalToSuperview()
@@ -91,26 +92,22 @@ final class BirthPickerView: UIView {
             $0.trailing.equalToSuperview().inset(7.0)
         }
         
-        clipView.addSubview(birthStackView)
         birthStackView.snp.makeConstraints {
             $0.height.equalTo(2000.0)
             $0.centerY.equalTo(selectView)
             $0.leading.trailing.equalToSuperview()
         }
         
-        clipView.addSubview(topGradientView)
         topGradientView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(70.0)
         }
         
-        clipView.addSubview(bottomGradientView)
         bottomGradientView.snp.makeConstraints {
             $0.bottom.leading.trailing.equalToSuperview()
             $0.height.equalTo(70.0)
         }
         
-        self.addSubview(doneButton)
         doneButton.snp.makeConstraints {
             $0.top.equalTo(clipView.snp.bottom).offset(10.0)
             $0.centerX.bottom.equalToSuperview()
@@ -173,7 +170,7 @@ extension BirthPickerView {
         viewModel.output.dayRow
             .bind(to: dayPickerView.rx.selectRow)
             .disposed(by: disposeBag)
-
+        
         
         viewModel.output.shouldHide
             .emit(onNext: { [weak self] _ in

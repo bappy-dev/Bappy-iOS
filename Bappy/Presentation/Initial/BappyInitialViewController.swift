@@ -50,14 +50,14 @@ final class BappyInitialViewController: UIViewController {
     }
     
     private func layout() {
-        view.addSubview(bappyImageView)
+        self.view.addSubviews([bappyImageView, logoImageView])
+        
         bappyImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalTo(view.safeAreaLayoutGuide).offset(-60.0)
             $0.width.height.equalTo(300.0)
         }
         
-        view.addSubview(logoImageView)
         logoImageView.snp.makeConstraints {
             $0.top.equalTo(bappyImageView.snp.bottom).offset(-20.0)
             $0.centerX.equalToSuperview()

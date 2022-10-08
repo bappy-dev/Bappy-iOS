@@ -148,32 +148,32 @@ final class SelectNationalityViewController: UIViewController {
         searchBackgroundView.backgroundColor = .bappyLightgray
         searchBackgroundView.layer.cornerRadius = 17.5
         
-        view.addSubview(dimmedView)
+        view.addSubviews([dimmedView, containerView])
+        containerView.addSubviews([titleLabel, closeButton, searchBackgroundView, tableView])
+        searchBackgroundView.addSubview(searchTextField)
+        
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
-        view.addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(defaultHeight)
             $0.bottom.equalToSuperview().inset(-defaultHeight)
         }
         
-        containerView.addSubview(titleLabel)
+        
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(15.0)
             $0.centerX.equalToSuperview()
         }
         
-        containerView.addSubview(closeButton)
         closeButton.snp.makeConstraints {
             $0.centerY.equalTo(titleLabel)
             $0.leading.equalToSuperview().inset(35.0)
             $0.height.equalTo(44.0)
         }
         
-        containerView.addSubview(searchBackgroundView)
         searchBackgroundView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(23.0)
             $0.leading.equalToSuperview().inset(30.0)
@@ -181,13 +181,11 @@ final class SelectNationalityViewController: UIViewController {
             $0.height.equalTo(35.0)
         }
         
-        searchBackgroundView.addSubview(searchTextField)
         searchTextField.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(15.0)
         }
         
-        containerView.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBackgroundView.snp.bottom).offset(15.0)
             $0.leading.equalToSuperview().inset(42.0)

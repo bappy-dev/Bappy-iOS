@@ -73,26 +73,23 @@ final class RegisterBirthView: UIView {
     }
     
     private func layout() {
-        self.addSubview(birthCaptionLabel)
+        self.addSubviews([birthCaptionLabel, birthTextField, underlinedView, birthPickerView])
         birthCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
             $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(birthTextField)
         birthTextField.snp.makeConstraints {
             $0.top.equalTo(birthCaptionLabel.snp.bottom).offset(92.0)
             $0.leading.trailing.equalToSuperview().inset(47.0)
         }
         
-        self.addSubview(underlinedView)
         underlinedView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(44.0)
             $0.height.equalTo(2.0)
             $0.top.equalTo(birthTextField.snp.bottom).offset(7.0)
         }
         
-        self.addSubview(birthPickerView)
         birthPickerView.snp.makeConstraints {
             $0.top.equalTo(birthCaptionLabel.snp.bottom).offset(20.0)
             $0.leading.equalToSuperview().inset(27.0)

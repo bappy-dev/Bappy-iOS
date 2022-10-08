@@ -72,14 +72,13 @@ final class HomeListTopSubView: UIView {
         localeButtonImageView.tintColor = .bappyYellow
         localeButtonImageView.contentMode = .scaleToFill
         
-        self.addSubview(hDividingView1)
+        self.addSubviews([hDividingView1, vDividingView, hDividingView2, collectionView, sortingOrderButton])
         hDividingView1.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(14.0)
             $0.height.equalTo(1.0)
         }
         
-        self.addSubview(vDividingView)
         vDividingView.snp.makeConstraints {
             $0.top.equalTo(hDividingView1.snp.bottom).offset(4.5)
             $0.trailing.equalToSuperview().inset(119.5)
@@ -87,7 +86,6 @@ final class HomeListTopSubView: UIView {
             $0.height.equalTo(34.0)
         }
         
-        self.addSubview(hDividingView2)
         hDividingView2.snp.makeConstraints {
             $0.top.equalTo(vDividingView.snp.bottom).offset(4.5)
             $0.leading.trailing.equalTo(hDividingView1)
@@ -95,7 +93,6 @@ final class HomeListTopSubView: UIView {
             $0.bottom.equalToSuperview().inset(12.5)
         }
         
-        self.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.top.equalTo(hDividingView1.snp.bottom)
             $0.leading.equalTo(hDividingView1)
@@ -103,7 +100,6 @@ final class HomeListTopSubView: UIView {
             $0.bottom.equalTo(hDividingView2.snp.top)
         }
         
-        self.addSubview(sortingOrderButton)
         sortingOrderButton.snp.makeConstraints {
             $0.top.equalTo(hDividingView1.snp.bottom)
             $0.bottom.equalTo(hDividingView2.snp.top)
@@ -111,7 +107,7 @@ final class HomeListTopSubView: UIView {
             $0.trailing.equalTo(hDividingView1)
         }
         
-        sortingOrderButton.addSubview(localeButtonImageView)
+        sortingOrderButton.addSubviews([localeButtonImageView, sortingOrderTitleLabel])
         localeButtonImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(18.0)
             $0.width.equalTo(12.0)
@@ -119,7 +115,6 @@ final class HomeListTopSubView: UIView {
             $0.trailing.equalToSuperview().inset(2.0)
         }
         
-        sortingOrderButton.addSubview(sortingOrderTitleLabel)
         sortingOrderTitleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(5.0)

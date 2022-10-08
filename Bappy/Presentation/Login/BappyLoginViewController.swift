@@ -173,7 +173,7 @@ final class BappyLoginViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(47.0)
             $0.height.equalTo(180.0)
         }
-
+        
         view.addSubview(loginSkipButton)
         loginSkipButton.snp.makeConstraints {
             $0.top.equalTo(vStackView.snp.bottom).offset(10.0)
@@ -189,15 +189,15 @@ extension BappyLoginViewController {
         googleLoginButton.rx.tap
             .bind(onNext: { [weak self] _ in self?.startSignInWithGoogleFlow()})
             .disposed(by: disposeBag)
-
+        
         facebookLoginButton.rx.tap
             .bind(onNext: { [weak self] _ in self?.startSignInWithFacebookFlow()})
             .disposed(by: disposeBag)
-
+        
         appleLoginButton.rx.tap
             .bind(onNext: { [weak self] _ in self?.startSignInWithAppleFlow()})
             .disposed(by: disposeBag)
-
+        
         authCredential$
             .bind(to: viewModel.input.authCredential)
             .disposed(by: disposeBag)
@@ -239,10 +239,10 @@ extension BappyLoginViewController {
                 print("ERROR: \(error.localizedDescription)")
                 return
             }
-
+            
             guard let authentication = user?.authentication,
                   let idToken = authentication.idToken else { return }
-
+            
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
             self?.authCredential$.onNext(credential)
         }
@@ -254,17 +254,17 @@ extension BappyLoginViewController {
     private func startSignInWithFacebookFlow() {
         let loginManager = LoginManager()
         loginManager.logIn(permissions: ["public_profile"], from: self) { [weak self] result, error in
-
+            
             if let error = error {
                 print("ERROR: \(error.localizedDescription)")
                 return
             }
-
+            
             guard let result = result, !result.isCancelled else { return }
-
+            
             guard let accessToken = AccessToken.current?.tokenString else { return }
             let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
-
+            
             self?.authCredential$.onNext(credential)
         }
     }
@@ -279,30 +279,30 @@ extension BappyLoginViewController {
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
         request.nonce = sha256(nonce)
-
+        
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
     }
-
+    
     private func sha256(_ input: String) -> String {
         let inputData = Data(input.utf8)
         let hashedData = SHA256.hash(data: inputData)
         let hashString = hashedData.compactMap {
             return String(format: "%02x", $0)
         }.joined()
-
+        
         return hashString
     }
-
+    
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         let charset: Array<Character> =
-            Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
         var result = ""
         var remainingLength = length
-
+        
         while remainingLength > 0 {
             let randoms: [UInt8] = (0 ..< 16).map { _ in
                 var random: UInt8 = 0
@@ -312,12 +312,12 @@ extension BappyLoginViewController {
                 }
                 return random
             }
-
+            
             randoms.forEach { random in
                 if remainingLength == 0 {
                     return
                 }
-
+                
                 if random < charset.count {
                     result.append(charset[Int(random)])
                     remainingLength -= 1
@@ -343,9 +343,9 @@ extension BappyLoginViewController: ASAuthorizationControllerDelegate {
                 print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
                 return
             }
-
+            
             let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
-
+            
             authCredential$.onNext(credential)
         }
     }
