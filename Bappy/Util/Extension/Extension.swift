@@ -195,6 +195,49 @@ extension String {
     }
 }
 
+// MARK: - UIView
+extension UIView {
+    func addSubviews(_ views: [UIView]) {
+        for view in views {
+            self.addSubview(view)
+        }
+    }
+}
+
+// MARK: - UITableView
+extension UITableView {
+    func dequeueReusableCell<T: UITableViewCell>(for indexPath: IndexPath, with cellType: T.Type = T.self) -> T {
+        let identifier = "\(cellType)"
+        guard let cell = dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? T else {
+            fatalError("Failed to dequeue a view with identifier \(identifier) matching type \(cellType.self).")
+        }
+        
+        return cell
+    }
+}
+
+// MARK: - UICollectionView
+extension UICollectionView {
+    func dequeueReusableCell<T: UICollectionViewCell>(for indexPath: IndexPath, with cellType: T.Type = T.self) -> T {
+        let identifier = "\(cellType)"
+        guard let  cell = dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? T else {
+            fatalError("Failed to dequeue a view with identifier \(identifier) matching type \(cellType.self).")
+        }
+        
+        return cell
+    }
+}
+
+// MARK: - UILabel
+extension UILabel {
+    static func getSize(_ text: String) -> CGRect {
+        let lbl = UILabel()
+        lbl.text = text
+        lbl.frame.size = lbl.intrinsicContentSize
+        return lbl.frame
+    }
+}
+
 // MARK: - UIButton
 extension UIButton {
     func setBappyTitle(title: String,
@@ -223,6 +266,10 @@ extension UIColor {
     static var bappyGray: UIColor { UIColor(named: "bappy_gray") ?? .clear }
     static var bappyLightgray: UIColor { UIColor(named: "bappy_lightgray") ?? .clear }
     static var bappyCoral: UIColor { UIColor(named: "bappy_coral") ?? .clear }
+    
+    static func rgb(_ red: CGFloat, _ green: CGFloat, _ blue: CGFloat, _ alpha: Double) -> UIColor {
+        return UIColor(red: red / 255, green: green / 255, blue: blue / 255, alpha: alpha)
+    }
 }
 
 // MARK: - NSAttributedString

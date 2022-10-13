@@ -41,7 +41,7 @@ final class RegisterNameView: UIView {
     
     private let underlinedView: UIView = {
         let underlinedView = UIView()
-        underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        underlinedView.backgroundColor = .rgb(241, 209, 83, 1)
         return underlinedView
     }()
     
@@ -67,15 +67,6 @@ final class RegisterNameView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Methods
-    func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
-        guard nameTextField.isFirstResponder else { return }
-        let labelPosition = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
-        let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
-        let offset = CGPoint(x: 0, y: y)
-        scrollView.setContentOffset(offset, animated: true)
-    }
-    
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
@@ -84,43 +75,49 @@ final class RegisterNameView: UIView {
     }
     
     private func layout() {
-        self.addSubview(nameCaptionLabel)
+        self.addSubviews([nameCaptionLabel, scrollView])
+        scrollView.addSubview(contentView)
+        contentView.addSubviews([nameTextField, underlinedView, ruleDescriptionLabel])
         nameCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
             $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(nameCaptionLabel.snp.bottom).offset(5.0)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
-        scrollView.addSubview(contentView)
+        
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(1000.0)
         }
         
-        contentView.addSubview(nameTextField)
         nameTextField.snp.makeConstraints {
             $0.top.equalToSuperview().inset(92.0)
             $0.leading.trailing.equalToSuperview().inset(47.0)
         }
         
-        contentView.addSubview(underlinedView)
         underlinedView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(44.0)
             $0.height.equalTo(2.0)
             $0.top.equalTo(nameTextField.snp.bottom).offset(7.0)
         }
         
-        contentView.addSubview(ruleDescriptionLabel)
         ruleDescriptionLabel.snp.makeConstraints {
             $0.top.equalTo(underlinedView.snp.bottom).offset(10.0)
             $0.leading.equalTo(underlinedView).offset(5.0)
         }
+    }
+    
+    // MARK: Methods
+    func updateTextFieldPosition(bottomButtonHeight: CGFloat) {
+        guard nameTextField.isFirstResponder else { return }
+        let labelPosition = scrollView.frame.height - ruleDescriptionLabel.frame.maxY
+        let y = (bottomButtonHeight > labelPosition) ? bottomButtonHeight - labelPosition + 5.0 : 0
+        let offset = CGPoint(x: 0, y: y)
+        scrollView.setContentOffset(offset, animated: true)
     }
 }
 
@@ -136,9 +133,10 @@ extension RegisterNameView {
             .bind(to: viewModel.input.editingDidBegin)
             .disposed(by: disposeBag)
         
-        viewModel.output.modifiedName
-            .emit(to: nameTextField.rx.text)
-            .disposed(by: disposeBag)
+        viewModel.output.isThreeOrThirty
+            .emit {
+                self.ruleDescriptionLabel.text = $0 ? "Enter at least 3 characters" : "Enter maximum 30 characters"
+            }.disposed(by: disposeBag)
         
         viewModel.output.shouldHideRule
             .emit(to: ruleDescriptionLabel.rx.isHidden)

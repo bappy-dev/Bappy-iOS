@@ -12,6 +12,8 @@ import Kingfisher
 final class ParticipantImageCell: UICollectionViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "ParticipantImageCell"
+    
     private let participantImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true

@@ -43,10 +43,7 @@ final class BappyTabBarController: UITabBarController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
-        let homeListViewModel = viewModel.subViewModels.homeListViewModel
-        let profileViewModel = viewModel.subViewModels.profileViewModel
-        
-        configureViewController(homeListViewModel: homeListViewModel, profileViewModel: profileViewModel)
+        configureViewController(with: viewModel)
         configure()
         layout()
         bind()
@@ -75,6 +72,20 @@ final class BappyTabBarController: UITabBarController {
     private func showWriteView(viewModel: HangoutMakeViewModel) {
         let rootViewController = HangoutMakeViewController(viewModel: viewModel)
         self.navigationController?.pushViewController(rootViewController, animated: true)
+    }
+    
+    private func configureViewController(with tabBarViewModel: BappyTabBarViewModel) {
+        let homeListViewModel = tabBarViewModel.subViewModels.homeListViewModel
+        let homeListRootViewController = HomeListViewController(viewModel: homeListViewModel)
+        let homeListViewController = UINavigationController(rootViewController: homeListRootViewController)
+        homeListViewController.navigationBar.isHidden = true
+        
+        let profileViewModel = tabBarViewModel.subViewModels.profileViewModel
+        let profileRootViewController = ProfileViewController(viewModel: profileViewModel)
+        let profileViewController = UINavigationController(rootViewController:  profileRootViewController)
+        profileViewController.navigationBar.isHidden = true
+        
+        viewControllers = [homeListViewController, profileViewController]
     }
     
     private func configureViewController(homeListViewModel: HomeListViewModel, profileViewModel: ProfileViewModel) {

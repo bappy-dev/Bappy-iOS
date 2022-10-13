@@ -30,8 +30,9 @@ final class HangoutDetailViewModel: ViewModelType {
             switch hangout.state {
             case .preview: return .create
             case .closed: return .closed
-            case .expired: return . expired
-            case .available: return isUserParticipating ? .cancel : .join }
+            case .expired: return .expired
+            case .available: return isUserParticipating ? .cancel : .join
+            }
         }
         
         init(currentUser: BappyUser,
@@ -39,8 +40,8 @@ final class HangoutDetailViewModel: ViewModelType {
              postImage: UIImage? = nil,
              mapImage: UIImage? = nil,
              firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared,
-              userProfileRepository: UserProfileRepository = DefaultUserProfileRepository(),
-              hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
+             userProfileRepository: UserProfileRepository = DefaultUserProfileRepository(),
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
             self.currentUser = currentUser
             self.hangout = hangout
             self.postImage = postImage
@@ -252,46 +253,46 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .bind(to: showCancelAlert$)
             .disposed(by: disposeBag)
-
+        
         // Create 버튼이 눌러졌을 때..
         let createResult = hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .create }
             .withLatestFrom(Observable.combineLatest(
-                hangout$, postImage$.compactMap { $0?.jpegData(compressionQuality: 1.0) }
+                hangout$, postImage$.compactMap { $0?.pngData() }
             ))
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap(dependency.hangoutRepository.createHangout)
             .do { [weak self] _ in self?.showYellowLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
-
+        
         createResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         createResult
             .compactMap(getValue)
             .map { _ in }
             .bind(to: showCreateSuccessView$)
             .disposed(by: disposeBag)
-
+        
         // FirebaseRemoteConfig로 행아웃 신고사유 리스트 불러오기
         let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()
             .share()
-
+        
         remoteConfigValuesResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         remoteConfigValuesResult
             .compactMap(getValue)
             .map(\.reasonsForReport)
             .bind(to: reasonsForReport$)
             .disposed(by: disposeBag)
-
+        
         // 참가자 셀 탭 했을 때..
         let bappyUserResult = selectedUserID$
             .withLatestFrom(currentUser$) { ($0, $1)}
@@ -302,12 +303,12 @@ final class HangoutDetailViewModel: ViewModelType {
             .do { [weak self] _ in self?.showTranslucentLoader$.onNext(false) }
             .observe(on: MainScheduler.asyncInstance)
             .share()
-
+        
         bappyUserResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         // 탭한 참가자 프로필로 이동
         bappyUserResult
             .compactMap(getValue)
@@ -319,22 +320,22 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .bind(to: showUserProfile$)
             .disposed(by: disposeBag)
-
+        
         // 좋아요 버튼 Flow
         let likeFlow = likeButtonTapped$
             .withLatestFrom(hangout$) { (id: $1.id, like: !$1.userHasLiked) }
             .share()
-
+        
         let likeResult = likeFlow
             .flatMap(dependency.hangoutRepository.likeHangout)
             .observe(on: MainScheduler.asyncInstance)
             .share()
-
+        
         likeResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         likeResult
             .compactMap(getValue)
             .withLatestFrom(likeFlow)
@@ -346,26 +347,26 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .bind(to: hangout$)
             .disposed(by: disposeBag)
-
+        
         // Child(Image)
         hangout
             .compactMap { $0 }
             .emit(to: subViewModels.imageSectionViewModel.input.hangout)
             .disposed(by: disposeBag)
-
+        
         imageHeight
             .emit(to: subViewModels.imageSectionViewModel.input.imageHeight)
             .disposed(by: disposeBag)
-
+        
         subViewModels.imageSectionViewModel.output.likeButtonTapped
             .emit(to: input.likeButtonTapped)
             .disposed(by: disposeBag)
-
+        
         // Child(Map)
         subViewModels.mapSectionViewModel.output.mapButtonTapped
             .emit(to: input.mapButtonTapped)
             .disposed(by: disposeBag)
-
+        
         // Child(Participants)
         subViewModels.participantsSectionViewModel.output.selectedUserID
             .compactMap { $0 }

@@ -52,13 +52,12 @@ final class HangoutImageSectionView: UIView {
     }
     
     private func layout() {
-        self.addSubview(postImageView)
+        self.addSubviews([postImageView, likeButton])
         postImageView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(UIScreen.main.bounds.width * 239.0 / 390.0)
         }
         
-        self.addSubview(likeButton)
         likeButton.snp.makeConstraints {
             $0.width.height.equalTo(44.0)
             $0.bottom.equalToSuperview().inset(5.8)

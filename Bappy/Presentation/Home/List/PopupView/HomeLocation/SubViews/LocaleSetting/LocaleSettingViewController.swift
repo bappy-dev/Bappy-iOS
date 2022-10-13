@@ -11,9 +11,9 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-private let reuseIdentifier = "LocaleSettingCell"
-typealias LocaleSettingSectionDataSource = RxTableViewSectionedAnimatedDataSource<LocaleSettingSection>
 final class LocaleSettingViewController: UIViewController {
+    
+    typealias LocaleSettingSectionDataSource = RxTableViewSectionedAnimatedDataSource<LocaleSettingSection>
     
     // MARK: Properties
     private let viewModel: LocaleSettingViewModel
@@ -45,7 +45,7 @@ final class LocaleSettingViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.register(LocaleSettingCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(LocaleSettingCell.self, forCellReuseIdentifier: LocaleSettingCell.reuseIdentifier)
         tableView.rowHeight = 75.0
         tableView.separatorInset = .init(top: 0, left: 20.0, bottom: 0, right: 20.0)
         tableView.backgroundColor = .bappyLightgray
@@ -55,10 +55,7 @@ final class LocaleSettingViewController: UIViewController {
     
     private let dataSource: LocaleSettingSectionDataSource = {
         let dataSource = LocaleSettingSectionDataSource { dataSource, tableView, indexPath, location -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: reuseIdentifier,
-                for: indexPath
-            ) as! LocaleSettingCell
+            let cell = tableView.dequeueReusableCell(for: indexPath, with: LocaleSettingCell.self)
             cell.bind(with: location)
             cell.selectionStyle = .none
             return cell

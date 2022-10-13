@@ -48,6 +48,7 @@ final class HomeListViewModel: ViewModelType {
         var cellViewModels: Driver<[HangoutCellViewModel]> // <-> View
         var showLocaleView: Signal<HomeLocationViewModel?> // <-> View
         var showSearchView: Signal<HomeSearchViewModel?> // <-> View
+        var showFilterView: Signal<HomeFilterViewModel?> // <-> View
         var showSortingView: Signal<SortingOrderViewModel?> // <-> View
         var showDetailView: Signal<HangoutDetailViewModel?> // <-> View
         var hideHolderView: Signal<Bool> // <-> View
@@ -68,7 +69,7 @@ final class HomeListViewModel: ViewModelType {
     private let page$ = BehaviorSubject<Int>(value: 1)
     private let totalPage$ = BehaviorSubject<Int>(value: 1)
     private let sorting$ = BehaviorSubject<Hangout.SortingOrder>(value: .Newest)
-    private let category$ = BehaviorSubject<Hangout.Category>(value: .All)
+    private let category$ = BehaviorSubject<Hangout.Category>(value: .ALL)
     private let coordinates$ = BehaviorSubject<Coordinates?>(value: nil)
     
     private let cellViewModels$ = BehaviorSubject<[HangoutCellViewModel]>(value: [])
@@ -117,6 +118,10 @@ final class HomeListViewModel: ViewModelType {
                 return HomeSearchViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
+        let showFilterView = filterButtonTapped$
+            .map { _ -> HomeFilterViewModel? in
+                return HomeFilterViewModel()
+            }.asSignal(onErrorJustReturn: nil)
         let showSortingView = showSortingView$
             .asSignal(onErrorJustReturn: nil)
         let showDetailView = showDetailView$
@@ -154,6 +159,7 @@ final class HomeListViewModel: ViewModelType {
             cellViewModels: cellViewModels,
             showLocaleView: showLocaleView,
             showSearchView: showSearchView,
+            showFilterView: showFilterView,
             showSortingView: showSortingView,
             showDetailView: showDetailView,
             hideHolderView: hideHolderView,
@@ -184,7 +190,8 @@ final class HomeListViewModel: ViewModelType {
                 refresh$
             )
             .skip(3)
-            .map { _ in 1 }
+//            .map { _ in 1 }
+            .map { _ in 0 }
             .bind(to: page$)
             .disposed(by: disposeBag)
         
@@ -194,19 +201,20 @@ final class HomeListViewModel: ViewModelType {
                 sorting$,
                 category$
             )) { ($0, $1.0, $1.1) }
-            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
+//            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
             .share()
         
         // Page 1일 때 dataSource 새로 만들기
         let newHangoutPageResult = hangoutFlow
-            .filter { $0.page == 1 }
+            .filter { $0.0 == 1 }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .observe(on: MainScheduler.asyncInstance)
             .share()
         
         // Page 1보다 클 때 기존 dataSource에 추가하기
         let extraHangoutPageResult = hangoutFlow
-            .filter { $0.page > 1 }
+//            .filter { $0.0 > 1 }
+            .filter { $0.0 < -1 }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .observe(on: MainScheduler.asyncInstance)
             .share()

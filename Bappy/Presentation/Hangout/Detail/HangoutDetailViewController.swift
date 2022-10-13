@@ -29,6 +29,13 @@ final class HangoutDetailViewController: UIViewController {
     
     private let hangoutButton = HangoutButton()
     
+    private let shareButton: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "arrowshape.turn.up.right")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        btn.tintColor = .white
+        return btn
+    }()
+    
     private let reportButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "detail_report"), for: .normal)
@@ -98,54 +105,50 @@ final class HangoutDetailViewController: UIViewController {
     }
     
     private func layout() {
-        view.addSubview(scrollView)
+        view.addSubviews([scrollView, titleTopView])
+        scrollView.addSubview(contentView)
+        titleTopView.addSubviews([backButton, shareButton])
+        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, hangoutButton, reportButton])
+       
         scrollView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
-        scrollView.addSubview(contentView)
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalTo(view.frame.width)
         }
         
-        contentView.addSubview(imageSectionView)
         imageSectionView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(imageSectionView.snp.width).multipliedBy(239.0/390.0)
         }
         
-        contentView.addSubview(mainSectionView)
         mainSectionView.snp.makeConstraints {
             $0.top.equalTo(imageSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         
-        contentView.addSubview(mapSectionView)
         mapSectionView.snp.makeConstraints {
             $0.top.equalTo(mainSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         
-        contentView.addSubview(planSectionView)
         planSectionView.snp.makeConstraints {
             $0.top.equalTo(mapSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         
-        contentView.addSubview(participantsSectionView)
         participantsSectionView.snp.makeConstraints {
             $0.top.equalTo(planSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         
-        contentView.addSubview(hangoutButton)
         hangoutButton.snp.makeConstraints {
             $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
             $0.centerX.equalToSuperview()
         }
         
-        contentView.addSubview(reportButton)
         reportButton.snp.makeConstraints {
             $0.top.equalTo(hangoutButton.snp.bottom).offset(18.0)
             $0.centerX.equalToSuperview()
@@ -154,18 +157,22 @@ final class HangoutDetailViewController: UIViewController {
             $0.bottom.equalToSuperview().inset(90.0)
         }
         
-        view.addSubview(titleTopView)
         titleTopView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(94.0)
             $0.bottom.equalTo(scrollView.snp.top)
         }
         
-        titleTopView.addSubview(backButton)
         backButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalToSuperview().inset(7.3)
             $0.width.height.equalTo(44.0)
+        }
+        
+        shareButton.snp.makeConstraints {
+            $0.centerY.equalTo(backButton.snp.centerY)
+            $0.trailing.equalToSuperview().inset(7.3)
+            $0.width.height.equalTo(50.0)
         }
     }
 }
@@ -179,11 +186,21 @@ extension HangoutDetailViewController {
         hangoutButton.rx.tap
             .bind(to: viewModel.input.hangoutButtonTapped)
             .disposed(by: disposeBag)
-
+        
         reportButton.rx.tap
             .bind(to: viewModel.input.reportButtonTapped)
             .disposed(by: disposeBag)
-
+        
+        shareButton.rx.tap
+            .bind {
+                let activityVC = UIActivityViewController(activityItems: ["이 일정을 다른 사람과 공유하기"], applicationActivities: nil)
+                activityVC.popoverPresentationController?.sourceView = self.view
+                
+                // 공유하기 기능 중 제외할 기능이 있을 때 사용
+                //        activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList]
+                self.present(activityVC, animated: true, completion: nil)
+            }.disposed(by: disposeBag)
+        
         scrollView.rx.didScroll
             .withLatestFrom(scrollView.rx.contentOffset)
             .map(\.y)
@@ -208,21 +225,21 @@ extension HangoutDetailViewController {
                 self?.present(popupView, animated: false)
             })
             .disposed(by: disposeBag)
-
+        
         viewModel.output.hangoutButtonState
             .emit(to: hangoutButton.rx.hangoutState)
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showSignInAlert
             .compactMap { $0 }
             .emit(to: self.rx.showSignInAlert)
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showCancelAlert
             .compactMap { $0 }
             .emit(to: self.rx.showAlert)
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showReportView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
@@ -230,7 +247,7 @@ extension HangoutDetailViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showUserProfile
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
@@ -238,7 +255,7 @@ extension HangoutDetailViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showCreateSuccessView
             .emit(onNext: { [weak self] _ in
                 let title = "Successfully Created!"
@@ -251,11 +268,11 @@ extension HangoutDetailViewController {
                 self?.present(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showYellowLoader
             .emit(to: ProgressHUD.rx.showYellowLoader)
             .disposed(by: disposeBag)
-
+        
         viewModel.output.showTranslucentLoader
             .emit(to: ProgressHUD.rx.showTranslucentLoader)
             .disposed(by: disposeBag)

@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "HangoutCell"
 final class HomeListViewController: UIViewController {
     
     // MARK: Properties
@@ -22,7 +21,7 @@ final class HomeListViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(HangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(HangoutCell.self, forCellReuseIdentifier: HangoutCell.reuseIdentifier)
         tableView.separatorStyle = .none
         tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
         return tableView
@@ -61,7 +60,7 @@ final class HomeListViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .white
@@ -70,26 +69,24 @@ final class HomeListViewController: UIViewController {
     }
     
     private func layout() {
-        view.addSubview(topView)
+        self.view.addSubviews([topView, topSubView, tableView, holderView])
+        
         topView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
         }
         
-        view.addSubview(topSubView)
         topSubView.snp.makeConstraints {
             $0.top.equalTo(topView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
         }
         
-        view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(topSubView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
-        view.addSubview(holderView)
         holderView.snp.makeConstraints {
             $0.top.equalTo(topView.snp.bottom)
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -118,16 +115,9 @@ extension HomeListViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.cellViewModels
-            .drive(tableView.rx.items) { tableView, row, viewModel in
-                let indexPath = IndexPath(row: row, section: 0)
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIdentifier,
-                    for: indexPath
-                ) as! HangoutCell
+            .drive(tableView.rx.items(cellIdentifier: HangoutCell.reuseIdentifier, cellType: HangoutCell.self)) { _, viewModel, cell in
                 cell.bind(viewModel)
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         viewModel.output.showLocaleView
             .compactMap { $0 }
@@ -146,6 +136,14 @@ extension HomeListViewController {
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.output.showFilterView
+            .compactMap { $0 }
+            .emit { [weak self] viewModel in
+                let viewController = HomeFilterViewController(viewModel: viewModel)
+                viewController.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            }.disposed(by: disposeBag)
         
         viewModel.output.showSortingView
             .compactMap { $0 }

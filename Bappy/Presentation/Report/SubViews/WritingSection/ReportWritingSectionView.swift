@@ -44,12 +44,12 @@ final class ReportWritingSectionView: UIView {
         let configuration = UIImage.SymbolConfiguration(pointSize: 13.0, weight: .medium)
         let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)
         let imageView = UIImageView(image: image)
-        imageView.tintColor = UIColor(red: 177.0/255.0, green: 172.0/255.0, blue: 154.0/255.0, alpha: 1.0)
+        imageView.tintColor = .rgb(177, 172, 154, 1)
         textField.font = .roboto(size: 12.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
             string: "Select the reason for reporting.",
-            attributes: [.foregroundColor: UIColor(red: 169.0/255.0, green: 162.0/255.0, blue: 139.0/255.0, alpha: 1.0)])
+            attributes: [.foregroundColor: UIColor.rgb(169, 162, 139, 1)])
         textField.rightView = imageView
         textField.rightViewMode = .always
         return textField
@@ -83,7 +83,7 @@ final class ReportWritingSectionView: UIView {
     private let reportingDetailPlaceholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Write if you want to let us know something more."
-        label.textColor = UIColor(red: 169.0/255.0, green: 162.0/255.0, blue: 139.0/255.0, alpha: 1.0)
+        label.textColor = .rgb(169, 162, 139, 1)
         label.font = .roboto(size: 12.0)
         label.numberOfLines = 0
         return label

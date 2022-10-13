@@ -70,6 +70,5 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
 }
 
 private func validation(text: String) -> Bool {
-    return text.hasPrefix("https://open.kakao.com/o/") &&
-    (text.count == 33)
+    return text.hasPrefix("https://open.kakao.com/o/") && text.count == 33
 }

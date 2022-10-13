@@ -22,7 +22,7 @@ final class BappyDropdownView: UIView {
         let tableView = UITableView()
         tableView.register(BappyDropdownCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorInset = .init(top: 0, left: 10.0, bottom: 0, right: 15.0)
-        tableView.separatorColor = UIColor(red: 212.0/255.0, green: 209.0/255.0, blue: 197.0/255.0, alpha: 1.0)
+        tableView.separatorColor = .rgb(212, 209, 197, 1)
         tableView.rowHeight = 34.5
         tableView.backgroundColor = .clear
         return tableView

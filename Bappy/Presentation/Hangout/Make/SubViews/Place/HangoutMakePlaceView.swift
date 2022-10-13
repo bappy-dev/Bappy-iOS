@@ -44,7 +44,7 @@ final class HangoutMakePlaceView: UIView {
     
     private let underlinedView: UIView = {
         let underlinedView = UIView()
-        underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        underlinedView.backgroundColor = .rgb(241, 209, 83, 1)
         return underlinedView
     }()
     

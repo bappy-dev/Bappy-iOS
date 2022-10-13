@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "CountryCell"
 final class SelectNationalityViewController: UIViewController {
     
     // MARK: Properties
@@ -66,7 +65,7 @@ final class SelectNationalityViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(CountryCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(CountryCell.self, forCellReuseIdentifier: CountryCell.reuseIdentifier)
         tableView.rowHeight = 41.5
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 20.0)
         tableView.keyboardDismissMode = .interactive
@@ -149,32 +148,32 @@ final class SelectNationalityViewController: UIViewController {
         searchBackgroundView.backgroundColor = .bappyLightgray
         searchBackgroundView.layer.cornerRadius = 17.5
         
-        view.addSubview(dimmedView)
+        view.addSubviews([dimmedView, containerView])
+        containerView.addSubviews([titleLabel, closeButton, searchBackgroundView, tableView])
+        searchBackgroundView.addSubview(searchTextField)
+        
         dimmedView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
-        view.addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(defaultHeight)
             $0.bottom.equalToSuperview().inset(-defaultHeight)
         }
         
-        containerView.addSubview(titleLabel)
+        
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(15.0)
             $0.centerX.equalToSuperview()
         }
         
-        containerView.addSubview(closeButton)
         closeButton.snp.makeConstraints {
             $0.centerY.equalTo(titleLabel)
             $0.leading.equalToSuperview().inset(35.0)
             $0.height.equalTo(44.0)
         }
         
-        containerView.addSubview(searchBackgroundView)
         searchBackgroundView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(23.0)
             $0.leading.equalToSuperview().inset(30.0)
@@ -182,13 +181,11 @@ final class SelectNationalityViewController: UIViewController {
             $0.height.equalTo(35.0)
         }
         
-        searchBackgroundView.addSubview(searchTextField)
         searchTextField.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(15.0)
         }
         
-        containerView.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBackgroundView.snp.bottom).offset(15.0)
             $0.leading.equalToSuperview().inset(42.0)
@@ -214,15 +211,9 @@ extension SelectNationalityViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.searchedCountries
-            .drive(tableView.rx.items) { tableView, row, country in
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIdentifier,
-                    for: IndexPath(row: row, section: 0)
-                ) as! CountryCell
+            .drive(tableView.rx.items(cellIdentifier: CountryCell.reuseIdentifier, cellType: CountryCell.self)) { _, country, cell in
                 cell.country = country
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         viewModel.output.dismiss
             .emit(onNext: { [weak self] _ in

@@ -11,6 +11,8 @@ import SnapKit
 final class LocaleSettingCell: UITableViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "LocaleSettingCell"
+    
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "detail_location")

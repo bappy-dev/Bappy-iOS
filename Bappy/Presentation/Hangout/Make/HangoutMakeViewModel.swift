@@ -258,6 +258,8 @@ final class HangoutMakeViewModel: ViewModelType {
                     placeName: first.3.name,
                     plan: second.0,
                     limitNumber: second.3,
+                    placeAddress: first.3.address,
+                    categories: first.0,
                     coordinates: first.3.coordinates,
                     postImageURL: nil,
                     openchatURL: URL(string: second.2),
@@ -266,6 +268,8 @@ final class HangoutMakeViewModel: ViewModelType {
                     userHasLiked: false)
             }
             .share()
+        
+//    https://open.kakao.com/o/asdasdas
         
         // Goolge Map Image 불러오기
         let result = continueButtonTapped$

@@ -68,7 +68,7 @@ extension ContinueButtonView {
             .drive(onNext: { [weak self] isEnabled in
                 guard let self = self else { return }
                 self.continueButton.isEnabled = isEnabled
-                self.continueButton.backgroundColor = isEnabled ? .bappyYellow : UIColor(red: 238.0/255.0, green: 238.0/255.0, blue: 234.0/255.0, alpha: 1.0)
+                self.continueButton.backgroundColor = isEnabled ? .bappyYellow : .rgb(238, 238, 234, 1)
             })
             .disposed(by: disposeBag)
     }

@@ -43,7 +43,7 @@ final class RegisterNationalityView: UIView {
     
     private let underlinedView: UIView = {
         let underlinedView = UIView()
-        underlinedView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        underlinedView.backgroundColor = .rgb(241, 209, 83, 1)
         return underlinedView
     }()
     
@@ -67,18 +67,16 @@ final class RegisterNationalityView: UIView {
     }
     
     private func layout() {
-        self.addSubview(nationalityCaptionLabel)
+        self.addSubviews([nationalityCaptionLabel, nationalityTextField, underlinedView])
         nationalityCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
             $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(nationalityTextField)
         nationalityTextField.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(54.0)
         }
         
-        self.addSubview(underlinedView)
         underlinedView.snp.makeConstraints {
             $0.top.equalTo(nationalityCaptionLabel.snp.bottom).offset(119.0)
             $0.top.equalTo(nationalityTextField.snp.bottom).offset(7.0)

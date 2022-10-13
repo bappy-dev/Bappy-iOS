@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "ParticipantImageCell"
 final class HangoutParticipantsSectionView: UIView {
     
     // MARK: Properties
@@ -39,7 +38,7 @@ final class HangoutParticipantsSectionView: UIView {
         flowLayout.itemSize = .init(width: 48.0, height: 48.0)
         flowLayout.sectionInset = .init(top: 0, left: 33.0, bottom: 0, right: 0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.register(ParticipantImageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(ParticipantImageCell.self, forCellWithReuseIdentifier: ParticipantImageCell.reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
@@ -98,14 +97,8 @@ extension HangoutParticipantsSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.participantIDs
-            .drive(collectionView.rx.items) { collectionView, item, element in
-                let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: reuseIdentifier,
-                    for: IndexPath(item: item, section: 0))
-                as! ParticipantImageCell
+            .drive(collectionView.rx.items(cellIdentifier: ParticipantImageCell.reuseIdentifier, cellType: ParticipantImageCell.self)) { _, element, cell in
                 cell.bind(with: element.imageURL)
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 }

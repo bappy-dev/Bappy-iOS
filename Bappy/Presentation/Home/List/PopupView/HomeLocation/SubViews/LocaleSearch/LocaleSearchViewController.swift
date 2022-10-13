@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "SearchPlaceCell"
 final class LocaleSearchViewController: UIViewController {
     
     // MARK: Properties
@@ -36,7 +35,7 @@ final class LocaleSearchViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(SearchPlaceCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(SearchPlaceCell.self, forCellReuseIdentifier: SearchPlaceCell.reuseIdentifier)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorInset = .init(top: 0, left: 20.0, bottom: 0, right: 20.0)
         tableView.backgroundColor = .bappyLightgray
@@ -158,15 +157,9 @@ extension LocaleSearchViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.maps
-            .drive(tableView.rx.items) { tableView, row, map in
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIdentifier,
-                    for: IndexPath(row: row, section: 0)
-                ) as! SearchPlaceCell
+            .drive(tableView.rx.items(cellIdentifier: SearchPlaceCell.reuseIdentifier, cellType: SearchPlaceCell.self)) { _, map, cell in
                 cell.setupCell(with: map)
-                return cell
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         viewModel.output.shouldHideNoResultView
             .skip(1)

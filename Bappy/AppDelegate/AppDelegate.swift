@@ -42,7 +42,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Messaging.messaging().apnsToken = deviceToken
     }
-
+    
     // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,

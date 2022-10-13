@@ -11,6 +11,8 @@ import SnapKit
 final class HomeListCategoryCell: UICollectionViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "HomeListCategoryCell"
+    
     var isCellSelected: Bool = false {
         didSet {
             contentView.backgroundColor = isCellSelected ? .bappyYellow : .bappyLightgray

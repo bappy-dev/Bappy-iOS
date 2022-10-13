@@ -20,6 +20,8 @@ struct Hangout: Equatable, Identifiable {
     let placeName: String
     let plan: String
     let limitNumber: Int
+    let placeAddress: String
+    let categories: [Category]
     
     let coordinates: Coordinates
     
@@ -44,11 +46,11 @@ extension Hangout {
     enum State: String { case available, closed, expired, preview }
     
     enum Category: Int {
-        case All, Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
+        case ALL, Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
         
         var description: String {
             switch self {
-            case .All : return "All"
+            case .ALL : return "ALL"
             case .Travel : return "Travel"
             case .Study : return "Study"
             case .Sports : return "Sports"
@@ -82,9 +84,9 @@ extension Hangout {
         
         var description: String {
             switch self {
-            case .Joined: return "joined"
+            case .Joined: return "join"
             case .Made: return "made"
-            case .Liked: return "liked"
+            case .Liked: return "like"
             }
         }
     }

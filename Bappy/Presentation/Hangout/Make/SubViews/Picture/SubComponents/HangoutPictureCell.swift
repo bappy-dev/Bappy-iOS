@@ -15,6 +15,7 @@ protocol HangoutPictureCellDelegate: AnyObject {
 final class HangoutPictureCell: UICollectionViewCell {
     
     // MARK: Properties
+    static let reuseIdentifier = "HangoutPictureCell"
     var indexPath: IndexPath?
     weak var delegate: HangoutPictureCellDelegate?
 
