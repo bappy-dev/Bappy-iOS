@@ -180,7 +180,7 @@ final class ReportViewModel: ViewModelType {
                 reportingType$.compactMap { $0 },
                 reportingDetail$.compactMap { $0 },
                 selectedImages$.map { images -> [Data]? in
-                    guard images.isEmpty else { return nil }
+                    guard !images.isEmpty else { return nil }
                     return images.compactMap { $0.jpegData(compressionQuality: 1.0) }
                 }
             ))
