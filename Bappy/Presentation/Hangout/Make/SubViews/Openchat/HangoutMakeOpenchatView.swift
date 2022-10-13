@@ -145,6 +145,14 @@ final class HangoutMakeOpenchatView: UIView {
 // MARK: - Bind
 extension HangoutMakeOpenchatView {
     private func bind() {
+        guideButton.rx.tap
+            .debounce(RxTimeInterval.nanoseconds(1000), scheduler: MainScheduler.instance)
+            .map { URL(string: Constant.instaURL) }
+            .bind {
+                guard let url = $0 else { return }
+                UIApplication.shared.open(url)
+            }.disposed(by: disposeBag)
+        
         openchatTextField.rx.text.orEmpty
             .bind(to: viewModel.input.text)
             .disposed(by: disposeBag)

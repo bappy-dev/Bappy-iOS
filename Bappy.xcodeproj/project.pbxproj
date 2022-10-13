@@ -250,7 +250,6 @@
 		A788CC662840682500490B0F /* HangoutMakeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC652840682400490B0F /* HangoutMakeViewController.swift */; };
 		A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */; };
 		A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */; };
-		A7895B4028AE07C00091DCF1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7895B3F28AE07BF0091DCF1 /* GoogleService-Info.plist */; };
 		A78C535E283B719800CC41F5 /* HangoutImageSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */; };
 		A78C5360283B741700CC41F5 /* HangoutImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C535F283B741700CC41F5 /* HangoutImageCell.swift */; };
 		A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */; };
@@ -309,6 +308,13 @@
 		A7F52D042866CFE0002523D4 /* OpenMapPopupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F52D032866CFE0002523D4 /* OpenMapPopupViewModel.swift */; };
 		A7F52D072866E4EE002523D4 /* HangoutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F52D062866E4EE002523D4 /* HangoutButton.swift */; };
 		A7FB6957289869B1007B5DCF /* ProfileHangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */; };
+		D6CC5B4E28EED52B004C5E9C /* HangoutList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B4D28EED52B004C5E9C /* HangoutList.swift */; };
+		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
+		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
+		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
+		D6CC5B6D28F5CB44004C5E9C /* CustomCalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */; };
+		D6D6F05F28C943BB0078FBB9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */; };
+		D6D6F06428CA34140078FBB9 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D6F06328CA34140078FBB9 /* Constant.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -406,7 +412,6 @@
 		A71E27D528698779001DA96B /* Coordinates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinates.swift; sourceTree = "<group>"; };
 		A71EBAEB283553890052C60A /* BappyTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTabBarController.swift; sourceTree = "<group>"; };
 		A71EBAEF283555B90052C60A /* HomeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListViewController.swift; sourceTree = "<group>"; };
-		A7202D572898B9C900878012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A7202D582898B9EF00878012 /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
 		A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocationViewController.swift; sourceTree = "<group>"; };
 		A72838F4286301F100BBBD9C /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
@@ -546,7 +551,6 @@
 		A788CC652840682400490B0F /* HangoutMakeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeViewController.swift; sourceTree = "<group>"; };
 		A788CC6728406BFB00490B0F /* HangoutMakeTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeTitleView.swift; sourceTree = "<group>"; };
 		A788CC6F2840744D00490B0F /* HangoutMakeTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMakeTimeView.swift; sourceTree = "<group>"; };
-		A7895B3F28AE07BF0091DCF1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A78C535D283B719800CC41F5 /* HangoutImageSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageSectionView.swift; sourceTree = "<group>"; };
 		A78C535F283B741700CC41F5 /* HangoutImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutImageCell.swift; sourceTree = "<group>"; };
 		A78C5363283BA3E000CC41F5 /* HangoutMainSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutMainSectionView.swift; sourceTree = "<group>"; };
@@ -602,6 +606,13 @@
 		A7F52D032866CFE0002523D4 /* OpenMapPopupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenMapPopupViewModel.swift; sourceTree = "<group>"; };
 		A7F52D062866E4EE002523D4 /* HangoutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutButton.swift; sourceTree = "<group>"; };
 		A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHangoutCell.swift; sourceTree = "<group>"; };
+		D6CC5B4D28EED52B004C5E9C /* HangoutList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutList.swift; sourceTree = "<group>"; };
+		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
+		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
+		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
+		D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D6D6F06028C943C50078FBB9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6D6F06328CA34140078FBB9 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -622,6 +633,7 @@
 				A769CCFC282A8EF30086182C /* SnapKit in Frameworks */,
 				A75B11C8283CF70400C49597 /* Lottie in Frameworks */,
 				A76EEE8E2853227D00A2CFF6 /* YPImagePicker in Frameworks */,
+				D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */,
 				A76C212528439B5300044A34 /* FirebaseAuth in Frameworks */,
 				A76C212928439B5300044A34 /* FirebaseRemoteConfig in Frameworks */,
 			);
@@ -856,6 +868,7 @@
 		A71EBAF628355C230052C60A /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				D6CC5B6428F1F1C9004C5E9C /* Filter */,
 				A7CE0FA02849F4F10063458F /* List */,
 				A71432DA2860CB7900380DF7 /* Search */,
 			);
@@ -1148,6 +1161,7 @@
 				A76EEE782850AD6000A2CFF6 /* Map.swift */,
 				A7F52CEB2864A66F002523D4 /* Location.swift */,
 				A72838F4286301F100BBBD9C /* Hangout.swift */,
+				D6CC5B4D28EED52B004C5E9C /* HangoutList.swift */,
 				A76AE73528A0F1B300A8EB9B /* NotificationSetting.swift */,
 			);
 			path = Entities;
@@ -1247,8 +1261,8 @@
 			isa = PBXGroup;
 			children = (
 				A709061B285498080096E9A0 /* Bappy.entitlements */,
-				A7202D572898B9C900878012 /* Info.plist */,
-				A7895B3F28AE07BF0091DCF1 /* GoogleService-Info.plist */,
+				D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */,
+				D6D6F06028C943C50078FBB9 /* Info.plist */,
 				A7CE0FA5284C7E710063458F /* GoogleMap-Info.plist */,
 				A7751B0128807B7300F23241 /* RemoteConfigValue.plist */,
 				A769CCF1282A8CB40086182C /* AppDelegate */,
@@ -1313,6 +1327,7 @@
 		A769CD1E282A94800086182C /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				D6D6F06228CA340B0078FBB9 /* Constant */,
 				A72E6F082893D9DB00E06BED /* Extension */,
 				A72E6F072893D9C800E06BED /* Bundle */,
 				A72E6F092893DA0C00E06BED /* LayoutVariable */,
@@ -2358,6 +2373,24 @@
 			path = UpdateProfileDTO;
 			sourceTree = "<group>";
 		};
+		D6CC5B6428F1F1C9004C5E9C /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */,
+				D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */,
+				D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
+		D6D6F06228CA340B0078FBB9 /* Constant */ = {
+			isa = PBXGroup;
+			children = (
+				D6D6F06328CA34140078FBB9 /* Constant.swift */,
+			);
+			path = Constant;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2390,6 +2423,7 @@
 				A7CE0F9E2848D3F30063458F /* FacebookLogin */,
 				A76EEE8D2853227D00A2CFF6 /* YPImagePicker */,
 				A73BC9CB287D9F0B00FB9FA9 /* RxDataSources */,
+				D6CC5B6A28F1F47E004C5E9C /* FSCalendar */,
 			);
 			productName = Bappy;
 			productReference = A769CCDA282A8C300086182C /* Bappy.app */;
@@ -2429,6 +2463,7 @@
 				A7CE0F9B2848D3F30063458F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 				A76EEE8C2853227D00A2CFF6 /* XCRemoteSwiftPackageReference "YPImagePicker" */,
 				A73BC9CA287D9F0B00FB9FA9 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			productRefGroup = A769CCDB282A8C300086182C /* Products */;
 			projectDirPath = "";
@@ -2446,7 +2481,7 @@
 			files = (
 				A71732362836171A0073E702 /* bappy.png in Resources */,
 				A7EB7836282AB7B100E3E965 /* Roboto-Thin.ttf in Resources */,
-				A7895B4028AE07C00091DCF1 /* GoogleService-Info.plist in Resources */,
+				D6D6F05F28C943BB0078FBB9 /* GoogleService-Info.plist in Resources */,
 				A7EB7808282AB51C00E3E965 /* Roboto-Medium.ttf in Resources */,
 				A7EB7834282AB7A900E3E965 /* Roboto-Regular.ttf in Resources */,
 				A7CE0FA6284C7E710063458F /* GoogleMap-Info.plist in Resources */,
@@ -2504,6 +2539,7 @@
 				A709062D28570D7D0096E9A0 /* RegisterCompletedViewController.swift in Sources */,
 				A76EEE60284E69FE00A2CFF6 /* ContinueButtonView.swift in Sources */,
 				A72838F5286301F100BBBD9C /* Hangout.swift in Sources */,
+				D6D6F06428CA34140078FBB9 /* Constant.swift in Sources */,
 				A76AE74A28A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift in Sources */,
 				A70C3CCB286B4CD200BB7219 /* DefaultUserProfileRepository.swift in Sources */,
 				A739ABA0289D07E500C6CE90 /* FetchHangoutsOfUserRequestDTO+Mapping.swift in Sources */,
@@ -2598,9 +2634,11 @@
 				A73BC9A82875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift in Sources */,
 				A71411CC28985F8A002D4714 /* ProfileDetailViewModel.swift in Sources */,
 				A76AE73628A0F1B300A8EB9B /* NotificationSetting.swift in Sources */,
+				D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */,
 				A76EEE7728507AD400A2CFF6 /* APIEndpoints.swift in Sources */,
 				A73BC9BA287B168400FB9FA9 /* CLLocationManager+Rx.swift in Sources */,
 				A71411DD28985F8A002D4714 /* ProfileButtonSectionView.swift in Sources */,
+				D6CC5B6D28F5CB44004C5E9C /* CustomCalendarCell.swift in Sources */,
 				A70C3CC1286AEB1300BB7219 /* DefaultFirebaseRepository.swift in Sources */,
 				A71411D228985F8A002D4714 /* DeleteAccountViewController.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
@@ -2728,6 +2766,7 @@
 				A70C3CB8286A174700BB7219 /* BappyAuthRepository.swift in Sources */,
 				A72964D3289AF1CA00970807 /* UpdateFCMTokenResponseDTO+Mapping.swift in Sources */,
 				A7F52CFD2865FFCC002523D4 /* HangoutParticipantsSectionViewModel.swift in Sources */,
+				D6CC5B4E28EED52B004C5E9C /* HangoutList.swift in Sources */,
 				A7D80C28286032EC00F9951A /* HomeListCategoryCell.swift in Sources */,
 				A72C06CE28373A360068897C /* HangoutDetailViewController.swift in Sources */,
 				A78C5366283BB16500CC41F5 /* HangoutMapSectionView.swift in Sources */,
@@ -2736,6 +2775,7 @@
 				A71411B828985F8A002D4714 /* ProfileEditAffiliationView.swift in Sources */,
 				A76EEE882852E40500A2CFF6 /* NoResultView.swift in Sources */,
 				A71E27D02868D290001DA96B /* FetchMapImageRequestDTO+Mapping.swift in Sources */,
+				D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */,
 				A77F4BCE282BC5040046921B /* RegisterGenderViewModel.swift in Sources */,
 				A7751AF9287EB60F00F23241 /* UpdateGPSSettingResponseDTO+Mapping.swift in Sources */,
 				A77F4BC4282AD1010046921B /* RegisterGenderView.swift in Sources */,
@@ -2878,14 +2918,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bappy/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow to use Camera";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow access to select a photo";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow \"Bappy\" to access your camera to take a picture.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow \"Bappy\" to access your location to find nearby hangouts.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow \"Bappy\" to access your photo library to upload your photo.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -2897,9 +2939,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -2912,14 +2955,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bappy/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow to use Camera";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow access to select a photo";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow \"Bappy\" to access your camera to take a picture.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow \"Bappy\" to access your location to find nearby hangouts.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow \"Bappy\" to access your photo library to upload your photo.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -2931,9 +2976,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -3036,6 +3082,14 @@
 				version = 13.2.0;
 			};
 		};
+		D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.8.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3113,6 +3167,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A7CE0F9B2848D3F30063458F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		D6CC5B6A28F1F47E004C5E9C /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
