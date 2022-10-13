@@ -36,7 +36,7 @@ final class ProfileHangoutCellHolderView: UIView {
         self.backgroundColor = .white
         self.layer.cornerRadius = 3.0
         self.clipsToBounds = true
-        let holderColor = UIColor(red: 232.0/255.0, green: 232.0/255.0, blue: 225.0/255.0, alpha: 1.0)
+        let holderColor: UIColor = .rgb(232, 232, 225, 1)
         imageHolderView.backgroundColor = holderColor
         imageHolderView.layer.cornerRadius = 9.0
         titleHolderView.backgroundColor = holderColor

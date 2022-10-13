@@ -139,13 +139,13 @@ final class HangoutMakeTimeView: UIView {
     
     private func initCalendarDate(_ date: String) {
         dateTextField.text = date
-        dateTextField.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
+        dateTextField.textColor = .rgb(140, 136, 119, 1)
         dateImageView.image = UIImage(named: "make_date_off")
     }
     
     private func initTimeDate(_ date: String) {
         timeTextField.text = date
-        timeTextField.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
+        timeTextField.textColor = .rgb(140, 136, 119, 1)
         timeImageView.image = UIImage(named: "make_time_off")
     }
     

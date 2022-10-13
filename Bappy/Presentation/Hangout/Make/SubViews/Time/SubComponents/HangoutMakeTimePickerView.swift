@@ -52,7 +52,7 @@ final class HangoutMakeTimePickerView: UIView {
     private func layout() {
         let selectView = UIView()
         selectView.layer.cornerRadius = 18.0
-        selectView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        selectView.backgroundColor = .rgb(241, 209, 83, 1)
         
         self.addSubview(selectView)
         selectView.snp.makeConstraints {

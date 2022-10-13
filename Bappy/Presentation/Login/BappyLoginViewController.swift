@@ -56,7 +56,7 @@ final class BappyLoginViewController: UIViewController {
     private let facebookLoginButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 24.0
-        button.backgroundColor = UIColor(red: 24.0/255.0, green: 119.0/255.0, blue: 242.0/255.0, alpha: 1.0)
+        button.backgroundColor = .rgb(24, 119, 242, 1)
         button.setImage(UIImage(named: "login_facebook"), for: .normal)
         button.setBappyTitle(
             title: "Sign in with Facebook",

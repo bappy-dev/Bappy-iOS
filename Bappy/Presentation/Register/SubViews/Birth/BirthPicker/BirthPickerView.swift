@@ -64,7 +64,7 @@ final class BirthPickerView: UIView {
     private func layout() {
         let selectView = UIView()
         selectView.layer.cornerRadius = 10.0
-        selectView.backgroundColor = UIColor(red: 241.0/255.0, green: 209.0/255.0, blue: 83.0/255.0, alpha: 1.0)
+        selectView.backgroundColor = .rgb(241, 209, 83, 1)
         
         let birthStackView = UIStackView(arrangedSubviews: [
             yearPickerView, monthPickerView, dayPickerView

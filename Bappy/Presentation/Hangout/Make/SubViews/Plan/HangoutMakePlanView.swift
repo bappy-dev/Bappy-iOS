@@ -40,7 +40,7 @@ final class HangoutMakePlanView: UIView {
     private let planPlaceholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Please enter the contents."
-        label.textColor = UIColor(red: 140.0/255.0, green: 136.0/255.0, blue: 119.0/255.0, alpha: 1.0)
+        label.textColor = .rgb(140, 136, 119, 1)
         label.font = .roboto(size: 16.0, family: .Light)
         label.numberOfLines = 0
         return label
