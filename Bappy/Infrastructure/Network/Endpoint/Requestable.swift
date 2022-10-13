@@ -50,9 +50,7 @@ extension Requestable {
             
         case .urlencoded:
             // header
-            if contentType == .urlencoded {
-                urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            }
+            urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             
             // httpBody
             if let bodyParameters = try bodyParameters?.toDictionary() {
