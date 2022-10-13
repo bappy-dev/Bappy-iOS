@@ -50,9 +50,7 @@ extension Requestable {
             
         case .urlencoded:
             // header
-            if contentType == .urlencoded {
-                urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            }
+            urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             
             // httpBody
             if let bodyParameters = try bodyParameters?.toDictionary() {
@@ -110,7 +108,7 @@ extension Requestable {
             }
         }
         
-        if let imageDatas = imageDatas, !imageDatas.isEmpty {
+        if let imageDatas = imageDatas {
             for imageData in imageDatas {
                 data.append(convertFileData(fieldName: "file",
                                             fileName: "\(UUID().uuidString).jpg",
@@ -120,7 +118,7 @@ extension Requestable {
             }
         }
         
-        data.append("--\(boundary)--".data(using: .utf8)!)
+        data.append("--\(boundary)--\r\n".data(using: .utf8)!)
         return data
     }
     
