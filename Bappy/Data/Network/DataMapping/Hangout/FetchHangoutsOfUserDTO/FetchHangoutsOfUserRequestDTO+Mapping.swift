@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct FetchHangoutsOfUserRequestDTO: Encodable {
-    let userID: String
-    let userProfileType: String
-}
+//struct FetchHangoutsOfUserRequestDTO: Encodable {
+//    let userID: String
+//    let userProfileType: String
+//}
+
+ struct FetchHangoutsOfUserRequestDTO: Encodable {
+ //    let userID: String
+     let filter: String
+ }

@@ -28,6 +28,9 @@ extension Requestable {
         let url = try url()
         var urlRequest = URLRequest(url: url)
         
+        // request timeoutInterval
+        urlRequest.timeoutInterval = 10
+        
         // httpMethod
         urlRequest.httpMethod = method.rawValue
         

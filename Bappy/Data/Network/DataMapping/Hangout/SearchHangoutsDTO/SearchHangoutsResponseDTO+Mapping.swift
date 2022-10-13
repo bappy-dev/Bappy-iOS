@@ -97,6 +97,8 @@ extension SearchHangoutsResponseDTO {
                     placeName: element.placeName,
                     plan: element.plan,
                     limitNumber: element.limitNumber,
+                    placeAddress: "",
+                    categories: [],
                     coordinates: coordinates,
                     postImageURL: postImageURL,
                     openchatURL: URL(string: element.openchatURL),
