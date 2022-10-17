@@ -103,7 +103,13 @@ extension Requestable {
         if let bodyParameters = try bodyParameters?.toDictionary() {
             if !bodyParameters.isEmpty {
                 for (key, value) in bodyParameters {
-                    data.append(convertFormField(key: key, value: "\(value)", boundary: boundary))
+                    if let arr = value as? Array<Any> {
+                        arr.forEach { elem in
+                            data.append(convertFormField(key: key, value: "\(elem)", boundary: boundary))
+                        }
+                    } else {
+                        data.append(convertFormField(key: key, value: "\(value)", boundary: boundary))
+                    }
                 }
             }
         }
