@@ -269,8 +269,6 @@ final class HangoutMakeViewModel: ViewModelType {
             }
             .share()
         
-//    https://open.kakao.com/o/asdasdas
-        
         // Goolge Map Image 불러오기
         let result = continueButtonTapped$
             .withLatestFrom(Observable.combineLatest(page$, numOfPage$))

@@ -82,14 +82,17 @@ final class HomeListTopView: UIView {
 extension HomeListTopView {
     private func bind() {
         localeButton.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(to: viewModel.input.localeButtonTapped)
             .disposed(by: disposeBag)
         
         searchButton.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(to: viewModel.input.searchButtonTapped)
             .disposed(by: disposeBag)
         
         filterButton.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(to: viewModel.input.filterButtonTapped)
             .disposed(by: disposeBag)
     }

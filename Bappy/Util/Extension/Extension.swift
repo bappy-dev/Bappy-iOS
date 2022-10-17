@@ -98,6 +98,12 @@ extension UIView {
             ).cgPath
         }
     }
+    
+    func addSubviews(_ views: [UIView]) {
+        for view in views {
+            self.addSubview(view)
+        }
+    }
 }
 
 // MARK: - UIImage
@@ -192,15 +198,6 @@ extension String {
         let date = dateFormatter.date(from: self)
         dateFormatter.dateFormat = afterDateFormat
         return date.flatMap { dateFormatter.string(from: $0) }
-    }
-}
-
-// MARK: - UIView
-extension UIView {
-    func addSubviews(_ views: [UIView]) {
-        for view in views {
-            self.addSubview(view)
-        }
     }
 }
 
