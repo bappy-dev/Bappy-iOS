@@ -250,48 +250,49 @@ final class ProfileViewModel: ViewModelType {
         
         // fetchJoinedHangout
         let joinedHangoutResult = startFlowWithUserID
-            .map { (id: $0, profileType: Hangout.UserProfileType.Joined) }
+//            .map { (id: $0, profileType: Hangout.UserProfileType.Joined) }
+            .map { _ in .Joined }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .do { [weak self] _ in self?.hideHolderView$.onNext(true) }
             .share()
-        
+
         joinedHangoutResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         joinedHangoutResult
             .compactMap(getValue)
             .bind(to: joinedHangouts$)
             .disposed(by: disposeBag)
-        
+
         // fetchMadeHangout
         let madeHangoutResult = startFlowWithUserID
-            .map { (id: $0, profileType: Hangout.UserProfileType.Made) }
+            .map { _ in .Made }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
-        
+
         madeHangoutResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         madeHangoutResult
             .compactMap(getValue)
             .bind(to: madeHangouts$)
             .disposed(by: disposeBag)
-        
+
         // fetchLikedHangout
         let likedHangoutResult = startFlowWithUserID
-            .map { (id: $0, profileType: Hangout.UserProfileType.Liked) }
+            .map { _ in .Liked }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
-        
+
         likedHangoutResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         likedHangoutResult
             .compactMap(getValue)
             .bind(to: likedHangouts$)

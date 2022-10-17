@@ -15,6 +15,7 @@ import FSCalendar
 final class HomeFilterViewController: UIViewController {
     
     // MARK: Properties
+    var isasdas = false
     let tapGesture = UITapGestureRecognizer()
     private var imageLeading: Constraint!
     private let viewModel: HomeFilterViewModel
@@ -42,6 +43,15 @@ final class HomeFilterViewController: UIViewController {
     private let fridayButton = SelectionButton(title: "Fri")
     private let satdayButton = SelectionButton(title: "Sat")
     
+    private let englishButton = SelectionButton(title: "English")
+    private let koreanButton = SelectionButton(title: "Korean")
+    private let japaneseButton = SelectionButton(title: "Japanese")
+    private let chineseButton = SelectionButton(title: "Chinese")
+    
+    private let scrollView = UIScrollView()
+    private var year: [Int] = []
+    private let month: [String] = ["January", "February", "March", "April", "May","June", "July", "August", "September", "October", "November", "December"]
+    
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
@@ -49,6 +59,13 @@ final class HomeFilterViewController: UIViewController {
         button.setImage(image, for: .normal)
         button.tintColor = .bappyBrown
         return button
+    }()
+    
+    private let pickerView: UIPickerView = {
+        let view = UIPickerView()
+        view.isHidden = true
+        view.backgroundColor = .white
+        return view
     }()
     
     private let filterTitleLbl: UILabel = {
@@ -70,7 +87,7 @@ final class HomeFilterViewController: UIViewController {
     private let weekInfoLbl: UILabel = {
         let lbl = UILabel()
         lbl.text = "Week"
-        lbl.font = .roboto(size: 22, family: .Medium)
+        lbl.font = .roboto(size: 20, family: .Medium)
         lbl.textColor = .bappyBrown
         return lbl
     }()
@@ -78,9 +95,29 @@ final class HomeFilterViewController: UIViewController {
     private let categoryInfoLbl: UILabel = {
         let lbl = UILabel()
         lbl.text = "Category"
-        lbl.font = .roboto(size: 22, family: .Medium)
+        lbl.font = .roboto(size: 20, family: .Medium)
         lbl.textColor = .bappyBrown
         return lbl
+    }()
+    
+    private let languageInfoLbl: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Language"
+        lbl.font = .roboto(size: 20, family: .Medium)
+        lbl.textColor = .bappyBrown
+        return lbl
+    }()
+    
+    private let moreBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("More", for: .normal)
+        btn.setImage(UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        btn.tintColor = .bappyBrown
+        btn.setTitleColor(.bappyBrown, for: .normal)
+        btn.semanticContentAttribute = .forceRightToLeft
+        btn.titleLabel?.font = .roboto(size: 14, family: .Regular)
+        btn.imageEdgeInsets = UIEdgeInsets(top: 4, left: 2, bottom: 4, right: 2)
+        return btn
     }()
     
     private let imageView: UIImageView = {
@@ -91,14 +128,27 @@ final class HomeFilterViewController: UIViewController {
     }()
     
     private let nextCalendarPageBtn: UIButton = {
-       let btn = UIButton()
+        let btn = UIButton()
         btn.setImage(UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysTemplate), for: .normal)
         btn.tintColor = .bappyYellow
         return btn
     }()
     
+    private let applyBtn: UIButton = {
+        let btn = UIButton()
+        btn.setTitleColor(.bappyGray, for: .disabled)
+        btn.setTitleColor(.bappyBrown, for: .normal)
+        btn.setTitle("Apply", for: .normal)
+        btn.titleLabel?.font = .roboto(size: 28.0, family: .Bold)
+        btn.isEnabled = true
+        btn.backgroundColor = .rgb(238, 238, 234, 1)
+        btn.layer.cornerRadius = 29.5
+        btn.backgroundColor = .bappyGray.withAlphaComponent(0.15)
+        return btn
+    }()
+    
     private let previousCalendarPageBtn: UIButton = {
-       let btn = UIButton()
+        let btn = UIButton()
         btn.setImage(UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysTemplate), for: .normal)
         btn.tintColor = .bappyYellow
         return btn
@@ -133,6 +183,7 @@ final class HomeFilterViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         configure()
+        setAvailableDate()
         layout()
         bind()
     }
@@ -146,6 +197,9 @@ final class HomeFilterViewController: UIViewController {
         view.backgroundColor = .white
         calendar.delegate = self
         calendar.dataSource = self
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.isHidden = true
         
         for button in [
             travelButton, studyButton, sportsButton,
@@ -154,7 +208,9 @@ final class HomeFilterViewController: UIViewController {
             languageButton, craftingButton,
             mondayButton, tuesdayButton,
             wedsdayButton, thursdayButton,
-            fridayButton, satdayButton, sundayButton
+            fridayButton, satdayButton, sundayButton,
+            englishButton, koreanButton,
+            japaneseButton, chineseButton
         ] { button.layer.cornerRadius = 19.5 }
     }
     
@@ -201,7 +257,17 @@ final class HomeFilterViewController: UIViewController {
         
         weekDayScrollView.addSubview(weekVStackView)
         
-        self.view.addSubviews([backButton, filterTitleLbl, dayInfoLbl, seperatView, calendar, imageView, previousCalendarPageBtn, nextCalendarPageBtn, seperatView2, weekInfoLbl, weekDayScrollView, seperatView3, categoryInfoLbl, vStackView])
+        let languageVStackSubview: [UIView] = [englishButton, koreanButton, japaneseButton, chineseButton]
+        let languageVStackView = UIStackView(arrangedSubviews: languageVStackSubview)
+        languageVStackView.axis = .horizontal
+        languageVStackView.distribution = .fillProportionally
+        languageVStackView.spacing = 8
+        
+        let baseView = UIView()
+        
+        self.view.addSubviews([backButton, filterTitleLbl, scrollView])
+        scrollView.addSubview(baseView)
+        baseView.addSubviews([dayInfoLbl, seperatView, calendar, imageView, previousCalendarPageBtn, nextCalendarPageBtn, seperatView2, pickerView, weekInfoLbl, weekDayScrollView, seperatView3, categoryInfoLbl, vStackView, seperatView4, languageInfoLbl, moreBtn, languageVStackView, applyBtn])
         
         backButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(15.0)
@@ -214,9 +280,20 @@ final class HomeFilterViewController: UIViewController {
             $0.centerY.equalTo(backButton.snp.centerY)
         }
         
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(backButton.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        baseView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
+        }
+        
         dayInfoLbl.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(28)
-            $0.top.equalTo(filterTitleLbl.snp.bottom).offset(38)
+            $0.top.equalToSuperview().inset(38)
+            $0.height.equalTo(26)
         }
         
         seperatView.snp.makeConstraints {
@@ -238,6 +315,12 @@ final class HomeFilterViewController: UIViewController {
             $0.centerY.equalTo(calendar.calendarHeaderView.collectionView.snp.centerY)
             $0.height.equalTo(14)
             $0.width.equalTo(8)
+        }
+        
+        pickerView.snp.makeConstraints {
+            $0.top.equalTo(imageView.snp.bottom).offset(10)
+            $0.bottom.equalTo(calendar.snp.bottom)
+            $0.leading.trailing.equalToSuperview().inset(29)
         }
         
         nextCalendarPageBtn.snp.makeConstraints {
@@ -262,17 +345,19 @@ final class HomeFilterViewController: UIViewController {
         weekInfoLbl.snp.makeConstraints {
             $0.leading.equalTo(dayInfoLbl.snp.leading)
             $0.top.equalTo(seperatView2.snp.bottom).offset(16)
+            $0.height.equalTo(23.67)
         }
         
         weekDayScrollView.snp.makeConstraints {
             $0.leading.width.equalToSuperview()
             $0.top.equalTo(weekInfoLbl.snp.bottom).offset(10)
-            $0.height.equalTo(32)
+            $0.height.equalTo(38)
         }
         
         weekVStackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(36)
-            $0.top.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(37)
+            $0.height.equalTo(36)
+            $0.top.equalToSuperview()
             $0.width.equalToSuperview().multipliedBy(1.3)
         }
         
@@ -286,6 +371,7 @@ final class HomeFilterViewController: UIViewController {
         categoryInfoLbl.snp.makeConstraints {
             $0.leading.equalTo(dayInfoLbl.snp.leading)
             $0.top.equalTo(seperatView3.snp.bottom).offset(16)
+            $0.height.equalTo(23.67)
         }
         
         vStackView.snp.makeConstraints {
@@ -293,13 +379,80 @@ final class HomeFilterViewController: UIViewController {
             $0.top.equalTo(categoryInfoLbl.snp.bottom).offset(6)
             $0.height.equalTo(132)
         }
+        
+        seperatView4.snp.makeConstraints {
+            $0.top.equalTo(vStackView.snp.bottom).offset(16)
+            $0.leading.equalTo(dayInfoLbl.snp.leading)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(1)
+        }
+        
+        languageInfoLbl.snp.makeConstraints {
+            $0.top.equalTo(seperatView4.snp.bottom).offset(21)
+            $0.leading.equalTo(dayInfoLbl.snp.leading)
+            $0.height.equalTo(23.67)
+        }
+        
+        moreBtn.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(29)
+            $0.bottom.equalTo(languageInfoLbl.snp.bottom)
+        }
+        
+        languageVStackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(29)
+            $0.height.equalTo(36)
+            $0.top.equalTo(languageInfoLbl.snp.bottom).offset(13)
+        }
+        
+        applyBtn.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(languageVStackView.snp.bottom).offset(37)
+            $0.bottom.equalToSuperview().inset(26)
+            $0.width.equalTo(215.0)
+            $0.height.equalTo(59.0)
+        }
+    }
+    
+    func setAvailableDate() {
+        /// 선택 가능한 연도 설정
+        let formatterYear = DateFormatter()
+        formatterYear.dateFormat = "yyyy"
+        let todayYear = Int(formatterYear.string(from: Date()))!
+        
+        for y in (todayYear - 50)...(todayYear + 50) {
+            year.append(y)
+        }
+        pickerView.selectRow(9, inComponent: 0, animated: false)
+        pickerView.selectRow(50, inComponent: 1, animated: false)
     }
 }
 
 extension HomeFilterViewController {
     private func bind() {
+        
         tapGesture.rx.event.bind { _ in
-            print("touched")
+            if self.isasdas { // 끄기
+                self.calendar.appearance.headerTitleColor = .black
+                UIView.animate(withDuration: 0.5, delay: 0) {
+                    self.imageView.transform = self.imageView.transform.rotated(by: -(CGFloat.pi / 2))
+                }
+                self.pickerView.isHidden = true
+                self.previousCalendarPageBtn.isHidden = false
+                self.nextCalendarPageBtn.isHidden = false
+                
+                self.isasdas = false
+            } else { // 켜기
+                UIView.animate(withDuration: 0.5, delay: 0) {
+                    self.imageView.transform = self.imageView.transform.rotated(by: CGFloat.pi / 2)
+                }
+                
+                self.calendar.appearance.headerTitleColor = .bappyYellow
+                self.previousCalendarPageBtn.isHidden = true
+                self.nextCalendarPageBtn.isHidden = true
+                self.pickerView.isHidden = false
+                
+                self.isasdas = true
+            }
         }.disposed(by: disposeBag)
         
         Observable.merge(previousCalendarPageBtn.rx.tap.map { -1 }, nextCalendarPageBtn.rx.tap.map { 1 })
@@ -308,7 +461,64 @@ extension HomeFilterViewController {
                 self.calendar.setCurrentPage(date, animated: true)
             }.disposed(by: disposeBag)
         
-        let subViewModel = viewModel.subViewModels.calendarViewModel
+        let subViewModel = viewModel.subViewModels.hangoutMakeCategoryViewModel
+        
+        backButton.rx.tap
+            .bind {
+                self.navigationController?.popViewController(animated: true)
+            }.disposed(by: disposeBag)
+        
+        sundayButton.rx.tap
+            .bind(to: viewModel.input.sundayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        mondayButton.rx.tap
+            .bind(to: viewModel.input.mondayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        tuesdayButton.rx.tap
+            .bind(to: viewModel.input.tuesdayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        wedsdayButton.rx.tap
+            .bind(to: viewModel.input.wedsdayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        thursdayButton.rx.tap
+            .bind(to: viewModel.input.thursdayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        fridayButton.rx.tap
+            .bind(to: viewModel.input.fridayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        satdayButton.rx.tap
+            .bind(to: viewModel.input.satdayButtonTapped)
+            .disposed(by: disposeBag)
+        
+        koreanButton.rx.tap
+            .bind(to: viewModel.input.koreanButtonTapped)
+            .disposed(by: disposeBag)
+        
+        japaneseButton.rx.tap
+            .bind(to: viewModel.input.japaneseButtonTapped)
+            .disposed(by: disposeBag)
+        
+        chineseButton.rx.tap
+            .bind(to: viewModel.input.chineseButtonTapped)
+            .disposed(by: disposeBag)
+        
+        englishButton.rx.tap
+            .bind(to: viewModel.input.englishButtonTapped)
+            .disposed(by: disposeBag)
+        
+        moreBtn.rx.tap
+            .bind(to: viewModel.input.moreButtonTapped)
+            .disposed(by: disposeBag)
+        
+        applyBtn.rx.tap
+            .bind(to: viewModel.input.applyButtonTapped)
+            .disposed(by: disposeBag)
         
         travelButton.rx.tap
             .bind(to: subViewModel.input.travelButtonTapped)
@@ -340,7 +550,55 @@ extension HomeFilterViewController {
         craftingButton.rx.tap
             .bind(to: subViewModel.input.craftingButtonTapped)
             .disposed(by: disposeBag)
-        
+        viewModel.output.showSelectLanguageView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = SelectLanguageViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        viewModel.output.isSundayButtonEnabled
+            .drive(sundayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isMondayButtonEnabled
+            .drive(mondayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isTuesdayButtonEnabled
+            .drive(tuesdayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isWedsdayButtonEnabled
+            .drive(wedsdayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isThursdayButtonEnabled
+            .drive(thursdayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isFridayButtonEnabled
+            .drive(fridayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isSaturdayButtonEnabled
+            .drive(satdayButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isKoreanButtonEnabled
+            .drive(koreanButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isJapaneseButtonEnabled
+            .drive(japaneseButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isEnglishButtonEnabled
+            .drive(englishButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isChineseButtonEnabled
+            .drive(chineseButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.isValid
+            .map {
+                self.applyBtn.isEnabled = $0
+                self.applyBtn.backgroundColor = $0 ? .bappyYellow : .rgb(238, 238, 234, 1)
+                return $0
+            }
+            .drive(applyBtn.rx.isEnabled)
+            .disposed(by: disposeBag)
         subViewModel.output.isTravelButtonEnabled
             .drive(travelButton.rx.isSelected)
             .disposed(by: disposeBag)
@@ -471,10 +729,56 @@ extension HomeFilterViewController: FSCalendarDelegate, FSCalendarDataSource, FS
             datesRange = []
         }
         
+        Observable.of(firstDate)
+            .bind(to: viewModel.input.firstDateSelected)
+            .disposed(by: disposeBag)
+        
+        Observable.of(lastDate)
+            .bind(to: viewModel.input.secondDateSelected)
+            .disposed(by: disposeBag)
+        
         configureVisibleCells()
     }
     
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleOffsetFor date: Date) -> CGPoint {
         return CGPoint(x: 0, y: 3)
+    }
+}
+
+extension HomeFilterViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 2
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        switch component {
+        case 0:
+            return 12
+        default:
+            return year.count
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        switch component {
+        case 0:
+            return month[row]
+        default:
+            return String(year[row])
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        var dateComponenet = Calendar.current.dateComponents(in: TimeZone(identifier: TimeZone.current.identifier)!, from: Date())
+        
+        if component == 1 {
+            dateComponenet.year = year[row]
+            dateComponenet.yearForWeekOfYear = year[row]
+        } else {
+            dateComponenet.month = row + 1
+        }
+        
+        let date = Calendar.current.date(from: dateComponenet) ?? Date()
+        self.calendar.setCurrentPage(date, animated: false)
     }
 }

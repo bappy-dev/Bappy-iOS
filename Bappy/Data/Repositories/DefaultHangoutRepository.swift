@@ -19,6 +19,26 @@ final class DefaultHangoutRepository {
 }
 
 extension DefaultHangoutRepository: HangoutRepository {
+    func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?) -> Single<Result<HangoutPage, Error>> {
+        var endDateToUse = endDate
+        if endDateToUse == nil {
+            endDateToUse = startDate
+        }
+        
+        let requestDTO = FilterHangoutRequestDTO(week: week.map { $0.rawValue }, language: language, hangoutCategory: hangoutCategory.map { $0.description }, startDate: startDate.toString(dateFormat: "yyyy-MM-dd"), endDate: endDateToUse!.toString(dateFormat: "yyyy-MM-dd"))
+        let endpoint = APIEndpoints.filterHangouts(with: requestDTO)
+        
+        return provider.request(with: endpoint)
+            .map { result -> Result<HangoutPage, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    return .success(responseDTO.toDomain())
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
+    
     func fetchHangouts(page: Int, sort: Hangout.SortingOrder, categorey: Hangout.Category) -> Single<Result<HangoutPage, Error>> {
         let requestDTO = FetchHangoutsRequestDTO(hangoutSort: sort.description,
                                                  test: "test",
@@ -257,7 +277,6 @@ extension DefaultHangoutRepository: HangoutRepository {
                                                  hangoutMeetTime: hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:MM"),
                                                  placeName: hangout.placeName)
         
-        print(requestDTO)
         let endpoint = APIEndpoints.createHangout(with: requestDTO, data: imageData)
         
         return provider.request(with: endpoint)

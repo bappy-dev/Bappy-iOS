@@ -55,14 +55,14 @@ extension FetchHangoutsResponseDTO {
                 )
             }
         
-        return HangoutPage(totalPage: hangoutDTOs.pageInfo.totalCount, hangouts: hangouts)
+        return HangoutPage(totalPage: hangoutDTOs.pageInfo?.totalCount ?? 0, hangouts: hangouts)
     }
 }
 
 extension FetchHangoutsResponseDTO {
     struct FetchHangoutListDTO: Decodable {
         var HangoutList: [HangoutDTO]
-        var pageInfo: PageInfoDTO
+        var pageInfo: PageInfoDTO?
     }
     
     struct PageInfoDTO:Decodable {
