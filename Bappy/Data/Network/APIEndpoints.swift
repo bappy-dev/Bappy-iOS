@@ -86,7 +86,7 @@ struct APIEndpoints {
 }
 
 
-    
+
 // MARK: - Map
 extension APIEndpoints {
     static func searchGoogleMapList(with mapsRequestDTO: FetchMapsRequestDTO) -> Endpoint<FetchMapsResponseDTO> {
@@ -160,7 +160,7 @@ extension APIEndpoints {
     }
     
     static func updateHangoutParticipation(with updateHangoutParticipationRequestDTO: UpdateHangoutParticipationRequestDTO,
-                            hangoutID: String) -> Endpoint<UpdateHangoutParticipationResponseDTO> {
+                                           hangoutID: String) -> Endpoint<UpdateHangoutParticipationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangout/\(hangoutID)",
@@ -185,6 +185,14 @@ extension APIEndpoints {
             path: "hangout",
             method: .get,
             queryParameters: searchHangoutsRequestDTO)
+    }
+
+    static func filterHangouts(with filterHangoutRequestDTO: FilterHangoutRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout/filter",
+            method: .get,
+            queryParameters: filterHangoutRequestDTO)
     }
 }
 
