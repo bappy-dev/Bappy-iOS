@@ -51,7 +51,7 @@ extension FetchHangoutsResponseDTO {
                     openchatURL: URL(string: element.openchatURL),
                     mapImageURL: mapImageURL,
                     participantIDs: [],
-                    userHasLiked: false
+                    userHasLiked: element.likeStatus
                 )
             }
         

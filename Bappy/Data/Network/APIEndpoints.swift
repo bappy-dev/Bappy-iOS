@@ -152,11 +152,11 @@ extension APIEndpoints {
     }
     
     static func likeHangout(hangoutID: String, hasUserLiked: Bool) -> Endpoint<LikeHangoutResponseDTO> {
-        let path = hasUserLiked ? "hangout/like/\(hangoutID)" : "hangout/nolike/\(hangoutID)"
+        let path = hasUserLiked ? "hangout/like/\(hangoutID)" : "hangout/noLike/\(hangoutID)"
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: path,
-            method: .get)
+            method: .put)
     }
     
     static func updateHangoutParticipation(with updateHangoutParticipationRequestDTO: UpdateHangoutParticipationRequestDTO,
