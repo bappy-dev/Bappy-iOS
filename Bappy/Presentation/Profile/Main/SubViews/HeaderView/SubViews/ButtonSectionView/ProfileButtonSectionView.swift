@@ -17,8 +17,8 @@ final class ProfileButtonSectionView: UIView {
     private let disposeBag = DisposeBag()
     
     private let joinedButton = UIButton()
-    private let madeButton = UIButton()
     private let likedButton = UIButton()
+    private let referenceButton = UIButton()
     private let yellowView = UIView()
     
     private let hStackView: UIStackView = {
@@ -29,19 +29,30 @@ final class ProfileButtonSectionView: UIView {
         return stackView
     }()
     
-    private let joinedLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Hangout\njoined"
-        label.textColor = .bappyBrown
-        label.font = .roboto(size: 18.0, family: .Medium)
-        label.textAlignment = .center
-        label.numberOfLines = 2
-        return label
+    private let joinedImage: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "open-arm-line")
+        image.tintColor = .bappyBrown
+        return image
     }()
     
-    private let madeLabel: UILabel = {
+    private let likedImage: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "heart-line")
+        image.tintColor = .bappyBrown
+        return image
+    }()
+    
+    private let referenceImage: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "thumb-up-line")
+        image.tintColor = .bappyBrown
+        return image
+    }()
+    
+    private let joinedLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hangout\nmade"
+        label.text = "Joined"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textAlignment = .center
@@ -51,7 +62,17 @@ final class ProfileButtonSectionView: UIView {
     
     private let likedLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hangout\nliked"
+        label.text = "Liked"
+        label.textColor = .bappyBrown
+        label.font = .roboto(size: 18.0, family: .Medium)
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        return label
+    }()
+    
+    private let referenceLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Reference"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 18.0, family: .Medium)
         label.textAlignment = .center
@@ -66,14 +87,14 @@ final class ProfileButtonSectionView: UIView {
         return label
     }()
     
-    private let numOfMadeLabel: UILabel = {
+    private let numOfLikedLabel: UILabel = {
         let label = UILabel()
         label.textColor = .bappyBrown
         label.font = .roboto(size: 15.0)
         return label
     }()
     
-    private let numOfLikedLabel: UILabel = {
+    private let numOfReferenceLabel: UILabel = {
         let label = UILabel()
         label.textColor = .bappyBrown
         label.font = .roboto(size: 15.0)
@@ -122,8 +143,8 @@ final class ProfileButtonSectionView: UIView {
 
     private func layout() {
         hStackView.addArrangedSubview(joinedButton)
-        hStackView.addArrangedSubview(madeButton)
         hStackView.addArrangedSubview(likedButton)
+        hStackView.addArrangedSubview(referenceButton)
         
         self.snp.makeConstraints {
             $0.height.equalTo(107.0)
@@ -143,40 +164,32 @@ final class ProfileButtonSectionView: UIView {
             $0.bottom.equalTo(yellowView.snp.top)
         }
         
-        joinedButton.addSubview(joinedLabel)
-        joinedLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(23.0)
+        zip([joinedButton, likedButton, referenceButton],
+            [joinedImage, likedImage, referenceImage]).forEach { (button, image) in
+            button.addSubview(image)
+            image.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.top.equalToSuperview().inset(6.0)
+                $0.width.height.equalTo(24.0)
+            }
         }
         
-        joinedButton.addSubview(numOfjoinedLabel)
-        numOfjoinedLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(7.0)
+        zip([joinedButton, likedButton, referenceButton],
+            [joinedLabel, likedLabel, referenceLabel]).forEach { (button, label) in
+            button.addSubview(label)
+            label.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.top.equalToSuperview().inset(34.0)
+            }
         }
         
-        madeButton.addSubview(madeLabel)
-        madeLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(23.0)
-        }
-        
-        madeButton.addSubview(numOfMadeLabel)
-        numOfMadeLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(7.0)
-        }
-        
-        likedButton.addSubview(likedLabel)
-        likedLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(23.0)
-        }
-        
-        likedButton.addSubview(numOfLikedLabel)
-        numOfLikedLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(7.0)
+        zip([joinedButton, likedButton, referenceButton],
+            [numOfjoinedLabel, numOfLikedLabel, numOfReferenceLabel]).forEach { (button, label) in
+            button.addSubview(label)
+            label.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.bottom.equalToSuperview().inset(20.0)
+            }
         }
     }
 }
@@ -188,11 +201,11 @@ extension ProfileButtonSectionView {
             .bind(to: viewModel.input.joinedButtonTapped)
             .disposed(by: disposeBag)
         
-        madeButton.rx.tap
+        likedButton.rx.tap
             .bind(to: viewModel.input.madeButtonTapped)
             .disposed(by: disposeBag)
         
-        likedButton.rx.tap
+        referenceButton.rx.tap
             .bind(to: viewModel.input.likedButtonTapped)
             .disposed(by: disposeBag)
         
@@ -201,11 +214,11 @@ extension ProfileButtonSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.numOfMadeHangouts
-            .drive(numOfMadeLabel.rx.text)
+            .drive(numOfLikedLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.numOfLikedHangouts
-            .drive(numOfLikedLabel.rx.text)
+            .drive(numOfReferenceLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.output.selectedIndex
