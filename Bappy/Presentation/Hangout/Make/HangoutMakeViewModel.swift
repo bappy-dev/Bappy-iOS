@@ -104,7 +104,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isTitleValid$ = BehaviorSubject<Bool>(value: false)
     private let isTimeValid$ = BehaviorSubject<Bool>(value: false)
     private let isPlaceValid$ = BehaviorSubject<Bool>(value: false)
-    private let isPictureValid$ = BehaviorSubject<Bool>(value: false)
+    private let isPictureValid$ = BehaviorSubject<Bool>(value: true)
     private let isPlanValid$ = BehaviorSubject<Bool>(value: false)
     private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
@@ -237,8 +237,7 @@ final class HangoutMakeViewModel: ViewModelType {
                     categories$.compactMap { $0 },
                     title$.compactMap { $0 },
                     date$.compactMap { $0 },
-                    place$.compactMap { $0 },
-                    picture$.compactMap { $0 }
+                    place$.compactMap { $0 }
                 ),
                 Observable.combineLatest(
                     plan$.compactMap { $0 },
@@ -295,7 +294,7 @@ final class HangoutMakeViewModel: ViewModelType {
         // 행아웃 Preview 모드
         mapImage
             .withLatestFrom(Observable.combineLatest(
-                currentUser$, hangout, picture$.compactMap { $0 }
+                currentUser$, hangout, picture$
             )) { (mapImage: $0, user: $1.0, hangout: $1.1, postImage: $1.2) }
             .map { element -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(

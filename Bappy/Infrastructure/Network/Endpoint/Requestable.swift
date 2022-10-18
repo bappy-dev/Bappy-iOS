@@ -116,11 +116,13 @@ extension Requestable {
         
         if let imageDatas = imageDatas {
             for imageData in imageDatas {
-                data.append(convertFileData(fieldName: "file",
-                                            fileName: "\(UUID().uuidString).jpg",
-                                            mimeType: "image/jpg",
-                                            fileData: imageData,
-                                            boundary: boundary))
+                if !imageData.isEmpty {
+                    data.append(convertFileData(fieldName: "file",
+                                                fileName: "\(UUID().uuidString).jpg",
+                                                mimeType: "image/jpg",
+                                                fileData: imageData,
+                                                boundary: boundary))
+                }
             }
         }
         

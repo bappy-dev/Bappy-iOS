@@ -259,7 +259,7 @@ final class HangoutDetailViewModel: ViewModelType {
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .create }
             .withLatestFrom(Observable.combineLatest(
-                hangout$, postImage$.compactMap { $0?.pngData() }
+                hangout$, postImage$.compactMap { $0?.pngData() ?? Data() }
             ))
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap(dependency.hangoutRepository.createHangout)
