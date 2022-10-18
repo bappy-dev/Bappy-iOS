@@ -16,8 +16,8 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     struct Input {
         var selectedIndex: AnyObserver<Int> // <-> Parent
         var numOfJoinedHangouts: AnyObserver<Int?> // <-> Parent
-        var numOfMadeHangouts: AnyObserver<Int?> // <-> Parent
         var numOfLikedHangouts: AnyObserver<Int?> // <-> Parent
+        var numOfReferenceHangouts: AnyObserver<Int?> // <-> Parent
         var joinedButtonTapped: AnyObserver<Void> // <-> View
         var madeButtonTapped: AnyObserver<Void> // <-> View
         var likedButtonTapped: AnyObserver<Void> // <-> View
@@ -26,8 +26,8 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     struct Output {
         var selectedIndex: Signal<Int> // <-> View
         var numOfJoinedHangouts: Driver<String> // <-> View
-        var numOfMadeHangouts: Driver<String> // <-> View
         var numOfLikedHangouts: Driver<String> // <-> View
+        var numOfReferenceHangouts: Driver<String> // <-> View
         var selectedButtonIndex: Signal<Int> // <-> Parent
     }
     
@@ -38,11 +38,11 @@ final class ProfileButtonSectionViewModel: ViewModelType {
     
     private let selectedIndex$ = PublishSubject<Int>()
     private let numOfJoinedHangouts$ = BehaviorSubject<Int?>(value: nil)
-    private let numOfMadeHangouts$ = BehaviorSubject<Int?>(value: nil)
     private let numOfLikedHangouts$ = BehaviorSubject<Int?>(value: nil)
+    private let numOfReferenceHangouts$ = BehaviorSubject<Int?>(value: nil)
     private let joinedButtonTapped$ = PublishSubject<Void>()
-    private let madeButtonTapped$ = PublishSubject<Void>()
     private let likedButtonTapped$ = PublishSubject<Void>()
+    private let referenceButtonTapped$ = PublishSubject<Void>()
   
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
@@ -54,19 +54,19 @@ final class ProfileButtonSectionViewModel: ViewModelType {
             .map { $0 ?? 0 }
             .map(String.init)
             .asDriver(onErrorJustReturn: "0")
-        let numOfMadeHangouts = numOfMadeHangouts$
+        let numOfLikedHangouts = numOfLikedHangouts$
             .map { $0 ?? 0 }
             .map(String.init)
             .asDriver(onErrorJustReturn: "0")
-        let numOfLikedHangouts = numOfLikedHangouts$
+        let numOfReferenceHangouts = numOfReferenceHangouts$
             .map { $0 ?? 0 }
             .map(String.init)
             .asDriver(onErrorJustReturn: "0")
         let selectedButtonIndex = Observable
             .merge(
                 joinedButtonTapped$.map { 0 },
-                madeButtonTapped$.map { 1 },
-                likedButtonTapped$.map { 2 }
+                likedButtonTapped$.map { 1 },
+                referenceButtonTapped$.map { 2 }
             )
             .asSignal(onErrorJustReturn: 0)
         
@@ -74,18 +74,18 @@ final class ProfileButtonSectionViewModel: ViewModelType {
         self.input = Input(
             selectedIndex: selectedIndex$.asObserver(),
             numOfJoinedHangouts: numOfJoinedHangouts$.asObserver(),
-            numOfMadeHangouts: numOfMadeHangouts$.asObserver(),
             numOfLikedHangouts: numOfLikedHangouts$.asObserver(),
+            numOfReferenceHangouts: numOfReferenceHangouts$.asObserver(),
             joinedButtonTapped: joinedButtonTapped$.asObserver(),
-            madeButtonTapped: madeButtonTapped$.asObserver(),
-            likedButtonTapped: likedButtonTapped$.asObserver()
+            madeButtonTapped: likedButtonTapped$.asObserver(),
+            likedButtonTapped: referenceButtonTapped$.asObserver()
         )
         
         self.output = Output(
             selectedIndex: selectedIndex,
             numOfJoinedHangouts: numOfJoinedHangouts,
-            numOfMadeHangouts: numOfMadeHangouts,
             numOfLikedHangouts: numOfLikedHangouts,
+            numOfReferenceHangouts: numOfReferenceHangouts,
             selectedButtonIndex: selectedButtonIndex
         )
         
@@ -93,8 +93,8 @@ final class ProfileButtonSectionViewModel: ViewModelType {
         Observable
             .merge(
                 joinedButtonTapped$.map { 0 },
-                madeButtonTapped$.map { 1 },
-                likedButtonTapped$.map { 2 }
+                likedButtonTapped$.map { 1 },
+                referenceButtonTapped$.map { 2 }
             )
             .bind(to: selectedIndex$)
             .disposed(by: disposeBag)

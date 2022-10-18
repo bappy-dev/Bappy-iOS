@@ -213,11 +213,11 @@ extension ProfileButtonSectionView {
             .drive(numOfjoinedLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.numOfMadeHangouts
+        viewModel.output.numOfLikedHangouts
             .drive(numOfLikedLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.numOfLikedHangouts
+        viewModel.output.numOfReferenceHangouts
             .drive(numOfReferenceLabel.rx.text)
             .disposed(by: disposeBag)
         

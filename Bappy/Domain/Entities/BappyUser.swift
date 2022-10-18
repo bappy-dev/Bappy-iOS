@@ -36,8 +36,8 @@ struct BappyUser: Equatable, Identifiable {
     var interests: [Hangout.Category]?
     
     var numOfJoinedHangouts: Int?
-    var numOfMadeHangouts: Int?
-    var numOfLikedHangouts: Int?
+    var numOfLikeHangouts: Int?
+    var numOfReferenceHangouts: Int?
     
     static func == (lhs: BappyUser, rhs: BappyUser) -> Bool {
         lhs.id == rhs.id
