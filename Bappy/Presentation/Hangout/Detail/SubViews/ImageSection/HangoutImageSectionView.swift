@@ -19,6 +19,7 @@ final class HangoutImageSectionView: UIView {
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "bappy.png")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -80,6 +81,7 @@ extension HangoutImageSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.image
+            .filter { $0 != nil }
             .emit(to: postImageView.rx.image)
             .disposed(by: disposeBag)
         
