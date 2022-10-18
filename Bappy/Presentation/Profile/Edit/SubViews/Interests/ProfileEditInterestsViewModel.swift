@@ -24,28 +24,42 @@ final class ProfileEditInterestsViewModel: ViewModelType {
     
     struct Input {
         var travelButtonTapped$: AnyObserver<Void> // <-> View
-        var studyButtonTapped$: AnyObserver<Void> // <-> View
-        var sportsButtonTapped$: AnyObserver<Void> // <-> View
+        var cafeButtonTapped$: AnyObserver<Void> // <-> View
+        var hikingButtonTapped$: AnyObserver<Void> // <-> View
         var foodButtonTapped$: AnyObserver<Void> // <-> View
-        var drinksButtonTapped$: AnyObserver<Void> // <-> View
+        var barButtonTapped$: AnyObserver<Void> // <-> View
         var cookButtonTapped$: AnyObserver<Void> // <-> View
-        var cultureButtonTapped$: AnyObserver<Void> // <-> View
+        var shoppingButtonTapped$: AnyObserver<Void> // <-> View
         var volunteerButtonTapped$: AnyObserver<Void> // <-> View
         var languageButtonTapped$: AnyObserver<Void> // <-> View
         var craftingButtonTapped$: AnyObserver<Void> // <-> View
+        var ballGameButtonTapped$: AnyObserver<Void>
+        var concertsButtonTapped$: AnyObserver<Void>
+        var museumButtonTapped$: AnyObserver<Void>
+        var veganButtonTapped$: AnyObserver<Void>
+        var boardgameButtonTapped$: AnyObserver<Void>
+        var runningButtonTapped$: AnyObserver<Void>
+        var musicButtonTapped$: AnyObserver<Void>
     }
     
     struct Output {
         var travel: Driver<Bool> // <-> View
-        var study: Driver<Bool> // <-> View
-        var sports: Driver<Bool> // <-> View
+        var cafe: Driver<Bool> // <-> View
+        var hiking: Driver<Bool> // <-> View
         var food: Driver<Bool> // <-> View
-        var drinks: Driver<Bool> // <-> View
+        var bar: Driver<Bool> // <-> View
         var cook: Driver<Bool> // <-> View
-        var culture: Driver<Bool> // <-> View
+        var shopping: Driver<Bool> // <-> View
         var volunteer: Driver<Bool> // <-> View
         var language: Driver<Bool> // <-> View
         var crafting: Driver<Bool> // <-> View
+        var music: Driver<Bool>
+        var ballgame: Driver<Bool>
+        var vegan: Driver<Bool>
+        var running: Driver<Bool>
+        var concerts: Driver<Bool>
+        var museum: Driver<Bool>
+        var boardgame: Driver<Bool>
         var edittedInterests: Signal<[Hangout.Category]?> // <-> Parent
     }
     
@@ -57,16 +71,23 @@ final class ProfileEditInterestsViewModel: ViewModelType {
     private let interests$: BehaviorSubject<[Hangout.Category: Bool]>
     
     private let travelButtonTapped$ = PublishSubject<Void>()
-    private let studyButtonTapped$ = PublishSubject<Void>()
-    private let sportsButtonTapped$ = PublishSubject<Void>()
+    private let cafeButtonTapped$ = PublishSubject<Void>()
+    private let hikingButtonTapped$ = PublishSubject<Void>()
     private let foodButtonTapped$ = PublishSubject<Void>()
-    private let drinksButtonTapped$ = PublishSubject<Void>()
+    private let barButtonTapped$ = PublishSubject<Void>()
     private let cookButtonTapped$ = PublishSubject<Void>()
-    private let cultureButtonTapped$ = PublishSubject<Void>()
+    private let shoppingButtonTapped$ = PublishSubject<Void>()
     private let volunteerButtonTapped$ = PublishSubject<Void>()
     private let languageButtonTapped$ = PublishSubject<Void>()
     private let craftingButtonTapped$ = PublishSubject<Void>()
-  
+    private let ballGameButtonTapped$ = PublishSubject<Void>()
+    private let concertsButtonTapped$ = PublishSubject<Void>()
+    private let museumButtonTapped$ = PublishSubject<Void>()
+    private let veganButtonTapped$ = PublishSubject<Void>()
+    private let boardgameButtonTapped$ = PublishSubject<Void>()
+    private let runningButtonTapped$ = PublishSubject<Void>()
+    private let musicButtonTapped$ = PublishSubject<Void>()
+    
     init(dependency: Dependency) {
         self.dependency = dependency
         
@@ -76,23 +97,23 @@ final class ProfileEditInterestsViewModel: ViewModelType {
         let travel = interests$
             .map { $0[.Travel] ?? false }
             .asDriver(onErrorJustReturn: false)
-        let study = interests$
-            .map { $0[.Study] ?? false }
+        let cafe = interests$
+            .map { $0[.Cafe] ?? false }
             .asDriver(onErrorJustReturn: false)
-        let sports = interests$
-            .map { $0[.Sports] ?? false }
+        let hiking = interests$
+            .map { $0[.Hiking] ?? false }
             .asDriver(onErrorJustReturn: false)
         let food = interests$
             .map { $0[.Food] ?? false }
             .asDriver(onErrorJustReturn: false)
-        let drinks = interests$
-            .map { $0[.Drinks] ?? false }
+        let bar = interests$
+            .map { $0[.Bar] ?? false }
             .asDriver(onErrorJustReturn: false)
         let cook = interests$
             .map { $0[.Cook] ?? false }
             .asDriver(onErrorJustReturn: false)
-        let culture = interests$
-            .map { $0[.Culture] ?? false }
+        let shopping = interests$
+            .map { $0[.Shopping] ?? false }
             .asDriver(onErrorJustReturn: false)
         let volunteer = interests$
             .map { $0[.Volunteer] ?? false }
@@ -103,6 +124,27 @@ final class ProfileEditInterestsViewModel: ViewModelType {
         let crafting = interests$
             .map { $0[.Crafting] ?? false }
             .asDriver(onErrorJustReturn: false)
+        let boardgame = interests$
+            .map { $0[.Boardgame] ?? false }
+            .asDriver(onErrorJustReturn: false)
+        let music = interests$
+            .map { $0[.Music] ?? false }
+            .asDriver(onErrorJustReturn: false)
+        let ballgame = interests$
+            .map { $0[.BallGame] ?? false }
+            .asDriver(onErrorJustReturn: false)
+        let vegan = interests$
+            .map { $0[.Vegan] ?? false }
+            .asDriver(onErrorJustReturn: false)
+        let running = interests$
+            .map { $0[.Running] ?? false }
+            .asDriver(onErrorJustReturn: false)
+        let concerts = interests$
+            .map { $0[.Concerts] ?? false }
+            .asDriver(onErrorJustReturn: false)
+        let museum = interests$
+            .map { $0[.Museum] ?? false }
+            .asDriver(onErrorJustReturn: false)
         let edittedInterests = interests$
             .map { $0.filter(\.value) }
             .map { $0.map(\.key) }
@@ -111,30 +153,42 @@ final class ProfileEditInterestsViewModel: ViewModelType {
         // MARK: Input & Output
         self.input = Input(
             travelButtonTapped$: travelButtonTapped$.asObserver(),
-            studyButtonTapped$: studyButtonTapped$.asObserver(),
-            sportsButtonTapped$: sportsButtonTapped$.asObserver(),
+            cafeButtonTapped$: cafeButtonTapped$.asObserver(),
+            hikingButtonTapped$: hikingButtonTapped$.asObserver(),
             foodButtonTapped$: foodButtonTapped$.asObserver(),
-            drinksButtonTapped$: drinksButtonTapped$.asObserver(),
+            barButtonTapped$: barButtonTapped$.asObserver(),
             cookButtonTapped$: cookButtonTapped$.asObserver(),
-            cultureButtonTapped$: cultureButtonTapped$.asObserver(),
+            shoppingButtonTapped$: shoppingButtonTapped$.asObserver(),
             volunteerButtonTapped$: volunteerButtonTapped$.asObserver(),
             languageButtonTapped$: languageButtonTapped$.asObserver(),
-            craftingButtonTapped$: craftingButtonTapped$.asObserver()
-        )
+            craftingButtonTapped$: craftingButtonTapped$.asObserver(),
+            ballGameButtonTapped$: ballGameButtonTapped$.asObserver(),
+            concertsButtonTapped$: concertsButtonTapped$.asObserver(),
+            museumButtonTapped$: museumButtonTapped$.asObserver(),
+            veganButtonTapped$: veganButtonTapped$.asObserver(),
+            boardgameButtonTapped$: boardgameButtonTapped$.asObserver(),
+            runningButtonTapped$: runningButtonTapped$.asObserver(),
+            musicButtonTapped$: musicButtonTapped$.asObserver())
         
         self.output = Output(
             travel: travel,
-            study: study,
-            sports: sports,
+            cafe: cafe,
+            hiking: hiking,
             food: food,
-            drinks: drinks,
+            bar: bar,
             cook: cook,
-            culture: culture,
+            shopping: shopping,
             volunteer: volunteer,
             language: language,
             crafting: crafting,
-            edittedInterests: edittedInterests
-        )
+            music: music,
+            ballgame: ballgame,
+            vegan: vegan,
+            running: running,
+            concerts: concerts,
+            museum: museum,
+            boardgame: boardgame,
+            edittedInterests: edittedInterests)
         
         // MARK: Bindind
         self.interests$ = interests$
@@ -145,14 +199,14 @@ final class ProfileEditInterestsViewModel: ViewModelType {
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
-        studyButtonTapped$
-            .map { Hangout.Category.Study }
+        cafeButtonTapped$
+            .map { Hangout.Category.Cafe }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
-        sportsButtonTapped$
-            .map { Hangout.Category.Sports }
+        hikingButtonTapped$
+            .map { Hangout.Category.Hiking }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
@@ -163,8 +217,8 @@ final class ProfileEditInterestsViewModel: ViewModelType {
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
-        drinksButtonTapped$
-            .map { Hangout.Category.Drinks }
+        barButtonTapped$
+            .map { Hangout.Category.Bar }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
@@ -175,8 +229,8 @@ final class ProfileEditInterestsViewModel: ViewModelType {
             .bind(to: interests$)
             .disposed(by: disposeBag)
         
-        cultureButtonTapped$
-            .map { Hangout.Category.Culture }
+        shoppingButtonTapped$
+            .map { Hangout.Category.Shopping }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)
@@ -195,6 +249,48 @@ final class ProfileEditInterestsViewModel: ViewModelType {
         
         craftingButtonTapped$
             .map { Hangout.Category.Crafting }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        musicButtonTapped$
+            .map { Hangout.Category.Music }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        ballGameButtonTapped$
+            .map { Hangout.Category.BallGame }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        veganButtonTapped$
+            .map { Hangout.Category.Vegan }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        runningButtonTapped$
+            .map { Hangout.Category.Running }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        concertsButtonTapped$
+            .map { Hangout.Category.Concerts }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        museumButtonTapped$
+            .map { Hangout.Category.Museum }
+            .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
+            .bind(to: interests$)
+            .disposed(by: disposeBag)
+        
+        boardgameButtonTapped$
+            .map { Hangout.Category.Boardgame }
             .withLatestFrom(interests$, resultSelector: flipInterestOfDict)
             .bind(to: interests$)
             .disposed(by: disposeBag)

@@ -31,15 +31,22 @@ final class ProfileDetailInterestsView: UIView {
     }()
     
     private let travelLabel = SelectionLabel(title: "Travel")
-    private let studyLabel = SelectionLabel(title: "Study")
-    private let sportsLabel = SelectionLabel(title: "Sports")
+    private let cafeLabel = SelectionLabel(title: "Cafe")
+    private let hikingLabel = SelectionLabel(title: "Hiking")
     private let foodLabel = SelectionLabel(title: "Food")
-    private let drinksLabel = SelectionLabel(title: "Drinks")
+    private let barLabel = SelectionLabel(title: "Bar")
     private let cookLabel = SelectionLabel(title: "Cook")
-    private let cultureLabel = SelectionLabel(title: "Cultural Activities")
+    private let shoppingLabel = SelectionLabel(title: "Shopping")
     private let volunteerLabel = SelectionLabel(title: "Volunteer")
     private let languageLabel = SelectionLabel(title: "Practice Language")
     private let craftingLabel = SelectionLabel(title: "Crafting")
+    private let ballGameLabel = SelectionLabel(title: "Ball Game")
+    private let runningLabel = SelectionLabel(title: "Running")
+    private let concertsLabel = SelectionLabel(title: "Concerts")
+    private let museumLabel = SelectionLabel(title: "Museum")
+    private let veganLabel = SelectionLabel(title: "Vegan")
+    private let boardgameLabel = SelectionLabel(title: "Boardgame")
+    private let musicLabel = SelectionLabel(title: "Music")
     
     // MARK: Lifecycle
     init(viewModel: ProfileDetailInterestsViewModel) {
@@ -59,25 +66,33 @@ final class ProfileDetailInterestsView: UIView {
     private func configure() {
         self.backgroundColor = .white
         for label in [
-            travelLabel, studyLabel, sportsLabel,
-            foodLabel, drinksLabel, cookLabel,
-            cultureLabel, volunteerLabel,
-            languageLabel, craftingLabel
+            travelLabel, cafeLabel, hikingLabel,
+            foodLabel, barLabel, cookLabel,
+            shoppingLabel, volunteerLabel,
+            languageLabel, craftingLabel,
+            ballGameLabel, runningLabel, concertsLabel,
+            museumLabel, veganLabel, boardgameLabel, musicLabel
         ] { label.layer.cornerRadius = 19.5 }
     }
     
     private func layout() {
-        let firstSubviews: [UIView] = [travelLabel, studyLabel, sportsLabel]
+        let firstSubviews: [UIView] = [travelLabel, cafeLabel, hikingLabel]
         let firstHStackView = UIStackView(arrangedSubviews: firstSubviews)
         
-        let secondSubviews: [UIView] = [foodLabel, drinksLabel, cookLabel]
+        let secondSubviews: [UIView] = [foodLabel, barLabel, cookLabel]
         let secondHStackView = UIStackView(arrangedSubviews: secondSubviews)
         
-        let thirdSubviews: [UIView] = [cultureLabel, volunteerLabel]
+        let thirdSubviews: [UIView] = [shoppingLabel, musicLabel, volunteerLabel]
         let thirdHStackView = UIStackView(arrangedSubviews: thirdSubviews)
          
         let fourthSubviews: [UIView] = [languageLabel, craftingLabel]
         let fourthHStackView = UIStackView(arrangedSubviews: fourthSubviews)
+        
+        let fifthSubviews: [UIView] = [ballGameLabel, veganLabel, runningLabel]
+        let fifthHStackView = UIStackView(arrangedSubviews: fifthSubviews)
+        
+        let sixthSubviews: [UIView] = [concertsLabel, museumLabel, boardgameLabel]
+        let sixthHStackView = UIStackView(arrangedSubviews: sixthSubviews)
         
         for stackView in [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView] {
             stackView.axis = .horizontal
@@ -114,7 +129,7 @@ final class ProfileDetailInterestsView: UIView {
             $0.top.equalTo(interestsImageView.snp.bottom).offset(10.0)
             $0.leading.equalToSuperview().inset(44.0)
             $0.trailing.equalToSuperview().inset(44.0)
-            $0.height.equalTo(192.0)
+            $0.height.equalTo(39 * vStackSubviews.count + (vStackSubviews.count - 1) * 12)
             $0.bottom.equalToSuperview().inset(55.0)
         }
         
@@ -130,28 +145,28 @@ extension ProfileDetailInterestsView {
             .drive(travelLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
-        viewModel.output.study
-            .drive(studyLabel.rx.isSelected)
+        viewModel.output.cafe
+            .drive(cafeLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
-        viewModel.output.sports
-            .drive(sportsLabel.rx.isSelected)
+        viewModel.output.hiking
+            .drive(hikingLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.food
             .drive(foodLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
-        viewModel.output.drinks
-            .drive(drinksLabel.rx.isSelected)
+        viewModel.output.bar
+            .drive(barLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.cook
             .drive(cookLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
-        viewModel.output.culture
-            .drive(cultureLabel.rx.isSelected)
+        viewModel.output.shopping
+            .drive(shoppingLabel.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.volunteer
@@ -164,6 +179,34 @@ extension ProfileDetailInterestsView {
         
         viewModel.output.crafting
             .drive(craftingLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.music
+            .drive(musicLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.ballgame
+            .drive(ballGameLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.vegan
+            .drive(veganLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.running
+            .drive(runningLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.concerts
+            .drive(concertsLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.museum
+            .drive(museumLabel.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.boardgame
+            .drive(boardgameLabel.rx.isSelected)
             .disposed(by: disposeBag)
     }
 }

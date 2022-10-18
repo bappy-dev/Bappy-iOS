@@ -19,15 +19,22 @@ final class ProfileDetailInterestsViewModel: ViewModelType {
     
     struct Output {
         var travel: Driver<Bool>
-        var study: Driver<Bool>
-        var sports: Driver<Bool>
+        var cafe: Driver<Bool>
+        var hiking: Driver<Bool>
         var food: Driver<Bool>
-        var drinks: Driver<Bool>
+        var bar: Driver<Bool>
         var cook: Driver<Bool>
-        var culture: Driver<Bool>
+        var shopping: Driver<Bool>
         var volunteer: Driver<Bool>
         var language: Driver<Bool>
         var crafting: Driver<Bool>
+        var music: Driver<Bool>
+        var ballgame: Driver<Bool>
+        var vegan: Driver<Bool>
+        var running: Driver<Bool>
+        var concerts: Driver<Bool>
+        var museum: Driver<Bool>
+        var boardgame: Driver<Bool>
     }
     
     let dependency: Dependency
@@ -36,7 +43,7 @@ final class ProfileDetailInterestsViewModel: ViewModelType {
     let output: Output
     
     private let user$: BehaviorSubject<BappyUser>
-  
+    
     init(dependency: Dependency) {
         self.dependency = dependency
         
@@ -47,29 +54,29 @@ final class ProfileDetailInterestsViewModel: ViewModelType {
             .map { $0.interests ?? [] }
             .map { $0.contains(.Travel) }
             .asDriver(onErrorJustReturn: false)
-        let study = user$
+        let cafe = user$
             .map { $0.interests ?? [] }
-            .map { $0.contains(.Study) }
+            .map { $0.contains(.Cafe) }
             .asDriver(onErrorJustReturn: false)
-        let sports = user$
+        let hiking = user$
             .map { $0.interests ?? [] }
-            .map { $0.contains(.Sports) }
+            .map { $0.contains(.Hiking) }
             .asDriver(onErrorJustReturn: false)
         let food = user$
             .map { $0.interests ?? [] }
             .map { $0.contains(.Food) }
             .asDriver(onErrorJustReturn: false)
-        let drinks = user$
+        let bar = user$
             .map { $0.interests ?? [] }
-            .map { $0.contains(.Drinks) }
+            .map { $0.contains(.Bar) }
             .asDriver(onErrorJustReturn: false)
         let cook = user$
             .map { $0.interests ?? [] }
             .map { $0.contains(.Cook) }
             .asDriver(onErrorJustReturn: false)
-        let culture = user$
+        let shopping = user$
             .map { $0.interests ?? [] }
-            .map { $0.contains(.Culture) }
+            .map { $0.contains(.Shopping) }
             .asDriver(onErrorJustReturn: false)
         let volunteer = user$
             .map { $0.interests ?? [] }
@@ -83,22 +90,55 @@ final class ProfileDetailInterestsViewModel: ViewModelType {
             .map { $0.interests ?? [] }
             .map { $0.contains(.Crafting) }
             .asDriver(onErrorJustReturn: false)
+        let music = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.Music) }
+            .asDriver(onErrorJustReturn: false)
+        let ballgame = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.BallGame) }
+            .asDriver(onErrorJustReturn: false)
+        let vegan = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.Vegan) }
+            .asDriver(onErrorJustReturn: false)
+        let running = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.Running) }
+            .asDriver(onErrorJustReturn: false)
+        let concerts = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.Concerts) }
+            .asDriver(onErrorJustReturn: false)
+        let museum = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.Museum) }
+            .asDriver(onErrorJustReturn: false)
+        let boardgame = user$
+            .map { $0.interests ?? [] }
+            .map { $0.contains(.Boardgame) }
+            .asDriver(onErrorJustReturn: false)
         
         // MARK: Input & Output
         self.input = Input()
         
-        self.output = Output(
-            travel: travel,
-            study: study,
-            sports: sports,
-            food: food,
-            drinks: drinks,
-            cook: cook,
-            culture: culture,
-            volunteer: volunteer,
-            language: language,
-            crafting: crafting
-        )
+        self.output = Output(travel: travel,
+                             cafe: cafe,
+                             hiking: hiking,
+                             food: food,
+                             bar: bar,
+                             cook: cook,
+                             shopping: shopping,
+                             volunteer: volunteer,
+                             language: language,
+                             crafting: crafting,
+                             music: music,
+                             ballgame: ballgame,
+                             vegan: vegan,
+                             running: running,
+                             concerts: concerts,
+                             museum: museum,
+                             boardgame: boardgame)
         
         // MARK: Bindind
         self.user$ = user$

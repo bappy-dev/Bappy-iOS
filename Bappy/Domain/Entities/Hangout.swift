@@ -46,21 +46,28 @@ extension Hangout {
     enum State: String { case available, closed, expired, preview }
     
     enum Category: Int {
-        case ALL, Travel, Study, Sports, Food, Drinks, Cook, Culture, Volunteer, Language, Crafting
+        case ALL, Travel, Cafe, Hiking, Food, Bar, Cook, Shopping, Volunteer, Language, Crafting, BallGame, Running, Concerts, Museum, Vegan, Boardgame, Music
         
         var description: String {
             switch self {
             case .ALL : return "ALL"
             case .Travel : return "Travel"
-            case .Study : return "Study"
-            case .Sports : return "Sports"
+            case .Cafe : return "Cafe"
+            case .Hiking : return "Hiking"
             case .Food : return "Food"
-            case .Drinks : return "Drinks"
+            case .Bar : return "Bar"
             case .Cook : return "Cook"
-            case .Culture : return "Cultural Activities"
+            case .Shopping : return "Shopping"
             case .Volunteer : return "Volunteer"
             case .Language : return "Practice Language"
             case .Crafting : return "Crafting"
+            case .BallGame: return "BallGame"
+            case .Running: return "Running"
+            case .Concerts: return "Concerts"
+            case .Museum: return "Museum"
+            case .Music: return "Music"
+            case .Vegan: return "Vegan"
+            case .Boardgame: return "Boardgame"
             }
         }
     }
