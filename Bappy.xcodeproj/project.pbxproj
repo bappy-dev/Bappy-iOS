@@ -314,6 +314,7 @@
 		D6CC5B6D28F5CB44004C5E9C /* CustomCalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */; };
 		D6D6F05F28C943BB0078FBB9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */; };
 		D6D6F06428CA34140078FBB9 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D6F06328CA34140078FBB9 /* Constant.swift */; };
+		D6DED0DB28FB746500FFB89F /* FilterHangoutRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -611,6 +612,7 @@
 		D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D6D6F06028C943C50078FBB9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6D6F06328CA34140078FBB9 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
+		D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterHangoutRequestDTO.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -945,6 +947,7 @@
 		A72964C6289A677300970807 /* Hangout */ = {
 			isa = PBXGroup;
 			children = (
+				D6DED0D928FB744700FFB89F /* FilterHangoutsDTO */,
 				A739AB9E289D07CD00C6CE90 /* FetchHangoutsOfUserDTO */,
 				A72964C1289A651C00970807 /* CreateHangoutDTO */,
 				A73BC9A9287598A500FB9FA9 /* FetchHangoutsDTO */,
@@ -2388,6 +2391,14 @@
 			path = Constant;
 			sourceTree = "<group>";
 		};
+		D6DED0D928FB744700FFB89F /* FilterHangoutsDTO */ = {
+			isa = PBXGroup;
+			children = (
+				D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */,
+			);
+			path = FilterHangoutsDTO;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2719,6 +2730,7 @@
 				A73BC9C7287D7E0700FB9FA9 /* LocaleSettingViewModel.swift in Sources */,
 				A70C3CC3286AF24200BB7219 /* FirebaseRepository.swift in Sources */,
 				A739ABAC289E159F00C6CE90 /* ProfileTableView.swift in Sources */,
+				D6DED0DB28FB746500FFB89F /* FilterHangoutRequestDTO.swift in Sources */,
 				A7751AFB287EBDD900F23241 /* NetworkConstant.swift in Sources */,
 				A71E27C528683ADF001DA96B /* GoogleMapsRepository.swift in Sources */,
 				A7A6B00C2845A7E200911861 /* HangoutPictureCell.swift in Sources */,
