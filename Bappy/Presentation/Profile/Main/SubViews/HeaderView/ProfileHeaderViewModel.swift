@@ -22,8 +22,8 @@ final class ProfileHeaderViewModel: ViewModelType {
     struct Input {
         var selectedIndex: AnyObserver<Int> // <-> Parent
         var numOfJoinedHangouts: AnyObserver<Int?> // <-> Parent
-        var numOfMadeHangouts: AnyObserver<Int?> // <-> Parent
         var numOfLikedHangouts: AnyObserver<Int?> // <-> Parent
+        var numOfReferenceHangouts: AnyObserver<Int?> // <-> Parent
         var user: AnyObserver<BappyUser?> // <-> Parent
         var moreButtonTapped: AnyObserver<Void> // <-> View
         var selectedButtonIndex: AnyObserver<Int> // <-> Child
@@ -38,8 +38,8 @@ final class ProfileHeaderViewModel: ViewModelType {
         var selectedButtonIndex: Signal<Int> // <-> Parent
         var selectedIndex: Signal<Int> // <-> Child
         var numOfJoinedHangouts: Driver<Int?> // <-> Child
-        var numOfMadeHangouts: Driver<Int?> // <-> Child
         var numOfLikedHangouts: Driver<Int?> // <-> Child
+        var numOfReferenceHangouts: Driver<Int?> // <-> Child
     }
     
     let dependency: Dependency
@@ -50,8 +50,8 @@ final class ProfileHeaderViewModel: ViewModelType {
    
     private let selectedIndex$ = PublishSubject<Int>()
     private let numOfJoinedHangouts$ = BehaviorSubject<Int?>(value: nil)
-    private let numOfMadeHangouts$ = BehaviorSubject<Int?>(value: nil)
     private let numOfLikedHangouts$ = BehaviorSubject<Int?>(value: nil)
+    private let numOfReferenceHangouts$ = BehaviorSubject<Int?>(value: nil)
     private let user$ = BehaviorSubject<BappyUser?>(value: nil)
     private let moreButtonTapped$ = PublishSubject<Void>()
     private let selectedButtonIndex$ = PublishSubject<Int>()
@@ -88,10 +88,10 @@ final class ProfileHeaderViewModel: ViewModelType {
         let numOfJoinedHangouts = numOfJoinedHangouts$
             .skip(1)
             .asDriver(onErrorJustReturn: nil)
-        let numOfMadeHangouts = numOfMadeHangouts$
+        let numOfLikedHangouts = numOfLikedHangouts$
             .skip(1)
             .asDriver(onErrorJustReturn: nil)
-        let numOfLikedHangouts = numOfLikedHangouts$
+        let numOfReferenceHangouts = numOfReferenceHangouts$
             .skip(1)
             .asDriver(onErrorJustReturn: nil)
         
@@ -99,8 +99,8 @@ final class ProfileHeaderViewModel: ViewModelType {
         self.input = Input(
             selectedIndex: selectedIndex$.asObserver(),
             numOfJoinedHangouts: numOfJoinedHangouts$.asObserver(),
-            numOfMadeHangouts: numOfMadeHangouts$.asObserver(),
             numOfLikedHangouts: numOfLikedHangouts$.asObserver(),
+            numOfReferenceHangouts: numOfReferenceHangouts$.asObserver(),
             user: user$.asObserver(),
             moreButtonTapped: moreButtonTapped$.asObserver(),
             selectedButtonIndex: selectedButtonIndex$.asObserver()
@@ -115,8 +115,8 @@ final class ProfileHeaderViewModel: ViewModelType {
             selectedButtonIndex: selectedButtonIndex,
             selectedIndex: selectedIndex,
             numOfJoinedHangouts: numOfJoinedHangouts,
-            numOfMadeHangouts: numOfMadeHangouts,
-            numOfLikedHangouts: numOfLikedHangouts
+            numOfLikedHangouts: numOfLikedHangouts,
+            numOfReferenceHangouts: numOfReferenceHangouts
         )
         
         // MARK: Bindind
@@ -129,12 +129,12 @@ final class ProfileHeaderViewModel: ViewModelType {
             .drive(subViewModels.buttonSectionViewModel.input.numOfJoinedHangouts)
             .disposed(by: disposeBag)
         
-        output.numOfMadeHangouts
-            .drive(subViewModels.buttonSectionViewModel.input.numOfMadeHangouts)
-            .disposed(by: disposeBag)
-        
         output.numOfLikedHangouts
             .drive(subViewModels.buttonSectionViewModel.input.numOfLikedHangouts)
+            .disposed(by: disposeBag)
+        
+        output.numOfReferenceHangouts
+            .drive(subViewModels.buttonSectionViewModel.input.numOfReferenceHangouts)
             .disposed(by: disposeBag)
         
         subViewModels.buttonSectionViewModel.output.selectedButtonIndex

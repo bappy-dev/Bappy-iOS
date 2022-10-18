@@ -61,8 +61,8 @@ final class ProfileViewModel: ViewModelType {
         var user: Driver<BappyUser?> // <-> Child
         var selectedIndex: Driver<Int> // <-> Child
         var numOfJoinedHangouts: Driver<Int?> // <-> Child
-        var numOfMadeHangouts: Driver<Int?> // <-> Child
         var numOfLikedHangouts: Driver<Int?> // <-> Child
+        var numOfReferenceHangouts: Driver<Int?> // <-> Child
     }
     
     let dependency: Dependency
@@ -75,8 +75,8 @@ final class ProfileViewModel: ViewModelType {
     private let authorization$: BehaviorSubject<ProfileAuthorization>
     private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let joinedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
-    private let madeHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let likedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
+    private let referenceHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
     private let viewWillAppear$ = PublishSubject<Bool>()
@@ -94,8 +94,8 @@ final class ProfileViewModel: ViewModelType {
     private let hideHolderView$ = PublishSubject<Bool>()
     private let showLoader$ = PublishSubject<Bool>()
     private let numOfJoinedHangouts$: BehaviorSubject<Int?>
-    private let numOfMadeHangouts$: BehaviorSubject<Int?>
     private let numOfLikedHangouts$: BehaviorSubject<Int?>
+    private let numOfReferenceHangouts$: BehaviorSubject<Int?>
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -105,8 +105,8 @@ final class ProfileViewModel: ViewModelType {
         let user$ = BehaviorSubject<BappyUser?>(value: dependency.user)
         let authorization$ = BehaviorSubject<ProfileAuthorization>(value: dependency.authorization)
         let numOfJoinedHangouts$ = BehaviorSubject<Int?>(value: dependency.user.numOfJoinedHangouts)
-        let numOfMadeHangouts$ = BehaviorSubject<Int?>(value: dependency.user.numOfMadeHangouts)
-        let numOfLikedHangouts$ = BehaviorSubject<Int?>(value: dependency.user.numOfLikedHangouts)
+        let numOfLikedHangouts$ = BehaviorSubject<Int?>(value: dependency.user.numOfLikeHangouts)
+        let numOfReferenceHangouts$ = BehaviorSubject<Int?>(value: dependency.user.numOfReferenceHangouts)
         
         let scrollToTop = scrollToTop$
             .asSignal(onErrorJustReturn: Void())
@@ -149,10 +149,10 @@ final class ProfileViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let numOfJoinedHangouts = numOfJoinedHangouts$
             .asDriver(onErrorJustReturn: dependency.user.numOfJoinedHangouts)
-        let numOfMadeHangouts = numOfMadeHangouts$
-            .asDriver(onErrorJustReturn: dependency.user.numOfMadeHangouts)
         let numOfLikedHangouts = numOfLikedHangouts$
-            .asDriver(onErrorJustReturn: dependency.user.numOfLikedHangouts)
+            .asDriver(onErrorJustReturn: dependency.user.numOfLikeHangouts)
+        let numOfReferenceHangouts = numOfReferenceHangouts$
+            .asDriver(onErrorJustReturn: dependency.user.numOfReferenceHangouts)
         
         // MARK: Input & Output
         self.input = Input(
@@ -182,16 +182,16 @@ final class ProfileViewModel: ViewModelType {
             user: user,
             selectedIndex: selectedIndex,
             numOfJoinedHangouts: numOfJoinedHangouts,
-            numOfMadeHangouts: numOfMadeHangouts,
-            numOfLikedHangouts: numOfLikedHangouts
+            numOfLikedHangouts: numOfLikedHangouts,
+            numOfReferenceHangouts: numOfReferenceHangouts
         )
         
         // MARK: Bindind
         self.user$ = user$
         self.authorization$ = authorization$
         self.numOfJoinedHangouts$ = numOfJoinedHangouts$
-        self.numOfMadeHangouts$ = numOfMadeHangouts$
         self.numOfLikedHangouts$ = numOfLikedHangouts$
+        self.numOfReferenceHangouts$ = numOfReferenceHangouts$
         
         // 선택된 인덱스의 행아웃리스트 업데이트
         Observable
@@ -200,10 +200,10 @@ final class ProfileViewModel: ViewModelType {
                     .combineLatest(selectedIndex$, joinedHangouts$)
                     .filter { $0.0 == 0 },
                 Observable
-                    .combineLatest(selectedIndex$, madeHangouts$)
+                    .combineLatest(selectedIndex$, likedHangouts$)
                     .filter { $0.0 == 1 },
                 Observable
-                    .combineLatest(selectedIndex$, likedHangouts$)
+                    .combineLatest(selectedIndex$, referenceHangouts$)
                     .filter { $0.0 == 2 }
             )
             .map(\.1)
@@ -218,16 +218,16 @@ final class ProfileViewModel: ViewModelType {
             .bind(to: numOfJoinedHangouts$)
             .disposed(by: disposeBag)
             
-        madeHangouts$
-            .skip(1)
-            .map(\.count)
-            .bind(to: numOfMadeHangouts$)
-            .disposed(by: disposeBag)
-        
         likedHangouts$
             .skip(1)
             .map(\.count)
             .bind(to: numOfLikedHangouts$)
+            .disposed(by: disposeBag)
+        
+        referenceHangouts$
+            .skip(1)
+            .map(\.count)
+            .bind(to: numOfReferenceHangouts$)
             .disposed(by: disposeBag)
         
         // Guest 모드시 프로필 가리기위해 Alert 띄우기
@@ -279,7 +279,7 @@ final class ProfileViewModel: ViewModelType {
 
         madeHangoutResult
             .compactMap(getValue)
-            .bind(to: madeHangouts$)
+            .bind(to: likedHangouts$)
             .disposed(by: disposeBag)
 
         // fetchLikedHangout
@@ -295,7 +295,7 @@ final class ProfileViewModel: ViewModelType {
 
         likedHangoutResult
             .compactMap(getValue)
-            .bind(to: likedHangouts$)
+            .bind(to: referenceHangouts$)
             .disposed(by: disposeBag)
             
         // Setting 버튼 Flow - 설정 상태 불러오기
@@ -347,12 +347,12 @@ final class ProfileViewModel: ViewModelType {
             .drive(subViewModels.headerViewModel.input.numOfJoinedHangouts)
             .disposed(by: disposeBag)
         
-        output.numOfMadeHangouts
-            .drive(subViewModels.headerViewModel.input.numOfMadeHangouts)
-            .disposed(by: disposeBag)
-        
         output.numOfLikedHangouts
             .drive(subViewModels.headerViewModel.input.numOfLikedHangouts)
+            .disposed(by: disposeBag)
+        
+        output.numOfReferenceHangouts
+            .drive(subViewModels.headerViewModel.input.numOfReferenceHangouts)
             .disposed(by: disposeBag)
         
         subViewModels.headerViewModel.output.moreButtonTapped
