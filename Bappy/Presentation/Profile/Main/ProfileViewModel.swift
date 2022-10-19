@@ -76,7 +76,7 @@ final class ProfileViewModel: ViewModelType {
     private let results$ = BehaviorSubject<[Any]>(value: [])
     private let joinedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let likedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
-    private let referenceHangouts$ = BehaviorSubject<[Hangout]>(value: [])
+    private let referenceHangouts$ = BehaviorSubject<[Reference]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
     private let viewWillAppear$ = PublishSubject<Bool>()
@@ -259,7 +259,6 @@ final class ProfileViewModel: ViewModelType {
         
         // fetchJoinedHangout
         let joinedHangoutResult = startFlowWithUserID
-//            .map { (id: $0, profileType: Hangout.UserProfileType.Joined) }
             .map { _ in .Joined }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .do { [weak self] _ in self?.hideHolderView$.onNext(true) }
@@ -275,22 +274,6 @@ final class ProfileViewModel: ViewModelType {
             .bind(to: joinedHangouts$)
             .disposed(by: disposeBag)
 
-        // fetchMadeHangout
-        let madeHangoutResult = startFlowWithUserID
-            .map { _ in .Made }
-            .flatMap(dependency.hangoutRepository.fetchHangouts)
-            .share()
-
-        madeHangoutResult
-            .compactMap(getErrorDescription)
-            .bind(to: self.rx.debugError)
-            .disposed(by: disposeBag)
-
-        madeHangoutResult
-            .compactMap(getValue)
-            .bind(to: likedHangouts$)
-            .disposed(by: disposeBag)
-
         // fetchLikedHangout
         let likedHangoutResult = startFlowWithUserID
             .map { _ in .Liked }
@@ -304,9 +287,30 @@ final class ProfileViewModel: ViewModelType {
 
         likedHangoutResult
             .compactMap(getValue)
-            .bind(to: referenceHangouts$)
+            .bind(to: likedHangouts$)
             .disposed(by: disposeBag)
             
+        // fetchReferences
+        let referenceResult = startFlowWithUserID
+            .map { _ in .Joined }
+            .flatMap(dependency.hangoutRepository.fetchHangouts)
+            .map({ result in
+                return Result<[Reference], Error>(catching: {
+                    return [Reference(contents: "내용")]
+                })
+            })
+            .share()
+
+        referenceResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+
+        referenceResult
+            .compactMap(getValue)
+            .bind(to: referenceHangouts$)
+            .disposed(by: disposeBag)
+        
         // Setting 버튼 Flow - 설정 상태 불러오기
         let notificationSettingResult = settingButtonTapped$
             .do { [weak self] _ in self?.showLoader$.onNext(true) }
