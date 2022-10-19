@@ -49,7 +49,7 @@ final class ProfileViewModel: ViewModelType {
         var scrollToTop: Signal<Void> // <-> View
         var shouldHideSettingButton: Signal<Bool> // <-> View
         var shouldHideBackButton: Signal<Bool> // <-> View
-        var results: Driver<[Hangout]> // <-> View
+        var results: Driver<[Any]> // <-> View
         var hideNoHangoutsView: Signal<Bool> // <-> View
         var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
         var showProfileDetailView: Signal<ProfileDetailViewModel?> // <-> View
@@ -73,7 +73,7 @@ final class ProfileViewModel: ViewModelType {
     
     private let user$: BehaviorSubject<BappyUser?>
     private let authorization$: BehaviorSubject<ProfileAuthorization>
-    private let results$ = BehaviorSubject<[Hangout]>(value: [])
+    private let results$ = BehaviorSubject<[Any]>(value: [])
     private let joinedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let likedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let referenceHangouts$ = BehaviorSubject<[Hangout]>(value: [])
@@ -123,18 +123,20 @@ final class ProfileViewModel: ViewModelType {
         let showProfileDetailView = showProfileDetailView$
             .asSignal(onErrorJustReturn: nil)
         
-        let hangoutItemSelected = itemSelected$
-            .withLatestFrom(selectedIndex$) { ($0, $1) }
-            .filter { $0.1 != 2 }
-            .map { $0.0 }
-            .share()
-        let showHangoutDetailView = hangoutItemSelected
-            .withLatestFrom(Observable.combineLatest(
-                user$.compactMap { $0 }, results$
-            )) { indexPath, element -> HangoutDetailViewModel in
+        let showHangoutDetailView = itemSelected$
+            .withLatestFrom(results$) { ($0, $1) }
+            .filter {
+                if let _ = $1 as? [Hangout] {
+                    return true
+                } else {
+                    return false
+                }
+            }
+            .map { ($0.0, $0.1 as! [Hangout]) }
+            .withLatestFrom(user$.compactMap { $0 }) { element, user -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
-                    currentUser: element.0,
-                    hangout: element.1[indexPath.row])
+                    currentUser: user,
+                    hangout: element.1[element.0.row])
                 return HangoutDetailViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
@@ -204,13 +206,13 @@ final class ProfileViewModel: ViewModelType {
         Observable
             .merge(
                 Observable
-                    .combineLatest(selectedIndex$, joinedHangouts$)
+                    .combineLatest(selectedIndex$, joinedHangouts$.map { $0 as [Any] })
                     .filter { $0.0 == 0 },
                 Observable
-                    .combineLatest(selectedIndex$, likedHangouts$)
+                    .combineLatest(selectedIndex$, likedHangouts$.map { $0 as [Any] })
                     .filter { $0.0 == 1 },
                 Observable
-                    .combineLatest(selectedIndex$, referenceHangouts$)
+                    .combineLatest(selectedIndex$, referenceHangouts$.map { $0 as [Any] })
                     .filter { $0.0 == 2 }
             )
             .map(\.1)
