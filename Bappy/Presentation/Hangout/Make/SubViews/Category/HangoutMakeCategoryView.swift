@@ -34,15 +34,22 @@ final class HangoutMakeCategoryView: UIView {
     }()
     
     private let travelButton = SelectionButton(title: "Travel")
-    private let studyButton = SelectionButton(title: "Study")
-    private let sportsButton = SelectionButton(title: "Sports")
+    private let cafeButton = SelectionButton(title: "Cafe")
+    private let hikingButton = SelectionButton(title: "Hiking")
     private let foodButton = SelectionButton(title: "Food")
-    private let drinksButton = SelectionButton(title: "Drinks")
+    private let barButton = SelectionButton(title: "Bar")
     private let cookButton = SelectionButton(title: "Cook")
-    private let cultureButton = SelectionButton(title: "Cultural Activities")
+    private let shoppingButton = SelectionButton(title: "Shopping")
     private let volunteerButton = SelectionButton(title: "Volunteer")
     private let languageButton = SelectionButton(title: "Practice Language")
     private let craftingButton = SelectionButton(title: "Crafting")
+    private let ballGameButton = SelectionButton(title: "Ball Game")
+    private let runningButton = SelectionButton(title: "Running")
+    private let concertsButton = SelectionButton(title: "Concerts")
+    private let museumButton = SelectionButton(title: "Museum")
+    private let veganButton = SelectionButton(title: "Vegan")
+    private let boardgameButton = SelectionButton(title: "Boardgame")
+    private let musicButton = SelectionButton(title: "Music")
     
     // MARK: Lifecycle
     init(viewModel: HangoutMakeCategoryViewModel) {
@@ -53,7 +60,7 @@ final class HangoutMakeCategoryView: UIView {
         layout()
         bind()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -63,27 +70,36 @@ final class HangoutMakeCategoryView: UIView {
         self.backgroundColor = .white
         ruleDescriptionLabel.text = "Select at least one category"
         for button in [
-            travelButton, studyButton, sportsButton,
-            foodButton, drinksButton, cookButton,
-            cultureButton, volunteerButton,
-            languageButton, craftingButton
+            travelButton, cafeButton, hikingButton,
+            foodButton, barButton, cookButton,
+            shoppingButton, volunteerButton,
+            languageButton, craftingButton,
+            ballGameButton, runningButton, concertsButton,
+            museumButton, veganButton,
+            boardgameButton, musicButton
         ] { button.layer.cornerRadius = 19.5 }
     }
     
     private func layout() {
-        let firstSubviews: [UIView] = [travelButton, studyButton, sportsButton]
+        let firstSubviews: [UIView] = [travelButton, cafeButton, hikingButton]
         let firstHStackView = UIStackView(arrangedSubviews: firstSubviews)
         
-        let secondSubviews: [UIView] = [foodButton, drinksButton, cookButton]
+        let secondSubviews: [UIView] = [foodButton, barButton, cookButton]
         let secondHStackView = UIStackView(arrangedSubviews: secondSubviews)
         
-        let thirdSubviews: [UIView] = [cultureButton, volunteerButton]
+        let thirdSubviews: [UIView] = [shoppingButton, musicButton, volunteerButton]
         let thirdHStackView = UIStackView(arrangedSubviews: thirdSubviews)
-         
+        
         let fourthSubviews: [UIView] = [languageButton, craftingButton]
         let fourthHStackView = UIStackView(arrangedSubviews: fourthSubviews)
         
-        for stackView in [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView] {
+        let fifthSubviews: [UIView] = [ballGameButton, veganButton, runningButton]
+        let fifthHStackView = UIStackView(arrangedSubviews: fifthSubviews)
+        
+        let sixthSubviews: [UIView] = [concertsButton, museumButton,  boardgameButton]
+        let sixthHStackView = UIStackView(arrangedSubviews: sixthSubviews)
+        
+        for stackView in [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView, fifthHStackView, sixthHStackView] {
             stackView.axis = .horizontal
             stackView.spacing = 15.0
         }
@@ -91,8 +107,10 @@ final class HangoutMakeCategoryView: UIView {
         secondHStackView.distribution = .fillEqually
         thirdHStackView.distribution = .fillProportionally
         fourthHStackView.distribution = .fillProportionally
+        fifthHStackView.distribution = .fillProportionally
+        sixthHStackView.distribution = .fillProportionally
         
-        let vStackSubviews: [UIView] = [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView]
+        let vStackSubviews: [UIView] = [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView, fifthHStackView, sixthHStackView]
         let vStackView = UIStackView(arrangedSubviews: vStackSubviews)
         vStackView.axis = .vertical
         vStackView.distribution = .fillEqually
@@ -109,7 +127,7 @@ final class HangoutMakeCategoryView: UIView {
         vStackView.snp.makeConstraints {
             $0.top.equalTo(categoryCaptionLabel.snp.bottom).offset(60.0)
             $0.leading.trailing.equalToSuperview().inset(39.0)
-            $0.height.equalTo(39.0 * 4 + 12.0 * 3)
+            $0.height.equalTo(39.0 * 6 + 12.0 * 3)
         }
         
         volunteerButton.snp.makeConstraints { $0.width.equalToSuperview().dividedBy(2.5) }
@@ -129,23 +147,23 @@ extension HangoutMakeCategoryView {
         travelButton.rx.tap
             .bind(to: viewModel.input.travelButtonTapped)
             .disposed(by: disposeBag)
-        studyButton.rx.tap
-            .bind(to: viewModel.input.studyButtonTapped)
+        cafeButton.rx.tap
+            .bind(to: viewModel.input.cafeButtonTapped)
             .disposed(by: disposeBag)
-        sportsButton.rx.tap
-            .bind(to: viewModel.input.sportsButtonTapped)
+        hikingButton.rx.tap
+            .bind(to: viewModel.input.hikingButtonTapped)
             .disposed(by: disposeBag)
         foodButton.rx.tap
             .bind(to: viewModel.input.foodButtonTapped)
             .disposed(by: disposeBag)
-        drinksButton.rx.tap
-            .bind(to: viewModel.input.drinksButtonTapped)
+        barButton.rx.tap
+            .bind(to: viewModel.input.barButtonTapped)
             .disposed(by: disposeBag)
         cookButton.rx.tap
             .bind(to: viewModel.input.cookButtonTapped)
             .disposed(by: disposeBag)
-        cultureButton.rx.tap
-            .bind(to: viewModel.input.cultureButtonTapped)
+        shoppingButton.rx.tap
+            .bind(to: viewModel.input.shoppingButtonTapped)
             .disposed(by: disposeBag)
         volunteerButton.rx.tap
             .bind(to: viewModel.input.volunteerButtonTapped)
@@ -156,27 +174,48 @@ extension HangoutMakeCategoryView {
         craftingButton.rx.tap
             .bind(to: viewModel.input.craftingButtonTapped)
             .disposed(by: disposeBag)
+        ballGameButton.rx.tap
+            .bind(to: viewModel.input.ballGameButtonTapped)
+            .disposed(by: disposeBag)
+        musicButton.rx.tap
+            .bind(to: viewModel.input.musicButtonTapped)
+            .disposed(by: disposeBag)
+        veganButton.rx.tap
+            .bind(to: viewModel.input.veganButtonTapped)
+            .disposed(by: disposeBag)
+        runningButton.rx.tap
+            .bind(to: viewModel.input.runningButtonTapped)
+            .disposed(by: disposeBag)
+        concertsButton.rx.tap
+            .bind(to: viewModel.input.concertsButtonTapped)
+            .disposed(by: disposeBag)
+        museumButton.rx.tap
+            .bind(to: viewModel.input.museumButtonTapped)
+            .disposed(by: disposeBag)
+        boardgameButton.rx.tap
+            .bind(to: viewModel.input.boardgameButtonTapped)
+            .disposed(by: disposeBag)
         
         viewModel.output.isTravelButtonEnabled
             .drive(travelButton.rx.isSelected)
             .disposed(by: disposeBag)
-        viewModel.output.isStudyButtonEnabled
-            .drive(studyButton.rx.isSelected)
+        viewModel.output.isCafeButtonEnabled
+            .drive(cafeButton.rx.isSelected)
             .disposed(by: disposeBag)
-        viewModel.output.isSportsButtonEnabled
-            .drive(sportsButton.rx.isSelected)
+        viewModel.output.isHikingButtonEnabled
+            .drive(hikingButton.rx.isSelected)
             .disposed(by: disposeBag)
         viewModel.output.isFoodButtonEnabled
             .drive(foodButton.rx.isSelected)
             .disposed(by: disposeBag)
-        viewModel.output.isDrinksButtonEnabled
-            .drive(drinksButton.rx.isSelected)
+        viewModel.output.isBarButtonEnabled
+            .drive(barButton.rx.isSelected)
             .disposed(by: disposeBag)
         viewModel.output.isCookButtonEnabled
             .drive(cookButton.rx.isSelected)
             .disposed(by: disposeBag)
-        viewModel.output.isCultureButtonEnabled
-            .drive(cultureButton.rx.isSelected)
+        viewModel.output.isShoppingButtonEnabled
+            .drive(shoppingButton.rx.isSelected)
             .disposed(by: disposeBag)
         viewModel.output.isVolunteerButtonEnabled
             .drive(volunteerButton.rx.isSelected)
@@ -186,6 +225,27 @@ extension HangoutMakeCategoryView {
             .disposed(by: disposeBag)
         viewModel.output.isCraftingButtonEnabled
             .drive(craftingButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.musicButtonEnabled
+            .drive(musicButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.ballGameButtonEnabled
+            .drive(ballGameButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.veganButtonEnabled
+            .drive(veganButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.runningButtonEnabled
+            .drive(runningButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.concertsButtonEnabled
+            .drive(concertsButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.museumButtonEnabled
+            .drive(museumButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        viewModel.output.boardgameButtonEnabled
+            .drive(boardgameButton.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.shouldHideRule

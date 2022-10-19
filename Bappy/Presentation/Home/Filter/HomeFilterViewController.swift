@@ -25,15 +25,22 @@ final class HomeFilterViewController: UIViewController {
     private var datesRange: [Date] = []
     
     private let travelButton = SelectionButton(title: "Travel")
-    private let studyButton = SelectionButton(title: "Study")
-    private let sportsButton = SelectionButton(title: "Sports")
+    private let cafeButton = SelectionButton(title: "Cafe")
+    private let hikingButton = SelectionButton(title: "Hiking")
     private let foodButton = SelectionButton(title: "Food")
-    private let drinksButton = SelectionButton(title: "Drinks")
+    private let barButton = SelectionButton(title: "Bar")
     private let cookButton = SelectionButton(title: "Cook")
-    private let cultureButton = SelectionButton(title: "Cultural Activities")
+    private let shoppingButton = SelectionButton(title: "Shopping")
     private let volunteerButton = SelectionButton(title: "Volunteer")
     private let languageButton = SelectionButton(title: "Practice Language")
     private let craftingButton = SelectionButton(title: "Crafting")
+    private let ballGameButton = SelectionButton(title: "Ball Game")
+    private let runningButton = SelectionButton(title: "Running")
+    private let concertsButton = SelectionButton(title: "Concerts")
+    private let museumButton = SelectionButton(title: "Museum")
+    private let veganButton = SelectionButton(title: "Vegan")
+    private let boardgameButton = SelectionButton(title: "Boardgame")
+    private let musicButton = SelectionButton(title: "Music")
     
     private let sundayButton = SelectionButton(title: "Sun")
     private let mondayButton = SelectionButton(title: "Mon")
@@ -202,15 +209,18 @@ final class HomeFilterViewController: UIViewController {
         pickerView.isHidden = true
         
         for button in [
-            travelButton, studyButton, sportsButton,
-            foodButton, drinksButton, cookButton,
-            cultureButton, volunteerButton,
+            travelButton, cafeButton, hikingButton,
+            foodButton, barButton, cookButton,
+            shoppingButton, volunteerButton,
             languageButton, craftingButton,
             mondayButton, tuesdayButton,
             wedsdayButton, thursdayButton,
             fridayButton, satdayButton, sundayButton,
             englishButton, koreanButton,
-            japaneseButton, chineseButton
+            japaneseButton, chineseButton,
+            ballGameButton, runningButton, concertsButton,
+            museumButton, veganButton,
+            boardgameButton, musicButton
         ] { button.layer.cornerRadius = 19.5 }
     }
     
@@ -224,24 +234,32 @@ final class HomeFilterViewController: UIViewController {
         let seperatView4 = UIView()
         seperatView4.backgroundColor = .bappyGray
         
-        let firstSubviews: [UIView] = [travelButton, studyButton, volunteerButton, sportsButton]
+        let firstSubviews: [UIView] = [travelButton, cafeButton, volunteerButton, hikingButton]
         let firstHStackView = UIStackView(arrangedSubviews: firstSubviews)
         
-        let secondSubviews: [UIView] = [foodButton, drinksButton, languageButton]
+        let secondSubviews: [UIView] = [foodButton, barButton, languageButton]
         let secondHStackView = UIStackView(arrangedSubviews: secondSubviews)
         
-        let thirdSubviews: [UIView] = [cultureButton, cookButton, craftingButton]
+        let thirdSubviews: [UIView] = [shoppingButton, musicButton, cookButton, craftingButton]
         let thirdHStackView = UIStackView(arrangedSubviews: thirdSubviews)
         
-        for stackView in [firstHStackView, secondHStackView, thirdHStackView] {
+        let fourthSubviews: [UIView] = [ballGameButton, veganButton, runningButton]
+        let fourthHStackView = UIStackView(arrangedSubviews: fourthSubviews)
+        
+        let fifthSubviews: [UIView] = [concertsButton, museumButton,  boardgameButton]
+        let fifthHStackView = UIStackView(arrangedSubviews: fifthSubviews)
+        
+        for stackView in [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView, fifthHStackView] {
             stackView.axis = .horizontal
             stackView.spacing = 7.0
         }
         firstHStackView.distribution = .fillProportionally
         secondHStackView.distribution = .fillProportionally
         thirdHStackView.distribution = .fillProportionally
+        fourthHStackView.distribution = .fillProportionally
+        fifthHStackView.distribution = .fillProportionally
         
-        let vStackSubviews: [UIView] = [firstHStackView, secondHStackView, thirdHStackView]
+        let vStackSubviews: [UIView] = [firstHStackView, secondHStackView, thirdHStackView,  fourthHStackView, fifthHStackView]
         let vStackView = UIStackView(arrangedSubviews: vStackSubviews)
         vStackView.axis = .vertical
         vStackView.distribution = .fillEqually
@@ -377,7 +395,7 @@ final class HomeFilterViewController: UIViewController {
         vStackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(33)
             $0.top.equalTo(categoryInfoLbl.snp.bottom).offset(6)
-            $0.height.equalTo(132)
+            $0.height.equalTo(39 * vStackSubviews.count + 12 * (vStackSubviews.count - 1))
         }
         
         seperatView4.snp.makeConstraints {
@@ -523,23 +541,23 @@ extension HomeFilterViewController {
         travelButton.rx.tap
             .bind(to: subViewModel.input.travelButtonTapped)
             .disposed(by: disposeBag)
-        studyButton.rx.tap
-            .bind(to: subViewModel.input.studyButtonTapped)
+        cafeButton.rx.tap
+            .bind(to: subViewModel.input.cafeButtonTapped)
             .disposed(by: disposeBag)
-        sportsButton.rx.tap
-            .bind(to: subViewModel.input.sportsButtonTapped)
+        hikingButton.rx.tap
+            .bind(to: subViewModel.input.hikingButtonTapped)
             .disposed(by: disposeBag)
         foodButton.rx.tap
             .bind(to: subViewModel.input.foodButtonTapped)
             .disposed(by: disposeBag)
-        drinksButton.rx.tap
-            .bind(to: subViewModel.input.drinksButtonTapped)
+        barButton.rx.tap
+            .bind(to: subViewModel.input.barButtonTapped)
             .disposed(by: disposeBag)
         cookButton.rx.tap
             .bind(to: subViewModel.input.cookButtonTapped)
             .disposed(by: disposeBag)
-        cultureButton.rx.tap
-            .bind(to: subViewModel.input.cultureButtonTapped)
+        shoppingButton.rx.tap
+            .bind(to: subViewModel.input.shoppingButtonTapped)
             .disposed(by: disposeBag)
         volunteerButton.rx.tap
             .bind(to: subViewModel.input.volunteerButtonTapped)
@@ -550,6 +568,28 @@ extension HomeFilterViewController {
         craftingButton.rx.tap
             .bind(to: subViewModel.input.craftingButtonTapped)
             .disposed(by: disposeBag)
+        ballGameButton.rx.tap
+            .bind(to: subViewModel.input.ballGameButtonTapped)
+            .disposed(by: disposeBag)
+        musicButton.rx.tap
+            .bind(to: subViewModel.input.musicButtonTapped)
+            .disposed(by: disposeBag)
+        veganButton.rx.tap
+            .bind(to: subViewModel.input.veganButtonTapped)
+            .disposed(by: disposeBag)
+        runningButton.rx.tap
+            .bind(to: subViewModel.input.runningButtonTapped)
+            .disposed(by: disposeBag)
+        concertsButton.rx.tap
+            .bind(to: subViewModel.input.concertsButtonTapped)
+            .disposed(by: disposeBag)
+        museumButton.rx.tap
+            .bind(to: subViewModel.input.museumButtonTapped)
+            .disposed(by: disposeBag)
+        boardgameButton.rx.tap
+            .bind(to: subViewModel.input.boardgameButtonTapped)
+            .disposed(by: disposeBag)
+        
         viewModel.output.showSelectLanguageView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
@@ -602,23 +642,23 @@ extension HomeFilterViewController {
         subViewModel.output.isTravelButtonEnabled
             .drive(travelButton.rx.isSelected)
             .disposed(by: disposeBag)
-        subViewModel.output.isStudyButtonEnabled
-            .drive(studyButton.rx.isSelected)
+        subViewModel.output.isCafeButtonEnabled
+            .drive(cafeButton.rx.isSelected)
             .disposed(by: disposeBag)
-        subViewModel.output.isSportsButtonEnabled
-            .drive(sportsButton.rx.isSelected)
+        subViewModel.output.isHikingButtonEnabled
+            .drive(hikingButton.rx.isSelected)
             .disposed(by: disposeBag)
         subViewModel.output.isFoodButtonEnabled
             .drive(foodButton.rx.isSelected)
             .disposed(by: disposeBag)
-        subViewModel.output.isDrinksButtonEnabled
-            .drive(drinksButton.rx.isSelected)
+        subViewModel.output.isBarButtonEnabled
+            .drive(barButton.rx.isSelected)
             .disposed(by: disposeBag)
         subViewModel.output.isCookButtonEnabled
             .drive(cookButton.rx.isSelected)
             .disposed(by: disposeBag)
-        subViewModel.output.isCultureButtonEnabled
-            .drive(cultureButton.rx.isSelected)
+        subViewModel.output.isShoppingButtonEnabled
+            .drive(shoppingButton.rx.isSelected)
             .disposed(by: disposeBag)
         subViewModel.output.isVolunteerButtonEnabled
             .drive(volunteerButton.rx.isSelected)
@@ -628,6 +668,27 @@ extension HomeFilterViewController {
             .disposed(by: disposeBag)
         subViewModel.output.isCraftingButtonEnabled
             .drive(craftingButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.musicButtonEnabled
+            .drive(musicButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.ballGameButtonEnabled
+            .drive(ballGameButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.veganButtonEnabled
+            .drive(veganButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.runningButtonEnabled
+            .drive(runningButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.concertsButtonEnabled
+            .drive(concertsButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.museumButtonEnabled
+            .drive(museumButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        subViewModel.output.boardgameButtonEnabled
+            .drive(boardgameButton.rx.isSelected)
             .disposed(by: disposeBag)
     }
     

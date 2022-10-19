@@ -80,15 +80,22 @@ extension FetchCurrentUserResponseDTO {
             .map { $0.compactMap { interest -> Hangout.Category? in
                 switch interest {
                 case "Travel": return .Travel
-                case "Study": return .Study
-                case "Sports": return .Sports
+                case "Cafe": return .Cafe
+                case "Hiking": return .Hiking
                 case "Food": return .Food
-                case "Drinks": return .Drinks
+                case "Bar": return .Bar
                 case "Cook": return .Cook
-                case "Culture": return .Culture
+                case "Shopping": return .Shopping
                 case "Volunteer": return .Volunteer
                 case "Language": return .Language
                 case "Crafting": return .Crafting
+                case "BallGame": return .BallGame
+                case "Running": return .Running
+                case "Concerts": return .Concerts
+                case "Museum": return .Museum
+                case "Music": return .Music
+                case "Vegan": return .Vegan
+                case "Boardgame": return .Boardgame
                 default: return nil }
             }}
         
