@@ -25,7 +25,7 @@ extension FetchHangoutsOfUserResponseDTO {
             .map { element -> Hangout in
                 var state: Hangout.State {
                     switch element.status {
-                    case "available": return .available
+                    case "open": return .available
                     case "closed": return .closed
                         default: return .expired }
                 }
