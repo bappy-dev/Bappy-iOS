@@ -122,7 +122,13 @@ final class ProfileViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showProfileDetailView = showProfileDetailView$
             .asSignal(onErrorJustReturn: nil)
-        let showHangoutDetailView = itemSelected$
+        
+        let hangoutItemSelected = itemSelected$
+            .withLatestFrom(selectedIndex$) { ($0, $1) }
+            .filter { $0.1 != 2 }
+            .map { $0.0 }
+            .share()
+        let showHangoutDetailView = hangoutItemSelected
             .withLatestFrom(Observable.combineLatest(
                 user$.compactMap { $0 }, results$
             )) { indexPath, element -> HangoutDetailViewModel in
@@ -132,6 +138,7 @@ final class ProfileViewModel: ViewModelType {
                 return HangoutDetailViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
+        
         let showAlert = showAlert$
             .asSignal(onErrorJustReturn: Void())
         let shouldHideBackButton = authorization$
