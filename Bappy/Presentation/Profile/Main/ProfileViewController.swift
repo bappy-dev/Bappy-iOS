@@ -171,13 +171,18 @@ extension ProfileViewController {
         
         viewModel.output.results
             .drive(tableView.rx.items) { tableView, row, item in
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: reuseIdentifier,
-                    for: IndexPath(row: row, section: 0)
-                ) as! ProfileHangoutCell
-                cell.bind(with: item)
-                cell.selectionStyle = .none
-                return cell
+                if let item = item as? Hangout {
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: reuseIdentifier,
+                        for: IndexPath(row: row, section: 0)
+                    ) as! ProfileHangoutCell
+                    cell.bind(with: item)
+                    cell.selectionStyle = .none
+                    return cell
+                } else if let item = item as? Reference {
+                    fatalError()
+                }
+                fatalError()
             }
             .disposed(by: disposeBag)
         
