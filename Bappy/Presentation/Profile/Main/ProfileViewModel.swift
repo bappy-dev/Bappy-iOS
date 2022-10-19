@@ -49,7 +49,7 @@ final class ProfileViewModel: ViewModelType {
         var scrollToTop: Signal<Void> // <-> View
         var shouldHideSettingButton: Signal<Bool> // <-> View
         var shouldHideBackButton: Signal<Bool> // <-> View
-        var hangouts: Driver<[Hangout]> // <-> View
+        var results: Driver<[Hangout]> // <-> View
         var hideNoHangoutsView: Signal<Bool> // <-> View
         var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
         var showProfileDetailView: Signal<ProfileDetailViewModel?> // <-> View
@@ -73,7 +73,7 @@ final class ProfileViewModel: ViewModelType {
     
     private let user$: BehaviorSubject<BappyUser?>
     private let authorization$: BehaviorSubject<ProfileAuthorization>
-    private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
+    private let results$ = BehaviorSubject<[Hangout]>(value: [])
     private let joinedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let likedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let referenceHangouts$ = BehaviorSubject<[Hangout]>(value: [])
@@ -113,9 +113,9 @@ final class ProfileViewModel: ViewModelType {
         let shouldHideSettingButton = authorization$
             .map { $0 == .view }
             .asSignal(onErrorJustReturn: true)
-        let hangouts = hangouts$
+        let results = results$
             .asDriver(onErrorJustReturn: [])
-        let hideNoHangoutsView = hangouts$
+        let hideNoHangoutsView = results$
             .map { !$0.isEmpty }
             .asSignal(onErrorJustReturn: true)
         let showSettingView = showSettingView$
@@ -124,7 +124,7 @@ final class ProfileViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showHangoutDetailView = itemSelected$
             .withLatestFrom(Observable.combineLatest(
-                user$.compactMap { $0 }, hangouts$
+                user$.compactMap { $0 }, results$
             )) { indexPath, element -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
                     currentUser: element.0,
@@ -170,7 +170,7 @@ final class ProfileViewModel: ViewModelType {
             scrollToTop: scrollToTop,
             shouldHideSettingButton: shouldHideSettingButton,
             shouldHideBackButton: shouldHideBackButton,
-            hangouts: hangouts,
+            results: results,
             hideNoHangoutsView: hideNoHangoutsView,
             showSettingView: showSettingView,
             showProfileDetailView: showProfileDetailView,
@@ -207,7 +207,7 @@ final class ProfileViewModel: ViewModelType {
                     .filter { $0.0 == 2 }
             )
             .map(\.1)
-            .bind(to: hangouts$)
+            .bind(to: results$)
             .disposed(by: disposeBag)
         
         // Hangouts Datasource가 업데이트 될 수 있기 때문에 더 정확하게 개수로 바인딩

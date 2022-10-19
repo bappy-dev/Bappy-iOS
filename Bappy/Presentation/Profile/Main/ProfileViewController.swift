@@ -169,7 +169,7 @@ extension ProfileViewController {
             .emit(to: tableView.rx.scrollToTop)
             .disposed(by: disposeBag)
         
-        viewModel.output.hangouts
+        viewModel.output.results
             .drive(tableView.rx.items) { tableView, row, item in
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: reuseIdentifier,
