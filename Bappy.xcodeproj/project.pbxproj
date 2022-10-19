@@ -308,6 +308,7 @@
 		A7F52D042866CFE0002523D4 /* OpenMapPopupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F52D032866CFE0002523D4 /* OpenMapPopupViewModel.swift */; };
 		A7F52D072866E4EE002523D4 /* HangoutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F52D062866E4EE002523D4 /* HangoutButton.swift */; };
 		A7FB6957289869B1007B5DCF /* ProfileHangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */; };
+		AFEC369A2900310300687C18 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36992900310300687C18 /* Reference.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -606,6 +607,7 @@
 		A7F52D032866CFE0002523D4 /* OpenMapPopupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenMapPopupViewModel.swift; sourceTree = "<group>"; };
 		A7F52D062866E4EE002523D4 /* HangoutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutButton.swift; sourceTree = "<group>"; };
 		A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHangoutCell.swift; sourceTree = "<group>"; };
+		AFEC36992900310300687C18 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -1163,6 +1165,7 @@
 				A7F52CEB2864A66F002523D4 /* Location.swift */,
 				A72838F4286301F100BBBD9C /* Hangout.swift */,
 				A76AE73528A0F1B300A8EB9B /* NotificationSetting.swift */,
+				AFEC36992900310300687C18 /* Reference.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -2607,6 +2610,7 @@
 				A739ABA9289D874200C6CE90 /* NoHangoutsView.swift in Sources */,
 				A739ABA2289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift in Sources */,
 				A76EEE71285065B700A2CFF6 /* URLSessionable.swift in Sources */,
+				AFEC369A2900310300687C18 /* Reference.swift in Sources */,
 				A73BC9B5287ABFE400FB9FA9 /* SortingOrderViewModel.swift in Sources */,
 				A785030B285A193B000FA592 /* HangoutMakePictureViewModel.swift in Sources */,
 				A7E13A562888904400413AE2 /* ReportViewModel.swift in Sources */,
