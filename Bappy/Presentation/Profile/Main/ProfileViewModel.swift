@@ -49,7 +49,7 @@ final class ProfileViewModel: ViewModelType {
         var scrollToTop: Signal<Void> // <-> View
         var shouldHideSettingButton: Signal<Bool> // <-> View
         var shouldHideBackButton: Signal<Bool> // <-> View
-        var hangouts: Driver<[Hangout]> // <-> View
+        var results: Driver<[Any]> // <-> View
         var hideNoHangoutsView: Signal<Bool> // <-> View
         var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
         var showProfileDetailView: Signal<ProfileDetailViewModel?> // <-> View
@@ -73,10 +73,10 @@ final class ProfileViewModel: ViewModelType {
     
     private let user$: BehaviorSubject<BappyUser?>
     private let authorization$: BehaviorSubject<ProfileAuthorization>
-    private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
+    private let results$ = BehaviorSubject<[Any]>(value: [])
     private let joinedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let likedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
-    private let referenceHangouts$ = BehaviorSubject<[Hangout]>(value: [])
+    private let referenceHangouts$ = BehaviorSubject<[Reference]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
     private let viewWillAppear$ = PublishSubject<Bool>()
@@ -113,25 +113,34 @@ final class ProfileViewModel: ViewModelType {
         let shouldHideSettingButton = authorization$
             .map { $0 == .view }
             .asSignal(onErrorJustReturn: true)
-        let hangouts = hangouts$
+        let results = results$
             .asDriver(onErrorJustReturn: [])
-        let hideNoHangoutsView = hangouts$
+        let hideNoHangoutsView = results$
             .map { !$0.isEmpty }
             .asSignal(onErrorJustReturn: true)
         let showSettingView = showSettingView$
             .asSignal(onErrorJustReturn: nil)
         let showProfileDetailView = showProfileDetailView$
             .asSignal(onErrorJustReturn: nil)
+        
         let showHangoutDetailView = itemSelected$
-            .withLatestFrom(Observable.combineLatest(
-                user$.compactMap { $0 }, hangouts$
-            )) { indexPath, element -> HangoutDetailViewModel in
+            .withLatestFrom(results$) { ($0, $1) }
+            .filter {
+                if let _ = $1 as? [Hangout] {
+                    return true
+                } else {
+                    return false
+                }
+            }
+            .map { ($0.0, $0.1 as! [Hangout]) }
+            .withLatestFrom(user$.compactMap { $0 }) { element, user -> HangoutDetailViewModel in
                 let dependency = HangoutDetailViewModel.Dependency(
-                    currentUser: element.0,
-                    hangout: element.1[indexPath.row])
+                    currentUser: user,
+                    hangout: element.1[element.0.row])
                 return HangoutDetailViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
+        
         let showAlert = showAlert$
             .asSignal(onErrorJustReturn: Void())
         let shouldHideBackButton = authorization$
@@ -170,7 +179,7 @@ final class ProfileViewModel: ViewModelType {
             scrollToTop: scrollToTop,
             shouldHideSettingButton: shouldHideSettingButton,
             shouldHideBackButton: shouldHideBackButton,
-            hangouts: hangouts,
+            results: results,
             hideNoHangoutsView: hideNoHangoutsView,
             showSettingView: showSettingView,
             showProfileDetailView: showProfileDetailView,
@@ -197,17 +206,17 @@ final class ProfileViewModel: ViewModelType {
         Observable
             .merge(
                 Observable
-                    .combineLatest(selectedIndex$, joinedHangouts$)
+                    .combineLatest(selectedIndex$, joinedHangouts$.map { $0 as [Any] })
                     .filter { $0.0 == 0 },
                 Observable
-                    .combineLatest(selectedIndex$, likedHangouts$)
+                    .combineLatest(selectedIndex$, likedHangouts$.map { $0 as [Any] })
                     .filter { $0.0 == 1 },
                 Observable
-                    .combineLatest(selectedIndex$, referenceHangouts$)
+                    .combineLatest(selectedIndex$, referenceHangouts$.map { $0 as [Any] })
                     .filter { $0.0 == 2 }
             )
             .map(\.1)
-            .bind(to: hangouts$)
+            .bind(to: results$)
             .disposed(by: disposeBag)
         
         // Hangouts Datasource가 업데이트 될 수 있기 때문에 더 정확하게 개수로 바인딩
@@ -250,7 +259,6 @@ final class ProfileViewModel: ViewModelType {
         
         // fetchJoinedHangout
         let joinedHangoutResult = startFlowWithUserID
-//            .map { (id: $0, profileType: Hangout.UserProfileType.Joined) }
             .map { _ in .Joined }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .do { [weak self] _ in self?.hideHolderView$.onNext(true) }
@@ -266,22 +274,6 @@ final class ProfileViewModel: ViewModelType {
             .bind(to: joinedHangouts$)
             .disposed(by: disposeBag)
 
-        // fetchMadeHangout
-        let madeHangoutResult = startFlowWithUserID
-            .map { _ in .Made }
-            .flatMap(dependency.hangoutRepository.fetchHangouts)
-            .share()
-
-        madeHangoutResult
-            .compactMap(getErrorDescription)
-            .bind(to: self.rx.debugError)
-            .disposed(by: disposeBag)
-
-        madeHangoutResult
-            .compactMap(getValue)
-            .bind(to: likedHangouts$)
-            .disposed(by: disposeBag)
-
         // fetchLikedHangout
         let likedHangoutResult = startFlowWithUserID
             .map { _ in .Liked }
@@ -295,9 +287,30 @@ final class ProfileViewModel: ViewModelType {
 
         likedHangoutResult
             .compactMap(getValue)
-            .bind(to: referenceHangouts$)
+            .bind(to: likedHangouts$)
             .disposed(by: disposeBag)
             
+        // fetchReferences
+        let referenceResult = startFlowWithUserID
+            .map { _ in .Joined }
+            .flatMap(dependency.hangoutRepository.fetchHangouts)
+            .map({ result in
+                return Result<[Reference], Error>(catching: {
+                    return [Reference(contents: "내용")]
+                })
+            })
+            .share()
+
+        referenceResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+
+        referenceResult
+            .compactMap(getValue)
+            .bind(to: referenceHangouts$)
+            .disposed(by: disposeBag)
+        
         // Setting 버튼 Flow - 설정 상태 불러오기
         let notificationSettingResult = settingButtonTapped$
             .do { [weak self] _ in self?.showLoader$.onNext(true) }
