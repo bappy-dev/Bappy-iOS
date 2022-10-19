@@ -10,7 +10,8 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-private let reuseIdentifier = "ProfileHangoutCell"
+private let hangoutReuseIdentifier = "ProfileHangoutCell"
+private let referenceReuseIdentifier = "ProfileReferenceCell"
 final class ProfileViewController: UIViewController {
     
     // MARK: Properties
@@ -35,7 +36,8 @@ final class ProfileViewController: UIViewController {
     private let tableView: ProfileTableView = {
         let tableView = ProfileTableView()
         tableView.backgroundColor = .bappyLightgray
-        tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: hangoutReuseIdentifier)
+        tableView.register(ProfileReferenceCell.self, forCellReuseIdentifier: referenceReuseIdentifier)
         tableView.rowHeight = 157.0
         tableView.separatorStyle = .none
         return tableView
@@ -173,14 +175,20 @@ extension ProfileViewController {
             .drive(tableView.rx.items) { tableView, row, item in
                 if let item = item as? Hangout {
                     let cell = tableView.dequeueReusableCell(
-                        withIdentifier: reuseIdentifier,
+                        withIdentifier: hangoutReuseIdentifier,
                         for: IndexPath(row: row, section: 0)
                     ) as! ProfileHangoutCell
                     cell.bind(with: item)
                     cell.selectionStyle = .none
                     return cell
                 } else if let item = item as? Reference {
-                    fatalError()
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: referenceReuseIdentifier,
+                        for: IndexPath(row: row, section: 0)
+                    ) as! ProfileReferenceCell
+                    cell.bind(with: item)
+                    cell.selectionStyle = .none
+                    return cell
                 }
                 fatalError()
             }
