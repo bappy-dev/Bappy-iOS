@@ -38,7 +38,8 @@ final class ProfileViewController: UIViewController {
         tableView.backgroundColor = .bappyLightgray
         tableView.register(ProfileHangoutCell.self, forCellReuseIdentifier: hangoutReuseIdentifier)
         tableView.register(ProfileReferenceCell.self, forCellReuseIdentifier: referenceReuseIdentifier)
-        tableView.rowHeight = 157.0
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 157.0
         tableView.separatorStyle = .none
         return tableView
     }()

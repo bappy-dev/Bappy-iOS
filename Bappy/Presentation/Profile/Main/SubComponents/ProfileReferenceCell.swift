@@ -108,6 +108,7 @@ final class ProfileReferenceCell: UITableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(10.0)
             $0.leading.equalTo(nameLabel)
             $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
+            $0.bottom.equalToSuperview().inset(15.0)
         }
         
         frameView.addSubview(dateLabel)
