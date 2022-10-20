@@ -29,12 +29,11 @@ final class ProfileReferenceCell: UITableViewCell {
         return label
     }()
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 15.0, family: .Medium)
-        label.textColor = .bappyYellow
-        label.lineBreakMode = .byTruncatingTail
-        return label
+    private let tagsView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 10.0
+        return stackView
     }()
     
     private let contentLabel: UILabel = {
@@ -98,8 +97,8 @@ final class ProfileReferenceCell: UITableViewCell {
             $0.leading.equalTo(profileImageView.snp.trailing).offset(7.0)
         }
         
-        frameView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints {
+        frameView.addSubview(tagsView)
+        tagsView.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(5.0)
             $0.leading.equalTo(nameLabel)
             $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
@@ -107,7 +106,7 @@ final class ProfileReferenceCell: UITableViewCell {
         
         frameView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10.0)
+            $0.top.equalTo(tagsView.snp.bottom).offset(10.0)
             $0.leading.equalTo(nameLabel)
             $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
             $0.bottom.equalToSuperview().inset(15.0)
@@ -120,6 +119,37 @@ final class ProfileReferenceCell: UITableViewCell {
         }
         
     }
+    
+    private func addTags(_ tags: [String]) {
+        tagsView.arrangedSubviews.forEach { subview in
+            subview.removeFromSuperview()
+        }
+        var hStack = UIStackView()
+        
+        tagsView.addArrangedSubview(hStack)
+        hStack.axis = .horizontal
+        hStack.spacing = 10.0
+        
+        var hStackWidth: CGFloat = 0.0
+        tags.map { ReferenceTag(tag: $0) }
+            .forEach { tagView in
+                let tagWidth = tagView.tagWidth
+                
+                hStackWidth += (tagWidth + 10.0)
+                
+                if hStackWidth >= UIScreen.main.bounds.width - 20.0 - 50.0 - 20.0 {
+                    hStack.addArrangedSubview(UIView())
+                    hStackWidth = tagWidth
+                    let temp = UIStackView()
+                    tagsView.addArrangedSubview(temp)
+                    temp.axis = .horizontal
+                    temp.spacing = 10.0
+                    hStack = temp
+                }
+                hStack.addArrangedSubview(tagView)
+            }
+        hStack.addArrangedSubview(UIView())
+    }
 }
 
 // MARK: - Bind
@@ -127,7 +157,9 @@ extension ProfileReferenceCell {
     func bind(with referenceCellState: ReferenceCellState) {
         profileImageView.kf.setImage(with: referenceCellState.reference.writerProfileImageURL, placeholder: UIImage(named: "no_profile_l"))
         nameLabel.text = referenceCellState.reference.writerName
-        titleLabel.text = "Want to meet again"
+        
+        addTags(referenceCellState.reference.tags)
+        
         dateLabel.text = referenceCellState.reference.date
         contentLabel.text = referenceCellState.reference.contents
         
