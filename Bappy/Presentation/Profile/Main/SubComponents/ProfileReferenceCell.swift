@@ -122,11 +122,17 @@ final class ProfileReferenceCell: UITableViewCell {
 
 // MARK: - Bind
 extension ProfileReferenceCell {
-    func bind(with reference: Reference) {
+    func bind(with referenceCellState: ReferenceCellState) {
         profileImageView.kf.setImage(with: URL(string: ""), placeholder: UIImage(named: "no_profile_l"))
         nameLabel.text = "Good"
         titleLabel.text = "Want to meet again"
         dateLabel.text = "2022-22-22"
-        contentLabel.text = reference.contents
+        contentLabel.text = referenceCellState.reference.contents
+        
+        if referenceCellState.isExpanded {
+            contentLabel.numberOfLines = 0
+        } else {
+            contentLabel.numberOfLines = 3
+        }
     }
 }

@@ -76,7 +76,7 @@ final class ProfileViewModel: ViewModelType {
     private let results$ = BehaviorSubject<[Any]>(value: [])
     private let joinedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let likedHangouts$ = BehaviorSubject<[Hangout]>(value: [])
-    private let referenceHangouts$ = BehaviorSubject<[Reference]>(value: [])
+    private let referenceHangouts$ = BehaviorSubject<[ReferenceCellState]>(value: [])
     
     private let scrollToTop$ = PublishSubject<Void>()
     private let viewWillAppear$ = PublishSubject<Bool>()
@@ -140,6 +140,23 @@ final class ProfileViewModel: ViewModelType {
                 return HangoutDetailViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
+        
+        itemSelected$
+            .withLatestFrom(results$) { ($0, $1) }
+            .filter {
+                if let _ = $1 as? [ReferenceCellState] {
+                    return true
+                } else {
+                    return false
+                }
+            }
+            .map { (indexPath, states) -> [Any] in
+                var states = states as! [ReferenceCellState]
+                states[indexPath.row].isExpanded = !states[indexPath.row].isExpanded
+                return states as [Any]
+            }
+            .bind(to: results$)
+            .disposed(by: disposeBag)
         
         let showAlert = showAlert$
             .asSignal(onErrorJustReturn: Void())
@@ -308,6 +325,9 @@ final class ProfileViewModel: ViewModelType {
 
         referenceResult
             .compactMap(getValue)
+            .map({ references in
+                references.map { ReferenceCellState(reference: $0, isExpanded: false) }
+            })
             .bind(to: referenceHangouts$)
             .disposed(by: disposeBag)
         

@@ -182,7 +182,7 @@ extension ProfileViewController {
                     cell.bind(with: item)
                     cell.selectionStyle = .none
                     return cell
-                } else if let item = item as? Reference {
+                } else if let item = item as? ReferenceCellState {
                     let cell = tableView.dequeueReusableCell(
                         withIdentifier: referenceReuseIdentifier,
                         for: IndexPath(row: row, section: 0)
