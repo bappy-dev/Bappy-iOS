@@ -9,6 +9,14 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+extension ProfileReferenceCell {
+    static let cellHorizontalInset: CGFloat = 10.0
+    
+    static let profileImageViewWidth: CGFloat = 50.0
+    static let tagsVerticalSpacing: CGFloat = 6.0
+    static let tagsHorizontalSpacing: CGFloat = 10.0
+}
+
 final class ProfileReferenceCell: UITableViewCell {
     
     // MARK: Properties
@@ -17,7 +25,7 @@ final class ProfileReferenceCell: UITableViewCell {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 25.0
+        imageView.layer.cornerRadius = ProfileReferenceCell.profileImageViewWidth / 2.0
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -32,7 +40,7 @@ final class ProfileReferenceCell: UITableViewCell {
     private let tagsView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 10.0
+        stackView.spacing = ProfileReferenceCell.tagsVerticalSpacing
         return stackView
     }()
     
@@ -80,35 +88,34 @@ final class ProfileReferenceCell: UITableViewCell {
         contentView.addSubview(frameView)
         frameView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(9.0)
-            $0.leading.equalToSuperview().inset(7.0)
-            $0.trailing.equalToSuperview().inset(13.0)
+            $0.leading.trailing.equalToSuperview().inset(ProfileReferenceCell.cellHorizontalInset)
         }
         
         frameView.addSubview(profileImageView)
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(15.0)
-            $0.leading.equalToSuperview().inset(10.0)
-            $0.width.height.equalTo(50.0)
+            $0.leading.equalToSuperview().inset(ProfileReferenceCell.cellHorizontalInset)
+            $0.width.height.equalTo(ProfileReferenceCell.profileImageViewWidth)
         }
         
         frameView.addSubview(nameLabel)
         nameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(19.0)
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(7.0)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(ProfileReferenceCell.cellHorizontalInset)
         }
         
         frameView.addSubview(tagsView)
         tagsView.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(5.0)
             $0.leading.equalTo(nameLabel)
-            $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
+            $0.trailing.equalToSuperview().inset(ProfileReferenceCell.cellHorizontalInset)
         }
         
         frameView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(tagsView.snp.bottom).offset(10.0)
             $0.leading.equalTo(nameLabel)
-            $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
+            $0.trailing.equalToSuperview().inset(21.0)
             $0.bottom.equalToSuperview().inset(15.0)
         }
         
@@ -128,22 +135,26 @@ final class ProfileReferenceCell: UITableViewCell {
         
         tagsView.addArrangedSubview(hStack)
         hStack.axis = .horizontal
-        hStack.spacing = 10.0
+        hStack.spacing = ProfileReferenceCell.tagsHorizontalSpacing
         
+        let maxWidth = UIScreen.main.bounds.width
+                    - ProfileReferenceCell.cellHorizontalInset * 2.0
+                    - ProfileReferenceCell.profileImageViewWidth
+                    - ProfileReferenceCell.cellHorizontalInset * 3.0
         var hStackWidth: CGFloat = 0.0
         tags.map { ReferenceTag(tag: $0) }
             .forEach { tagView in
                 let tagWidth = tagView.tagWidth
                 
-                hStackWidth += (tagWidth + 10.0)
+                hStackWidth += (tagWidth + ProfileReferenceCell.tagsHorizontalSpacing)
                 
-                if hStackWidth >= UIScreen.main.bounds.width - 20.0 - 50.0 - 20.0 {
+                if hStackWidth >= maxWidth {
                     hStack.addArrangedSubview(UIView())
                     hStackWidth = tagWidth
                     let temp = UIStackView()
                     tagsView.addArrangedSubview(temp)
                     temp.axis = .horizontal
-                    temp.spacing = 10.0
+                    temp.spacing = ProfileReferenceCell.tagsHorizontalSpacing
                     hStack = temp
                 }
                 hStack.addArrangedSubview(tagView)
@@ -163,16 +174,14 @@ extension ProfileReferenceCell {
         dateLabel.text = referenceCellState.reference.date
         contentLabel.text = referenceCellState.reference.contents
         
-        if referenceCellState.reference.isCanRead {
-            blurEffectView?.removeFromSuperview()
-            blurEffectView = nil
-        } else if blurEffectView == nil {
-            var blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.3)
-            frameView.addSubview(blurEffectView)
-            blurEffectView.snp.makeConstraints { make in
+        blurEffectView?.removeFromSuperview()
+        blurEffectView = nil
+        if !referenceCellState.reference.isCanRead && blurEffectView == nil {
+            blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.3)
+            frameView.addSubview(blurEffectView!)
+            blurEffectView!.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
-            self.blurEffectView = blurEffectView
         }
         
         if referenceCellState.isExpanded {
