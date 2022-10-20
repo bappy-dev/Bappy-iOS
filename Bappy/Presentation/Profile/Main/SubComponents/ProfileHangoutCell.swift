@@ -115,7 +115,7 @@ final class ProfileHangoutCell: UITableViewCell {
         
         frameView.addSubview(postImageView)
         postImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
+            $0.top.bottom.equalToSuperview().inset(11.0)
             $0.leading.equalToSuperview().inset(9.0)
             $0.width.equalTo(116.0)
             $0.height.equalTo(117.0)
