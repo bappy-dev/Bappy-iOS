@@ -330,7 +330,11 @@ final class ProfileViewModel: ViewModelType {
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .map({ result in
                 return Result<[Reference], Error>(catching: {
-                    return [Reference(contents: "내용")]
+                    return [Reference(writerName: "Writer1", writerProfileImageURL: nil, tags: ["Nice", "Good"], contents: "내용", date: "2022-22-22", isCanRead: false, hangoutID: "1234"),
+                            Reference(writerName: "Writer2", writerProfileImageURL: nil, tags: ["Nice", "Good", "Nice", "Good", "Nice", "Good"], contents: "내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용", date: "2022-22-22", isCanRead: false, hangoutID: "1234"),
+                            Reference(writerName: "Writer3", writerProfileImageURL: nil, tags: ["Nice", "Good"], contents: "내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용", date: "2022-22-22", isCanRead: true, hangoutID: "1234"),
+                            Reference(writerName: "Writer4", writerProfileImageURL: nil, tags: ["Nice", "Good", "Nice", "Good", "Nice", "Good"], contents: "내용", date: "2022-22-22", isCanRead: true, hangoutID: "1234"),
+                            Reference(writerName: "Writer5", writerProfileImageURL: nil, tags: ["Nice", "Good"], contents: "내용", date: "2022-22-22", isCanRead: true, hangoutID: "1234"),]
                 })
             })
             .share()
