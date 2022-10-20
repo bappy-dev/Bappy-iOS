@@ -313,6 +313,7 @@
 		AFEC369E2901066400687C18 /* ReferenceCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369D2901066400687C18 /* ReferenceCellState.swift */; };
 		AFEC36A129012CC000687C18 /* GoToReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A029012CC000687C18 /* GoToReviewViewController.swift */; };
 		AFEC36A32901309200687C18 /* GotoReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A22901309200687C18 /* GotoReviewViewModel.swift */; };
+		AFEC36A52901400900687C18 /* ReferenceTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A42901400900687C18 /* ReferenceTag.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -616,6 +617,7 @@
 		AFEC369D2901066400687C18 /* ReferenceCellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceCellState.swift; sourceTree = "<group>"; };
 		AFEC36A029012CC000687C18 /* GoToReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoToReviewViewController.swift; sourceTree = "<group>"; };
 		AFEC36A22901309200687C18 /* GotoReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GotoReviewViewModel.swift; sourceTree = "<group>"; };
+		AFEC36A42901400900687C18 /* ReferenceTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceTag.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -2374,6 +2376,7 @@
 				A739ABAB289E159F00C6CE90 /* ProfileTableView.swift */,
 				AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */,
 				AFEC369D2901066400687C18 /* ReferenceCellState.swift */,
+				AFEC36A42901400900687C18 /* ReferenceTag.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -2706,6 +2709,7 @@
 				A76AE73F28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift in Sources */,
 				A76AE74828A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift in Sources */,
 				A70B0D60286C567A009EBF33 /* BappyInitialViewController.swift in Sources */,
+				AFEC36A52901400900687C18 /* ReferenceTag.swift in Sources */,
 				A76EEE73285065BC00A2CFF6 /* Provider.swift in Sources */,
 				A7F52CFB2865FFBE002523D4 /* HangoutPlanSectionViewModel.swift in Sources */,
 				A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */,
