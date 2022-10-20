@@ -310,6 +310,7 @@
 		A7FB6957289869B1007B5DCF /* ProfileHangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */; };
 		AFEC369A2900310300687C18 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36992900310300687C18 /* Reference.swift */; };
 		AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */; };
+		AFEC369E2901066400687C18 /* ReferenceCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369D2901066400687C18 /* ReferenceCellState.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -610,6 +611,7 @@
 		A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHangoutCell.swift; sourceTree = "<group>"; };
 		AFEC36992900310300687C18 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileReferenceCell.swift; sourceTree = "<group>"; };
+		AFEC369D2901066400687C18 /* ReferenceCellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceCellState.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -2366,6 +2368,7 @@
 				A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */,
 				A739ABAB289E159F00C6CE90 /* ProfileTableView.swift */,
 				AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */,
+				AFEC369D2901066400687C18 /* ReferenceCellState.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -2705,6 +2708,7 @@
 				A73BC9A62875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift in Sources */,
 				A71411D328985F8A002D4714 /* ProfileSettingViewModel.swift in Sources */,
 				A7F52CF52865FF7E002523D4 /* HangoutImageSectionViewModel.swift in Sources */,
+				AFEC369E2901066400687C18 /* ReferenceCellState.swift in Sources */,
 				A72E6F1928980F5600E06BED /* UpdateProfileRequestDTO+Mapping.swift in Sources */,
 				A7615E2F2857AFA000A09B2B /* BirthPickerViewModel.swift in Sources */,
 				A70B0D64286C56C2009EBF33 /* BappyInitialViewModel.swift in Sources */,
