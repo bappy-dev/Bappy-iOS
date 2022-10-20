@@ -229,6 +229,15 @@ extension ProfileViewController {
             })
             .disposed(by: disposeBag)
         
+        viewModel.output.showGotoReviewView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] hangoutID in
+                let viewController = GoToReviewViewController(viewModel: GotoReviewViewModel(dependency: GotoReviewViewModel.Dependency(hangoutID: hangoutID)))
+                viewController.modalPresentationStyle = .overCurrentContext
+                self?.present(viewController, animated: false, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.output.shouldHideSettingButton
             .emit(to: settingButton.rx.isHidden)
             .disposed(by: disposeBag)
