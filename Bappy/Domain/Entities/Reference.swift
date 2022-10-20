@@ -8,5 +8,11 @@
 import Foundation
 
 struct Reference {
+    var writerName: String
+    var writerProfileImageURL: URL?
+    var tags: [String]
     var contents: String
+    var date: String
+    var isCanRead: Bool
+    var hangoutID: String
 }

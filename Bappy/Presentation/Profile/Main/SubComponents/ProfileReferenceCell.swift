@@ -9,13 +9,23 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+extension ProfileReferenceCell {
+    static let cellHorizontalInset: CGFloat = 10.0
+    
+    static let profileImageViewWidth: CGFloat = 50.0
+    static let tagsVerticalSpacing: CGFloat = 6.0
+    static let tagsHorizontalSpacing: CGFloat = 10.0
+}
+
 final class ProfileReferenceCell: UITableViewCell {
     
     // MARK: Properties
+    var blurEffectView: UIVisualEffectView?
+    
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 25.0
+        imageView.layer.cornerRadius = ProfileReferenceCell.profileImageViewWidth / 2.0
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -27,12 +37,11 @@ final class ProfileReferenceCell: UITableViewCell {
         return label
     }()
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .roboto(size: 15.0, family: .Medium)
-        label.textColor = .bappyYellow
-        label.lineBreakMode = .byTruncatingTail
-        return label
+    private let tagsView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = ProfileReferenceCell.tagsVerticalSpacing
+        return stackView
     }()
     
     private let contentLabel: UILabel = {
@@ -79,35 +88,34 @@ final class ProfileReferenceCell: UITableViewCell {
         contentView.addSubview(frameView)
         frameView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(9.0)
-            $0.leading.equalToSuperview().inset(7.0)
-            $0.trailing.equalToSuperview().inset(13.0)
+            $0.leading.trailing.equalToSuperview().inset(ProfileReferenceCell.cellHorizontalInset)
         }
         
         frameView.addSubview(profileImageView)
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(15.0)
-            $0.leading.equalToSuperview().inset(10.0)
-            $0.width.height.equalTo(50.0)
+            $0.leading.equalToSuperview().inset(ProfileReferenceCell.cellHorizontalInset)
+            $0.width.height.equalTo(ProfileReferenceCell.profileImageViewWidth)
         }
         
         frameView.addSubview(nameLabel)
         nameLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(19.0)
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(7.0)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(ProfileReferenceCell.cellHorizontalInset)
         }
         
-        frameView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints {
+        frameView.addSubview(tagsView)
+        tagsView.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(5.0)
             $0.leading.equalTo(nameLabel)
-            $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
+            $0.trailing.equalToSuperview().inset(ProfileReferenceCell.cellHorizontalInset)
         }
         
         frameView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10.0)
+            $0.top.equalTo(tagsView.snp.bottom).offset(10.0)
             $0.leading.equalTo(nameLabel)
-            $0.trailing.lessThanOrEqualToSuperview().inset(10.0)
+            $0.trailing.equalToSuperview().inset(21.0)
             $0.bottom.equalToSuperview().inset(15.0)
         }
         
@@ -118,21 +126,83 @@ final class ProfileReferenceCell: UITableViewCell {
         }
         
     }
+    
+    private func addTags(_ tags: [String]) {
+        tagsView.arrangedSubviews.forEach { subview in
+            subview.removeFromSuperview()
+        }
+        var hStack = UIStackView()
+        
+        tagsView.addArrangedSubview(hStack)
+        hStack.axis = .horizontal
+        hStack.spacing = ProfileReferenceCell.tagsHorizontalSpacing
+        
+        let maxWidth = UIScreen.main.bounds.width
+                    - ProfileReferenceCell.cellHorizontalInset * 2.0
+                    - ProfileReferenceCell.profileImageViewWidth
+                    - ProfileReferenceCell.cellHorizontalInset * 3.0
+        var hStackWidth: CGFloat = 0.0
+        tags.map { ReferenceTag(tag: $0) }
+            .forEach { tagView in
+                let tagWidth = tagView.tagWidth
+                
+                hStackWidth += (tagWidth + ProfileReferenceCell.tagsHorizontalSpacing)
+                
+                if hStackWidth >= maxWidth {
+                    hStack.addArrangedSubview(UIView())
+                    hStackWidth = tagWidth
+                    let temp = UIStackView()
+                    tagsView.addArrangedSubview(temp)
+                    temp.axis = .horizontal
+                    temp.spacing = ProfileReferenceCell.tagsHorizontalSpacing
+                    hStack = temp
+                }
+                hStack.addArrangedSubview(tagView)
+            }
+        hStack.addArrangedSubview(UIView())
+    }
 }
 
 // MARK: - Bind
 extension ProfileReferenceCell {
     func bind(with referenceCellState: ReferenceCellState) {
-        profileImageView.kf.setImage(with: URL(string: ""), placeholder: UIImage(named: "no_profile_l"))
-        nameLabel.text = "Good"
-        titleLabel.text = "Want to meet again"
-        dateLabel.text = "2022-22-22"
+        profileImageView.kf.setImage(with: referenceCellState.reference.writerProfileImageURL, placeholder: UIImage(named: "no_profile_l"))
+        nameLabel.text = referenceCellState.reference.writerName
+        
+        addTags(referenceCellState.reference.tags)
+        
+        dateLabel.text = referenceCellState.reference.date
         contentLabel.text = referenceCellState.reference.contents
+        
+        blurEffectView?.removeFromSuperview()
+        blurEffectView = nil
+        if !referenceCellState.reference.isCanRead && blurEffectView == nil {
+            blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.3)
+            frameView.addSubview(blurEffectView!)
+            blurEffectView!.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
         
         if referenceCellState.isExpanded {
             contentLabel.numberOfLines = 0
         } else {
             contentLabel.numberOfLines = 3
         }
+    }
+}
+
+class CustomIntensityVisualEffectView: UIVisualEffectView {
+    // MARK: Properties
+    private var animator: UIViewPropertyAnimator!
+    
+    init(effect: UIVisualEffect, intensity: CGFloat) {
+        super.init(effect: nil)
+        animator = UIViewPropertyAnimator(duration: 1, curve: .linear) { [unowned self] in self.effect = effect }
+        animator.fractionComplete = intensity
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
     }
 }

@@ -54,6 +54,7 @@ final class ProfileViewModel: ViewModelType {
         var showSettingView: Signal<ProfileSettingViewModel?> // <-> View
         var showProfileDetailView: Signal<ProfileDetailViewModel?> // <-> View
         var showHangoutDetailView: Signal<HangoutDetailViewModel?> // <-> View
+        var showGotoReviewView: Signal<String?> // <-> View
         var showAlert: Signal<Void> // <-> View
         var popView: Signal<Void> // <-> View
         var hideHolderView: Signal<Bool> // <-> View
@@ -144,8 +145,8 @@ final class ProfileViewModel: ViewModelType {
         itemSelected$
             .withLatestFrom(results$) { ($0, $1) }
             .filter {
-                if let _ = $1 as? [ReferenceCellState] {
-                    return true
+                if let states = $1 as? [ReferenceCellState] {
+                    return states[$0.row].reference.isCanRead
                 } else {
                     return false
                 }
@@ -157,6 +158,21 @@ final class ProfileViewModel: ViewModelType {
             }
             .bind(to: results$)
             .disposed(by: disposeBag)
+        
+        let showGotoReviewView = itemSelected$
+            .withLatestFrom(results$) { ($0, $1) }
+            .filter {
+                if let states = $1 as? [ReferenceCellState] {
+                    return !states[$0.row].reference.isCanRead
+                } else {
+                    return false
+                }
+            }
+            .map { indexPath, states -> String in
+                var states = states as! [ReferenceCellState]
+                return states[indexPath.row].reference.hangoutID
+            }
+            .asSignal(onErrorJustReturn: nil)
         
         let showAlert = showAlert$
             .asSignal(onErrorJustReturn: Void())
@@ -201,6 +217,7 @@ final class ProfileViewModel: ViewModelType {
             showSettingView: showSettingView,
             showProfileDetailView: showProfileDetailView,
             showHangoutDetailView: showHangoutDetailView,
+            showGotoReviewView: showGotoReviewView,
             showAlert: showAlert,
             popView: popView,
             hideHolderView: hideHolderView,
@@ -313,7 +330,11 @@ final class ProfileViewModel: ViewModelType {
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .map({ result in
                 return Result<[Reference], Error>(catching: {
-                    return [Reference(contents: "내용")]
+                    return [Reference(writerName: "Writer1", writerProfileImageURL: nil, tags: ["Nice", "Good"], contents: "내용", date: "2022-22-22", isCanRead: false, hangoutID: "1234"),
+                            Reference(writerName: "Writer2", writerProfileImageURL: nil, tags: ["Nice", "Good", "Nice", "Good", "Nice", "Good"], contents: "내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용", date: "2022-22-22", isCanRead: false, hangoutID: "1234"),
+                            Reference(writerName: "Writer3", writerProfileImageURL: nil, tags: ["Nice", "Good"], contents: "내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용 내용", date: "2022-22-22", isCanRead: true, hangoutID: "1234"),
+                            Reference(writerName: "Writer4", writerProfileImageURL: nil, tags: ["Nice", "Good", "Nice", "Good", "Nice", "Good"], contents: "내용", date: "2022-22-22", isCanRead: true, hangoutID: "1234"),
+                            Reference(writerName: "Writer5", writerProfileImageURL: nil, tags: ["Nice", "Good"], contents: "내용", date: "2022-22-22", isCanRead: true, hangoutID: "1234"),]
                 })
             })
             .share()
