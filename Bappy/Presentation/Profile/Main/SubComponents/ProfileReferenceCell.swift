@@ -12,6 +12,8 @@ import Kingfisher
 final class ProfileReferenceCell: UITableViewCell {
     
     // MARK: Properties
+    var blurEffectView: UIVisualEffectView?
+    
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -123,16 +125,43 @@ final class ProfileReferenceCell: UITableViewCell {
 // MARK: - Bind
 extension ProfileReferenceCell {
     func bind(with referenceCellState: ReferenceCellState) {
-        profileImageView.kf.setImage(with: URL(string: ""), placeholder: UIImage(named: "no_profile_l"))
-        nameLabel.text = "Good"
+        profileImageView.kf.setImage(with: referenceCellState.reference.writerProfileImageURL, placeholder: UIImage(named: "no_profile_l"))
+        nameLabel.text = referenceCellState.reference.writerName
         titleLabel.text = "Want to meet again"
-        dateLabel.text = "2022-22-22"
+        dateLabel.text = referenceCellState.reference.date
         contentLabel.text = referenceCellState.reference.contents
+        
+        if referenceCellState.reference.isCanRead {
+            blurEffectView?.removeFromSuperview()
+            blurEffectView = nil
+        } else if blurEffectView == nil {
+            var blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.3)
+            frameView.addSubview(blurEffectView)
+            blurEffectView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            self.blurEffectView = blurEffectView
+        }
         
         if referenceCellState.isExpanded {
             contentLabel.numberOfLines = 0
         } else {
             contentLabel.numberOfLines = 3
         }
+    }
+}
+
+class CustomIntensityVisualEffectView: UIVisualEffectView {
+    // MARK: Properties
+    private var animator: UIViewPropertyAnimator!
+    
+    init(effect: UIVisualEffect, intensity: CGFloat) {
+        super.init(effect: nil)
+        animator = UIViewPropertyAnimator(duration: 1, curve: .linear) { [unowned self] in self.effect = effect }
+        animator.fractionComplete = intensity
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
     }
 }
