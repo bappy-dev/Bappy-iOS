@@ -13,6 +13,7 @@ protocol HangoutRepository {
     func fetchHangouts(page: Int, sort: Hangout.SortingOrder, categorey: Hangout.Category) -> Single<Result<HangoutPage, Error>>
     func fetchHangouts(profileType: Hangout.UserProfileType) -> Single<Result<[Hangout], Error>> 
 //    func fetchHangouts(userID: String, profileType: Hangout.UserProfileType) -> Single<Result<[Hangout], Error>>
+    func fetchHangout(hangoutID: String) -> Single<Result<Hangout, Error>>
     func createHangout(hangout: Hangout, imageData: Data) -> Single<Result<Bool, Error>>
     func deleteHangout(hangoutID: String) -> Single<Result<Bool, Error>>
     func likeHangout(hangoutID: String, hasUserLiked: Bool) -> Single<Result<Bool, Error>>
