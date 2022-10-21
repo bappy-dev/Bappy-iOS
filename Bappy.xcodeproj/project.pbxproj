@@ -316,6 +316,10 @@
 		AFEC36A52901400900687C18 /* ReferenceTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A42901400900687C18 /* ReferenceTag.swift */; };
 		AFEC36A829028B7600687C18 /* HangoutDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A729028B7600687C18 /* HangoutDTO.swift */; };
 		AFEC36AB29028BEE00687C18 /* FetchHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36AA29028BEE00687C18 /* FetchHangoutResponseDTO+Mapping.swift */; };
+		AFEC36AE2902916B00687C18 /* WriteReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36AD2902916B00687C18 /* WriteReviewViewModel.swift */; };
+		AFEC36B02902918D00687C18 /* WriteReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36AF2902918D00687C18 /* WriteReviewViewController.swift */; };
+		AFEC36B32902B63700687C18 /* ReviewSelectTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */; };
+		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -622,6 +626,10 @@
 		AFEC36A42901400900687C18 /* ReferenceTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceTag.swift; sourceTree = "<group>"; };
 		AFEC36A729028B7600687C18 /* HangoutDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutDTO.swift; sourceTree = "<group>"; };
 		AFEC36AA29028BEE00687C18 /* FetchHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		AFEC36AD2902916B00687C18 /* WriteReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewModel.swift; sourceTree = "<group>"; };
+		AFEC36AF2902918D00687C18 /* WriteReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewController.swift; sourceTree = "<group>"; };
+		AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagView.swift; sourceTree = "<group>"; };
+		AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -2028,6 +2036,7 @@
 				A7FB6933289866C4007B5DCF /* Edit */,
 				A7FB6932289866BA007B5DCF /* CustomerServcie */,
 				A7FB6931289866A4007B5DCF /* DeleteAccount */,
+				AFEC36AC2902913800687C18 /* WriteReview */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -2421,6 +2430,25 @@
 			path = FetchHangoutDTO;
 			sourceTree = "<group>";
 		};
+		AFEC36AC2902913800687C18 /* WriteReview */ = {
+			isa = PBXGroup;
+			children = (
+				AFEC36AF2902918D00687C18 /* WriteReviewViewController.swift */,
+				AFEC36AD2902916B00687C18 /* WriteReviewViewModel.swift */,
+				AFEC36B12902B61B00687C18 /* Subviews */,
+			);
+			path = WriteReview;
+			sourceTree = "<group>";
+		};
+		AFEC36B12902B61B00687C18 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */,
+				AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */,
+			);
+			path = Subviews;
+			sourceTree = "<group>";
+		};
 		D6CC5B6428F1F1C9004C5E9C /* Filter */ = {
 			isa = PBXGroup;
 			children = (
@@ -2577,6 +2605,7 @@
 				A71411CD28985F8A002D4714 /* DeleteAccountFirstPageViewModel.swift in Sources */,
 				AFEC36A129012CC000687C18 /* GoToReviewViewController.swift in Sources */,
 				A769CCDE282A8C300086182C /* AppDelegate.swift in Sources */,
+				AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */,
 				A71411B328985F8A002D4714 /* ProfileEditPersonalityView.swift in Sources */,
 				A7FB6957289869B1007B5DCF /* ProfileHangoutCell.swift in Sources */,
 				A71411DA28985F8A002D4714 /* ProfileHeaderView.swift in Sources */,
@@ -2724,6 +2753,7 @@
 				A76AE72A289ED47800A8EB9B /* HomeListHolderView.swift in Sources */,
 				A71411B428985F8A002D4714 /* ProfileEditIntroduceViewModel.swift in Sources */,
 				A739ABA4289D758300C6CE90 /* ProfileHangoutCellHolderView.swift in Sources */,
+				AFEC36B02902918D00687C18 /* WriteReviewViewController.swift in Sources */,
 				A776B93A285B1F0A005496DC /* HangoutMakeTimePickerViewModel.swift in Sources */,
 				A71411DC28985F8A002D4714 /* ProfileButtonSectionViewModel.swift in Sources */,
 				A76EEE692850659600A2CFF6 /* NetworkError.swift in Sources */,
@@ -2780,6 +2810,7 @@
 				A71411B028985F8A002D4714 /* ProfileLanguageViewController.swift in Sources */,
 				A76AE73328A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift in Sources */,
 				A71411C228985F8A002D4714 /* ProfileDetailIntroduceView.swift in Sources */,
+				AFEC36B32902B63700687C18 /* ReviewSelectTagView.swift in Sources */,
 				A71411BC28985F8A002D4714 /* ProfileEditInterestsView.swift in Sources */,
 				A71411C728985F8A002D4714 /* ProfileDetailAffiliationViewModel.swift in Sources */,
 				A76EEE6F285065AD00A2CFF6 /* Endpoint.swift in Sources */,
@@ -2844,6 +2875,7 @@
 				A7751AF9287EB60F00F23241 /* UpdateGPSSettingResponseDTO+Mapping.swift in Sources */,
 				A77F4BC4282AD1010046921B /* RegisterGenderView.swift in Sources */,
 				A776B93C285B1F17005496DC /* HangoutMakeCalendarPickerViewModel.swift in Sources */,
+				AFEC36AE2902916B00687C18 /* WriteReviewViewModel.swift in Sources */,
 				A71411AA28985F8A002D4714 /* LanguageSettingViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -16,11 +16,11 @@ final class SelectionButton: UIButton {
     var font: UIFont = .roboto(size: 16.0, family: .Medium)
     
     // MARK: Lifecycle
-    init(title: String) {
+    init(title: String, isSmall: Bool = false) {
         self.title = title
         
         super.init(frame: .zero)
-        configure()
+        configure(isSmall)
     }
     
     required init?(coder: NSCoder) {
@@ -28,7 +28,7 @@ final class SelectionButton: UIButton {
     }
     
     // MARK: Helpers
-    private func configure() {
+    private func configure(_ isSmall: Bool) {
         self.layer.cornerRadius = 3.5
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: 1.0)
@@ -37,7 +37,7 @@ final class SelectionButton: UIButton {
         // 임시
         self.setBappyTitle(
             title: title,
-            font: .roboto(size: 16.0, family: .Medium),
+            font: .roboto(size: isSmall ? 14.0 : 16.0, family: .Medium),
             color: .bappyGray
         )
         self.backgroundColor = .bappyLightgray

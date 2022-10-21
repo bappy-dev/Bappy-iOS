@@ -9,26 +9,27 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-struct WriteReviewViewModel {}
-
 final class GotoReviewViewModel: ViewModelType {
     struct Dependency {
         let hangoutID: String
         let bappyAuthRepository: BappyAuthRepository
+        let hangoutRepository: HangoutRepository
         
         init(hangoutID: String,
-             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
             self.hangoutID = hangoutID
             self.bappyAuthRepository = bappyAuthRepository
+            self.hangoutRepository = hangoutRepository
         }
     }
     
     struct Input {
-        var okayButtonTapped: AnyObserver<Void>
+        var okayButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
-        var moveToWriteReviewView: Signal<WriteReviewViewModel?>
+        var moveToWriteReviewView: Driver<(HangoutDetailViewModel, WriteReviewViewModel)?> // <-> View
     }
     
     let dependency: Dependency
@@ -38,14 +39,16 @@ final class GotoReviewViewModel: ViewModelType {
     
     private let okayButtonTapped$ = PublishSubject<Void>()
     
-    private let moveToWriteReviewView$ = PublishSubject<WriteReviewViewModel?>()
+    private let hangoutDetail$ = BehaviorSubject<Hangout?>(value: nil)
+    private let targetList$ = BehaviorSubject<Hangout?>(value: nil)
+    private let moveToWriteReviewView$ = PublishSubject<(HangoutDetailViewModel, WriteReviewViewModel)?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // MARK: Streams
+        let currentUser$ = dependency.bappyAuthRepository.currentUser
         let moveToWriteReviewView = moveToWriteReviewView$
-            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -53,15 +56,54 @@ final class GotoReviewViewModel: ViewModelType {
         )
         
         self.output = Output(
-            moveToWriteReviewView: moveToWriteReviewView
+            moveToWriteReviewView: moveToWriteReviewView.asDriver(onErrorJustReturn: nil)
         )
+
+        let hangoutDetail = okayButtonTapped$
+            .map { _ in dependency.hangoutID }
+            .flatMap(dependency.hangoutRepository.fetchHangout)
+            .share()
+
+        hangoutDetail
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        hangoutDetail
+            .compactMap(getValue)
+            .bind(to: hangoutDetail$)
+            .disposed(by: disposeBag)
+
+        let targetList = okayButtonTapped$
+            .map { _ in dependency.hangoutID }
+            .flatMap(dependency.hangoutRepository.fetchHangout)
+            .share()
+
+        targetList
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        targetList
+            .compactMap(getValue)
+            .bind(to: targetList$)
+            .disposed(by: disposeBag)
         
         // MARK: Binding
-        okayButtonTapped$
-            .map { _  -> WriteReviewViewModel in
-                return WriteReviewViewModel()
+        Observable
+            .combineLatest(hangoutDetail$.compactMap { $0 },
+                           targetList$.compactMap { $0 })
+            .withLatestFrom(currentUser$.compactMap { $0 }) {
+                ($0.0, $0.1, $1)
             }
-            .bind(to: moveToWriteReviewView$)
+            .asDriver(onErrorJustReturn: nil)
+            .compactMap { $0 }
+            .map { hangout, targetList, user  -> (HangoutDetailViewModel, WriteReviewViewModel) in
+                let hangoutDetailViewModel = HangoutDetailViewModel(dependency: HangoutDetailViewModel.Dependency(currentUser: user, hangout: hangout))
+                let writeReviewViewModel = WriteReviewViewModel(dependency: WriteReviewViewModel.Dependency(targetList: targetList))
+                return (hangoutDetailViewModel, writeReviewViewModel)
+            }
+            .drive(moveToWriteReviewView$)
             .disposed(by: disposeBag)
     }
 }
