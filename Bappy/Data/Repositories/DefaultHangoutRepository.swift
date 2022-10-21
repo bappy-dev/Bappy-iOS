@@ -168,6 +168,20 @@ extension DefaultHangoutRepository: HangoutRepository {
             }
     }
     
+    func fetchHangout(hangoutID: String) -> Single<Result<Hangout, Error>> {
+        let endpoint = APIEndpoints.fetchHangout(with: hangoutID)
+        
+        return provider.request(with: endpoint)
+            .map { result -> Result<Hangout, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    print("얍", responseDTO.toDomain())
+                    return .success(responseDTO.toDomain())
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
     // Sample Data
     //        return Single<Result<[Hangout], Error>>.create { single in
     //            let joinedHangouts: [Hangout] = [

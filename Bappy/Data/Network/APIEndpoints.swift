@@ -134,6 +134,13 @@ extension APIEndpoints {
             queryParameters: fetchHangoutsOfUserRequestDTO)
     }
     
+    static func fetchHangout(with hangoutID: String) -> Endpoint<FetchHangoutResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout/\(hangoutID)",
+            method: .get)
+    }
+    
     static func createHangout(with createHangoutRequestDTO: CreateHangoutRequestDTO, data: Data) -> Endpoint<CreateHangoutResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
