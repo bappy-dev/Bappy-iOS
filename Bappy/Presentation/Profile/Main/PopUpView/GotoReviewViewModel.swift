@@ -9,22 +9,25 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-struct WriteReviewViewModel {}
+final class WriteReviewViewModel {}
 
 final class GotoReviewViewModel: ViewModelType {
     struct Dependency {
         let hangoutID: String
         let bappyAuthRepository: BappyAuthRepository
+        let hangoutRepository: HangoutRepository
         
         init(hangoutID: String,
-             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
             self.hangoutID = hangoutID
             self.bappyAuthRepository = bappyAuthRepository
+            self.hangoutRepository = hangoutRepository
         }
     }
     
     struct Input {
-        var okayButtonTapped: AnyObserver<Void>
+        var okayButtonTapped: AnyObserver<Void> // <-> View
     }
     
     struct Output {
@@ -38,7 +41,7 @@ final class GotoReviewViewModel: ViewModelType {
     
     private let okayButtonTapped$ = PublishSubject<Void>()
     
-    private let moveToWriteReviewView$ = PublishSubject<WriteReviewViewModel?>()
+    private let hangoutDetail$ = BehaviorSubject<Hangout?>(value: nil)
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -55,13 +58,22 @@ final class GotoReviewViewModel: ViewModelType {
         self.output = Output(
             moveToWriteReviewView: moveToWriteReviewView
         )
-        
-        // MARK: Binding
-        okayButtonTapped$
-            .map { _  -> WriteReviewViewModel in
-                return WriteReviewViewModel()
-            }
-            .bind(to: moveToWriteReviewView$)
+
+        let hangoutDetail = okayButtonTapped$
+            .map { _ in dependency.hangoutID }
+            .flatMap(dependency.hangoutRepository.fetchHangout)
+            .share()
+
+        hangoutDetail
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
+        
+        hangoutDetail
+            .compactMap(getValue)
+            .bind(to: hangoutDetail$)
+            .disposed(by: disposeBag)
+
+        // MARK: Binding
     }
 }
