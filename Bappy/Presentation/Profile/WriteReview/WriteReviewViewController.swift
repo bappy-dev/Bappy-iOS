@@ -108,6 +108,7 @@ final class WriteReviewViewController: UIViewController {
         view.backgroundColor = .white
         backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
+        addTargets()
     }
     
     private func layout() {
@@ -139,7 +140,7 @@ final class WriteReviewViewController: UIViewController {
         view.addSubview(targetsScrollView)
         targetsScrollView.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(30.0)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(32.0)
             make.height.equalTo(48.0)
         }
         
@@ -161,6 +162,34 @@ final class WriteReviewViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
         }
     }
+    
+    private func addTargets() {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 23.0
+        
+        targetsScrollView.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        viewModel.dependency.targetList.forEach { targetInfo in
+            let profileImageView: UIImageView = {
+                let imageView = UIImageView()
+                imageView.contentMode = .scaleAspectFill
+                imageView.layer.cornerRadius = ProfileReferenceCell.profileImageViewWidth / 2.0
+                imageView.clipsToBounds = true
+                return imageView
+            }()
+            profileImageView.kf.setImage(with: targetInfo.profileImage, placeholder: UIImage(named: "no_profile_l"))
+            profileImageView.snp.makeConstraints { make in
+                make.width.height.equalTo(48.0)
+            }
+            
+            stackView.addArrangedSubview(profileImageView)
+        }
+    }
+    
 }
 
 // MARK: - Bind
@@ -179,7 +208,6 @@ extension WriteReviewViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.progression
-            .skip(1)
             .drive(progressBarView.rx.setProgression)
             .disposed(by: disposeBag)
         
