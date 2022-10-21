@@ -93,7 +93,12 @@ final class WriteReviewViewController: UIViewController {
     private func touchesScrollView() {
         view.endEditing(true)
     }
-
+    
+    private func addTapGestureOnScrollView() {
+        let scrollViewTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(touchesScrollView))
+        targetsScrollView.addGestureRecognizer(scrollViewTapRecognizer)
+    }
+    
     // MARK: Helpers
     private func updateButtonPostion(keyboardHeight: CGFloat) {
         let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
@@ -111,6 +116,7 @@ final class WriteReviewViewController: UIViewController {
         backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         textField.placeholder = "Do you wanna leave a message?"
+        addTapGestureOnScrollView()
         addTargets()
     }
     
