@@ -27,6 +27,7 @@ final class WriteReviewViewModel: ViewModelType {
     
     struct SubViewModels {
         let continueButtonViewModel: ContinueButtonViewModel
+        let reviewSelectTagViewModel: ReviewSelectTagViewModel
     }
     struct Input {
         var viewDidAppear: AnyObserver<Bool> // <-> View
@@ -54,7 +55,8 @@ final class WriteReviewViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            continueButtonViewModel: ContinueButtonViewModel()
+            continueButtonViewModel: ContinueButtonViewModel(),
+            reviewSelectTagViewModel: ReviewSelectTagViewModel()
         )
         
         // MARK: Streams
