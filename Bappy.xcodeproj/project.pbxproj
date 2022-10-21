@@ -314,6 +314,7 @@
 		AFEC36A129012CC000687C18 /* GoToReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A029012CC000687C18 /* GoToReviewViewController.swift */; };
 		AFEC36A32901309200687C18 /* GotoReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A22901309200687C18 /* GotoReviewViewModel.swift */; };
 		AFEC36A52901400900687C18 /* ReferenceTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A42901400900687C18 /* ReferenceTag.swift */; };
+		AFEC36A829028B7600687C18 /* HangoutDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36A729028B7600687C18 /* HangoutDTO.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -618,6 +619,7 @@
 		AFEC36A029012CC000687C18 /* GoToReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoToReviewViewController.swift; sourceTree = "<group>"; };
 		AFEC36A22901309200687C18 /* GotoReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GotoReviewViewModel.swift; sourceTree = "<group>"; };
 		AFEC36A42901400900687C18 /* ReferenceTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceTag.swift; sourceTree = "<group>"; };
+		AFEC36A729028B7600687C18 /* HangoutDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutDTO.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -959,6 +961,7 @@
 		A72964C6289A677300970807 /* Hangout */ = {
 			isa = PBXGroup;
 			children = (
+				AFEC36A629028B6700687C18 /* HangoutDTO */,
 				D6DED0D928FB744700FFB89F /* FilterHangoutsDTO */,
 				A739AB9E289D07CD00C6CE90 /* FetchHangoutsOfUserDTO */,
 				A72964C1289A651C00970807 /* CreateHangoutDTO */,
@@ -2399,6 +2402,14 @@
 			path = PopUpView;
 			sourceTree = "<group>";
 		};
+		AFEC36A629028B6700687C18 /* HangoutDTO */ = {
+			isa = PBXGroup;
+			children = (
+				AFEC36A729028B7600687C18 /* HangoutDTO.swift */,
+			);
+			path = HangoutDTO;
+			sourceTree = "<group>";
+		};
 		D6CC5B6428F1F1C9004C5E9C /* Filter */ = {
 			isa = PBXGroup;
 			children = (
@@ -2666,6 +2677,7 @@
 				A71411C328985F8A002D4714 /* ProfileDetailIntroduceViewModel.swift in Sources */,
 				A72E6F1B28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift in Sources */,
 				A71411AF28985F8A002D4714 /* LanguageSearchViewController.swift in Sources */,
+				AFEC36A829028B7600687C18 /* HangoutDTO.swift in Sources */,
 				A78502F7285A0A4F000FA592 /* HangoutMakeCategoryViewModel.swift in Sources */,
 				A7D80C20285CDBC300F9951A /* SearchPlaceViewModel.swift in Sources */,
 				A73BC9A82875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift in Sources */,
