@@ -27,6 +27,7 @@ final class WriteReviewViewModel: ViewModelType {
     
     struct SubViewModels {
         let continueButtonViewModel: ContinueButtonViewModel
+        let reviewSelectTagViewModel: ReviewSelectTagViewModel
     }
     struct Input {
         var viewDidAppear: AnyObserver<Bool> // <-> View
@@ -47,14 +48,15 @@ final class WriteReviewViewModel: ViewModelType {
     var output: Output
     
     private let viewDidAppear$ = PublishSubject<Bool>()
-    private let index$ = PublishSubject<Int>()
+    private let index$ = BehaviorSubject<Int>(value: 0)
     private let continueButtonTapped$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            continueButtonViewModel: ContinueButtonViewModel()
+            continueButtonViewModel: ContinueButtonViewModel(),
+            reviewSelectTagViewModel: ReviewSelectTagViewModel()
         )
         
         // MARK: Streams
