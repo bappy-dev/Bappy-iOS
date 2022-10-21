@@ -64,6 +64,7 @@ final class HomeFilterViewModel: ViewModelType {
         var isEnglishButtonEnabled: Driver<Bool> // <-> View
         var isKoreanButtonEnabled: Driver<Bool> // <-> View
         var isJapaneseButtonEnabled: Driver<Bool> // <-> View
+        var filterForm: Signal<(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?)>
     }
     
     private let firstDateSelected$ = PublishSubject<Date?>()
@@ -95,6 +96,7 @@ final class HomeFilterViewModel: ViewModelType {
     private let isKoreanButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isJapaneseButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel?>()
+    private let filterForm = BehaviorSubject<(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?)>(value: ([],[],[],Date(),nil))
     
     var dependency: Dependency
     let input: Input
@@ -183,7 +185,7 @@ final class HomeFilterViewModel: ViewModelType {
         
         let showSelectLanguageView = showSelectLanguageView$
             .asSignal(onErrorJustReturn: nil)
-        
+
         self.input = Input(applyButtonTapped: applyButtonTapped$.asObserver(),
                            firstDateSelected: firstDateSelected$.asObserver(),
                            secondDateSelected: secondDateSelected$.asObserver(),
@@ -216,7 +218,8 @@ final class HomeFilterViewModel: ViewModelType {
                              isChineseButtonEnabled: isChineseButtonEnabled,
                              isEnglishButtonEnabled: isEnglishButtonEnabled,
                              isKoreanButtonEnabled: isKoreanButtonEnabled,
-                             isJapaneseButtonEnabled: isJapaneseButtonEnabled)
+                             isJapaneseButtonEnabled: isJapaneseButtonEnabled,
+                             filterForm: filterForm.asSignal(onErrorJustReturn: ([],[],[],Date(),nil)))
         
         // MARK: Binding
         self.weekdays = weekdays$
@@ -313,43 +316,16 @@ final class HomeFilterViewModel: ViewModelType {
             .bind(to: weekdays$)
             .disposed(by: disposeBag)
         
-//        // Goolge Map Image 불러오기
-//        let result = continueButtonTapped$
-//            .withLatestFrom(Observable.combineLatest(page$, numOfPage$))
-//            .filter { $0.0 + 1 == $0.1 }
-//            .withLatestFrom(Observable.combineLatest(
-//                key$, place$.compactMap { $0.map(\.coordinates) }
-//            ))
-//            .do { [weak self] _ in self?.showLoader$.onNext(true) }
-//            .map(dependency.googleMapImageRepository.fetchMapImageData)
-//            .do { [weak self] _ in self?.showLoader$.onNext(false) }
-//            .flatMap { $0 }
-//            .share()
-        
-        
-        let asd = applyButtonTapped$
+        applyButtonTapped$
             .withLatestFrom(
                 Observable.combineLatest(weekdays.asObservable(),
                                          language$,
                                          subViewModels.hangoutMakeCategoryViewModel.output.categories.asObservable(),
                                          firstDateSelected$,
                                          secondDateSelected$))
-            .map { DefaultHangoutRepository().filterHangouts(week: $0, language: $1, hangoutCategory: $2, startDate: $3!, endDate: $4)}
-//            .map { $0 }
-            .flatMap { $0 }
-//            .map { $0 }
-            .share()
-        
-        asd
-            .compactMap(getErrorDescription)
-            .bind(to: self.rx.debugError)
+            .map { ($0, $1, $2, $3!, $4) }
+            .bind(to: filterForm)
             .disposed(by: disposeBag)
-
-        let mapImage = asd
-            .compactMap(getValue)
-//            .map(UIImage.init)
-            .share()
-        
         
         isKoreanButtonEnabled$
             .skip(1)

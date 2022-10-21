@@ -328,6 +328,8 @@
 		D6D6F05F28C943BB0078FBB9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */; };
 		D6D6F06428CA34140078FBB9 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D6F06328CA34140078FBB9 /* Constant.swift */; };
 		D6DED0DB28FB746500FFB89F /* FilterHangoutRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */; };
+		D6F660B32900791500C0EF87 /* HomeFilteredViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */; };
+		D6F660B52900792600C0EF87 /* HomeFilteredViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -639,6 +641,8 @@
 		D6D6F06028C943C50078FBB9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6D6F06328CA34140078FBB9 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterHangoutRequestDTO.swift; sourceTree = "<group>"; };
+		D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilteredViewController.swift; sourceTree = "<group>"; };
+		D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilteredViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2463,9 +2467,10 @@
 		D6CC5B6428F1F1C9004C5E9C /* Filter */ = {
 			isa = PBXGroup;
 			children = (
-				D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */,
-				D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */,
-				D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */,
+				D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */,
+				D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */,
+				D6F660B0290078D100C0EF87 /* SubViewControllers */,
+				D6F660B1290078DC00C0EF87 /* SubComponents */,
 			);
 			path = Filter;
 			sourceTree = "<group>";
@@ -2484,6 +2489,23 @@
 				D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */,
 			);
 			path = FilterHangoutsDTO;
+			sourceTree = "<group>";
+		};
+		D6F660B0290078D100C0EF87 /* SubViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */,
+				D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */,
+			);
+			path = SubViewControllers;
+			sourceTree = "<group>";
+		};
+		D6F660B1290078DC00C0EF87 /* SubComponents */ = {
+			isa = PBXGroup;
+			children = (
+				D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */,
+			);
+			path = SubComponents;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2760,6 +2782,7 @@
 				A7F52CF32865FEC7002523D4 /* HangoutDetailViewModel.swift in Sources */,
 				A76EEE6B285065A100A2CFF6 /* Requestable.swift in Sources */,
 				A7E13A5A288890DC00413AE2 /* ReportImageSectionViewModel.swift in Sources */,
+				D6F660B52900792600C0EF87 /* HomeFilteredViewModel.swift in Sources */,
 				A7751B062886F66800F23241 /* DefaultNotificationRepository.swift in Sources */,
 				A7CE0FA2284B37D60063458F /* HomeListTopSubView.swift in Sources */,
 				A76AE72A289ED47800A8EB9B /* HomeListHolderView.swift in Sources */,
@@ -2778,6 +2801,7 @@
 				AFEC36A52901400900687C18 /* ReferenceTag.swift in Sources */,
 				A76EEE73285065BC00A2CFF6 /* Provider.swift in Sources */,
 				A7F52CFB2865FFBE002523D4 /* HangoutPlanSectionViewModel.swift in Sources */,
+				D6F660B32900791500C0EF87 /* HomeFilteredViewController.swift in Sources */,
 				A77F4BC1282AC8070046921B /* RegisterNameView.swift in Sources */,
 				A73BC9A22875977F00FB9FA9 /* DefaultHangoutRepository.swift in Sources */,
 				A72C06CC283733E50068897C /* ParticipantImageCell.swift in Sources */,
@@ -3038,6 +3062,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow \"Bappy\" to access your photo library to upload your photo.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -3075,6 +3100,7 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow \"Bappy\" to access your photo library to upload your photo.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

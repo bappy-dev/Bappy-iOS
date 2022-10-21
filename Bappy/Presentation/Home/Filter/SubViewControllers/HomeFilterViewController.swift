@@ -20,6 +20,7 @@ final class HomeFilterViewController: UIViewController {
     private var imageLeading: Constraint!
     private let viewModel: HomeFilterViewModel
     private let disposeBag = DisposeBag()
+    private var firstdateob = BehaviorSubject<Date?>(value: nil)
     private var firstDate: Date?
     private var lastDate: Date?
     private var datesRange: [Date] = []
@@ -59,10 +60,10 @@ final class HomeFilterViewController: UIViewController {
     private var year: [Int] = []
     private let month: [String] = ["January", "February", "March", "April", "May","June", "July", "August", "September", "October", "November", "December"]
     
-    private let backButton: UIButton = {
+    private let closeButton: UIButton = {
         let button = UIButton(type: .system)
         let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
-        let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
+        let image = UIImage(systemName: "xmark", withConfiguration: configuration)
         button.setImage(image, for: .normal)
         button.tintColor = .bappyBrown
         return button
@@ -199,8 +200,13 @@ final class HomeFilterViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("deinit")
+    }
+    
     // MARK: Helpers
     private func configure() {
+        //        self.isModalInPresentation = true
         view.backgroundColor = .white
         calendar.delegate = self
         calendar.dataSource = self
@@ -283,11 +289,11 @@ final class HomeFilterViewController: UIViewController {
         
         let baseView = UIView()
         
-        self.view.addSubviews([backButton, filterTitleLbl, scrollView])
+        self.view.addSubviews([filterTitleLbl, scrollView, closeButton])
         scrollView.addSubview(baseView)
         baseView.addSubviews([dayInfoLbl, seperatView, calendar, imageView, previousCalendarPageBtn, nextCalendarPageBtn, seperatView2, pickerView, weekInfoLbl, weekDayScrollView, seperatView3, categoryInfoLbl, vStackView, seperatView4, languageInfoLbl, moreBtn, languageVStackView, applyBtn])
         
-        backButton.snp.makeConstraints {
+        closeButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(15.0)
             $0.leading.equalToSuperview().inset(5.5)
             $0.width.height.equalTo(44.0)
@@ -295,11 +301,11 @@ final class HomeFilterViewController: UIViewController {
         
         filterTitleLbl.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalTo(backButton.snp.centerY)
+            $0.centerY.equalTo(closeButton.snp.centerY)
         }
         
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(backButton.snp.bottom)
+            $0.top.equalTo(filterTitleLbl.snp.bottom).offset(15)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
@@ -310,7 +316,7 @@ final class HomeFilterViewController: UIViewController {
         
         dayInfoLbl.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(28)
-            $0.top.equalToSuperview().inset(38)
+            $0.top.equalToSuperview().inset(5)
             $0.height.equalTo(26)
         }
         
@@ -447,97 +453,72 @@ final class HomeFilterViewController: UIViewController {
 
 extension HomeFilterViewController {
     private func bind() {
-        
-        tapGesture.rx.event.bind { _ in
-            if self.isasdas { // 끄기
-                self.calendar.appearance.headerTitleColor = .black
-                UIView.animate(withDuration: 0.5, delay: 0) {
-                    self.imageView.transform = self.imageView.transform.rotated(by: -(CGFloat.pi / 2))
-                }
-                self.pickerView.isHidden = true
-                self.previousCalendarPageBtn.isHidden = false
-                self.nextCalendarPageBtn.isHidden = false
-                
-                self.isasdas = false
-            } else { // 켜기
-                UIView.animate(withDuration: 0.5, delay: 0) {
-                    self.imageView.transform = self.imageView.transform.rotated(by: CGFloat.pi / 2)
-                }
-                
-                self.calendar.appearance.headerTitleColor = .bappyYellow
-                self.previousCalendarPageBtn.isHidden = true
-                self.nextCalendarPageBtn.isHidden = true
-                self.pickerView.isHidden = false
-                
-                self.isasdas = true
+        tapGesture.rx.event.bind { [weak self] _ in
+            let asd = self?.isasdas ?? true
+            
+            self?.calendar.appearance.headerTitleColor = asd ? .black : .bappyYellow
+            self?.pickerView.isHidden = asd
+            self?.previousCalendarPageBtn.isHidden = !asd
+            self?.nextCalendarPageBtn.isHidden = !asd
+            UIView.animate(withDuration: 0.5, delay: 0) {
+                self?.imageView.transform = CGAffineTransform(rotationAngle: asd ? 0 :  1.57)
             }
+            
+            self?.isasdas.toggle()
         }.disposed(by: disposeBag)
         
         Observable.merge(previousCalendarPageBtn.rx.tap.map { -1 }, nextCalendarPageBtn.rx.tap.map { 1 })
-            .bind {
-                let date = self.calendar.gregorian.date(byAdding: .month, value: $0, to: self.calendar.currentPage)!
+            .bind { [weak self] value in
+                guard let `self` = self else { return }
+                let date = self.calendar.gregorian.date(byAdding: .month, value: value, to: self.calendar.currentPage)!
                 self.calendar.setCurrentPage(date, animated: true)
             }.disposed(by: disposeBag)
         
         let subViewModel = viewModel.subViewModels.hangoutMakeCategoryViewModel
         
-        backButton.rx.tap
-            .bind {
-                self.navigationController?.popViewController(animated: true)
+        closeButton.rx.tap
+            .bind { [weak self] in
+                self?.dismiss(animated: true)
             }.disposed(by: disposeBag)
-        
         sundayButton.rx.tap
             .bind(to: viewModel.input.sundayButtonTapped)
             .disposed(by: disposeBag)
-        
         mondayButton.rx.tap
             .bind(to: viewModel.input.mondayButtonTapped)
             .disposed(by: disposeBag)
-        
         tuesdayButton.rx.tap
             .bind(to: viewModel.input.tuesdayButtonTapped)
             .disposed(by: disposeBag)
-        
         wedsdayButton.rx.tap
             .bind(to: viewModel.input.wedsdayButtonTapped)
             .disposed(by: disposeBag)
-        
         thursdayButton.rx.tap
             .bind(to: viewModel.input.thursdayButtonTapped)
             .disposed(by: disposeBag)
-        
         fridayButton.rx.tap
             .bind(to: viewModel.input.fridayButtonTapped)
             .disposed(by: disposeBag)
-        
         satdayButton.rx.tap
             .bind(to: viewModel.input.satdayButtonTapped)
             .disposed(by: disposeBag)
-        
         koreanButton.rx.tap
             .bind(to: viewModel.input.koreanButtonTapped)
             .disposed(by: disposeBag)
-        
         japaneseButton.rx.tap
             .bind(to: viewModel.input.japaneseButtonTapped)
             .disposed(by: disposeBag)
-        
         chineseButton.rx.tap
             .bind(to: viewModel.input.chineseButtonTapped)
             .disposed(by: disposeBag)
-        
         englishButton.rx.tap
             .bind(to: viewModel.input.englishButtonTapped)
             .disposed(by: disposeBag)
-        
         moreBtn.rx.tap
             .bind(to: viewModel.input.moreButtonTapped)
             .disposed(by: disposeBag)
-        
         applyBtn.rx.tap
             .bind(to: viewModel.input.applyButtonTapped)
             .disposed(by: disposeBag)
-        
         travelButton.rx.tap
             .bind(to: subViewModel.input.travelButtonTapped)
             .disposed(by: disposeBag)
@@ -632,10 +613,10 @@ extension HomeFilterViewController {
             .drive(chineseButton.rx.isSelected)
             .disposed(by: disposeBag)
         viewModel.output.isValid
-            .map {
-                self.applyBtn.isEnabled = $0
-                self.applyBtn.backgroundColor = $0 ? .bappyYellow : .rgb(238, 238, 234, 1)
-                return $0
+            .map { [weak self] isValid in
+                self?.applyBtn.isEnabled = isValid
+                self?.applyBtn.backgroundColor = isValid ? .bappyYellow : .rgb(238, 238, 234, 1)
+                return isValid
             }
             .drive(applyBtn.rx.isEnabled)
             .disposed(by: disposeBag)
@@ -765,6 +746,7 @@ extension HomeFilterViewController: FSCalendarDelegate, FSCalendarDataSource, FS
             firstDate = date
             datesRange = [firstDate!]
         } else if firstDate != nil && lastDate == nil { // 처음만 선택되어있다
+            
             if date <= firstDate! { // 나중에 선택한 날짜가 더 앞에 있을 때 -> 처음 선택한 날짜가 lastDate가 되어야 함
                 lastDate = firstDate
                 firstDate = date
@@ -789,6 +771,27 @@ extension HomeFilterViewController: FSCalendarDelegate, FSCalendarDataSource, FS
             
             datesRange = []
         }
+        
+        Observable.of(firstDate)
+            .bind(to: viewModel.input.firstDateSelected)
+            .disposed(by: disposeBag)
+        
+        Observable.of(lastDate)
+            .bind(to: viewModel.input.secondDateSelected)
+            .disposed(by: disposeBag)
+        
+        configureVisibleCells()
+    }
+    
+    func calendar(_ calendar: FSCalendar, didDeselect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        for day in calendar.selectedDates {
+            calendar.deselect(day)
+        }
+        
+        lastDate = nil
+        firstDate = nil
+        
+        datesRange = []
         
         Observable.of(firstDate)
             .bind(to: viewModel.input.firstDateSelected)
