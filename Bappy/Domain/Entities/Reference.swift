@@ -15,4 +15,31 @@ struct Reference {
     var date: String
     var isCanRead: Bool
     var hangoutID: String
+    
+    
+    enum Tag: Int {
+        case Again, Friendly, Respectful, Talkative, Punctual, Rude, NotAgain, DidntMeet
+        
+        var description: String {
+            switch self {
+            case .Again:
+                return "Again!"
+            case .Friendly:
+                return "Friendly"
+            case .Respectful:
+                return "Respectful"
+            case .Talkative:
+                return "Talkative"
+            case .Punctual:
+                return "Punctual"
+            case .Rude:
+                return "Rude"
+            case .NotAgain:
+                return "Not again"
+            case .DidntMeet:
+                return "Didn't meet"
+            }
+        }
+    }
+    
 }
