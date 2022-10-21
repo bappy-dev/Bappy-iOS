@@ -224,8 +224,9 @@ extension GoToReviewViewController {
         
         viewModel.output.moveToWriteReviewView
             .compactMap { $0 }
-            .emit(onNext: { viewModel in
-                //navigationController?.pushViewController(WriteReviewViewController(viewModel: viewModel), animated: false)
+            .emit(onNext: { [unowned self] (hangoutDetailViewModel, writeReviewViewModel) in
+                self.presentingViewController?.navigationController?.pushViewController(HangoutDetailViewController(viewModel: hangoutDetailViewModel), animated: true)
+                self.animateDismissView()
             })
             .disposed(by: disposeBag)
     }
