@@ -9,8 +9,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class WriteReviewViewModel {}
-
 final class GotoReviewViewModel: ViewModelType {
     struct Dependency {
         let hangoutID: String
@@ -31,7 +29,7 @@ final class GotoReviewViewModel: ViewModelType {
     }
     
     struct Output {
-        var moveToWriteReviewView: Signal<(HangoutDetailViewModel, WriteReviewViewModel)?> // <-> View
+        var moveToWriteReviewView: Driver<(HangoutDetailViewModel, WriteReviewViewModel)?> // <-> View
     }
     
     let dependency: Dependency
@@ -42,6 +40,7 @@ final class GotoReviewViewModel: ViewModelType {
     private let okayButtonTapped$ = PublishSubject<Void>()
     
     private let hangoutDetail$ = BehaviorSubject<Hangout?>(value: nil)
+    private let targetList$ = BehaviorSubject<Hangout?>(value: nil)
     private let moveToWriteReviewView$ = PublishSubject<(HangoutDetailViewModel, WriteReviewViewModel)?>()
     
     init(dependency: Dependency) {
@@ -50,7 +49,6 @@ final class GotoReviewViewModel: ViewModelType {
         // MARK: Streams
         let currentUser$ = dependency.bappyAuthRepository.currentUser
         let moveToWriteReviewView = moveToWriteReviewView$
-            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -58,7 +56,7 @@ final class GotoReviewViewModel: ViewModelType {
         )
         
         self.output = Output(
-            moveToWriteReviewView: moveToWriteReviewView
+            moveToWriteReviewView: moveToWriteReviewView.asDriver(onErrorJustReturn: nil)
         )
 
         let hangoutDetail = okayButtonTapped$
@@ -76,18 +74,36 @@ final class GotoReviewViewModel: ViewModelType {
             .bind(to: hangoutDetail$)
             .disposed(by: disposeBag)
 
+        let targetList = okayButtonTapped$
+            .map { _ in dependency.hangoutID }
+            .flatMap(dependency.hangoutRepository.fetchHangout)
+            .share()
+
+        targetList
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        targetList
+            .compactMap(getValue)
+            .bind(to: targetList$)
+            .disposed(by: disposeBag)
+        
         // MARK: Binding
-        hangoutDetail$
-            .compactMap { $0 }
+        Observable
+            .combineLatest(hangoutDetail$.compactMap { $0 },
+                           targetList$.compactMap { $0 })
             .withLatestFrom(currentUser$.compactMap { $0 }) {
-                ($0, $1)
+                ($0.0, $0.1, $1)
             }
-            .map { hangout, user  -> (HangoutDetailViewModel, WriteReviewViewModel) in
+            .asDriver(onErrorJustReturn: nil)
+            .compactMap { $0 }
+            .map { hangout, targetList, user  -> (HangoutDetailViewModel, WriteReviewViewModel) in
                 let hangoutDetailViewModel = HangoutDetailViewModel(dependency: HangoutDetailViewModel.Dependency(currentUser: user, hangout: hangout))
-                let writeReviewViewModel = WriteReviewViewModel()
+                let writeReviewViewModel = WriteReviewViewModel(dependency: WriteReviewViewModel.Dependency(targetList: targetList))
                 return (hangoutDetailViewModel, writeReviewViewModel)
             }
-            .bind(to: moveToWriteReviewView$)
+            .drive(moveToWriteReviewView$)
             .disposed(by: disposeBag)
     }
 }
