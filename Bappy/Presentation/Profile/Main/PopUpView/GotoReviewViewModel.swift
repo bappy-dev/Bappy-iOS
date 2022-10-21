@@ -31,7 +31,7 @@ final class GotoReviewViewModel: ViewModelType {
     }
     
     struct Output {
-        var moveToWriteReviewView: Signal<WriteReviewViewModel?>
+        var moveToWriteReviewView: Signal<(HangoutDetailViewModel, WriteReviewViewModel)?> // <-> View
     }
     
     let dependency: Dependency
@@ -42,11 +42,13 @@ final class GotoReviewViewModel: ViewModelType {
     private let okayButtonTapped$ = PublishSubject<Void>()
     
     private let hangoutDetail$ = BehaviorSubject<Hangout?>(value: nil)
+    private let moveToWriteReviewView$ = PublishSubject<(HangoutDetailViewModel, WriteReviewViewModel)?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // MARK: Streams
+        let currentUser$ = dependency.bappyAuthRepository.currentUser
         let moveToWriteReviewView = moveToWriteReviewView$
             .asSignal(onErrorJustReturn: nil)
         
@@ -75,5 +77,17 @@ final class GotoReviewViewModel: ViewModelType {
             .disposed(by: disposeBag)
 
         // MARK: Binding
+        hangoutDetail$
+            .compactMap { $0 }
+            .withLatestFrom(currentUser$.compactMap { $0 }) {
+                ($0, $1)
+            }
+            .map { hangout, user  -> (HangoutDetailViewModel, WriteReviewViewModel) in
+                let hangoutDetailViewModel = HangoutDetailViewModel(dependency: HangoutDetailViewModel.Dependency(currentUser: user, hangout: hangout))
+                let writeReviewViewModel = WriteReviewViewModel()
+                return (hangoutDetailViewModel, writeReviewViewModel)
+            }
+            .bind(to: moveToWriteReviewView$)
+            .disposed(by: disposeBag)
     }
 }
