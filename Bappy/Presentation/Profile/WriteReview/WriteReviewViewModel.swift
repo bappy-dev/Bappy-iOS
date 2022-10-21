@@ -48,7 +48,7 @@ final class WriteReviewViewModel: ViewModelType {
     var output: Output
     
     private let viewDidAppear$ = PublishSubject<Bool>()
-    private let index$ = PublishSubject<Int>()
+    private let index$ = BehaviorSubject<Int>(value: 0)
     private let continueButtonTapped$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
     
