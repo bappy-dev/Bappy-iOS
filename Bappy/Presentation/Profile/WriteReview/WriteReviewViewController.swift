@@ -48,6 +48,8 @@ final class WriteReviewViewController: UIViewController {
     
     private let tagsView: ReviewSelectTagView
     
+    private let textField = BappyTextField()
+    
     private let backButton = UIButton()
     
     private let continueButtonView: ContinueButtonView
@@ -108,6 +110,7 @@ final class WriteReviewViewController: UIViewController {
         view.backgroundColor = .white
         backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
+        textField.placeholder = "Do you wanna leave a message?"
         addTargets()
     }
     
@@ -154,6 +157,12 @@ final class WriteReviewViewController: UIViewController {
         tagsView.snp.makeConstraints { make in
             make.top.equalTo(progressBarView.snp.bottom).offset(30.0)
             make.leading.trailing.equalToSuperview().inset(20.0)
+        }
+        
+        view.addSubview(textField)
+        textField.snp.makeConstraints { make in
+            make.top.equalTo(tagsView.snp.bottom).offset(34.0)
+            make.leading.trailing.equalToSuperview().inset(23.0)
         }
         
         view.addSubview(continueButtonView)
