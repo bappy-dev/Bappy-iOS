@@ -320,6 +320,7 @@
 		AFEC36B02902918D00687C18 /* WriteReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36AF2902918D00687C18 /* WriteReviewViewController.swift */; };
 		AFEC36B32902B63700687C18 /* ReviewSelectTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */; };
 		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
+		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -630,6 +631,7 @@
 		AFEC36AF2902918D00687C18 /* WriteReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteReviewViewController.swift; sourceTree = "<group>"; };
 		AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagView.swift; sourceTree = "<group>"; };
 		AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagViewModel.swift; sourceTree = "<group>"; };
+		AFEC36B72902E1D100687C18 /* BappyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTextField.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -796,6 +798,7 @@
 		A717323D28361F5F0073E702 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				AFEC36B62902E1BD00687C18 /* BappyTextField */,
 				A709062A28570BB50096E9A0 /* BappyNavigationView */,
 				A709062628570B3A0096E9A0 /* ProgressBar */,
 				A709062928570B9F0096E9A0 /* TopView */,
@@ -2449,6 +2452,14 @@
 			path = Subviews;
 			sourceTree = "<group>";
 		};
+		AFEC36B62902E1BD00687C18 /* BappyTextField */ = {
+			isa = PBXGroup;
+			children = (
+				AFEC36B72902E1D100687C18 /* BappyTextField.swift */,
+			);
+			path = BappyTextField;
+			sourceTree = "<group>";
+		};
 		D6CC5B6428F1F1C9004C5E9C /* Filter */ = {
 			isa = PBXGroup;
 			children = (
@@ -2640,6 +2651,7 @@
 				A75B11C5283CBC1F00C49597 /* BappyDropdownCell.swift in Sources */,
 				A71432D92860CB6F00380DF7 /* HomeSearchViewController.swift in Sources */,
 				A72964CC289AEF0600970807 /* ReportHangoutRequestDTO+Mapping.swift in Sources */,
+				AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */,
 				A71411C628985F8A002D4714 /* ProfileDetailAffiliationView.swift in Sources */,
 				A70C3CC5286B2FC000BB7219 /* BappyTabBarViewModel.swift in Sources */,
 				A71411D128985F8A002D4714 /* DeleteAccountViewModel.swift in Sources */,
