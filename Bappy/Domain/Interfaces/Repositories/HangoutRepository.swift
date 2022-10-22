@@ -20,6 +20,6 @@ protocol HangoutRepository {
     func joinHangout(hangoutID: String) -> Single<Result<Bool, Error>>
     func cancelHangout(hangoutID: String) -> Single<Result<Bool, Error>>
     func reportHangout(hangoutID: String, reportType: String, detail: String, imageDatas: [Data]?) -> Single<Result<Bool, Error>>
-    func searchHangouts(query: String, page: Int) -> Single<Result<HangoutPage, Error>>
+    func searchHangouts(title: String) -> Single<Result<HangoutPage, Error>>
     func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?) -> Single<Result<HangoutPage, Error>>
 }

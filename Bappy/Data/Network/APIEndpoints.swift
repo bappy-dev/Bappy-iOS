@@ -186,10 +186,10 @@ extension APIEndpoints {
             contentType: .multipart)
     }
     
-    static func searchHangouts(with searchHangoutsRequestDTO: SearchHangoutsRequestDTO) -> Endpoint<SearchHangoutsResponseDTO> {
+    static func searchHangouts(with searchHangoutsRequestDTO: SearchHangoutsRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "hangout",
+            path: "hangout/search",
             method: .get,
             queryParameters: searchHangoutsRequestDTO)
     }

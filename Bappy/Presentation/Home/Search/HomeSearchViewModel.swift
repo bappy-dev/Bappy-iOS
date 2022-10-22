@@ -123,11 +123,10 @@ final class HomeSearchViewModel: ViewModelType {
             .withLatestFrom(text$)
             .withLatestFrom(minimumLength$) { (text: $0, minimumLenth: $1) }
             .filter { $0.text.count >= $0.minimumLenth }
-            .map { (query: $0.text, page: 1) }
+            .map { $0.text }
             .share()
         
         newHangoutFlow
-            .map(\.query)
             .bind(to: searchedText$)
             .disposed(by: disposeBag)
         
@@ -138,16 +137,8 @@ final class HomeSearchViewModel: ViewModelType {
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .share()
         
-        let extraHangoutPageResult = page$
-            .filter { $0 >= 2 }
-            .withLatestFrom(searchedText$) { (query: $1, page: $0) }
-            .flatMap(dependency.hangoutRepository.searchHangouts)
-            .observe(on: MainScheduler.asyncInstance)
-            .share()
-        
         // Error 디버깅
-        Observable
-            .merge(newHangoutPageResult, extraHangoutPageResult)
+        newHangoutPageResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
@@ -156,13 +147,7 @@ final class HomeSearchViewModel: ViewModelType {
             .compactMap(getValue)
             .share()
         
-        let extraHangoutPage = extraHangoutPageResult
-            .compactMap(getValue)
-            .share()
-        
-        // totalPage 업데이트
-        Observable
-            .merge(newHangoutPage, extraHangoutPage)
+        newHangoutPage
             .map(\.totalPage)
             .bind(to: totalPage$)
             .disposed(by: disposeBag)
@@ -188,26 +173,26 @@ final class HomeSearchViewModel: ViewModelType {
             .bind(to: cellViewModels$)
             .disposed(by: disposeBag)
         
-        extraHangoutPage
-            .map(\.hangouts)
-            .withLatestFrom(user$) { (hangouts: $0, user: $1) }
-            .map { [weak self] element -> [HangoutCellViewModel] in
-                element.hangouts.map { hangout -> HangoutCellViewModel in
-                    let dependency = HangoutCellViewModel.Dependency(
-                        user: element.user, hangout: hangout)
-                    let viewModel = HangoutCellViewModel(dependency: dependency)
-                    if let self = self {
-                        viewModel.output.showDetailView
-                            .compactMap { $0 }
-                            .emit(to: self.showDetailView$)
-                            .disposed(by: viewModel.disposeBag)
-                    }
-                    return viewModel
-                }
-            }
-            .withLatestFrom(cellViewModels$) { $1 + $0 }
-            .bind(to: cellViewModels$)
-            .disposed(by: disposeBag)
+        //        extraHangoutPage
+        //            .map(\.hangouts)
+        //            .withLatestFrom(user$) { (hangouts: $0, user: $1) }
+        //            .map { [weak self] element -> [HangoutCellViewModel] in
+        //                element.hangouts.map { hangout -> HangoutCellViewModel in
+        //                    let dependency = HangoutCellViewModel.Dependency(
+        //                        user: element.user, hangout: hangout)
+        //                    let viewModel = HangoutCellViewModel(dependency: dependency)
+        //                    if let self = self {
+        //                        viewModel.output.showDetailView
+        //                            .compactMap { $0 }
+        //                            .emit(to: self.showDetailView$)
+        //                            .disposed(by: viewModel.disposeBag)
+        //                    }
+        //                    return viewModel
+        //                }
+        //            }
+        //            .withLatestFrom(cellViewModels$) { $1 + $0 }
+        //            .bind(to: cellViewModels$)
+        //            .disposed(by: disposeBag)
         
         // willDisplayRow가 마지막 전 Cell의 인덱스를 건드리고, totalPage가 page 보다 클 때 page 1 증가 시키기
         willDisplayRow$
@@ -233,8 +218,7 @@ final class HomeSearchViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // Spinner StopAnimating
-        Observable
-            .merge(newHangoutPage, extraHangoutPage)
+        newHangoutPage
             .map(\.totalPage)
             .withLatestFrom(page$) { (totalPage: $0, page: $1) }
             .filter { $0.totalPage == $0.page }
