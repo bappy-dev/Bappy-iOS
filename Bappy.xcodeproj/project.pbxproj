@@ -330,6 +330,7 @@
 		D6DED0DB28FB746500FFB89F /* FilterHangoutRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */; };
 		D6F660B32900791500C0EF87 /* HomeFilteredViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */; };
 		D6F660B52900792600C0EF87 /* HomeFilteredViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */; };
+		D6F660B82903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -643,6 +644,7 @@
 		D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterHangoutRequestDTO.swift; sourceTree = "<group>"; };
 		D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilteredViewController.swift; sourceTree = "<group>"; };
 		D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilteredViewModel.swift; sourceTree = "<group>"; };
+		D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GetGPSResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -958,6 +960,7 @@
 				A70C3CBF286A206700BB7219 /* FetchCurrentUserDTO */,
 				A70C3CD1286B4E1400BB7219 /* FetchProfileDTO */,
 				A7FB695828986A20007B5DCF /* UpdateProfileDTO */,
+				D6F660B62903BE3A00C0EF87 /* GetGPSDTO */,
 				A7751AF7287EB58D00F23241 /* UpdateGPSSettingDTO */,
 				A72964CF289AF18800970807 /* UpdateFCMTokenDTO */,
 				A76AE73428A0F0E000A8EB9B /* FetchNotificationSettingDTO */,
@@ -2508,6 +2511,14 @@
 			path = SubComponents;
 			sourceTree = "<group>";
 		};
+		D6F660B62903BE3A00C0EF87 /* GetGPSDTO */ = {
+			isa = PBXGroup;
+			children = (
+				D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */,
+			);
+			path = GetGPSDTO;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2843,6 +2854,7 @@
 				A739AB95289CE8AE00C6CE90 /* UpdateHangoutParticipationResponseDTO+Mapping.swift in Sources */,
 				A71411A728985F8A002D4714 /* CustomerServiceButton.swift in Sources */,
 				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
+				D6F660B82903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift in Sources */,
 				A71411B028985F8A002D4714 /* ProfileLanguageViewController.swift in Sources */,
 				A76AE73328A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift in Sources */,
 				A71411C228985F8A002D4714 /* ProfileDetailIntroduceView.swift in Sources */,

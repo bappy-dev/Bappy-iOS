@@ -34,6 +34,18 @@ final class DefaultBappyAuthRepository {
 }
 
 extension DefaultBappyAuthRepository: BappyAuthRepository {
+    func getGps() -> Single<Result<GetGPSResponseDTO, Error>> {
+        let endpoint = APIEndpoints.getGps()
+        return provider.request(with: endpoint)
+            .map { result -> Result<GetGPSResponseDTO, Error> in
+                switch result {
+                case .success(let responseDTO):
+                    return .success(responseDTO)
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
     
     static let shared = DefaultBappyAuthRepository()
     var currentUser: BehaviorSubject<BappyUser?> { currentUser$ }
@@ -53,30 +65,30 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<BappyUser, Error>>.create { single in
-//            let user = BappyUser(
-//                id: "abc",
-//                state: .normal,
-//                isUserUsingGPS: false,
-//                name: "David",
-//                gender: .Male,
-//                birth: Date(),
-//                nationality: Country(code: "KR"),
-//                profileImageURL: URL(string: EXAMPLE_IMAGE3_URL),
-//                introduce: "Hello ~~",
-//                affiliation: "Bappy",
-//                languages: ["Korean", "English"],
-//                personalities: [.Empathatic, .Talkative, .Spontaneous],
-//                interests: [.Culture, .Travel, .Language]
-//            )
-//            self.currentUser$.onNext(user)
-//
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(user)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<BappyUser, Error>>.create { single in
+        //            let user = BappyUser(
+        //                id: "abc",
+        //                state: .normal,
+        //                isUserUsingGPS: false,
+        //                name: "David",
+        //                gender: .Male,
+        //                birth: Date(),
+        //                nationality: Country(code: "KR"),
+        //                profileImageURL: URL(string: EXAMPLE_IMAGE3_URL),
+        //                introduce: "Hello ~~",
+        //                affiliation: "Bappy",
+        //                languages: ["Korean", "English"],
+        //                personalities: [.Empathatic, .Talkative, .Spontaneous],
+        //                interests: [.Culture, .Travel, .Language]
+        //            )
+        //            self.currentUser$.onNext(user)
+        //
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(user)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func fetchAnonymousUser() -> Single<BappyUser> {
@@ -93,16 +105,16 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             switch gender {
             case .Male: return "0"
             case .Female: return "1"
-            case .Other: return "2" }
+                case .Other: return "2" }
         }
-
+        
         let requestDTO = CreateUserRequestDTO(
             userName: name,
             userGender: userGender,
             userBirth: birth.toString(dateFormat: "yyyy.MM.dd"),
             userNationality: countryCode
         )
-
+        
         let endpoint = APIEndpoints.createUser(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { [weak self] result -> Result<BappyUser, Error> in
@@ -117,22 +129,22 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<BappyUser, Error>>.create { single in
-//            let user = BappyUser(
-//                id: UUID().uuidString,
-//                state: .normal,
-//                name: name,
-//                gender: Gender(rawValue: gender.rawValue) ?? .Other,
-//                birth: birth,
-//                nationality: Country(code: countryCode))
-//            self.currentUser$.onNext(user)
-//
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(user)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<BappyUser, Error>>.create { single in
+        //            let user = BappyUser(
+        //                id: UUID().uuidString,
+        //                state: .normal,
+        //                name: name,
+        //                gender: Gender(rawValue: gender.rawValue) ?? .Other,
+        //                birth: birth,
+        //                nationality: Country(code: countryCode))
+        //            self.currentUser$.onNext(user)
+        //
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(user)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func deleteUser() -> Single<Result<Bool, Error>> {
@@ -199,23 +211,23 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<Bool, Error>>.create { single in
-//            do {
-//                guard var user = try self.currentUser.value()
-//                else { return Disposables.create() }
-//                user.isUserUsingGPS = setting
-//                self.currentUser$.onNext(user)
-//
-//                DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                    single(.success(.success(true)))
-//                }
-//
-//            } catch {
-//                single(.failure(NetworkError.emptyUser))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<Bool, Error>>.create { single in
+        //            do {
+        //                guard var user = try self.currentUser.value()
+        //                else { return Disposables.create() }
+        //                user.isUserUsingGPS = setting
+        //                self.currentUser$.onNext(user)
+        //
+        //                DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                    single(.success(.success(true)))
+        //                }
+        //
+        //            } catch {
+        //                single(.failure(NetworkError.emptyUser))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func registerFCMToken(_ fcmToken: String) {
@@ -235,44 +247,44 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<[Location], Error>>.create { single in
-//            let locations = [
-//                Location(
-//                    identity: UUID().uuidString,
-//                    name: "Centum Station",
-//                    address: "210 Haeun-daero, Haeundae-gu, Busan, South Korea",
-//                    coordinates: Coordinates(latitude: 35.179495, longitude: 129.124544),
-//                    isSelected: false
-//                ),
-//                Location(
-//                    identity: UUID().uuidString,
-//                    name: "Pusan National University",
-//                    address: "2 Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan, South Korea",
-//                    coordinates: Coordinates(latitude: 35.2339681, longitude: 129.0806855),
-//                    isSelected: false
-//                ),
-//                Location(
-//                    identity: UUID().uuidString,
-//                    name: "Dongseong-ro",
-//                    address: "Dongseong-ro, Jung-gu, Daegu, South Korea",
-//                    coordinates: Coordinates(latitude: 35.8715163, longitude: 128.5959431),
-//                    isSelected: false
-//                ),
-//                Location(
-//                    identity: UUID().uuidString,
-//                    name: "Pangyo-dong",
-//                    address: "Pangyo-dong, Bundang-gu, Seongnam-si, Gyeonggi-do, South Korea",
-//                    coordinates: Coordinates(latitude: 37.3908894, longitude: 127.0967915),
-//                    isSelected: false
-//                ),
-//            ]
-//
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(locations)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<[Location], Error>>.create { single in
+        //            let locations = [
+        //                Location(
+        //                    identity: UUID().uuidString,
+        //                    name: "Centum Station",
+        //                    address: "210 Haeun-daero, Haeundae-gu, Busan, South Korea",
+        //                    coordinates: Coordinates(latitude: 35.179495, longitude: 129.124544),
+        //                    isSelected: false
+        //                ),
+        //                Location(
+        //                    identity: UUID().uuidString,
+        //                    name: "Pusan National University",
+        //                    address: "2 Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan, South Korea",
+        //                    coordinates: Coordinates(latitude: 35.2339681, longitude: 129.0806855),
+        //                    isSelected: false
+        //                ),
+        //                Location(
+        //                    identity: UUID().uuidString,
+        //                    name: "Dongseong-ro",
+        //                    address: "Dongseong-ro, Jung-gu, Daegu, South Korea",
+        //                    coordinates: Coordinates(latitude: 35.8715163, longitude: 128.5959431),
+        //                    isSelected: false
+        //                ),
+        //                Location(
+        //                    identity: UUID().uuidString,
+        //                    name: "Pangyo-dong",
+        //                    address: "Pangyo-dong, Bundang-gu, Seongnam-si, Gyeonggi-do, South Korea",
+        //                    coordinates: Coordinates(latitude: 37.3908894, longitude: 127.0967915),
+        //                    isSelected: false
+        //                ),
+        //            ]
+        //
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(locations)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func createLocation(location: Location) -> Single<Result<Bool, Error>> {
@@ -295,13 +307,13 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<Bool, Error>>.create { single in
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(true)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<Bool, Error>>.create { single in
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(true)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func deleteLocation(id: String) -> Single<Result<Bool, Error>> {
@@ -318,13 +330,13 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<Bool, Error>>.create { single in
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(true)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<Bool, Error>>.create { single in
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(true)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func selectLocation(id: String, isSelected: Bool) -> Single<Result<Bool, Error>> {
@@ -336,7 +348,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
                 case .success(let responseDTO):
                     if let self = self,
                        var user = try self.currentUser$.value(),
-                        isSelected {
+                       isSelected {
                         user.isUserUsingGPS = false
                         self.currentUser$.onNext(user)
                     }
@@ -347,20 +359,20 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<Bool, Error>>.create { [weak self] single in
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                if let self = self,
-//                   var user = try! self.currentUser$.value(),
-//                    isSelected {
-//                    user.isUserUsingGPS = false
-//                    self.currentUser$.onNext(user)
-//                }
-//
-//                single(.success(.success(true)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<Bool, Error>>.create { [weak self] single in
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                if let self = self,
+        //                   var user = try! self.currentUser$.value(),
+        //                    isSelected {
+        //                    user.isUserUsingGPS = false
+        //                    self.currentUser$.onNext(user)
+        //                }
+        //
+        //                single(.success(.success(true)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func fetchNotificationSetting() -> Single<Result<NotificationSetting, Error>> {
@@ -376,15 +388,15 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<NotificationSetting, Error>>.create { single in
-//            let notificationSetting = NotificationSetting(myHangout: true, newHangout: false)
-//
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(notificationSetting)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<NotificationSetting, Error>>.create { single in
+        //            let notificationSetting = NotificationSetting(myHangout: true, newHangout: false)
+        //
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(notificationSetting)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
     
     func updateNotificationSetting(myHangout: Bool?, newHangout: Bool?) -> Single<Result<Bool, Error>> {
@@ -401,12 +413,12 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             }
         
         // Sample Data
-//        return Single<Result<Bool, Error>>.create { single in
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
-//                single(.success(.success(true)))
-//            }
-//
-//            return Disposables.create()
-//        }
+        //        return Single<Result<Bool, Error>>.create { single in
+        //            DispatchQueue.global().asyncAfter(deadline: .now() + 0.4) {
+        //                single(.success(.success(true)))
+        //            }
+        //
+        //            return Disposables.create()
+        //        }
     }
 }

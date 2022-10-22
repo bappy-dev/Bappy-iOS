@@ -62,9 +62,7 @@ final class LocaleSettingHeaderView: UIView {
     }
     
     private func layout() {
-        let topSeparatorView = UIView()
         let bottomSeparatorView = UIView()
-        topSeparatorView.backgroundColor = .black.withAlphaComponent(0.2)
         bottomSeparatorView.backgroundColor = .black.withAlphaComponent(0.2)
         
         self.addSubview(currentLocaleButton)
@@ -75,14 +73,14 @@ final class LocaleSettingHeaderView: UIView {
         
         currentLocaleButton.addSubview(currentLocaleImageView)
         currentLocaleImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(23.0)
+            $0.leading.equalToSuperview().inset(35.0)
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(22.0)
+            $0.width.height.equalTo(18.0)
         }
         
         currentLocaleButton.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.leading.equalTo(currentLocaleImageView.snp.trailing).offset(15.0)
+            $0.leading.equalTo(currentLocaleImageView.snp.trailing).offset(10.0)
             $0.centerY.equalToSuperview()
         }
         
@@ -92,13 +90,6 @@ final class LocaleSettingHeaderView: UIView {
             $0.centerY.equalToSuperview()
             $0.width.equalTo(18.0)
             $0.height.equalTo(14.0)
-        }
-        
-        self.addSubview(topSeparatorView)
-        topSeparatorView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(currentLocaleButton.snp.top)
-            $0.height.equalTo(1.0/3.0)
         }
         
         self.addSubview(bottomSeparatorView)
