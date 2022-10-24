@@ -25,6 +25,8 @@ final class ReviewSelectTagView: UIView {
     private let notAgainButton = SelectionButton(title: Reference.Tag.NotAgain.description, isSmall: true)
     private let didntMeetButton = SelectionButton(title: Reference.Tag.DidntMeet.description, isSmall: true)
     
+    private let setTagsSubject = PublishSubject<[String]>()
+    
     // MARK: Lifecycle
     init(viewModel: ReviewSelectTagViewModel) {
         self.viewModel = viewModel
@@ -40,6 +42,34 @@ final class ReviewSelectTagView: UIView {
     }
     
     // MARK: Helpers
+    func setTags(_ tags: [String]) {
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.Again.description }))
+            .bind(to: againButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.Friendly.description }))
+            .bind(to: friendlyButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.Respectful.description }))
+            .bind(to: respectfulButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.Talkative.description }))
+            .bind(to: talkativeButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.Punctual.description }))
+            .bind(to: punctualButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.Rude.description }))
+            .bind(to: rudeButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.NotAgain.description }))
+            .bind(to: notAgainButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        Observable.just(tags.contains(where: { $0 == Reference.Tag.DidntMeet.description }))
+            .bind(to: didntMeetButton.rx.isSelected)
+            .disposed(by: disposeBag)
+        setTagsSubject.onNext(tags)
+    }
+    
     private func configure() {
         self.backgroundColor = .white
         for button in [
@@ -99,6 +129,9 @@ extension ReviewSelectTagView {
             .disposed(by: disposeBag)
         didntMeetButton.rx.tap
             .bind(to: viewModel.input.didntMeetButtonTapped)
+            .disposed(by: disposeBag)
+        setTagsSubject
+            .bind(to: viewModel.input.setTags)
             .disposed(by: disposeBag)
         
         viewModel.output.isAgainButtonEnabled

@@ -16,6 +16,10 @@ final class WriteReviewViewController: UIViewController {
     private let viewModel: WriteReviewViewModel
     private let disposeBag = DisposeBag()
     
+    private let contentView = UIView()
+    
+    private let backButton = UIButton()
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Bold)
@@ -44,20 +48,17 @@ final class WriteReviewViewController: UIViewController {
     }()
     
     private let targetsScrollView = UIScrollView()
-    private let progressBarView = ProgressBarView()
+    let stackView = UIStackView()
+    private let progressBarView = RoundedProgressBarView()
     
     private let tagsView: ReviewSelectTagView
     
-    private let textField = BappyTextField()
-    
-    private let backButton = UIButton()
-    
-    private let continueButtonView: ContinueButtonView
+    private let moveWithKeyboardView: MoveWithKeyboardView
 
     // MARK: Lifecycle
     init(viewModel: WriteReviewViewModel) {
         self.viewModel = viewModel
-        self.continueButtonView = ContinueButtonView(viewModel: viewModel.subViewModels.continueButtonViewModel)
+        self.moveWithKeyboardView = MoveWithKeyboardView(viewModel: viewModel.subViewModels.moveWithKeyboardViewModel)
         self.tagsView = ReviewSelectTagView(viewModel: viewModel.subViewModels.reviewSelectTagViewModel)
         super.init(nibName: nil, bundle: nil)
         
@@ -74,6 +75,13 @@ final class WriteReviewViewController: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIView.animate(withDuration: 0.4, delay: 0.0) { [unowned self] in
+            self.view.backgroundColor = .gray.withAlphaComponent(0.2)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -101,10 +109,10 @@ final class WriteReviewViewController: UIViewController {
     
     // MARK: Helpers
     private func updateButtonPostion(keyboardHeight: CGFloat) {
-        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
+        let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : 0
 
         UIView.animate(withDuration: 0.4) {
-            self.continueButtonView.snp.updateConstraints {
+            self.moveWithKeyboardView.snp.updateConstraints {
                 $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
             }
             self.view.layoutIfNeeded()
@@ -112,74 +120,80 @@ final class WriteReviewViewController: UIViewController {
     }
     
     private func configure() {
-        view.backgroundColor = .white
-        backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 20.0
+        contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        contentView.clipsToBounds = true
+        
+        backButton.setImage(UIImage(named: "chevron_back")?.withTintColor(.bappyYellow), for: .normal)
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-        textField.placeholder = "Do you wanna leave a message?"
+        
+        targetsScrollView.showsHorizontalScrollIndicator = false
+        
         addTapGestureOnScrollView()
         addTargets()
     }
     
     private func layout() {
-//        view.addSubview(backButton)
-//        backButton.snp.makeConstraints {
-//            $0.top.equalTo(progressBarView.snp.bottom).offset(15.0)
-//            $0.leading.equalToSuperview().inset(5.5)
-//            $0.width.height.equalTo(44.0)
-//        }
-
-        view.addSubview(titleLabel)
+        view.addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(510.0)
+        }
+        
+        contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(16.0)
             make.centerX.equalToSuperview()
         }
         
-        view.addSubview(divider)
+        contentView.addSubview(backButton)
+        backButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(15.0)
+            make.centerY.equalTo(titleLabel)
+            make.width.height.equalTo(44.0)
+        }
+        
+        contentView.addSubview(divider)
         divider.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(18.0)
             make.leading.trailing.equalToSuperview()
         }
         
-        view.addSubview(descriptionLabel)
+        contentView.addSubview(descriptionLabel)
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(divider.snp.bottom).offset(30.0)
             make.centerX.equalToSuperview()
         }
         
-        view.addSubview(targetsScrollView)
+        contentView.addSubview(targetsScrollView)
         targetsScrollView.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(30.0)
             make.leading.trailing.equalToSuperview().inset(32.0)
             make.height.equalTo(48.0)
         }
         
-        view.addSubview(progressBarView)
+        contentView.addSubview(progressBarView)
         progressBarView.snp.makeConstraints { make in
             make.top.equalTo(targetsScrollView.snp.bottom).offset(8.0)
             make.leading.trailing.equalToSuperview().inset(23.0)
         }
         
-        view.addSubview(tagsView)
+        contentView.addSubview(tagsView)
         tagsView.snp.makeConstraints { make in
             make.top.equalTo(progressBarView.snp.bottom).offset(30.0)
             make.leading.trailing.equalToSuperview().inset(20.0)
         }
         
-        view.addSubview(textField)
-        textField.snp.makeConstraints { make in
-            make.top.equalTo(tagsView.snp.bottom).offset(34.0)
-            make.leading.trailing.equalToSuperview().inset(23.0)
-        }
+        contentView.addSubview(moveWithKeyboardView)
         
-        view.addSubview(continueButtonView)
-        continueButtonView.snp.makeConstraints {
+        moveWithKeyboardView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
     private func addTargets() {
-        let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 23.0
         
@@ -194,6 +208,7 @@ final class WriteReviewViewController: UIViewController {
                 imageView.contentMode = .scaleAspectFill
                 imageView.layer.cornerRadius = ProfileReferenceCell.profileImageViewWidth / 2.0
                 imageView.clipsToBounds = true
+                imageView.layer.borderColor = UIColor.bappyYellow.cgColor
                 return imageView
             }()
             profileImageView.kf.setImage(with: targetInfo.profileImage, placeholder: UIImage(named: "no_profile_l"))
@@ -205,17 +220,34 @@ final class WriteReviewViewController: UIViewController {
         }
     }
     
+    private func setTargetIndex(_ index: Int) {
+        UIView.animate(withDuration: 0.4) { [unowned self] in
+            self.stackView.arrangedSubviews.forEach { target in
+                target.layer.borderWidth = 0
+            }
+            if index < self.stackView.arrangedSubviews.count {
+                self.stackView.arrangedSubviews[index].layer.borderWidth = 5.0
+            }
+            self.targetsScrollView.setContentOffset(CGPoint(x: min(stackView.frame.width - targetsScrollView.frame.width, (48.0 + 23.0) * Double(index)), y: 0.0), animated: false)
+        }
+    }
 }
 
 // MARK: - Bind
 extension WriteReviewViewController {
     private func bind() {
-        backButton.rx.tap
-            .bind(to: viewModel.input.backButtonTapped)
-            .disposed(by: disposeBag)
-        
         self.rx.viewDidAppear
             .bind(to: viewModel.input.viewDidAppear)
+            .disposed(by: disposeBag)
+        
+        backButton.rx.tap
+            .subscribe(onNext: { [unowned self] in
+                UIView.animate(withDuration: 0.4, delay: 0.0) { [unowned self] in
+                    self.view.backgroundColor = .clear
+                } completion: { _ in
+                    self.dismiss(animated: true)
+                }
+            })
             .disposed(by: disposeBag)
         
         viewModel.output.shouldKeyboardHide
@@ -229,6 +261,18 @@ extension WriteReviewViewController {
         viewModel.output.initProgression
             .emit(to: progressBarView.rx.initProgression)
             .disposed(by: disposeBag)
+        
+        viewModel.output.nowValues
+            .drive { [unowned self] makeReviewModel in
+                self.tagsView.setTags(makeReviewModel.tags)
+                self.moveWithKeyboardView.setText(makeReviewModel.message)
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.index
+            .drive { [unowned self] index in
+                self.setTargetIndex(index)
+            }
         
         RxKeyboard.instance.visibleHeight
             .skip(1)

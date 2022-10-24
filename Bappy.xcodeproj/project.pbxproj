@@ -308,6 +308,9 @@
 		A7F52D042866CFE0002523D4 /* OpenMapPopupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F52D032866CFE0002523D4 /* OpenMapPopupViewModel.swift */; };
 		A7F52D072866E4EE002523D4 /* HangoutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F52D062866E4EE002523D4 /* HangoutButton.swift */; };
 		A7FB6957289869B1007B5DCF /* ProfileHangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */; };
+		AF0A3B24290699E200AFD752 /* MoveWithKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */; };
+		AF0A3B2629069D0700AFD752 /* MoveWithKeyboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */; };
+		AF0A3B282906CCAB00AFD752 /* RoundedProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */; };
 		AFEC369A2900310300687C18 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36992900310300687C18 /* Reference.swift */; };
 		AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */; };
 		AFEC369E2901066400687C18 /* ReferenceCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369D2901066400687C18 /* ReferenceCellState.swift */; };
@@ -622,6 +625,9 @@
 		A7F52D032866CFE0002523D4 /* OpenMapPopupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenMapPopupViewModel.swift; sourceTree = "<group>"; };
 		A7F52D062866E4EE002523D4 /* HangoutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangoutButton.swift; sourceTree = "<group>"; };
 		A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHangoutCell.swift; sourceTree = "<group>"; };
+		AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveWithKeyboardView.swift; sourceTree = "<group>"; };
+		AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveWithKeyboardViewModel.swift; sourceTree = "<group>"; };
+		AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressBarView.swift; sourceTree = "<group>"; };
 		AFEC36992900310300687C18 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileReferenceCell.swift; sourceTree = "<group>"; };
 		AFEC369D2901066400687C18 /* ReferenceCellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceCellState.swift; sourceTree = "<group>"; };
@@ -704,6 +710,7 @@
 			isa = PBXGroup;
 			children = (
 				A7EB77FE282A9BB400E3E965 /* ProgressBarView.swift */,
+				AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */,
 			);
 			path = ProgressBar;
 			sourceTree = "<group>";
@@ -2455,6 +2462,8 @@
 			children = (
 				AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */,
 				AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */,
+				AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */,
+				AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -2746,6 +2755,7 @@
 				A71411D528985F8A002D4714 /* ProfileSettingNotificationViewModel.swift in Sources */,
 				A7F52CEC2864A66F002523D4 /* Location.swift in Sources */,
 				A70B0D69286C7395009EBF33 /* CreateUserResponseDTO+Mapping.swift in Sources */,
+				AF0A3B24290699E200AFD752 /* MoveWithKeyboardView.swift in Sources */,
 				A71411B728985F8A002D4714 /* ProfileEditLanguageView.swift in Sources */,
 				A75B11B4283BE66200C49597 /* BappyTabBar.swift in Sources */,
 				A7598C7C282EA90D00F96E39 /* Country.swift in Sources */,
@@ -2793,6 +2803,7 @@
 				A7F52CF32865FEC7002523D4 /* HangoutDetailViewModel.swift in Sources */,
 				A76EEE6B285065A100A2CFF6 /* Requestable.swift in Sources */,
 				A7E13A5A288890DC00413AE2 /* ReportImageSectionViewModel.swift in Sources */,
+				AF0A3B2629069D0700AFD752 /* MoveWithKeyboardViewModel.swift in Sources */,
 				D6F660B52900792600C0EF87 /* HomeFilteredViewModel.swift in Sources */,
 				A7751B062886F66800F23241 /* DefaultNotificationRepository.swift in Sources */,
 				A7CE0FA2284B37D60063458F /* HomeListTopSubView.swift in Sources */,
@@ -2819,6 +2830,7 @@
 				A753CB73284E415200167450 /* OpenMapPopupViewController.swift in Sources */,
 				A78502FD285A181A000FA592 /* HangoutMakeTimeViewModel.swift in Sources */,
 				A75B11C3283CB14B00C49597 /* BappyDropdownView.swift in Sources */,
+				AF0A3B282906CCAB00AFD752 /* RoundedProgressBarView.swift in Sources */,
 				A739AB9D289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift in Sources */,
 				A71411C428985F8A002D4714 /* ProfileDetailLanguageView.swift in Sources */,
 				A7A6B0062845010200911861 /* SearchPlaceCell.swift in Sources */,

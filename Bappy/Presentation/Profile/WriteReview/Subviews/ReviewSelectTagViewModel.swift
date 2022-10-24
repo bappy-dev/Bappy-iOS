@@ -22,6 +22,7 @@ final class ReviewSelectTagViewModel: ViewModelType {
         var rudeButtonTapped: AnyObserver<Void> // <-> View
         var notAgainButtonTapped: AnyObserver<Void> // <-> View
         var didntMeetButtonTapped: AnyObserver<Void> // <-> View
+        var setTags: AnyObserver<[String]> // <-> View
     }
     
     struct Output {
@@ -51,6 +52,7 @@ final class ReviewSelectTagViewModel: ViewModelType {
     private let rudeButtonTapped$ = PublishSubject<Void>()
     private let notAgainButtonTapped$ = PublishSubject<Void>()
     private let didntMeetButtonTapped$ = PublishSubject<Void>()
+    private let setTags$ = PublishSubject<[String]>()
     
     private let isAgainButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isFriendlyButtonEnabled$ = BehaviorSubject<Bool>(value: false)
@@ -128,7 +130,8 @@ final class ReviewSelectTagViewModel: ViewModelType {
             punctualButtonTapped: punctualButtonTapped$.asObserver(),
             rudeButtonTapped: rudeButtonTapped$.asObserver(),
             notAgainButtonTapped: notAgainButtonTapped$.asObserver(),
-            didntMeetButtonTapped: didntMeetButtonTapped$.asObserver())
+            didntMeetButtonTapped: didntMeetButtonTapped$.asObserver(),
+            setTags: setTags$.asObserver())
         
         self.output = Output(
             tags: tags,
@@ -234,5 +237,19 @@ final class ReviewSelectTagViewModel: ViewModelType {
             }
             .bind(to: tags$)
             .disposed(by: disposeBag)
+        
+        setTags$
+            .subscribe(onNext: { [unowned self] tags in
+                self.isAgainButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.Again.description }))
+                self.isFriendlyButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.Friendly.description }))
+                self.isRespectfulButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.Respectful.description }))
+                self.isTalkativeButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.Talkative.description }))
+                self.isPunctualButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.Punctual.description }))
+                self.isRudeButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.Rude.description }))
+                self.isNotAgainButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.NotAgain.description }))
+                self.isDidntMeetButtonEnabled$.onNext(tags.contains(where: { $0 == Reference.Tag.DidntMeet.description }))
+            })
+            .disposed(by: disposeBag)
+        
     }
 }

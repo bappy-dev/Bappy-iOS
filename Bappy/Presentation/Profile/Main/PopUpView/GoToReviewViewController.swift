@@ -227,7 +227,11 @@ extension GoToReviewViewController {
             .drive(onNext: { [unowned self] (hangoutDetailViewModel, writeReviewViewModel) in
                 let detailVC = HangoutDetailViewController(viewModel: hangoutDetailViewModel)
                 self.presentingViewController?.navigationController?.pushViewController(detailVC, animated: true)
-                detailVC.present(WriteReviewViewController(viewModel: writeReviewViewModel), animated: true)
+                
+                let writeReviewVC = WriteReviewViewController(viewModel: writeReviewViewModel)
+                writeReviewVC.modalPresentationStyle = .overCurrentContext
+                writeReviewVC.modalTransitionStyle = .coverVertical
+                detailVC.present(writeReviewVC, animated: true)
                 self.animateDismissView()
             })
             .disposed(by: disposeBag)
