@@ -193,12 +193,12 @@ final class LocaleSearchViewModel: ViewModelType {
             .flatMap(dependency.bappyAuthRepository.createLocation)
             .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .share()
-        
+
         createLocationResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         createLocationResult
             .compactMap(getValue)
             .map { _ in }

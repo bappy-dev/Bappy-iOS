@@ -137,10 +137,10 @@ extension HomeListViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.showFilterView
+        viewModel.output.showFilteredView
             .compactMap { $0 }
             .emit { [weak self] viewModel in
-                let viewController = HomeFilterViewController(viewModel: viewModel)
+                let viewController = HomeFilteredViewController(viewModel: viewModel)
                 viewController.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(viewController, animated: true)
             }.disposed(by: disposeBag)

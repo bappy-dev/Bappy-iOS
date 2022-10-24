@@ -59,6 +59,13 @@ struct APIEndpoints {
             contentType: .urlencoded)
     }
     
+    static func getGps() -> Endpoint<GetGPSResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "place/gps",
+            method: .get)
+    }
+    
     static func updateFCMToken(with updateFCMTokenRequestDTO: UpdateFCMTokenRequestDTO) -> Endpoint<UpdateFCMTokenResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -186,10 +193,10 @@ extension APIEndpoints {
             contentType: .multipart)
     }
     
-    static func searchHangouts(with searchHangoutsRequestDTO: SearchHangoutsRequestDTO) -> Endpoint<SearchHangoutsResponseDTO> {
+    static func searchHangouts(with searchHangoutsRequestDTO: SearchHangoutsRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "hangout",
+            path: "hangout/search",
             method: .get,
             queryParameters: searchHangoutsRequestDTO)
     }
@@ -211,7 +218,7 @@ extension APIEndpoints {
             path: "user/locations",
             method: .get)
     }
-    
+
     static func createLocation(with createLocationRequestDTO: CreateLocationRequestDTO) -> Endpoint<CreateLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -220,7 +227,7 @@ extension APIEndpoints {
             bodyParameters: createLocationRequestDTO,
             contentType: .urlencoded)
     }
-    
+
     static func deleteLocation(with deleteLocationRequestDTO: DeleteLocationRequestDTO) -> Endpoint<DeleteLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -228,7 +235,7 @@ extension APIEndpoints {
             method: .delete,
             queryParameters: deleteLocationRequestDTO)
     }
-    
+
     static func selectLocation(with selectLocationRequestDTO: SelectLocationRequestDTO) -> Endpoint<SelectLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,

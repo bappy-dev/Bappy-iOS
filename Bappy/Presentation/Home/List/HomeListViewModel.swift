@@ -48,7 +48,7 @@ final class HomeListViewModel: ViewModelType {
         var cellViewModels: Driver<[HangoutCellViewModel]> // <-> View
         var showLocaleView: Signal<HomeLocationViewModel?> // <-> View
         var showSearchView: Signal<HomeSearchViewModel?> // <-> View
-        var showFilterView: Signal<HomeFilterViewModel?> // <-> View
+        var showFilteredView: Signal<HomeFilteredViewModel?> // <-> View
         var showSortingView: Signal<SortingOrderViewModel?> // <-> View
         var showDetailView: Signal<HangoutDetailViewModel?> // <-> View
         var hideHolderView: Signal<Bool> // <-> View
@@ -118,9 +118,9 @@ final class HomeListViewModel: ViewModelType {
                 return HomeSearchViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
-        let showFilterView = filterButtonTapped$
-            .map { _ -> HomeFilterViewModel? in
-                return HomeFilterViewModel()
+        let showFilteredView = filterButtonTapped$
+            .map { _ -> HomeFilteredViewModel? in
+                return HomeFilteredViewModel()
             }.asSignal(onErrorJustReturn: nil)
         let showSortingView = showSortingView$
             .asSignal(onErrorJustReturn: nil)
@@ -159,7 +159,7 @@ final class HomeListViewModel: ViewModelType {
             cellViewModels: cellViewModels,
             showLocaleView: showLocaleView,
             showSearchView: showSearchView,
-            showFilterView: showFilterView,
+            showFilteredView: showFilteredView,
             showSortingView: showSortingView,
             showDetailView: showDetailView,
             hideHolderView: hideHolderView,

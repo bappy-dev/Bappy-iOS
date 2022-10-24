@@ -91,6 +91,7 @@ final class HomeSearchViewController: UIViewController {
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .white
+        noResultView.isHidden = true
         searchBackgroundView.backgroundColor = .bappyLightgray
         searchBackgroundView.layer.cornerRadius = 17.5
         tableView.tableFooterView = bottomSpinner
@@ -122,6 +123,11 @@ final class HomeSearchViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBackgroundView.snp.bottom).offset(20.0)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        view.addSubview(noResultView)
+        noResultView.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
 }

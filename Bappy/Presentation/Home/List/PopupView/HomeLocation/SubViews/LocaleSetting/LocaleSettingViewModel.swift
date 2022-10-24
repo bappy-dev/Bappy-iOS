@@ -53,6 +53,8 @@ final class LocaleSettingViewModel: ViewModelType {
     private let authorization$: BehaviorSubject<CLAuthorizationStatus>
     private let userGPSWithAuthorization$: BehaviorSubject<(gps: Bool, authorization: CLAuthorizationStatus)>
     private let locations$ = BehaviorSubject<[Location]>(value: [])
+    // FIXME: 추후에 실제 데이터로 테스트시 변수삭제 및 수정 필요
+    private let locationss$ = BehaviorSubject<GetGPSResponseDTO>(value: GetGPSResponseDTO(status: "", message: "", data: false, token: 1))
     
     private let viewWillAppear$ = PublishSubject<Bool>()
     private let editingDidBegin$ = PublishSubject<Void>()
@@ -163,17 +165,17 @@ final class LocaleSettingViewModel: ViewModelType {
         // viewWillAppear 호출 시 데이터 새로 불러오기
         let locationsResult = viewWillAppear$
             .map { _ in }
-            .flatMap(dependency.bappyAuthRepository.fetchLocations)
+            .flatMap(dependency.bappyAuthRepository.getGps)
             .share()
         
         locationsResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         locationsResult
             .compactMap(getValue)
-            .bind(to: locations$)
+            .bind(to: locationss$)
             .disposed(by: disposeBag)
         
         // 4가지 상태(GPS, Authorization): Off/Off, On/Off, Off/On, On/On
@@ -222,7 +224,7 @@ final class LocaleSettingViewModel: ViewModelType {
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
-        // 셀 선택 Flow
+//         셀 선택 Flow
         let selectResult = itemSelected$
             .withLatestFrom(locations$) { indexPath, locations -> Location in
                 return locations[indexPath.row]
@@ -230,12 +232,12 @@ final class LocaleSettingViewModel: ViewModelType {
             .map { (id: $0.identity, isSelcted: !$0.isSelected) }
             .flatMap(dependency.bappyAuthRepository.selectLocation)
             .share()
-        
+
         selectResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         // 선택 상태 뒤집기
         selectResult
             .compactMap(getValue)
@@ -255,18 +257,18 @@ final class LocaleSettingViewModel: ViewModelType {
             }
             .bind(to: locations$)
             .disposed(by: disposeBag)
-        
+
         // 셀 삭제 Flow
         let deleteResult = itemDeleted$
             .withLatestFrom(locations$) { $1[$0.row].identity }
             .flatMap(dependency.bappyAuthRepository.deleteLocation)
             .share()
-        
+
         deleteResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
+
         deleteResult
             .compactMap(getValue)
             .withLatestFrom(itemDeleted$)
@@ -277,13 +279,13 @@ final class LocaleSettingViewModel: ViewModelType {
             }
             .bind(to: locations$)
             .disposed(by: disposeBag)
-    
+
         // Child
         userGPSWithAuthorization$
             .map { $0.gps && ($0.authorization == .authorizedWhenInUse) }
             .bind(to: subViewModels.headerViewModel.input.isUserUsingGPS)
             .disposed(by: disposeBag)
-        
+
         subViewModels.headerViewModel.output.localeButtonTapped
             .emit(to: localeButtonTapped$)
             .disposed(by: disposeBag)

@@ -407,8 +407,8 @@ extension DefaultHangoutRepository: HangoutRepository {
         //        }
     }
     
-    func searchHangouts(query: String, page: Int) -> Single<Result<HangoutPage, Error>> {
-        let requestDTO = SearchHangoutsRequestDTO(query: query, page: page)
+    func searchHangouts(title: String) -> Single<Result<HangoutPage, Error>> {
+        let requestDTO = SearchHangoutsRequestDTO(title: title)
         let endpoint = APIEndpoints.searchHangouts(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { result -> Result<HangoutPage, Error> in

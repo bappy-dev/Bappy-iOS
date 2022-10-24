@@ -107,7 +107,7 @@ extension SearchHangoutsResponseDTO {
                     userHasLiked: element.userHasLiked
                 )
             }
-        return HangoutPage(totalPage: totalPage, hangouts: hangouts)
+        return HangoutPage(totalPage: 0, hangouts: hangouts)
     }
 }
 

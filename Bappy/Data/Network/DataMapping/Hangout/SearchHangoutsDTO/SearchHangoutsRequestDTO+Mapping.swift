@@ -8,6 +8,5 @@
 import Foundation
 
 struct SearchHangoutsRequestDTO: Encodable {
-    let query: String
-    let page: Int
+    let title: String
 }

@@ -117,7 +117,7 @@ final class LocaleSettingViewController: UIViewController {
         
         view.backgroundColor = .bappyLightgray
         tableView.tableHeaderView = currentLocaleView
-        currentLocaleView.frame.size.height = 90.0
+        currentLocaleView.frame.size.height = 40.0
         topSectionView.backgroundColor = .white
     }
     
@@ -149,7 +149,7 @@ final class LocaleSettingViewController: UIViewController {
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.equalTo(topSectionView.snp.bottom).offset(1.0)
+            $0.top.equalTo(topSectionView.snp.bottom)
             $0.leading.equalToSuperview()
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().inset(10.0)
