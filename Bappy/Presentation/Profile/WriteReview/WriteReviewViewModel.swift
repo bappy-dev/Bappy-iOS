@@ -97,16 +97,28 @@ final class WriteReviewViewModel: ViewModelType {
             .distinctUntilChanged()
             .asSignal(onErrorJustReturn: false)
         
-        let nowValues = index$
+        let nowValue = index$
             .withLatestFrom(reviews$) { ($0, $1) }
             .map { (index, reviews) in
-                if index > 0 &&  index < reviews.count {
+                if index >= 0 && index < reviews.count {
+                    print("nowValues", index, reviews[index])
                     return reviews[index]
                 } else {
+                    print("nowValues 새 거", index)
                     return MakeReferenceModel(targetID: "", tags: [], message: "")
                 }
             }
-            .asDriver(onErrorJustReturn: MakeReferenceModel(targetID: "", tags: [], message: ""))
+            .share()
+        
+        nowValue
+            .map { $0.tags }
+            .bind(to: tags$)
+            .disposed(by: disposeBag)
+
+        nowValue
+            .map { $0.message }
+            .bind(to: message$)
+            .disposed(by: disposeBag)
         
         // MARK: Input & Output
         self.input = Input(
@@ -121,14 +133,17 @@ final class WriteReviewViewModel: ViewModelType {
             progression: progression,
             initProgression: initProgression,
             shouldKeyboardHide: shouldKeyboardHide,
-            nowValues: nowValues,
+            nowValues: nowValue.asDriver(onErrorJustReturn: MakeReferenceModel(targetID: "",
+                                                                               tags: [],
+                                                                               message: "")),
             isContinueButtonEnabled: isContinueButtonEnabled,
             reviews: reviews$.asSignal(onErrorJustReturn: [])
         )
 
         // MARK: Binding
-        continueButtonTapped$
-            .withLatestFrom(index$) { $1 + 1 }
+        backButtonTapped$
+            .withLatestFrom(index$) { $1 - 1 }
+            .filter { $0 >= 0 }
             .map {
                 print("지금", $0)
                 return $0
@@ -137,23 +152,37 @@ final class WriteReviewViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // 리뷰 작성 또는 업데이트
-        index$
-            .filter {
-                $0 != 0 && $0 < dependency.targetList.count
+        let endNowIndex = continueButtonTapped$
+            .withLatestFrom(Observable.combineLatest(index$, reviews$, tags$, message$)) {
+                ($1.0, $1.1, $1.2, $1.3)
             }
-            .withLatestFrom(Observable.combineLatest(reviews$, tags$, message$)) {
-                ($0, $1.0, $1.1, $1.2)
+            .share()
+        
+        endNowIndex
+            .filter {
+                $0.0 + 1 < dependency.targetList.count
             }
             .map { (index, reviews, tags, message) in
-                print(index, reviews)
-                let review = MakeReferenceModel(targetID: dependency.targetList[index-1].id,
+                index + 1
+            }
+            .bind(to: index$)
+            .disposed(by: disposeBag)
+        
+        endNowIndex
+            .filter {
+                $0.0 + 1 < dependency.targetList.count
+            }
+            .map { (index, reviews, tags, message) in
+                let review = MakeReferenceModel(targetID: dependency.targetList[index].id,
                                                 tags: tags,
                                                 message: message)
-                if index > reviews.count {
+                print(index, reviews, review)
+                if index >= reviews.count {
                     return reviews + [review]
                 } else {
                     var reviews = reviews
-                    reviews[index-1] = review
+                    print("업데이트", review)
+                    reviews[index] = review
                     return reviews
                 }
             }
@@ -161,15 +190,12 @@ final class WriteReviewViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // 마지막, 제츨
-        index$
+        endNowIndex
             .filter {
-                $0 == dependency.targetList.count
-            }
-            .withLatestFrom(Observable.combineLatest(reviews$, tags$, message$)) {
-                ($0, $1.0, $1.1, $1.2)
+                $0.0 + 1 == dependency.targetList.count
             }
             .map { (index, reviews, tags, message) in
-                let review = MakeReferenceModel(targetID: dependency.targetList[index-1].id,
+                let review = MakeReferenceModel(targetID: dependency.targetList[index].id,
                                                 tags: tags,
                                                 message: message)
                 let reviews = reviews + [review]
