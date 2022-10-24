@@ -310,6 +310,7 @@
 		A7FB6957289869B1007B5DCF /* ProfileHangoutCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */; };
 		AF0A3B24290699E200AFD752 /* MoveWithKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */; };
 		AF0A3B2629069D0700AFD752 /* MoveWithKeyboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */; };
+		AF0A3B282906CCAB00AFD752 /* RoundedProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */; };
 		AFEC369A2900310300687C18 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36992900310300687C18 /* Reference.swift */; };
 		AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */; };
 		AFEC369E2901066400687C18 /* ReferenceCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369D2901066400687C18 /* ReferenceCellState.swift */; };
@@ -626,6 +627,7 @@
 		A7FB6956289869B1007B5DCF /* ProfileHangoutCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHangoutCell.swift; sourceTree = "<group>"; };
 		AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveWithKeyboardView.swift; sourceTree = "<group>"; };
 		AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveWithKeyboardViewModel.swift; sourceTree = "<group>"; };
+		AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressBarView.swift; sourceTree = "<group>"; };
 		AFEC36992900310300687C18 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileReferenceCell.swift; sourceTree = "<group>"; };
 		AFEC369D2901066400687C18 /* ReferenceCellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceCellState.swift; sourceTree = "<group>"; };
@@ -708,6 +710,7 @@
 			isa = PBXGroup;
 			children = (
 				A7EB77FE282A9BB400E3E965 /* ProgressBarView.swift */,
+				AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */,
 			);
 			path = ProgressBar;
 			sourceTree = "<group>";
@@ -2827,6 +2830,7 @@
 				A753CB73284E415200167450 /* OpenMapPopupViewController.swift in Sources */,
 				A78502FD285A181A000FA592 /* HangoutMakeTimeViewModel.swift in Sources */,
 				A75B11C3283CB14B00C49597 /* BappyDropdownView.swift in Sources */,
+				AF0A3B282906CCAB00AFD752 /* RoundedProgressBarView.swift in Sources */,
 				A739AB9D289CEE0100C6CE90 /* DeleteUserResponseDTO+Mapping.swift in Sources */,
 				A71411C428985F8A002D4714 /* ProfileDetailLanguageView.swift in Sources */,
 				A7A6B0062845010200911861 /* SearchPlaceCell.swift in Sources */,

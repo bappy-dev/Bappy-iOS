@@ -48,7 +48,7 @@ final class WriteReviewViewController: UIViewController {
     }()
     
     private let targetsScrollView = UIScrollView()
-    private let progressBarView = ProgressBarView()
+    private let progressBarView = RoundedProgressBarView()
     
     private let tagsView: ReviewSelectTagView
     
