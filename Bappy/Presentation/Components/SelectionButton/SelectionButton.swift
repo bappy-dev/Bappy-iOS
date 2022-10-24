@@ -43,6 +43,17 @@ final class SelectionButton: UIButton {
         self.backgroundColor = .bappyLightgray
         self.clipsToBounds = true
     }
+    
+    func off() {
+        isSelected = false
+        setBappyTitle(
+            title: title,
+            font: font,
+            color: .bappyGray
+        )
+        backgroundColor = .bappyLightgray
+        clipsToBounds = true
+    }
 }
 
 // MARK: - Binder
