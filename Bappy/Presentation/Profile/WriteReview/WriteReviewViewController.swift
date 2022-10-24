@@ -107,6 +107,9 @@ final class WriteReviewViewController: UIViewController {
             self.continueButtonView.snp.updateConstraints {
                 $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
             }
+            self.textField.snp.updateConstraints {
+                $0.bottom.equalTo(self.continueButtonView.snp.top)
+            }
             self.view.layoutIfNeeded()
         }
     }
@@ -166,12 +169,12 @@ final class WriteReviewViewController: UIViewController {
         }
         
         view.addSubview(textField)
+        view.addSubview(continueButtonView)
         textField.snp.makeConstraints { make in
-            make.top.equalTo(tagsView.snp.bottom).offset(34.0)
             make.leading.trailing.equalToSuperview().inset(23.0)
+            make.bottom.equalTo(continueButtonView.snp.top)
         }
         
-        view.addSubview(continueButtonView)
         continueButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
@@ -214,6 +217,11 @@ extension WriteReviewViewController {
             .bind(to: viewModel.input.backButtonTapped)
             .disposed(by: disposeBag)
         
+        textField.rx.value
+            .compactMap { $0 }
+            .bind(to: viewModel.input.message)
+            .disposed(by: disposeBag)
+        
         self.rx.viewDidAppear
             .bind(to: viewModel.input.viewDidAppear)
             .disposed(by: disposeBag)
@@ -228,6 +236,13 @@ extension WriteReviewViewController {
         
         viewModel.output.initProgression
             .emit(to: progressBarView.rx.initProgression)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.nowValues
+            .drive { [unowned self] makeReviewModel in
+                self.tagsView.setTags(makeReviewModel.tags)
+                self.textField.text = makeReviewModel.message
+            }
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
