@@ -49,6 +49,7 @@ final class WriteReviewViewModel: ViewModelType {
         var shouldKeyboardHide: Signal<Void> // <-> View
         var nowValues: Driver<MakeReferenceModel> // <-> View
         var isContinueButtonEnabled: Signal<Bool> // <-> Child(Continue)
+        var index: Driver<Int> // <-> View
         var reviews: Signal<[MakeReferenceModel]>
     }
 
@@ -137,6 +138,7 @@ final class WriteReviewViewModel: ViewModelType {
                                                                                tags: [],
                                                                                message: "")),
             isContinueButtonEnabled: isContinueButtonEnabled,
+            index: index$.asDriver(onErrorJustReturn: 0),
             reviews: reviews$.asSignal(onErrorJustReturn: [])
         )
 

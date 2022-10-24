@@ -48,6 +48,7 @@ final class WriteReviewViewController: UIViewController {
     }()
     
     private let targetsScrollView = UIScrollView()
+    let stackView = UIStackView()
     private let progressBarView = RoundedProgressBarView()
     
     private let tagsView: ReviewSelectTagView
@@ -193,7 +194,6 @@ final class WriteReviewViewController: UIViewController {
     }
     
     private func addTargets() {
-        let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 23.0
         
@@ -208,6 +208,7 @@ final class WriteReviewViewController: UIViewController {
                 imageView.contentMode = .scaleAspectFill
                 imageView.layer.cornerRadius = ProfileReferenceCell.profileImageViewWidth / 2.0
                 imageView.clipsToBounds = true
+                imageView.layer.borderColor = UIColor.bappyYellow.cgColor
                 return imageView
             }()
             profileImageView.kf.setImage(with: targetInfo.profileImage, placeholder: UIImage(named: "no_profile_l"))
@@ -219,6 +220,17 @@ final class WriteReviewViewController: UIViewController {
         }
     }
     
+    private func setTargetIndex(_ index: Int) {
+        UIView.animate(withDuration: 0.4) { [unowned self] in
+            self.stackView.arrangedSubviews.forEach { target in
+                target.layer.borderWidth = 0
+            }
+            if index < self.stackView.arrangedSubviews.count {
+                self.stackView.arrangedSubviews[index].layer.borderWidth = 5.0
+            }
+            self.targetsScrollView.setContentOffset(CGPoint(x: min(stackView.frame.width - targetsScrollView.frame.width, (48.0 + 23.0) * Double(index)), y: 0.0), animated: false)
+        }
+    }
 }
 
 // MARK: - Bind
@@ -256,6 +268,11 @@ extension WriteReviewViewController {
                 self.moveWithKeyboardView.setText(makeReviewModel.message)
             }
             .disposed(by: disposeBag)
+        
+        viewModel.output.index
+            .drive { [unowned self] index in
+                self.setTargetIndex(index)
+            }
         
         RxKeyboard.instance.visibleHeight
             .skip(1)
