@@ -25,6 +25,8 @@ final class ReviewSelectTagView: UIView {
     private let notAgainButton = SelectionButton(title: Reference.Tag.NotAgain.description, isSmall: true)
     private let didntMeetButton = SelectionButton(title: Reference.Tag.DidntMeet.description, isSmall: true)
     
+    private let setTagsSubject = PublishSubject<[String]>()
+    
     // MARK: Lifecycle
     init(viewModel: ReviewSelectTagViewModel) {
         self.viewModel = viewModel
@@ -40,6 +42,18 @@ final class ReviewSelectTagView: UIView {
     }
     
     // MARK: Helpers
+    func setTags(_ tags: [String]) {
+        againButton.off()
+        friendlyButton.off()
+        respectfulButton.off()
+        talkativeButton.off()
+        punctualButton.off()
+        rudeButton.off()
+        notAgainButton.off()
+        didntMeetButton.off()
+        setTagsSubject.onNext(tags)
+    }
+    
     private func configure() {
         self.backgroundColor = .white
         for button in [
@@ -99,6 +113,9 @@ extension ReviewSelectTagView {
             .disposed(by: disposeBag)
         didntMeetButton.rx.tap
             .bind(to: viewModel.input.didntMeetButtonTapped)
+            .disposed(by: disposeBag)
+        setTagsSubject
+            .bind(to: viewModel.input.setTags)
             .disposed(by: disposeBag)
         
         viewModel.output.isAgainButtonEnabled
