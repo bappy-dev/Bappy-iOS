@@ -32,15 +32,15 @@ final class WriteReviewViewModel: ViewModelType {
     }
     
     struct SubViewModels {
-        let continueButtonViewModel: ContinueButtonViewModel
+        let moveWithKeyboardViewModel: MoveWithKeyboardViewModel
         let reviewSelectTagViewModel: ReviewSelectTagViewModel
     }
     struct Input {
         var viewDidAppear: AnyObserver<Bool> // <-> View
         var continueButtonTapped: AnyObserver<Void> // <-> Child(Top)
-        var backButtonTapped: AnyObserver<Void> // <-> View
+        var backButtonTapped: AnyObserver<Void> // <-> Child(Top)
         var tags: AnyObserver<[String]> // <-> View
-        var message: AnyObserver<String> // <-> View
+        var message: AnyObserver<String> // <-> Child(Top)
     }
 
     struct Output {
@@ -70,7 +70,7 @@ final class WriteReviewViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            continueButtonViewModel: ContinueButtonViewModel(),
+            moveWithKeyboardViewModel: MoveWithKeyboardViewModel(),
             reviewSelectTagViewModel: ReviewSelectTagViewModel()
         )
         
@@ -193,13 +193,21 @@ final class WriteReviewViewModel: ViewModelType {
             .drive(isTagsValid$)
             .disposed(by: disposeBag)
         
-        // ContinueButton
+        // Child
         output.isContinueButtonEnabled
-            .emit(to: subViewModels.continueButtonViewModel.input.isButtonEnabled)
+            .emit(to: subViewModels.moveWithKeyboardViewModel.input.isButtonEnabled)
             .disposed(by: disposeBag)
         
-        subViewModels.continueButtonViewModel.output.continueButtonTapped
+        subViewModels.moveWithKeyboardViewModel.output.continueButtonTapped
             .emit(to: continueButtonTapped$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.moveWithKeyboardViewModel.output.text
+            .emit(to: message$)
+            .disposed(by: disposeBag)
+        
+        subViewModels.moveWithKeyboardViewModel.output.backButtonTapped
+            .emit(to: backButtonTapped$)
             .disposed(by: disposeBag)
     }
 }

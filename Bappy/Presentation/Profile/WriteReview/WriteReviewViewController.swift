@@ -48,16 +48,12 @@ final class WriteReviewViewController: UIViewController {
     
     private let tagsView: ReviewSelectTagView
     
-    private let textField = BappyTextField()
-    
-    private let backButton = UIButton()
-    
-    private let continueButtonView: ContinueButtonView
+    private let moveWithKeyboardView: MoveWithKeyboardView
 
     // MARK: Lifecycle
     init(viewModel: WriteReviewViewModel) {
         self.viewModel = viewModel
-        self.continueButtonView = ContinueButtonView(viewModel: viewModel.subViewModels.continueButtonViewModel)
+        self.moveWithKeyboardView = MoveWithKeyboardView(viewModel: viewModel.subViewModels.moveWithKeyboardViewModel)
         self.tagsView = ReviewSelectTagView(viewModel: viewModel.subViewModels.reviewSelectTagViewModel)
         super.init(nibName: nil, bundle: nil)
         
@@ -104,11 +100,8 @@ final class WriteReviewViewController: UIViewController {
         let bottomPadding = (keyboardHeight != 0) ? view.safeAreaInsets.bottom : view.safeAreaInsets.bottom * 2.0 / 3.0
 
         UIView.animate(withDuration: 0.4) {
-            self.continueButtonView.snp.updateConstraints {
+            self.moveWithKeyboardView.snp.updateConstraints {
                 $0.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(bottomPadding - keyboardHeight)
-            }
-            self.textField.snp.updateConstraints {
-                $0.bottom.equalTo(self.continueButtonView.snp.top)
             }
             self.view.layoutIfNeeded()
         }
@@ -116,21 +109,11 @@ final class WriteReviewViewController: UIViewController {
     
     private func configure() {
         view.backgroundColor = .white
-        backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
-        backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
-        textField.placeholder = "Do you wanna leave a message?"
         addTapGestureOnScrollView()
         addTargets()
     }
     
     private func layout() {
-//        view.addSubview(backButton)
-//        backButton.snp.makeConstraints {
-//            $0.top.equalTo(progressBarView.snp.bottom).offset(15.0)
-//            $0.leading.equalToSuperview().inset(5.5)
-//            $0.width.height.equalTo(44.0)
-//        }
-
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(16.0)
@@ -168,14 +151,9 @@ final class WriteReviewViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(20.0)
         }
         
-        view.addSubview(textField)
-        view.addSubview(continueButtonView)
-        textField.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(23.0)
-            make.bottom.equalTo(continueButtonView.snp.top)
-        }
+        view.addSubview(moveWithKeyboardView)
         
-        continueButtonView.snp.makeConstraints {
+        moveWithKeyboardView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
         }
@@ -213,15 +191,6 @@ final class WriteReviewViewController: UIViewController {
 // MARK: - Bind
 extension WriteReviewViewController {
     private func bind() {
-        backButton.rx.tap
-            .bind(to: viewModel.input.backButtonTapped)
-            .disposed(by: disposeBag)
-        
-        textField.rx.value
-            .compactMap { $0 }
-            .bind(to: viewModel.input.message)
-            .disposed(by: disposeBag)
-        
         self.rx.viewDidAppear
             .bind(to: viewModel.input.viewDidAppear)
             .disposed(by: disposeBag)
@@ -241,7 +210,7 @@ extension WriteReviewViewController {
         viewModel.output.nowValues
             .drive { [unowned self] makeReviewModel in
                 self.tagsView.setTags(makeReviewModel.tags)
-                self.textField.text = makeReviewModel.message
+                self.moveWithKeyboardView.setText(makeReviewModel.message)
             }
             .disposed(by: disposeBag)
         
