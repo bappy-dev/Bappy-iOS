@@ -51,8 +51,23 @@ final class MoveWithKeyboardView: UIView {
     
     private func configure() {
         self.backgroundColor = .white
-        backButton.setImage(UIImage(named: "chevron_back"), for: .normal)
-        backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
+        backButton.setImage(UIImage(named: "chevron_back")?.withTintColor(.bappyGray), for: .normal)
+        backButton.contentEdgeInsets = UIEdgeInsets(
+            top: 8.0,
+            left: 8.0,
+            bottom: 8.0,
+            right: 16.0
+        )
+        backButton.titleEdgeInsets = UIEdgeInsets(
+            top: 0,
+            left: 8.0,
+            bottom: 0,
+            right: -8.0
+        )
+        backButton.setTitle("back", for: .normal)
+        backButton.setTitleColor(.bappyGray, for: .normal)
+        backButton.imageView?.contentMode = .scaleAspectFit
+        backButton.titleLabel?.font = .roboto(size: 14.0, family: .Medium)
         textField.placeholder = "Do you wanna leave a message?"
     }
     
@@ -69,14 +84,14 @@ final class MoveWithKeyboardView: UIView {
         backButton.snp.makeConstraints {
             $0.centerY.equalTo(continueButton)
             $0.leading.equalToSuperview().inset(30.0)
-            $0.width.height.equalTo(44.0)
+            $0.height.equalTo(44.0)
         }
         
         self.addSubview(continueButton)
         continueButton.snp.makeConstraints { make in
             make.top.equalTo(textField.snp.bottom).offset(10.0)
             make.trailing.equalToSuperview().inset(30.0)
-            make.bottom.equalToSuperview().inset(28.0)
+            make.bottom.equalToSuperview().inset(10.0)
             make.height.equalTo(47.0)
             make.width.equalTo(150.0)
         }
