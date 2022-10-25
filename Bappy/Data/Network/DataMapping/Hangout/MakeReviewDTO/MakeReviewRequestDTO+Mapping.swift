@@ -7,9 +7,13 @@
 
 import Foundation
 
-struct MakeReviewRequestDTO: Encodable {
-    let tags: [String]
-    let message: String
-    let receiveId: String
-    let hangoutInfoId: String
+struct MakeReviewsRequestDTO: Encodable {
+    let reviews: [MakeReviewRequestDTO]
+    
+    struct MakeReviewRequestDTO: Encodable {
+        let tags: [String]
+        let message: String
+        let receiveId: String
+        let hangoutInfoId: String
+    }
 }
