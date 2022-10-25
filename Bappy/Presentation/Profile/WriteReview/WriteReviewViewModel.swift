@@ -202,9 +202,7 @@ final class WriteReviewViewModel: ViewModelType {
                 let review = MakeReferenceModel(targetID: dependency.targetList[index].id,
                                                 tags: tags,
                                                 message: message)
-                let reviews = reviews + [review]
-
-                return dependency.hangoutRepository.makeReview(referenceModel: review, hangoutID: dependency.hangoutID)
+                return dependency.hangoutRepository.makeReviews(referenceModels: reviews + [review], hangoutID: dependency.hangoutID)
             }
             .flatMap { $0 }
             .share()
@@ -222,10 +220,6 @@ final class WriteReviewViewModel: ViewModelType {
             .bind(to: showCompleteView$)
             .disposed(by: disposeBag)
         
-//        endNowIndex
-//            .map { _ in MakeReviewCompletedViewModel(dependency: .init(user: BappyUser(id: "a", state: .normal))) }
-//            .bind(to: showCompleteView$)
-//            .disposed(by: disposeBag)
         
         // Child(Tag)
         subViewModels.reviewSelectTagViewModel.output.tags
