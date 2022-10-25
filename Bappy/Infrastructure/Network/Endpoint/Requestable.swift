@@ -41,6 +41,8 @@ extension Requestable {
         
         switch contentType {
         case .none:
+            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            
             // httpBody
             if let bodyParameters = try bodyParameters?.toDictionary() {
                 if !bodyParameters.isEmpty {
