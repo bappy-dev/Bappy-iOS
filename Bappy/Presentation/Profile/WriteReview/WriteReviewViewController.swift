@@ -211,7 +211,7 @@ final class WriteReviewViewController: UIViewController {
                 imageView.layer.borderColor = UIColor.bappyYellow.cgColor
                 return imageView
             }()
-            profileImageView.kf.setImage(with: targetInfo.profileImage, placeholder: UIImage(named: "no_profile_l"))
+            profileImageView.kf.setImage(with: targetInfo.imageURL, placeholder: UIImage(named: "no_profile_l"))
             profileImageView.snp.makeConstraints { make in
                 make.width.height.equalTo(48.0)
             }
@@ -273,6 +273,25 @@ extension WriteReviewViewController {
             .drive { [unowned self] index in
                 self.setTargetIndex(index)
             }
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showCompleteView
+            .compactMap { $0 }
+            .emit(onNext: { [unowned self] viewModel in
+                guard let pvc = self.presentingViewController else { return }
+                
+                let viewController = MakeReviewCompletedViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                
+                UIView.animate(withDuration: 0.4, delay: 0.0) { [unowned self] in
+                    self.view.backgroundColor = .clear
+                } completion: { _ in
+                    self.dismiss(animated: true) {
+                        pvc.present(viewController, animated: true, completion: nil)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
             .skip(1)
