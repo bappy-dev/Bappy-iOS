@@ -314,6 +314,8 @@
 		AF0A3B2B2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2A2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift */; };
 		AF0A3B2D2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2C2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift */; };
 		AF0A3B302906E17100AFD752 /* FetchReviewsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2F2906E17100AFD752 /* FetchReviewsResponseDTO+Mapping.swift */; };
+		AFBAB3082908198400F23E9F /* MakeReviewCompletedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBAB3072908198400F23E9F /* MakeReviewCompletedViewController.swift */; };
+		AFBAB30A2908198E00F23E9F /* MakeReviewCompletedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBAB3092908198E00F23E9F /* MakeReviewCompletedViewModel.swift */; };
 		AFEC369A2900310300687C18 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36992900310300687C18 /* Reference.swift */; };
 		AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */; };
 		AFEC369E2901066400687C18 /* ReferenceCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369D2901066400687C18 /* ReferenceCellState.swift */; };
@@ -634,6 +636,8 @@
 		AF0A3B2A2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MakeReviewRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		AF0A3B2C2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MakeReviewResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		AF0A3B2F2906E17100AFD752 /* FetchReviewsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchReviewsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		AFBAB3072908198400F23E9F /* MakeReviewCompletedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeReviewCompletedViewController.swift; sourceTree = "<group>"; };
+		AFBAB3092908198E00F23E9F /* MakeReviewCompletedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeReviewCompletedViewModel.swift; sourceTree = "<group>"; };
 		AFEC36992900310300687C18 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileReferenceCell.swift; sourceTree = "<group>"; };
 		AFEC369D2901066400687C18 /* ReferenceCellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceCellState.swift; sourceTree = "<group>"; };
@@ -2447,6 +2451,15 @@
 			path = FetchReviewsDTO;
 			sourceTree = "<group>";
 		};
+		AFBAB3062908195A00F23E9F /* PopUpView */ = {
+			isa = PBXGroup;
+			children = (
+				AFBAB3072908198400F23E9F /* MakeReviewCompletedViewController.swift */,
+				AFBAB3092908198E00F23E9F /* MakeReviewCompletedViewModel.swift */,
+			);
+			path = PopUpView;
+			sourceTree = "<group>";
+		};
 		AFEC369F29012CA800687C18 /* PopUpView */ = {
 			isa = PBXGroup;
 			children = (
@@ -2477,6 +2490,7 @@
 			children = (
 				AFEC36AF2902918D00687C18 /* WriteReviewViewController.swift */,
 				AFEC36AD2902916B00687C18 /* WriteReviewViewModel.swift */,
+				AFBAB3062908195A00F23E9F /* PopUpView */,
 				AFEC36B12902B61B00687C18 /* Subviews */,
 			);
 			path = WriteReview;
@@ -2732,6 +2746,7 @@
 				A72E6F022893BDF300E06BED /* Alertable.swift in Sources */,
 				A71411A828985F8A002D4714 /* CustomerServiceViewController.swift in Sources */,
 				A73BC9B12875A49000FB9FA9 /* HomeLocationViewModel.swift in Sources */,
+				AFBAB3082908198400F23E9F /* MakeReviewCompletedViewController.swift in Sources */,
 				A71411B628985F8A002D4714 /* ProfileEditLanguageViewModel.swift in Sources */,
 				A71432CD2860AB5A00380DF7 /* SelectionLabel.swift in Sources */,
 				A76AE75528A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift in Sources */,
@@ -2798,6 +2813,7 @@
 				A7202D592898B9EF00878012 /* Example.swift in Sources */,
 				A71411C328985F8A002D4714 /* ProfileDetailIntroduceViewModel.swift in Sources */,
 				A72E6F1B28980F6100E06BED /* UpdateProfileResponseDTO+Mapping.swift in Sources */,
+				AFBAB30A2908198E00F23E9F /* MakeReviewCompletedViewModel.swift in Sources */,
 				A71411AF28985F8A002D4714 /* LanguageSearchViewController.swift in Sources */,
 				AFEC36A829028B7600687C18 /* HangoutDTO.swift in Sources */,
 				A78502F7285A0A4F000FA592 /* HangoutMakeCategoryViewModel.swift in Sources */,
