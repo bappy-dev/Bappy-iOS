@@ -407,13 +407,15 @@ extension DefaultHangoutRepository: HangoutRepository {
         //        }
     }
     
-    func makeReview(referenceModel: MakeReferenceModel, hangoutID: String) -> RxSwift.Single<Result<Bool, Error>> {
-        let requestDTO = MakeReviewRequestDTO(
-            tags: referenceModel.tags,
-            message: referenceModel.message,
-            receiveId: referenceModel.targetID,
-            hangoutInfoId: hangoutID)
-        let endpoint = APIEndpoints.makeReview(with: requestDTO)
+    func makeReviews(referenceModels: [MakeReferenceModel], hangoutID: String) -> RxSwift.Single<Result<Bool, Error>> {
+        let requestDTO = MakeReviewsRequestDTO(reviews: referenceModels.map {
+            MakeReviewsRequestDTO.MakeReviewRequestDTO(
+                tags: $0.tags,
+                message: $0.message,
+                receiveId: $0.targetID,
+                hangoutInfoId: hangoutID)
+        })
+        let endpoint = APIEndpoints.makeReviews(with: requestDTO)
         return provider.request(with: endpoint)
             .map { result -> Result<Bool, Error> in
                 switch result {
