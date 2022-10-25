@@ -209,13 +209,13 @@ extension APIEndpoints {
             queryParameters: filterHangoutRequestDTO)
     }
     
-    static func makeReview(with makeReviewRequestDTO: MakeReviewRequestDTO) -> Endpoint<MakeReviewResponseDTO> {
+    static func makeReviews(with makeReviewRequestDTO: MakeReviewsRequestDTO) -> Endpoint<MakeReviewResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangout/review",
             method: .post,
             bodyParameters: makeReviewRequestDTO,
-            contentType: .multipart)
+            contentType: .none)
     }
     
     static func fetchReviews() -> Endpoint<FetchReviewsResponseDTO> {
