@@ -311,6 +311,8 @@
 		AF0A3B24290699E200AFD752 /* MoveWithKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */; };
 		AF0A3B2629069D0700AFD752 /* MoveWithKeyboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */; };
 		AF0A3B282906CCAB00AFD752 /* RoundedProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */; };
+		AF0A3B2B2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2A2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift */; };
+		AF0A3B2D2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2C2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift */; };
 		AF0A3B302906E17100AFD752 /* FetchReviewsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A3B2F2906E17100AFD752 /* FetchReviewsResponseDTO+Mapping.swift */; };
 		AFEC369A2900310300687C18 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36992900310300687C18 /* Reference.swift */; };
 		AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */; };
@@ -629,6 +631,8 @@
 		AF0A3B23290699E200AFD752 /* MoveWithKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveWithKeyboardView.swift; sourceTree = "<group>"; };
 		AF0A3B2529069D0700AFD752 /* MoveWithKeyboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveWithKeyboardViewModel.swift; sourceTree = "<group>"; };
 		AF0A3B272906CCAB00AFD752 /* RoundedProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedProgressBarView.swift; sourceTree = "<group>"; };
+		AF0A3B2A2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MakeReviewRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		AF0A3B2C2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MakeReviewResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		AF0A3B2F2906E17100AFD752 /* FetchReviewsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchReviewsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		AFEC36992900310300687C18 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		AFEC369B2900350400687C18 /* ProfileReferenceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileReferenceCell.swift; sourceTree = "<group>"; };
@@ -991,6 +995,7 @@
 			isa = PBXGroup;
 			children = (
 				AF0A3B2E2906E15C00AFD752 /* FetchReviewsDTO */,
+				AF0A3B292906D97600AFD752 /* MakeReviewDTO */,
 				AFEC36A929028BDA00687C18 /* FetchHangoutDTO */,
 				AFEC36A629028B6700687C18 /* HangoutDTO */,
 				D6DED0D928FB744700FFB89F /* FilterHangoutsDTO */,
@@ -2425,6 +2430,15 @@
 			path = UpdateProfileDTO;
 			sourceTree = "<group>";
 		};
+		AF0A3B292906D97600AFD752 /* MakeReviewDTO */ = {
+			isa = PBXGroup;
+			children = (
+				AF0A3B2A2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift */,
+				AF0A3B2C2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift */,
+			);
+			path = MakeReviewDTO;
+			sourceTree = "<group>";
+		};
 		AF0A3B2E2906E15C00AFD752 /* FetchReviewsDTO */ = {
 			isa = PBXGroup;
 			children = (
@@ -2726,6 +2740,7 @@
 				A73BC9C0287B176900FB9FA9 /* CLLocationRepository.swift in Sources */,
 				A73BC9AD28759F0500FB9FA9 /* HomeListTopSubViewModel.swift in Sources */,
 				A739AB9A289CEAB400C6CE90 /* LikeHangoutResponseDTO+Mapping.swift in Sources */,
+				AF0A3B2B2906D98B00AFD752 /* MakeReviewRequestDTO+Mapping.swift in Sources */,
 				A78502F32859C6B8000FA592 /* HangoutMakeViewModel.swift in Sources */,
 				A7850305285A183A000FA592 /* HangoutMakeLanguageViewModel.swift in Sources */,
 				A717323C28361F580073E702 /* TitleTopView.swift in Sources */,
@@ -2804,6 +2819,7 @@
 				A72964CE289AEF1000970807 /* ReportHangoutResponseDTO+Mapping.swift in Sources */,
 				A7A6AFFE2844DB6000911861 /* HangoutMakeTimePickerView.swift in Sources */,
 				A7F52D042866CFE0002523D4 /* OpenMapPopupViewModel.swift in Sources */,
+				AF0A3B2D2906DAE900AFD752 /* MakeReviewResponseDTO+Mapping.swift in Sources */,
 				AFEC36AB29028BEE00687C18 /* FetchHangoutResponseDTO+Mapping.swift in Sources */,
 				A71432DC2861F7CF00380DF7 /* SelectLanguageViewModel.swift in Sources */,
 				A71411DB28985F8A002D4714 /* ProfileHeaderViewModel.swift in Sources */,
