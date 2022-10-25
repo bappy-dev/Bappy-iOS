@@ -78,7 +78,8 @@ struct HangoutDTO: Decodable {
             postImageURL: postImageURL,
             openchatURL: URL(string: openchatURL),
             mapImageURL: mapImageURL,
-            participantIDs: [],
+            participantIDs: zip(joinedUserIDs, joinedUserImageURL)
+                .map({ Hangout.Info(id: $0, imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")) }),
             userHasLiked: likeStatus
         )
     }
