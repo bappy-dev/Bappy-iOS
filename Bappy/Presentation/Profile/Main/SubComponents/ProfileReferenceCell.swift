@@ -177,11 +177,13 @@ extension ProfileReferenceCell {
         blurEffectView?.removeFromSuperview()
         blurEffectView = nil
         if !referenceCellState.reference.isCanRead && blurEffectView == nil {
-            blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.3)
+            blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.2)
             frameView.addSubview(blurEffectView!)
             blurEffectView!.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
+                make.leading.top.equalTo(tagsView).inset(-10.0)
+                make.trailing.bottom.equalToSuperview()
             }
+            frameView.bringSubviewToFront(nameLabel)
         }
         
         if referenceCellState.isExpanded {

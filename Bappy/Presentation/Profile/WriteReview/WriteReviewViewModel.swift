@@ -9,11 +9,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-struct TargetInfo {
-    var id: String = "aaa"
-    var profileImage: URL? = nil
-}
-
 struct MakeReferenceModel {
     var targetID: String
     var tags: [String]
@@ -22,12 +17,16 @@ struct MakeReferenceModel {
 
 final class WriteReviewViewModel: ViewModelType {
     struct Dependency {
-        let targetList: [TargetInfo]
+        let hangoutID: String
+        let targetList: [Hangout.Info]
         let hangoutRepository: HangoutRepository
+        let bappyAuthRepository: BappyAuthRepository
 
-        init(targetList: Hangout, hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
-            self.targetList = [TargetInfo(id: "aaa"), TargetInfo(id: "bbb"), TargetInfo(id: "ccc"), TargetInfo(id: "ddd"), TargetInfo(id: "eee")]
+        init(hangoutID: String, targetList: [Hangout.Info], hangoutRepository: HangoutRepository = DefaultHangoutRepository(), bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.hangoutID = hangoutID
+            self.targetList = targetList
             self.hangoutRepository = hangoutRepository
+            self.bappyAuthRepository = bappyAuthRepository
         }
     }
     
@@ -51,6 +50,7 @@ final class WriteReviewViewModel: ViewModelType {
         var isContinueButtonEnabled: Signal<Bool> // <-> Child(Continue)
         var index: Driver<Int> // <-> View
         var reviews: Signal<[MakeReferenceModel]>
+        var showCompleteView: Signal<MakeReviewCompletedViewModel?> // <-> View
     }
 
     var dependency: Dependency
@@ -67,6 +67,7 @@ final class WriteReviewViewModel: ViewModelType {
     private let isTagsValid$ = BehaviorSubject<Bool>(value: false)
     private let message$ = BehaviorSubject<String>(value: "")
     private let reviews$ = BehaviorSubject<[MakeReferenceModel]>(value: [])
+    private let showCompleteView$ = PublishSubject<MakeReviewCompletedViewModel?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -139,7 +140,8 @@ final class WriteReviewViewModel: ViewModelType {
                                                                                message: "")),
             isContinueButtonEnabled: isContinueButtonEnabled,
             index: index$.asDriver(onErrorJustReturn: 0),
-            reviews: reviews$.asSignal(onErrorJustReturn: [])
+            reviews: reviews$.asSignal(onErrorJustReturn: []),
+            showCompleteView: showCompleteView$.asSignal(onErrorJustReturn: nil)
         )
 
         // MARK: Binding
@@ -192,7 +194,7 @@ final class WriteReviewViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // 마지막, 제츨
-        endNowIndex
+        let result = endNowIndex
             .filter {
                 $0.0 + 1 == dependency.targetList.count
             }
@@ -201,13 +203,29 @@ final class WriteReviewViewModel: ViewModelType {
                                                 tags: tags,
                                                 message: message)
                 let reviews = reviews + [review]
-                print(index, reviews)
-                // dependency.hangoutRepository.makeReview()
+
+                return dependency.hangoutRepository.makeReview(referenceModel: review, hangoutID: dependency.hangoutID)
             }
-            .subscribe {
-                print("얍", $0)
-            }
+            .flatMap { $0 }
+            .share()
+
+        result
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
+
+        result
+            .compactMap(getValue)
+            .withLatestFrom(dependency.bappyAuthRepository.currentUser) { $1 }
+            .compactMap { $0 }
+            .map { user in MakeReviewCompletedViewModel(dependency: .init(user: user)) }
+            .bind(to: showCompleteView$)
+            .disposed(by: disposeBag)
+        
+//        endNowIndex
+//            .map { _ in MakeReviewCompletedViewModel(dependency: .init(user: BappyUser(id: "a", state: .normal))) }
+//            .bind(to: showCompleteView$)
+//            .disposed(by: disposeBag)
         
         // Child(Tag)
         subViewModels.reviewSelectTagViewModel.output.tags
