@@ -80,7 +80,7 @@ final class WriteReviewViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         UIView.animate(withDuration: 0.4, delay: 0.0) { [unowned self] in
-            self.view.backgroundColor = .gray.withAlphaComponent(0.2)
+            self.view.backgroundColor = .gray.withAlphaComponent(0.5)
         }
     }
     
