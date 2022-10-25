@@ -22,4 +22,5 @@ protocol HangoutRepository {
     func reportHangout(hangoutID: String, reportType: String, detail: String, imageDatas: [Data]?) -> Single<Result<Bool, Error>>
     func searchHangouts(title: String) -> Single<Result<HangoutPage, Error>>
     func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?) -> Single<Result<HangoutPage, Error>>
+    func fetchReviews() -> Single<Result<[Reference], Error>>
 }

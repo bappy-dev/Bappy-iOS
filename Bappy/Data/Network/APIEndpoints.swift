@@ -208,6 +208,13 @@ extension APIEndpoints {
             method: .get,
             queryParameters: filterHangoutRequestDTO)
     }
+    
+    static func fetchReviews() -> Endpoint<FetchReviewsResponseDTO> {
+        return Endpoint(
+            baseURL: BAPPY_API_BASEURL,
+            path: "hangout/review",
+            method: .get)
+    }
 }
 
 // MARK: - Location

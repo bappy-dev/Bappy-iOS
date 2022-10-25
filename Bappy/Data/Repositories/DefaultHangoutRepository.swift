@@ -407,6 +407,20 @@ extension DefaultHangoutRepository: HangoutRepository {
         //        }
     }
     
+    func fetchReviews() -> RxSwift.Single<Result<[Reference], Error>> {
+        let endpoint = APIEndpoints.fetchReviews()
+        
+        return provider.request(with: endpoint)
+            .map { result -> Result<[Reference], Error> in
+                switch result {
+                case .success(let responseDTO):
+                    return .success(responseDTO.toDomain())
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
+    
     func searchHangouts(title: String) -> Single<Result<HangoutPage, Error>> {
         let requestDTO = SearchHangoutsRequestDTO(title: title)
         let endpoint = APIEndpoints.searchHangouts(with: requestDTO)
