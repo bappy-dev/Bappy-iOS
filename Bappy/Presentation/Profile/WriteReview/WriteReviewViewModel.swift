@@ -9,11 +9,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-struct TargetInfo {
-    var id: String = "aaa"
-    var profileImage: URL? = nil
-}
-
 struct MakeReferenceModel {
     var targetID: String
     var tags: [String]
@@ -22,12 +17,16 @@ struct MakeReferenceModel {
 
 final class WriteReviewViewModel: ViewModelType {
     struct Dependency {
-        let targetList: [TargetInfo]
+        let hangoutID: String
+        let targetList: [Hangout.Info]
         let hangoutRepository: HangoutRepository
+        let bappyAuthRepository: BappyAuthRepository
 
-        init(targetList: Hangout, hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
-            self.targetList = [TargetInfo(id: "aaa"), TargetInfo(id: "bbb"), TargetInfo(id: "ccc"), TargetInfo(id: "ddd"), TargetInfo(id: "eee")]
+        init(hangoutID: String, targetList: [Hangout.Info], hangoutRepository: HangoutRepository = DefaultHangoutRepository(), bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
+            self.hangoutID = hangoutID
+            self.targetList = targetList
             self.hangoutRepository = hangoutRepository
+            self.bappyAuthRepository = bappyAuthRepository
         }
     }
     
