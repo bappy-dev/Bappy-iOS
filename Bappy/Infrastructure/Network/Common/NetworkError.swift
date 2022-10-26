@@ -40,6 +40,7 @@ enum NetworkError: LocalizedError {
 enum FirebaseError: LocalizedError {
     case signInFailed
     case signOutFailed
+    case deleteFailed
     case emptyToken
     case failedRemoteConfig
     
@@ -47,6 +48,7 @@ enum FirebaseError: LocalizedError {
         switch self {
         case .signInFailed: return "Firebase SignIn에 실패했습니다."
         case .signOutFailed: return "Firebase SignOut에 실패했습니다."
+        case .deleteFailed: return "Firebase 회원 탈퇴에 실패했습니다."
         case .emptyToken: return "빈 Token 입니다."
         case .failedRemoteConfig: return "Remote Config의 데이터를 불러오는데 실패했습니다."
         }
