@@ -185,5 +185,13 @@ extension DeleteAccountViewController {
                 self?.updateConfirmButtonState(isEnabled: isEnabled)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.output.switchToSignInView
+            .compactMap { $0 }
+            .emit(onNext: { viewModel in
+                guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
+                sceneDelegate.switchRootViewToSignInView(viewModel: viewModel)
+            })
+            .disposed(by: disposeBag)
     }
 }
