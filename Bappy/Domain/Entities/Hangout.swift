@@ -16,20 +16,16 @@ struct Hangout: Equatable, Identifiable {
     let title: String
     let meetTime: Date
     let language: Language
-    let placeID: String
-    let placeName: String
     let plan: String
     let limitNumber: Int
-    let placeAddress: String
     let categories: [Category]
+    let place: Place
     
-    let coordinates: Coordinates
+    let postImageURL: URL
+    let openchatURL: URL
     
-    let postImageURL: URL?
-    let openchatURL: URL?
-    let mapImageURL: URL?
-    
-    let participantIDs: [Info]
+    let joinedIDs: [Info]
+    let likedIDs: [Info]
     var userHasLiked: Bool
     
     static func == (lhs: Hangout, rhs: Hangout) -> Bool {
@@ -40,7 +36,19 @@ struct Hangout: Equatable, Identifiable {
 extension Hangout {
     struct Info {
         let id: String
-        let imageURL: URL?
+        let imageURL: URL
+    }
+    
+    struct Place {
+        let name: String
+        let address: String
+        let coordinates: Coordinates
+        
+        init(name: String, address: String, latitude: Double, longitude: Double) {
+            self.name = name
+            self.address = address
+            self.coordinates = Coordinates(latitude: latitude, longitude: longitude)
+        }
     }
     
     enum State: String { case available, closed, expired, preview }

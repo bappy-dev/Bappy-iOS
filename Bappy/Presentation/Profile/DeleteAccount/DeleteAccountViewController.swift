@@ -15,15 +15,6 @@ final class DeleteAccountViewController: UIViewController {
     private let viewModel: DeleteAccountViewModel
     private let disposeBag = DisposeBag()
     
-    private let backButton: UIButton = {
-        let button = UIButton(type: .system)
-        let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
-        let image = UIImage(systemName: "chevron.left", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.tintColor = .bappyBrown
-        return button
-    }()
-    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Delete Account"
@@ -112,17 +103,10 @@ final class DeleteAccountViewController: UIViewController {
         hStackView.distribution = .fillEqually
         hStackView.spacing = 31.0
         
-        view.addSubview(backButton)
-        backButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(18.0)
-            $0.leading.equalToSuperview().inset(9.0)
-            $0.width.height.equalTo(44.0)
-        }
-        
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalTo(backButton)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(18.0)
         }
         
         view.addSubview(dividingView)
@@ -170,10 +154,6 @@ final class DeleteAccountViewController: UIViewController {
 // MARK: - Bind
 extension DeleteAccountViewController {
     private func bind() {
-        backButton.rx.tap
-            .bind(to: viewModel.input.backButtonTapped)
-            .disposed(by: disposeBag)
-        
         cancelButton.rx.tap
             .bind(to: viewModel.input.cancelButtonTapped)
             .disposed(by: disposeBag)

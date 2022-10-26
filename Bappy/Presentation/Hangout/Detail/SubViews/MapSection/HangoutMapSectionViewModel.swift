@@ -15,8 +15,7 @@ final class HangoutMapSectionViewModel: ViewModelType {
         var hangout: Hangout
         var mapImage: UIImage?
         var isPreviewModel: Bool { hangout.state == .preview }
-        var placeName: String { hangout.placeName }
-        var mapImageURL: URL? { hangout.mapImageURL }
+        var placeName: String { hangout.place.name }
     }
     
     struct Input {
@@ -26,7 +25,6 @@ final class HangoutMapSectionViewModel: ViewModelType {
     struct Output {
         var mapButtonTapped: Signal<Void> // <-> Parent
         var placeName: Driver<String> // <-> View
-        var mapImageURL: Signal<URL?> // <-> View
         var mapImage: Signal<UIImage?> // <-> View
     }
     
@@ -37,7 +35,6 @@ final class HangoutMapSectionViewModel: ViewModelType {
     
     private let isPreviewModel$: BehaviorSubject<Bool>
     private let placeName$: BehaviorSubject<String>
-    private let mapImageURL$: BehaviorSubject<URL?>
     private let mapImage$: BehaviorSubject<UIImage?>
     
     private let mapButtonTapped$ = PublishSubject<Void>()
@@ -48,17 +45,12 @@ final class HangoutMapSectionViewModel: ViewModelType {
         // MARK: Streams
         let isPreviewModel$ = BehaviorSubject<Bool>(value: dependency.isPreviewModel)
         let placeName$ = BehaviorSubject<String>(value: dependency.placeName)
-        let mapImageURL$ = BehaviorSubject<URL?>(value: dependency.mapImageURL)
         let mapImage$ = BehaviorSubject<UIImage?>(value: dependency.mapImage)
         
         let mapButtonTapped = mapButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let placeName = placeName$
             .asDriver(onErrorJustReturn: dependency.placeName)
-        let mapImageURL = isPreviewModel$
-            .filter { !$0 }
-            .withLatestFrom(mapImageURL$)
-            .asSignal(onErrorJustReturn: dependency.mapImageURL)
         let mapImage = isPreviewModel$
             .filter { $0 }
             .withLatestFrom(mapImage$)
@@ -72,14 +64,12 @@ final class HangoutMapSectionViewModel: ViewModelType {
         self.output = Output(
             mapButtonTapped: mapButtonTapped,
             placeName: placeName,
-            mapImageURL: mapImageURL,
             mapImage: mapImage
         )
         
         // MARK: Bindind
         self.isPreviewModel$ = isPreviewModel$
         self.placeName$ = placeName$
-        self.mapImageURL$ = mapImageURL$
         self.mapImage$ = mapImage$
     }
 }

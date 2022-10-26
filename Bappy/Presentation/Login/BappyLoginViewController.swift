@@ -11,10 +11,17 @@ import Firebase
 import FirebaseAuth
 import GoogleSignIn
 import FacebookLogin
+import FBSDKLoginKit
 import AuthenticationServices
 import CryptoKit
 import RxSwift
 import RxCocoa
+
+enum LoginType: String {
+    case Apple
+    case Google
+    case Facebook
+}
 
 final class BappyLoginViewController: UIViewController {
     
@@ -243,6 +250,7 @@ extension BappyLoginViewController {
             guard let authentication = user?.authentication,
                   let idToken = authentication.idToken else { return }
             
+            UserDefaults.standard.set(LoginType.Google.rawValue, forKey: "LoginType")
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
             self?.authCredential$.onNext(credential)
         }
@@ -264,6 +272,7 @@ extension BappyLoginViewController {
             
             guard let accessToken = AccessToken.current?.tokenString else { return }
             let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+            UserDefaults.standard.set(LoginType.Facebook.rawValue, forKey: "LoginType")
             
             self?.authCredential$.onNext(credential)
         }
@@ -345,7 +354,7 @@ extension BappyLoginViewController: ASAuthorizationControllerDelegate {
             }
             
             let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
-            
+            UserDefaults.standard.set(LoginType.Apple.rawValue, forKey: "LoginType")
             authCredential$.onNext(credential)
         }
     }

@@ -8,16 +8,14 @@
 import Foundation
 
 struct UpdateHangoutParticipationResponseDTO: Decodable {
-    
-    let hasUpdated: Bool
-    
-    private enum CodingKeys: String, CodingKey {
-        case hasUpdated = "data"
-    }
+    let status: String
+    let data: Bool
+    let token: String
+    let message: String
 }
 
 extension UpdateHangoutParticipationResponseDTO {
-    func toDomain() -> Bool {
-        return hasUpdated
-    }
+//    func toDomain() -> Bool {
+//        return data == "true"
+//    }
 }

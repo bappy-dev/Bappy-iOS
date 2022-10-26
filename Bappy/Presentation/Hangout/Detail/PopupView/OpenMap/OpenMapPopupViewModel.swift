@@ -49,8 +49,7 @@ final class OpenMapPopupViewModel: ViewModelType {
                     path: "?",
                     queries: [
                         "api=1",
-                        "destination=\($0.placeName)",
-                        "destination_place_id=\($0.placeID)"
+                        "destination=\($0.place.name)"
                     ])
             }
             .asSignal(onErrorJustReturn: nil)
@@ -61,7 +60,7 @@ final class OpenMapPopupViewModel: ViewModelType {
                     baseURL: KAKAO_MAP_DIR_BASEURL,
                     path: nil,
                     queries: [
-                        "\($0.placeName),\($0.coordinates.latitude),\($0.coordinates.longitude)"
+                        "\($0.place.name),\($0.place.coordinates.latitude),\($0.place.coordinates.longitude)"
                     ])
             }
             .asSignal(onErrorJustReturn: nil)

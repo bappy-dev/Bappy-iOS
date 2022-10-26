@@ -21,7 +21,7 @@ final class HangoutDetailViewModel: ViewModelType {
         let hangoutRepository: HangoutRepository
         
         var isUserParticipating: Bool {
-            return hangout.participantIDs
+            return hangout.joinedIDs
                 .map(\.id)
                 .contains(currentUser.id)
         }

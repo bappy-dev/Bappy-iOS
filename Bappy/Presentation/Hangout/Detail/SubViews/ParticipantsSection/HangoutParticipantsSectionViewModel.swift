@@ -14,7 +14,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
     struct Dependency {
         var hangout: Hangout
         var limitNumber: Int { hangout.limitNumber }
-        var participantIDs: [Hangout.Info] { hangout.participantIDs }
+        var joinedIDs: [Hangout.Info] { hangout.joinedIDs }
     }
     
     struct Input {
@@ -23,7 +23,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
     
     struct Output {
         var limitNumberText: Signal<String> // <-> View
-        var participantIDs: Driver<[Hangout.Info]> // <-> View
+        var joinedIDs: Driver<[Hangout.Info]> // <-> View
         var selectedUserID: Signal<String?> // <-> Parent
     }
     
@@ -35,22 +35,22 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
     private let itemSelected$ = PublishSubject<IndexPath>()
     
     private let limitNumber$: BehaviorSubject<Int>
-    private let participantIDs$: BehaviorSubject<[Hangout.Info]>
+    private let joinedIDs$: BehaviorSubject<[Hangout.Info]>
     
     init(dependency: Dependency) {
         self.dependency = dependency
         
         // MARK: Streams
         let limitNumber$ = BehaviorSubject<Int>(value: dependency.limitNumber)
-        let participantIDs$ = BehaviorSubject<[Hangout.Info]>(value: dependency.participantIDs)
+        let joinedIDs$ = BehaviorSubject<[Hangout.Info]>(value: dependency.joinedIDs)
         
         let limitNumberText = limitNumber$
             .map { "Max \($0)" }
             .asSignal(onErrorJustReturn: "Max \(dependency.limitNumber)")
-        let participantIDs = participantIDs$
-            .asDriver(onErrorJustReturn: dependency.participantIDs)
+        let joinedIDs = joinedIDs$
+            .asDriver(onErrorJustReturn: dependency.joinedIDs)
         let selectedUserID = itemSelected$
-            .withLatestFrom(participantIDs$) { $1[$0.row].id }
+            .withLatestFrom(joinedIDs$) { $1[$0.row].id }
             .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
@@ -60,12 +60,11 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
         
         self.output = Output(
             limitNumberText: limitNumberText,
-            participantIDs: participantIDs,
+            joinedIDs: joinedIDs,
             selectedUserID: selectedUserID
         )
-        
         // MARK: Bindind
         self.limitNumber$ = limitNumber$
-        self.participantIDs$ = participantIDs$
+        self.joinedIDs$ = joinedIDs$
     }
 }

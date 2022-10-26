@@ -18,12 +18,11 @@ struct HangoutDTO: Decodable {
     let limitNumber: Int
     let currentNum: Int
     let likeCount: Int
-    let placeImageURL: String
-    let placeName: String
+    let place: PlaceDTO
     let joinedUserIDs: [String]
-    let joinedUserImageURL: [String]
+    let joinedUserImageName: [String]
     let likedUserIDs: [String]
-    let likedUserImageURL: [String]
+    let likedUserImageName: [String]
     let status: String
     let likeStatus: Bool
     let joinedStatus: Bool
@@ -39,15 +38,30 @@ struct HangoutDTO: Decodable {
         case limitNumber = "hangoutTotalNum"
         case currentNum = "hangoutCurrentNum"
         case likeCount = "hangoutLikeCount"
-        case placeImageURL = "hangoutPlaceImageUrl"
-        case placeName = "hangoutPlaceName"
+        case place = "place"
         case joinedUserIDs = "hangoutJoinUserId"
-        case joinedUserImageURL = "hangoutJoinUserImageUrl"
+        case joinedUserImageName = "hangoutJoinUserImageUrl"
         case likedUserIDs = "hangoutLikeUserId"
-        case likedUserImageURL = "hangoutLikeUserImageUrl"
+        case likedUserImageName = "hangoutLikeUserImageUrl"
         case status = "hangoutStatus"
         case likeStatus = "hangoutLikeStatus"
         case joinedStatus = "hangoutJoinStatus"
+    }
+}
+
+extension HangoutDTO {
+    struct PlaceDTO: Decodable {
+        let name: String
+        let latitude: Double
+        let longitude: Double
+        let address: String
+        
+        private enum CodingKeys: String, CodingKey {
+            case name = "placeName"
+            case latitude = "placeLatitude"
+            case longitude = "placeLongitude"
+            case address = "placeAddress"
+        }
     }
     
     func toDomain() -> Hangout {
@@ -59,28 +73,22 @@ struct HangoutDTO: Decodable {
         }
         
         let date = meetTime.toDate(format: "yyyy-MM-dd HH:mm:ss") ?? Date()
-        let coordinates = Coordinates(latitude: 0.0, longitude: 0.0)
-        let postImageURL = URL(string: "\(BAPPY_API_BASEURL)static-file/\(postImageFilename)")
-        let mapImageURL = URL(string: "\(BAPPY_API_BASEURL)static-file/")
+        let postImageURL = URL(string: "\(BAPPY_API_BASEURL)static-file/\(postImageFilename)")!
+        let place = Hangout.Place(name: place.name, address: place.address, latitude: place.latitude, longitude: place.longitude)
         
-        return Hangout(
-            id: id,
-            state: state,
-            title: title,
-            meetTime: date,
-            language: language,
-            placeID: "",
-            placeName: placeName,
-            plan: plan,
-            limitNumber: limitNumber, placeAddress: "",
-            categories: [],
-            coordinates: coordinates,
-            postImageURL: postImageURL,
-            openchatURL: URL(string: openchatURL),
-            mapImageURL: mapImageURL,
-            participantIDs: zip(joinedUserIDs, joinedUserImageURL)
-                .map({ Hangout.Info(id: $0, imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")) }),
-            userHasLiked: likeStatus
-        )
+        return Hangout(id: id,
+                       state: state,
+                       title: title,
+                       meetTime: date,
+                       language: language,
+                       plan: plan,
+                       limitNumber: limitNumber,
+                       categories: [],
+                       place: place,
+                       postImageURL: postImageURL,
+                       openchatURL: URL(string: openchatURL)!,
+                       joinedIDs: zip(joinedUserIDs, joinedUserImageName).map({ Hangout.Info(id: $0,imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")!) }),
+                       likedIDs: zip(likedUserIDs, likedUserImageName).map({ Hangout.Info(id: $0, imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")!) }),
+                       userHasLiked: likeStatus)
     }
 }

@@ -281,15 +281,13 @@ extension DefaultHangoutRepository: HangoutRepository {
                                                  hangoutPlan: hangout.plan,
                                                  hangoutLanguage: hangout.language,
                                                  hangoutTotalNum: hangout.limitNumber,
-                                                 hangoutImageUrl: hangout.postImageURL?.absoluteString ?? "",
-                                                 hangoutOpenChat: hangout.openchatURL!.absoluteString,
+                                                 hangoutOpenChat: hangout.openchatURL.absoluteString,
                                                  hangoutCategory: hangout.categories.map { $0.description },
-                                                 placeLatitude: "\(hangout.coordinates.latitude)",
-                                                 placeLongitude: "\(hangout.coordinates.longitude)",
-                                                 placeAddress: "",
-                                                 placeId: hangout.placeID,
+                                                 placeLatitude: "\(hangout.place.coordinates.latitude)",
+                                                 placeLongitude: "\(hangout.place.coordinates.longitude)",
+                                                 placeAddress: hangout.place.address,
                                                  hangoutMeetTime: hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:MM"),
-                                                 placeName: hangout.placeName)
+                                                 placeName: hangout.place.name)
         
         let endpoint = APIEndpoints.createHangout(with: requestDTO, data: imageData)
         
@@ -353,7 +351,7 @@ extension DefaultHangoutRepository: HangoutRepository {
             .map { result -> Result<Bool, Error> in
                 switch result {
                 case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
+                    return .success(responseDTO.data)
                 case .failure(let error):
                     return .failure(error)
                 }
@@ -367,7 +365,8 @@ extension DefaultHangoutRepository: HangoutRepository {
             .map { result -> Result<Bool, Error> in
                 switch result {
                 case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
+//                    let bool = responseDTO.data as! Bool
+                    return .success(responseDTO.data)
                 case .failure(let error):
                     return .failure(error)
                 }
