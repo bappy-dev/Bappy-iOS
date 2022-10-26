@@ -9,15 +9,15 @@ import Foundation
 
 struct DeleteUserResponseDTO: Decodable {
     
-    let hasDeleted: Bool
+    let status: String
     
     private enum CodingKeys: String, CodingKey {
-        case hasDeleted = "data"
+        case status = "status"
     }
 }
 
 extension DeleteUserResponseDTO {
     func toDomain() -> Bool {
-        return hasDeleted
+        return status == "OK"
     }
 }
