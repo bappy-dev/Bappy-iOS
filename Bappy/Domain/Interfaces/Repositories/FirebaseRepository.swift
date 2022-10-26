@@ -21,6 +21,7 @@ protocol FirebaseRepository {
     func signInAnonymously() -> Single<Result<AuthDataResult?, Error>>
     func signOut(completion: @escaping(Result<Void, Error>) -> Void)
     func signOut() -> Single<Result<Void, Error>>
+    func deleteAccount() -> Single<Result<Void, Error>>
     func getRemoteConfigValues() -> Observable<Result<RemoteConfigValues, Error>>
 }
 

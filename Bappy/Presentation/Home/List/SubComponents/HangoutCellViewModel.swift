@@ -37,7 +37,7 @@ final class HangoutCellViewModel: ViewModelType {
         var title: Driver<String?> // <-> View
         var time: Driver<String?> // <-> View
         var place: Driver<String?> // <-> View
-        var postImageURL: Driver<URL> // <-> View
+        var postImageURL: Driver<URL?> // <-> View
         var joinedUsers: Driver<[Hangout.Info]>
         var userHasLiked: Driver<Bool> // <-> View
         var state: Driver<Hangout.State?> // <-> View

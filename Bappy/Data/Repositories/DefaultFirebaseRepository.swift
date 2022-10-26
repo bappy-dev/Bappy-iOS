@@ -153,6 +153,32 @@ extension DefaultFirebaseRepository: FirebaseRepository {
         }
     }
     
+    func deleteAccount(completion: @escaping(Result<Void, Error>) -> Void) {
+        networkCheckRepository.checkNetworkConnection { [weak self] in
+            self?.auth.currentUser?.delete() { error in
+                print(error)
+                if error == nil {
+                    completion(.success(Void()))
+                } else {
+                    completion(.failure(FirebaseError.deleteFailed))
+                }
+            }
+        }
+    }
+    
+    func deleteAccount() -> Single<Result<Void, Error>> {
+        return Single<Result<Void, Error>>.create { [weak self] single in
+            self?.deleteAccount { result in
+                switch result {
+                case .success(let value):
+                    single(.success(.success(value)))
+                case .failure(let error):
+                    single(.failure(error)) }
+            }
+            return Disposables.create()
+        }
+    }
+    
     func getRemoteConfigValues() -> Observable<Result<RemoteConfigValues, Error>> {
         return Observable<Result<RemoteConfigValues, Error>>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }

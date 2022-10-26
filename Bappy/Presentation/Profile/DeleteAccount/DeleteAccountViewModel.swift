@@ -16,9 +16,15 @@ final class DeleteAccountViewModel: ViewModelType {
     struct Dependency {
         var dropdownList: [String]
         let hangoutRepository: HangoutRepository
+        let firebaseRepository: FirebaseRepository
+        let bappyAuthRepository: BappyAuthRepository
         
-        init(dropdownList: [String], hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
+        init(dropdownList: [String], hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             firebaseRepository: FirebaseRepository = DefaultFirebaseRepository.shared,
+             bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared) {
             self.hangoutRepository = hangoutRepository
+            self.firebaseRepository = firebaseRepository
+            self.bappyAuthRepository = bappyAuthRepository
             self.dropdownList = dropdownList
         }
     }
@@ -38,6 +44,7 @@ final class DeleteAccountViewModel: ViewModelType {
         var page: Driver<Int> // <-> View
         var popView: Signal<Void> // <-> View
         var isConfirmButtonEnabled: Driver<Bool> // <-> View
+        var switchToSignInView: Signal<BappyLoginViewModel?> // <-> View
     }
     
     let dependency: Dependency
@@ -51,6 +58,7 @@ final class DeleteAccountViewModel: ViewModelType {
     private let cancelButtonTapped$ = PublishSubject<Void>()
     private let confirmButtonTapped$ = PublishSubject<Void>()
     private let isReasonSelected$ = BehaviorSubject<Bool>(value: false)
+    private let switchToSignInView$ = PublishSubject<BappyLoginViewModel?>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -70,6 +78,8 @@ final class DeleteAccountViewModel: ViewModelType {
             .combineLatest(isReasonSelected$, page$)
             .map { ($1 == 0) || ($1 == 1 && $0) }
             .asDriver(onErrorJustReturn: false)
+        let switchToSignInView = switchToSignInView$
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -81,7 +91,8 @@ final class DeleteAccountViewModel: ViewModelType {
         self.output = Output(
             page: page,
             popView: popView,
-            isConfirmButtonEnabled: isConfirmButtonEnabled
+            isConfirmButtonEnabled: isConfirmButtonEnabled,
+            switchToSignInView: switchToSignInView
         )
         
         // MARK: Bindind
@@ -92,31 +103,36 @@ final class DeleteAccountViewModel: ViewModelType {
             .bind(to: page$)
             .disposed(by: disposeBag)
         
-//        confirmButtonTapped$
-//            .withLatestFrom(page$)
-//            .filter { $0 == 1 }
+        // 회원 탈퇴
+        let deleteDataResult = confirmButtonTapped$
+            .withLatestFrom(isReasonSelected$)
+            .filter { $0 }
+            .map { _ in Void() }
+            .flatMap(dependency.bappyAuthRepository.deleteUser)
+            .share()
         
-        // facebook
-//       Delete /AccessToken.current?.userID/permissions
+        deleteDataResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
         
-        //google
-//        Auth.auth().currentUser?.delete { error in
-//            if error != nil {
-//
-//            } else {
-//
-//            }
-//        }
-//        guard let loginType = UserDefaults.standard.value(forKey: "LoginType") as? String, let type = LoginType(rawValue: loginType) {
-//            switch type {
-//            case .Apple:
-//                <#code#>
-//            case .Google:
-//                <#code#>
-//            case .Facebook:
-//                <#code#>
-//            }
-//        }
+        let deleteResult = deleteDataResult
+            .compactMap(getValue)
+            .filter { $0 }
+            .map { _ in Void() }
+            .flatMap(dependency.firebaseRepository.deleteAccount)
+            .share()
+        
+        deleteResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        deleteResult
+            .compactMap(getValue)
+            .map { _ in BappyLoginViewModel() }
+            .bind(to: switchToSignInView$)
+            .disposed(by: disposeBag)
         
         subViewModels.secondPageViewModel.output.isReasonSelected
             .emit(to: isReasonSelected$)

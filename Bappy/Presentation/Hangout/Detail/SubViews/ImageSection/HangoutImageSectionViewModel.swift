@@ -23,7 +23,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
     }
     
     struct Output {
-        var imageURL: Signal<URL> // <-> View
+        var imageURL: Signal<URL?> // <-> View
         var image: Signal<UIImage?> // <-> View
         var userHasLiked: Driver<Bool> // <-> View
         var imageHeight: Signal<CGFloat> // <-> View
