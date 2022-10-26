@@ -100,7 +100,7 @@ final class GotoReviewViewModel: ViewModelType {
             .compactMap { $0 }
             .map { hangout, targetList, user  -> (HangoutDetailViewModel, WriteReviewViewModel) in
                 let hangoutDetailViewModel = HangoutDetailViewModel(dependency: HangoutDetailViewModel.Dependency(currentUser: user, hangout: hangout))
-                let writeReviewViewModel = WriteReviewViewModel(dependency: WriteReviewViewModel.Dependency(hangoutID: hangout.id, targetList: hangout.participantIDs))
+                let writeReviewViewModel = WriteReviewViewModel(dependency: WriteReviewViewModel.Dependency(hangoutID: hangout.id, targetList: hangout.joinedIDs))
                 return (hangoutDetailViewModel, writeReviewViewModel)
             }
             .drive(moveToWriteReviewView$)
