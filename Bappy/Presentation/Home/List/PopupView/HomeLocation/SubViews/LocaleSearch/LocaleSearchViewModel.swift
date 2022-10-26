@@ -184,7 +184,6 @@ final class LocaleSearchViewModel: ViewModelType {
             .withLatestFrom(maps$) { $1[$0.row] }
             .map {
                 Location(
-                    identity: $0.id,
                     name: $0.name,
                     address: $0.address,
                     coordinates: $0.coordinates,

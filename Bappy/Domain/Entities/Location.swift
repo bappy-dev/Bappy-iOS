@@ -19,7 +19,7 @@ struct Location: Equatable, IdentifiableType {
     
     var isSelected: Bool
     
-    init(identity: String, name: String, address: String, coordinates: Coordinates, isSelected: Bool) {
+    init(identity: String = UUID().uuidString, name: String, address: String, coordinates: Coordinates, isSelected: Bool) {
         self.identity = identity
         self.name = name
         self.address = address

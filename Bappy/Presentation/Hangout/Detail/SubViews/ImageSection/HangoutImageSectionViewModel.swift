@@ -23,7 +23,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
     }
     
     struct Output {
-        var imageURL: Signal<URL?> // <-> View
+        var imageURL: Signal<URL> // <-> View
         var image: Signal<UIImage?> // <-> View
         var userHasLiked: Driver<Bool> // <-> View
         var imageHeight: Signal<CGFloat> // <-> View
@@ -51,7 +51,7 @@ final class HangoutImageSectionViewModel: ViewModelType {
         let imageURL = hangout$
             .filter { $0.state != .preview }
             .map(\.postImageURL)
-            .asSignal(onErrorJustReturn: nil)
+            .asSignal(onErrorJustReturn: URL(string: BAPPY_API_BASEURL)!)
         let image = hangout$
             .filter { $0.state == .preview }
             .withLatestFrom(postImage$)

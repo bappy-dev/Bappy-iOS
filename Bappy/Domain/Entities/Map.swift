@@ -7,24 +7,16 @@
 
 import Foundation
 
-struct Map: Equatable, Identifiable {
-    typealias Identifier = String
-    
-    let id: Identifier
-    
+struct Map {
     let name: String
     let address: String
     
     let coordinates: Coordinates
     
     let iconURL: URL?
-    
-    static func == (lhs: Map, rhs: Map) -> Bool {
-        lhs.id == rhs.id
-    }
 }
 
-struct MapPage: Equatable {
+struct MapPage {
     let nextPageToken: String?
     let maps: [Map]
 }

@@ -247,24 +247,20 @@ final class HangoutMakeViewModel: ViewModelType {
                 )
             )
             .map { first, second -> Hangout in
-                return Hangout(
-                    id: "preview",
-                    state: .preview,
-                    title: first.1,
-                    meetTime: first.2,
-                    language: second.1,
-                    placeID: first.3.id,
-                    placeName: first.3.name,
-                    plan: second.0,
-                    limitNumber: second.3,
-                    placeAddress: first.3.address,
-                    categories: first.0,
-                    coordinates: first.3.coordinates,
-                    postImageURL: nil,
-                    openchatURL: URL(string: second.2),
-                    mapImageURL: nil,
-                    participantIDs: [.init(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL)],
-                    userHasLiked: false)
+                return Hangout(id: "preview",
+                        state: .preview,
+                        title: first.1,
+                        meetTime: first.2,
+                        language: second.1,
+                        plan: second.0,
+                        limitNumber: second.3,
+                        categories: first.0,
+                        place: .init(name: first.3.name, latitude: first.3.coordinates.latitude, longitude: first.3.coordinates.longitude),
+                        postImageURL: URL(string: "")!,
+                        openchatURL: URL(string: second.2)!,
+                        joinedIDs: [],
+                        likedIDs: [],
+                        userHasLiked: false)
             }
             .share()
         

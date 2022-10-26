@@ -12,14 +12,12 @@ struct CreateHangoutRequestDTO: Encodable {
     let hangoutPlan: String
     let hangoutLanguage: String
     let hangoutTotalNum: Int
-    let hangoutImageUrl: String
     let hangoutOpenChat: String
     let hangoutCategory: [String]
     let test = "test"
     let placeLatitude: String
     let placeLongitude: String
     let placeAddress: String
-    let placeId: String
     let hangoutMeetTime: String
     let placeName: String
 }

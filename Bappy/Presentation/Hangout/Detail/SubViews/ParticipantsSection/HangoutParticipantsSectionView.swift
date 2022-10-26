@@ -96,7 +96,7 @@ extension HangoutParticipantsSectionView {
             .emit(to: numOfParticipantsLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.participantIDs
+        viewModel.output.joinedIDs
             .drive(collectionView.rx.items(cellIdentifier: ParticipantImageCell.reuseIdentifier, cellType: ParticipantImageCell.self)) { _, element, cell in
                 cell.bind(with: element.imageURL)
             }.disposed(by: disposeBag)

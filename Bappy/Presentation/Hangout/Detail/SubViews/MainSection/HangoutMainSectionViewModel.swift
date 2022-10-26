@@ -19,7 +19,7 @@ final class HangoutMainSectionViewModel: ViewModelType {
             hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
         }
         var language: Language { hangout.language }
-        var placeName: String { hangout.placeName }
+        var placeName: String { hangout.place.name }
         var openchatURL: URL? { hangout.openchatURL }
     }
     

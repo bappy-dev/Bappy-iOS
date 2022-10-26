@@ -99,12 +99,6 @@ extension HangoutMapSectionView {
             .drive(placeLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.mapImageURL
-            .emit(onNext: { [weak self] url in
-                self?.mapButton.kf.setImage(with: url, for: .normal)
-            })
-            .disposed(by: disposeBag)
-        
         viewModel.output.mapImage
             .emit(to: mapButton.rx.image(for: .normal))
             .disposed(by: disposeBag)

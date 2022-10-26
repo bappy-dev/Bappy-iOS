@@ -37,7 +37,8 @@ final class HangoutCellViewModel: ViewModelType {
         var title: Driver<String?> // <-> View
         var time: Driver<String?> // <-> View
         var place: Driver<String?> // <-> View
-        var postImageURL: Driver<URL?> // <-> View
+        var postImageURL: Driver<URL> // <-> View
+        var joinedUsers: Driver<[Hangout.Info]>
         var userHasLiked: Driver<Bool> // <-> View
         var state: Driver<Hangout.State?> // <-> View
         var showAnimation: Signal<Void> // <-> View
@@ -74,12 +75,15 @@ final class HangoutCellViewModel: ViewModelType {
             .map { $0.meetTime.toString(dateFormat: dependency.dateFormat) }
             .asDriver(onErrorJustReturn: nil)
         let place = hangout$
-            .map(\.placeName)
+            .map(\.place.name)
             .map(String?.init)
             .asDriver(onErrorJustReturn: nil)
         let postImageURL = hangout$
             .map(\.postImageURL)
-            .asDriver(onErrorJustReturn: nil)
+            .asDriver(onErrorJustReturn: URL(string: BAPPY_API_BASEURL)!)
+        let joinedUsers = hangout$
+            .map { $0.joinedIDs }
+            .asDriver(onErrorJustReturn: [])
         let userHasLiked = hangout$
             .map(\.userHasLiked)
             .asDriver(onErrorJustReturn: false)
@@ -105,6 +109,7 @@ final class HangoutCellViewModel: ViewModelType {
             time: time,
             place: place,
             postImageURL: postImageURL,
+            joinedUsers: joinedUsers,
             userHasLiked: userHasLiked,
             state: state,
             showAnimation: showAnimation,

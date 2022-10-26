@@ -181,7 +181,7 @@ extension ProfileHangoutCell {
         postImageView.kf.setImage(with: hangout.postImageURL)
         titleLabel.text = hangout.title
         timeLabel.text = hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
-        placeLabel.text = hangout.placeName
+        placeLabel.text = hangout.place.name
         
         disabledView.isHidden = (hangout.state == .available)
         if hangout.state != .available {

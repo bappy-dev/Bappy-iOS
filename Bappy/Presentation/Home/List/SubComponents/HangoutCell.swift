@@ -69,10 +69,33 @@ final class HangoutCell: UITableViewCell {
     
     private let participantsImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "cell_participants")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
+    
+    private let participantsImageView2: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    private let participantsImageView3: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    private let participantsImageView4: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Image 1")
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    lazy var participantsImageViews: [UIImageView] = [participantsImageView, participantsImageView2, participantsImageView3, participantsImageView4]
     
     private let likeButton = BappyLikeButton()
     private let moreButton = UIButton()
@@ -106,7 +129,7 @@ final class HangoutCell: UITableViewCell {
         return animationView
     }()
     
-    // MARK: Lifecycle    
+    // MARK: Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -200,17 +223,35 @@ final class HangoutCell: UITableViewCell {
             $0.height.equalTo(18.0)
         }
         
-        transparentView.addSubview(placeLabel)
-        placeLabel.snp.makeConstraints {
-            $0.leading.equalTo(timeLabel)
-            $0.centerY.equalTo(placeImageView)
-        }
-        
         transparentView.addSubview(participantsImageView)
         participantsImageView.snp.makeConstraints {
             $0.bottom.equalTo(postImageView).offset(-13.8)
             $0.leading.equalTo(titleLabel).offset(6.0)
-            $0.width.equalTo(163.0)
+            $0.width.equalTo(32)
+            $0.height.equalTo(32.0)
+        }
+        
+        transparentView.addSubview(participantsImageView2)
+        participantsImageView2.snp.makeConstraints {
+            $0.bottom.equalTo(postImageView).offset(-13.8)
+            $0.leading.equalTo(participantsImageView.snp.trailing).offset(12.0)
+            $0.width.equalTo(32)
+            $0.height.equalTo(32.0)
+        }
+        
+        transparentView.addSubview(participantsImageView3)
+        participantsImageView3.snp.makeConstraints {
+            $0.bottom.equalTo(postImageView).offset(-13.8)
+            $0.leading.equalTo(participantsImageView2.snp.trailing).offset(12.0)
+            $0.width.equalTo(32)
+            $0.height.equalTo(32.0)
+        }
+        
+        transparentView.addSubview(participantsImageView4)
+        participantsImageView4.snp.makeConstraints {
+            $0.bottom.equalTo(postImageView).offset(-13.8)
+            $0.leading.equalTo(participantsImageView3.snp.trailing).offset(12.0)
+            $0.width.equalTo(32)
             $0.height.equalTo(32.0)
         }
         
@@ -220,6 +261,13 @@ final class HangoutCell: UITableViewCell {
             $0.trailing.equalToSuperview().inset(14.0)
             $0.width.equalTo(140.0)
             $0.height.equalTo(57.0)
+        }
+        
+        transparentView.addSubview(placeLabel)
+        placeLabel.snp.makeConstraints {
+            $0.leading.equalTo(timeLabel)
+            $0.trailing.equalTo(moreButton.snp.leading).offset(-8)
+            $0.centerY.equalTo(placeImageView)
         }
         
         self.addSubview(likeButton)
@@ -270,20 +318,29 @@ extension HangoutCell {
             .drive(placeLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.output.postImageURL
-            .drive(onNext: { [weak self] url in
-                self?.postImageView.kf.setImage(with: url)
-            })
-            .disposed(by: disposeBag)
-        
         viewModel.output.userHasLiked
             .drive(likeButton.rx.isSelected)
             .disposed(by: disposeBag)
+        
+        viewModel.output.joinedUsers
+            .drive(onNext: { [weak self] infos in
+                for idx in 0..<infos.count {
+                    if idx == 3 { self?.participantsImageView4.isHidden = false; return }
+                    self?.participantsImageViews[idx].kf.setImage(with: infos[idx].imageURL, placeholder: UIImage(named: "profile_default"))
+                    self?.participantsImageViews[idx].isHidden = false
+                }
+            }).disposed(by: disposeBag)
         
         viewModel.output.state
             .compactMap { $0 }
             .drive(self.rx.state)
             .disposed(by: disposeBag)
+        
+        viewModel.output.postImageURL
+            .compactMap { $0 }
+            .drive(onNext: { [weak self] url in
+                self?.postImageView.kf.setImage(with: url)
+            }).disposed(by: disposeBag)
         
         viewModel.output.showAnimation
             .emit(onNext: { [weak self] _ in
