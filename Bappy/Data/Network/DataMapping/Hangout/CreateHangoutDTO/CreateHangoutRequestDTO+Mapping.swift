@@ -14,7 +14,6 @@ struct CreateHangoutRequestDTO: Encodable {
     let hangoutTotalNum: Int
     let hangoutOpenChat: String
     let hangoutCategory: [String]
-    let test = "test"
     let placeLatitude: String
     let placeLongitude: String
     let placeAddress: String
