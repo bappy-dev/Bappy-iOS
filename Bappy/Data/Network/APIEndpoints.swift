@@ -16,12 +16,11 @@ struct APIEndpoints {
             method: .get)
     }
     
-    static func fetchUserProfile(with userProfileRequestDTO: FetchProfileRequestDTO) -> Endpoint<FetchProfileResponseDTO> {
+    static func fetchUserProfile(with id: String) -> Endpoint<FetchCurrentUserResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "auth/login",
-            method: .get,
-            queryParameters: userProfileRequestDTO)
+            path: "user/\(id)",
+            method: .get)
     }
     
     static func createUser(with createUserRequestDTO: CreateUserRequestDTO) -> Endpoint<CreateUserResponseDTO> {
@@ -133,7 +132,14 @@ extension APIEndpoints {
             queryParameters: hangoutsRequestDTO)
     }
     
-    static func fetchHangouts(with fetchHangoutsOfUserRequestDTO: FetchHangoutsOfUserRequestDTO) -> Endpoint<FetchHangoutsOfUserResponseDTO> {
+    static func fetchHangouts(with fetchHangoutsOfUserRequestDTO: FetchHangoutsOfUserRequestDTO, id: String?) -> Endpoint<FetchHangoutsOfUserResponseDTO> {
+        if let id = id {
+            return Endpoint(
+                baseURL: BAPPY_API_BASEURL,
+                path: "user/\(id)/hangout",
+                method: .get,
+                queryParameters: fetchHangoutsOfUserRequestDTO)
+        }
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "user/profile/hangout",
@@ -218,7 +224,13 @@ extension APIEndpoints {
             contentType: .none)
     }
     
-    static func fetchReviews() -> Endpoint<FetchReviewsResponseDTO> {
+    static func fetchReviews(id: String?) -> Endpoint<FetchReviewsResponseDTO> {
+        if let id = id {
+            return Endpoint(
+                baseURL: BAPPY_API_BASEURL,
+                path: "user/\(id)/review",
+                method: .get)
+        }
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
             path: "hangout/review",

@@ -11,9 +11,11 @@ import SwiftUI
 struct FetchCurrentUserResponseDTO: Decodable {
     
     let user: UserDTO
+    let message: String
     
     private enum CodingKeys: String, CodingKey {
         case user = "data"
+        case message
     }
 }
 
@@ -28,7 +30,7 @@ extension FetchCurrentUserResponseDTO {
         let introduce: String?
         let profileImageFilename: String?
         let isUserUsingGPS: Bool?
-        let state: String
+        let state: String?
         let languages: [String]?
         let personalities: [String]?
         let interests: [String]?
@@ -58,7 +60,7 @@ extension FetchCurrentUserResponseDTO {
             switch user.state {
             case "normal": return .normal
             case "notRegistered": return .notRegistered
-            default: return .notRegistered }
+            default: return message == "normal user" ? .normal : .notRegistered }
         }
         
         var gender: Gender? {

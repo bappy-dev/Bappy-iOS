@@ -134,10 +134,14 @@ final class ProfileViewModel: ViewModelType {
                 }
             }
             .map { ($0.0, $0.1 as! [Hangout]) }
-            .withLatestFrom(user$.compactMap { $0 }) { element, user -> HangoutDetailViewModel in
+            .withLatestFrom(dependency.bappyAuthRepository.currentUser.compactMap{ $0 }) { element, user -> HangoutDetailViewModel in
+                var hangout = element.1[element.0.row]
+                hangout.userHasLiked =  hangout.likedIDs.contains(where: { info in
+                    info.id == user.id
+                })
                 let dependency = HangoutDetailViewModel.Dependency(
                     currentUser: user,
-                    hangout: element.1[element.0.row])
+                    hangout: hangout)
                 return HangoutDetailViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
@@ -293,7 +297,7 @@ final class ProfileViewModel: ViewModelType {
         
         // fetchJoinedHangout
         let joinedHangoutResult = startFlowWithUserID
-            .map { _ in .Joined }
+            .map { _ in (.Joined, dependency.user.id) }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .do { [weak self] _ in self?.hideHolderView$.onNext(true) }
             .share()
@@ -310,7 +314,7 @@ final class ProfileViewModel: ViewModelType {
 
         // fetchLikedHangout
         let likedHangoutResult = startFlowWithUserID
-            .map { _ in .Liked }
+            .map { _ in (.Liked, dependency.user.id) }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
 
@@ -326,7 +330,7 @@ final class ProfileViewModel: ViewModelType {
             
         // fetchReferences
         let referenceResult = startFlowWithUserID
-            .map { _ in return Void() }
+            .map { _ in return dependency.user.id }
             .flatMap(dependency.hangoutRepository.fetchReviews)
             .share()
 
@@ -337,8 +341,15 @@ final class ProfileViewModel: ViewModelType {
 
         referenceResult
             .compactMap(getValue)
-            .map({ references in
-                references.map { ReferenceCellState(reference: $0, isExpanded: false) }
+            .withLatestFrom(dependency.bappyAuthRepository.currentUser) { ($0, $1) }
+            .map({ references, realUser in
+                references.map { origin in
+                    var reference = origin
+                    if dependency.user.id != realUser?.id {
+                        reference.isCanRead = true
+                    }
+                    return ReferenceCellState(reference: reference, isExpanded: false)
+                }
             })
             .bind(to: referenceHangouts$)
             .disposed(by: disposeBag)
