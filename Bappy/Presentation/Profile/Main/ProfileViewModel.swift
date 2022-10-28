@@ -293,7 +293,7 @@ final class ProfileViewModel: ViewModelType {
         
         // fetchJoinedHangout
         let joinedHangoutResult = startFlowWithUserID
-            .map { _ in .Joined }
+            .map { _ in (.Joined, dependency.user.id) }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .do { [weak self] _ in self?.hideHolderView$.onNext(true) }
             .share()
@@ -310,7 +310,7 @@ final class ProfileViewModel: ViewModelType {
 
         // fetchLikedHangout
         let likedHangoutResult = startFlowWithUserID
-            .map { _ in .Liked }
+            .map { _ in (.Liked, dependency.user.id) }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
 
@@ -326,7 +326,7 @@ final class ProfileViewModel: ViewModelType {
             
         // fetchReferences
         let referenceResult = startFlowWithUserID
-            .map { _ in return Void() }
+            .map { _ in return dependency.user.id }
             .flatMap(dependency.hangoutRepository.fetchReviews)
             .share()
 
