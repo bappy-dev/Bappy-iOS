@@ -24,6 +24,7 @@ final class HangoutCell: UITableViewCell {
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = Constant.hangoutDefaultImages.randomElement() as? UIImage
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .bappyLightgray
@@ -339,7 +340,7 @@ extension HangoutCell {
         viewModel.output.postImageURL
             .compactMap { $0 }
             .drive(onNext: { [weak self] url in
-                self?.postImageView.kf.setImage(with: url)
+                self?.postImageView.kf.setImage(with: url, placeholder: Constant.hangoutDefaultImages.randomElement() as? UIImage)
             }).disposed(by: disposeBag)
         
         viewModel.output.showAnimation

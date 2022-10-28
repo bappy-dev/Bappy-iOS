@@ -19,7 +19,7 @@ final class HangoutImageSectionView: UIView {
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "bappy.png")
+        imageView.image = Constant.hangoutDefaultImages.randomElement() as? UIImage
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -76,7 +76,7 @@ extension HangoutImageSectionView {
 
         viewModel.output.imageURL
             .emit(onNext: { [weak self] url in
-                self?.postImageView.kf.setImage(with: url)
+                self?.postImageView.kf.setImage(with: url, placeholder: Constant.hangoutDefaultImages.randomElement() as? UIImage)
             })
             .disposed(by: disposeBag)
         

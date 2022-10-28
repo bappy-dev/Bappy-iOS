@@ -14,6 +14,7 @@ final class ProfileHangoutCell: UITableViewCell {
     // MARK: Properties
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = Constant.hangoutDefaultImages.randomElement() as? UIImage
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 9.0
@@ -178,7 +179,7 @@ final class ProfileHangoutCell: UITableViewCell {
 // MARK: - Bind
 extension ProfileHangoutCell {
     func bind(with hangout: Hangout) {
-        postImageView.kf.setImage(with: hangout.postImageURL)
+        postImageView.kf.setImage(with: hangout.postImageURL, placeholder: Constant.hangoutDefaultImages.randomElement() as? UIImage)
         titleLabel.text = hangout.title
         timeLabel.text = hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
         placeLabel.text = hangout.place.name
