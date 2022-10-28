@@ -12,5 +12,5 @@ struct UpdateProfileRequestDTO: Encodable {
     let userIntroduce: String?
     let userLanguages: String?
     let userInterests: String?
-    let userPersonalities: String?
+    let personalities: String?
 }

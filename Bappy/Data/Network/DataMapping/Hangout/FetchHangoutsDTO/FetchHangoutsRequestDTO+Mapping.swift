@@ -9,7 +9,6 @@ import Foundation
 
 struct FetchHangoutsRequestDTO: Encodable {
     var hangoutSort: String
-    var test: String
     var hangoutCategory: String
 //    let page: Int
 //    let sorting: String
