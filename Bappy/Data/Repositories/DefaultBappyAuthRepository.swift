@@ -177,7 +177,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
             userIntroduce: introduce,
             userLanguages: languages,
             userInterests: interests,
-            userPersonalities: personalities)
+            personalities: personalities)
         let endpoint = APIEndpoints.updateProfile(with: requestDTO, data: data)
         return  provider.request(with: endpoint)
             .map { result -> Result<Bool, Error> in
