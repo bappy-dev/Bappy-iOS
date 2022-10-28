@@ -151,15 +151,16 @@ extension DefaultHangoutRepository: HangoutRepository {
     //        }
     //    }
     
-    func fetchHangouts(profileType: Hangout.UserProfileType) -> Single<Result<[Hangout], Error>> {
+    func fetchHangouts(profileType: Hangout.UserProfileType, id: String?) -> Single<Result<[Hangout], Error>> {
         let requestDTO = FetchHangoutsOfUserRequestDTO(filter: profileType.description)
         
-        let endpoint = APIEndpoints.fetchHangouts(with: requestDTO)
+        let endpoint = APIEndpoints.fetchHangouts(with: requestDTO, id: id)
         
         return provider.request(with: endpoint)
             .map { result -> Result<[Hangout], Error> in
                 switch result {
                 case .success(let responseDTO):
+                    print("얍", responseDTO.toDomain())
                     return .success(responseDTO.toDomain())
                 case .failure(let error):
                     return .failure(error)
@@ -425,13 +426,14 @@ extension DefaultHangoutRepository: HangoutRepository {
             }
     }
     
-    func fetchReviews() -> RxSwift.Single<Result<[Reference], Error>> {
-        let endpoint = APIEndpoints.fetchReviews()
+    func fetchReviews(id: String?) -> RxSwift.Single<Result<[Reference], Error>> {
+        let endpoint = APIEndpoints.fetchReviews(id: id)
         
         return provider.request(with: endpoint)
             .map { result -> Result<[Reference], Error> in
                 switch result {
                 case .success(let responseDTO):
+                    print("얍 \(id)", responseDTO.toDomain())
                     return .success(responseDTO.toDomain())
                 case .failure(let error):
                     return .failure(error)

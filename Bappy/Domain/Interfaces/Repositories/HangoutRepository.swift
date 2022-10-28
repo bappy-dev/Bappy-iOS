@@ -11,7 +11,7 @@ import RxSwift
 protocol HangoutRepository {
 //    func fetchHangouts(page: Int, sorting: Hangout.SortingOrder, category: Hangout.Category, coordinates: Coordinates?) -> Single<Result<HangoutPage, Error>>
     func fetchHangouts(page: Int, sort: Hangout.SortingOrder, categorey: Hangout.Category) -> Single<Result<HangoutPage, Error>>
-    func fetchHangouts(profileType: Hangout.UserProfileType) -> Single<Result<[Hangout], Error>> 
+    func fetchHangouts(profileType: Hangout.UserProfileType, id: String?) -> Single<Result<[Hangout], Error>> 
 //    func fetchHangouts(userID: String, profileType: Hangout.UserProfileType) -> Single<Result<[Hangout], Error>>
     func fetchHangout(hangoutID: String) -> Single<Result<Hangout, Error>>
     func createHangout(hangout: Hangout, imageData: Data) -> Single<Result<Bool, Error>>
@@ -23,5 +23,5 @@ protocol HangoutRepository {
     func searchHangouts(title: String) -> Single<Result<HangoutPage, Error>>
     func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?) -> Single<Result<HangoutPage, Error>>
     func makeReviews(referenceModels: [MakeReferenceModel], hangoutID: String) -> Single<Result<Bool, Error>>
-    func fetchReviews() -> Single<Result<[Reference], Error>>
+    func fetchReviews(id: String?) -> Single<Result<[Reference], Error>>
 }
