@@ -52,7 +52,6 @@ final class HangoutMapSectionViewModel: ViewModelType {
         let placeName = placeName$
             .asDriver(onErrorJustReturn: dependency.placeName)
         let mapImage = isPreviewModel$
-            .filter { $0 }
             .withLatestFrom(mapImage$)
             .asSignal(onErrorJustReturn: dependency.mapImage)
         

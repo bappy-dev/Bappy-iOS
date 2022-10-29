@@ -68,10 +68,39 @@ final class HangoutCell: UITableViewCell {
         return label
     }()
     
-    private let participantsImageView = UIImageView()
-    private let participantsImageView2 = UIImageView()
-    private let participantsImageView3 = UIImageView()
-    private let participantsImageView4 = UIImageView()
+    private let participantsImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 16
+        return imageView
+    }()
+    
+    private let participantsImageView2: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 16
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    private let participantsImageView3: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 16
+        imageView.clipsToBounds = true
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    private let participantsImageView4: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Image 1")
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        return imageView
+    }()
     
     lazy var participantsImageViews: [UIImageView] = [participantsImageView, participantsImageView2, participantsImageView3, participantsImageView4]
     
@@ -119,12 +148,6 @@ final class HangoutCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        configureShadow()
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -140,11 +163,6 @@ final class HangoutCell: UITableViewCell {
     }
     
     // MARK: Helpers
-    private func configureShadow() {
-        timeLabel.addBappyShadow()
-        placeLabel.addBappyShadow()
-    }
-    
     private func configureState(_ state: Hangout.State) {
         disabledImageView.isHidden = (state == .available)
         if state != .available {

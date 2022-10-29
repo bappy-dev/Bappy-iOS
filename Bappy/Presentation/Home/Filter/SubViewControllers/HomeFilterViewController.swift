@@ -200,10 +200,6 @@ final class HomeFilterViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        print("deinit")
-    }
-    
     // MARK: Helpers
     private func configure() {
         //        self.isModalInPresentation = true
