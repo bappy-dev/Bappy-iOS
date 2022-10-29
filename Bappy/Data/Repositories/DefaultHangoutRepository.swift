@@ -42,7 +42,7 @@ extension DefaultHangoutRepository: HangoutRepository {
     func fetchHangouts(page: Int, sort: Hangout.SortingOrder, categorey: Hangout.Category) -> Single<Result<HangoutPage, Error>> {
         let requestDTO = FetchHangoutsRequestDTO(hangoutSort: sort.description,
                                                  hangoutCategory: categorey.description)
-        let endpoint = APIEndpoints.fetchHangouts(with: requestDTO)
+        let endpoint = APIEndpoints.fetchHangouts(with: requestDTO, page: page)
         
         return provider.request(with: endpoint)
             .map { result -> Result<HangoutPage, Error> in
