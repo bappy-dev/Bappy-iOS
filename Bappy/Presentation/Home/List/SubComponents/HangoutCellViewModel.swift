@@ -15,14 +15,17 @@ final class HangoutCellViewModel: ViewModelType {
         var user: BappyUser
         var hangout: Hangout
         let hangoutRepository: HangoutRepository
+        let googleMapImageRepository: GoogleMapImageRepository
         var dateFormat: String { "dd. MMM. HH:mm" }
         
         init(user: BappyUser,
              hangout: Hangout,
-             hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             googleMapImageRepository: GoogleMapImageRepository = DefaultGoogleMapImageRepository()) {
             self.user = user
             self.hangout = hangout
             self.hangoutRepository = hangoutRepository
+            self.googleMapImageRepository = googleMapImageRepository
         }
     }
     
@@ -66,6 +69,7 @@ final class HangoutCellViewModel: ViewModelType {
         // MARK: Streams
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
         let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
+        let key$ = BehaviorSubject<String>(value: Bundle.main.googleMapAPIKey)
         
         let title = hangout$
             .map(\.title)
@@ -87,6 +91,7 @@ final class HangoutCellViewModel: ViewModelType {
         let userHasLiked = hangout$
             .map(\.userHasLiked)
             .asDriver(onErrorJustReturn: false)
+        //        let mapImage = hangout$.map(\.place.)
         let state = hangout$
             .map(\.state)
             .map(Hangout.State?.init)
@@ -156,14 +161,32 @@ final class HangoutCellViewModel: ViewModelType {
             .bind(to: showAnimation$)
             .disposed(by: disposeBag)
         
+        let result = moreButtonTapped$
+            .withLatestFrom(Observable.combineLatest(
+                key$, hangout$.map { $0.place.coordinates }
+            ))
+            .flatMap(dependency.googleMapImageRepository.fetchMapImageData)
+            .share()
+        
+        result
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        
+        let mapImage = result
+            .compactMap(getValue)
+            .map(UIImage.init)
+            .share()
+        
         // 상세뷰와 Like 맞추기
-        moreButtonTapped$
-            .withLatestFrom(hangout$)
-            .withLatestFrom(user$) { (hangout: $0, user: $1) }
+        mapImage
+            .withLatestFrom(hangout$) { (image: $0, hangout: $1)}
+            .withLatestFrom(user$) { (image: $0.image, hangout: $0.hangout, user: $1)}
             .map { [weak self] element -> HangoutDetailViewModel? in
                 guard let self = self else { return nil }
                 let dependency = HangoutDetailViewModel.Dependency(
-                    currentUser: element.user, hangout: element.hangout)
+                    currentUser: element.user, hangout: element.hangout, mapImage: element.image)
                 let viewModel = HangoutDetailViewModel(dependency: dependency)
                 viewModel.output.hangout
                     .compactMap { $0 }

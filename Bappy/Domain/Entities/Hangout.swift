@@ -24,8 +24,8 @@ struct Hangout: Equatable, Identifiable {
     let postImageURL: URL?
     let openchatURL: URL
     
-    let joinedIDs: [Info]
-    let likedIDs: [Info]
+    var joinedIDs: [Info]
+    var likedIDs: [Info]
     var userHasLiked: Bool
     
     static func == (lhs: Hangout, rhs: Hangout) -> Bool {

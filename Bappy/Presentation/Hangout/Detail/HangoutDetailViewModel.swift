@@ -84,6 +84,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showYellowLoader: Signal<Bool> // <-> View
         var showTranslucentLoader: Signal<Bool> // <-> View
         var hangout: Signal<Hangout?> // <-> Child(Image), CellViewModel
+        var newParticipantsSectionView: Signal<HangoutParticipantsSectionViewModel?>
     }
     
     let dependency: Dependency
@@ -110,6 +111,7 @@ final class HangoutDetailViewModel: ViewModelType {
     
     private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
+    private let newParticipantsSectionView$ = PublishSubject<HangoutParticipantsSectionViewModel?>()
     private let showCreateSuccessView$ = PublishSubject<Void>()
     private let showYellowLoader$ = PublishSubject<Bool>()
     private let showTranslucentLoader$ = PublishSubject<Bool>()
@@ -197,6 +199,8 @@ final class HangoutDetailViewModel: ViewModelType {
             .skip(1)
             .map(Hangout?.init)
             .asSignal(onErrorJustReturn: nil)
+        let newParticipantsSectionView = newParticipantsSectionView$
+            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -222,7 +226,8 @@ final class HangoutDetailViewModel: ViewModelType {
             showCreateSuccessView: showCreateSuccessView,
             showYellowLoader: showYellowLoader,
             showTranslucentLoader: showTranslucentLoader,
-            hangout: hangout
+            hangout: hangout,
+            newParticipantsSectionView: newParticipantsSectionView
         )
         
         // MARK: Bindind
@@ -272,10 +277,54 @@ final class HangoutDetailViewModel: ViewModelType {
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
-        createResult
+        let joinResult = hangoutButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 == .join }
+            .withLatestFrom(hangout$)
+            .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
+            .flatMap { dependency.hangoutRepository.joinHangout(hangoutID: $0.id) }
+            .do(onNext: { [weak self] _ in self?.showYellowLoader$.onNext(false)
+            }, onError: { [weak self] _ in self?.showYellowLoader$.onNext(false)})
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        joinResult
             .compactMap(getValue)
-            .map { _ in }
-            .bind(to: showCreateSuccessView$)
+            .filter { $0 }
+            .bind(onNext: { _ in
+                hangoutButtonState$.onNext(.join)
+            })
+            .disposed(by: disposeBag)
+        
+        let cancelResult = cancelAlertButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 == .cancel }
+            .withLatestFrom(hangout$)
+            .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
+            .flatMap { dependency.hangoutRepository.cancelHangout(hangoutID: $0.id) }
+            .do(onNext: { [weak self] _ in self?.showYellowLoader$.onNext(false)
+            }, onError: { [weak self] _ in self?.showYellowLoader$.onNext(false)})
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        cancelResult
+            .compactMap(getValue)
+            .filter { $0 }
+            .bind(onNext: { _ in hangoutButtonState$.onNext(.cancel) })
+            .disposed(by: disposeBag)
+        
+        hangoutButtonState$
+            .filter { $0 == .join || $0 == .cancel }
+            .map {
+                var newHangout = dependency.hangout
+                
+                if $0 == .join {
+                    newHangout.joinedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL!))
+                } else {
+                    newHangout.joinedIDs.remove(at: newHangout.joinedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) ?? 0)
+                }
+                return HangoutParticipantsSectionViewModel(dependency: HangoutParticipantsSectionViewModel.Dependency(hangout: newHangout))
+            }.bind(to: newParticipantsSectionView$)
             .disposed(by: disposeBag)
         
         // FirebaseRemoteConfig로 행아웃 신고사유 리스트 불러오기

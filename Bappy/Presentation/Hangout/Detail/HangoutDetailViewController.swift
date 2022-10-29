@@ -25,7 +25,7 @@ final class HangoutDetailViewController: UIViewController {
     private let mainSectionView: HangoutMainSectionView
     private let mapSectionView: HangoutMapSectionView
     private let planSectionView: HangoutPlanSectionView
-    private let participantsSectionView: HangoutParticipantsSectionView
+    private var participantsSectionView: HangoutParticipantsSectionView
     
     private let hangoutButton = HangoutButton()
     
@@ -227,8 +227,18 @@ extension HangoutDetailViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.hangoutButtonState
-            .emit(to: hangoutButton.rx.hangoutState)
+            .emit(onNext: { [weak self] state in
+                self?.hangoutButton.hangoutState = state
+            })
             .disposed(by: disposeBag)
+        
+        viewModel.output.newParticipantsSectionView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                self?.participantsSectionView = HangoutParticipantsSectionView(viewModel: viewModel)
+                self?.participantsSectionView.setNeedsDisplay()
+                self?.hangoutButton.setNeedsDisplay() 
+            }).disposed(by: disposeBag)
         
         viewModel.output.showSignInAlert
             .compactMap { $0 }
