@@ -68,33 +68,10 @@ final class HangoutCell: UITableViewCell {
         return label
     }()
     
-    private let participantsImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let participantsImageView2: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = true
-        return imageView
-    }()
-    
-    private let participantsImageView3: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = true
-        return imageView
-    }()
-    
-    private let participantsImageView4: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "Image 1")
-        imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = true
-        return imageView
-    }()
+    private let participantsImageView = UIImageView()
+    private let participantsImageView2 = UIImageView()
+    private let participantsImageView3 = UIImageView()
+    private let participantsImageView4 = UIImageView()
     
     lazy var participantsImageViews: [UIImageView] = [participantsImageView, participantsImageView2, participantsImageView3, participantsImageView4]
     
@@ -224,36 +201,25 @@ final class HangoutCell: UITableViewCell {
             $0.height.equalTo(18.0)
         }
         
-        transparentView.addSubview(participantsImageView)
+        var before: UIView = titleLabel
+        participantsImageViews.forEach { imageView in
+            transparentView.addSubview(imageView)
+            imageView.contentMode = .scaleAspectFit
+            imageView.isHidden = true
+            imageView.layer.cornerRadius = 16.0
+            imageView.clipsToBounds = true
+            imageView.snp.makeConstraints {
+                $0.bottom.equalTo(postImageView).offset(-13.8)
+                $0.width.height.equalTo(32.0)
+                if imageView != participantsImageView {
+                    $0.leading.equalTo(before.snp.trailing).offset(12.0)
+                }
+            }
+            before = imageView
+        }
+        
         participantsImageView.snp.makeConstraints {
-            $0.bottom.equalTo(postImageView).offset(-13.8)
             $0.leading.equalTo(titleLabel).offset(6.0)
-            $0.width.equalTo(32)
-            $0.height.equalTo(32.0)
-        }
-        
-        transparentView.addSubview(participantsImageView2)
-        participantsImageView2.snp.makeConstraints {
-            $0.bottom.equalTo(postImageView).offset(-13.8)
-            $0.leading.equalTo(participantsImageView.snp.trailing).offset(12.0)
-            $0.width.equalTo(32)
-            $0.height.equalTo(32.0)
-        }
-        
-        transparentView.addSubview(participantsImageView3)
-        participantsImageView3.snp.makeConstraints {
-            $0.bottom.equalTo(postImageView).offset(-13.8)
-            $0.leading.equalTo(participantsImageView2.snp.trailing).offset(12.0)
-            $0.width.equalTo(32)
-            $0.height.equalTo(32.0)
-        }
-        
-        transparentView.addSubview(participantsImageView4)
-        participantsImageView4.snp.makeConstraints {
-            $0.bottom.equalTo(postImageView).offset(-13.8)
-            $0.leading.equalTo(participantsImageView3.snp.trailing).offset(12.0)
-            $0.width.equalTo(32)
-            $0.height.equalTo(32.0)
         }
         
         self.addSubview(moreButton)
@@ -326,7 +292,11 @@ extension HangoutCell {
         viewModel.output.joinedUsers
             .drive(onNext: { [weak self] infos in
                 for idx in 0..<infos.count {
-                    if idx == 3 { self?.participantsImageView4.isHidden = false; return }
+                    if idx == 3 {
+                        self?.participantsImageView4.image = UIImage(named: "Image 1")
+                        self?.participantsImageView4.isHidden = false
+                        return
+                    }
                     self?.participantsImageViews[idx].kf.setImage(with: infos[idx].imageURL, placeholder: UIImage(named: "profile_default"))
                     self?.participantsImageViews[idx].isHidden = false
                 }

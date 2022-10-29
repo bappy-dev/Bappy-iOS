@@ -61,12 +61,12 @@ final class ProfileHangoutCell: UITableViewCell {
         return label
     }()
     
-    private let participantsImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "profile_participants")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+    private let participantsImageView = UIImageView()
+    private let participantsImageView2 = UIImageView()
+    private let participantsImageView3 = UIImageView()
+    private let participantsImageView4 = UIImageView()
+    
+    lazy var participantsImageViews: [UIImageView] = [participantsImageView, participantsImageView2, participantsImageView3, participantsImageView4]
     
     private let disabledView: UIView = {
         let disabledView = UIView()
@@ -156,12 +156,19 @@ final class ProfileHangoutCell: UITableViewCell {
             $0.centerY.equalTo(placeLabel)
         }
         
-        frameView.addSubview(participantsImageView)
-        participantsImageView.snp.makeConstraints {
-            $0.top.equalTo(placeLabel.snp.bottom).offset(8.0)
-            $0.leading.equalTo(postImageView.snp.trailing).offset(9.7)
-            $0.width.equalTo(131.0)
-            $0.height.equalTo(26.0)
+        var before = postImageView
+        participantsImageViews.forEach { imageView in
+            frameView.addSubview(imageView)
+            imageView.contentMode = .scaleAspectFit
+            imageView.isHidden = true
+            imageView.layer.cornerRadius = 16.0
+            imageView.clipsToBounds = true
+            imageView.snp.makeConstraints {
+                $0.top.equalTo(placeLabel.snp.bottom).offset(8.0)
+                $0.width.height.equalTo(32.0)
+                $0.leading.equalTo(before.snp.trailing).offset(9.7)
+            }
+            before = imageView
         }
         
         frameView.addSubview(disabledView)
@@ -183,6 +190,12 @@ extension ProfileHangoutCell {
         titleLabel.text = hangout.title
         timeLabel.text = hangout.meetTime.toString(dateFormat: "dd. MMM. HH:mm")
         placeLabel.text = hangout.place.name
+        
+        
+        for idx in 0..<min(hangout.joinedIDs.count, 4) {
+            participantsImageViews[idx].kf.setImage(with: hangout.joinedIDs[idx].imageURL, placeholder: UIImage(named: "profile_default"))
+            participantsImageViews[idx].isHidden = false
+        }
         
         disabledView.isHidden = (hangout.state == .available)
         if hangout.state != .available {
