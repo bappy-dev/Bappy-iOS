@@ -196,6 +196,7 @@ final class HomeListViewModel: ViewModelType {
         
         // 행아웃 불러오기 Flow
         let hangoutFlow = page$
+            .observe(on: MainScheduler.asyncInstance)
             .withLatestFrom(Observable.combineLatest(
                 sorting$,
                 category$
