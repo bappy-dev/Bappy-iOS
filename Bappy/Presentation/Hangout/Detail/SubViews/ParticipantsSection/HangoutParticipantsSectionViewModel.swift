@@ -18,6 +18,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
     }
     
     struct Input {
+        var joinedIDs: AnyObserver<[Hangout.Info]>
         var itemSelected: AnyObserver<IndexPath> // <-> View
     }
     
@@ -55,6 +56,7 @@ final class HangoutParticipantsSectionViewModel: ViewModelType {
         
         // MARK: Input & Output
         self.input = Input(
+            joinedIDs: joinedIDs$.asObserver(),
             itemSelected: itemSelected$.asObserver()
         )
         

@@ -84,7 +84,6 @@ final class HangoutDetailViewModel: ViewModelType {
         var showYellowLoader: Signal<Bool> // <-> View
         var showTranslucentLoader: Signal<Bool> // <-> View
         var hangout: Signal<Hangout?> // <-> Child(Image), CellViewModel
-        var newParticipantsSectionView: Signal<HangoutParticipantsSectionViewModel?>
     }
     
     let dependency: Dependency
@@ -199,8 +198,6 @@ final class HangoutDetailViewModel: ViewModelType {
             .skip(1)
             .map(Hangout?.init)
             .asSignal(onErrorJustReturn: nil)
-        let newParticipantsSectionView = newParticipantsSectionView$
-            .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
         self.input = Input(
@@ -226,8 +223,7 @@ final class HangoutDetailViewModel: ViewModelType {
             showCreateSuccessView: showCreateSuccessView,
             showYellowLoader: showYellowLoader,
             showTranslucentLoader: showTranslucentLoader,
-            hangout: hangout,
-            newParticipantsSectionView: newParticipantsSectionView
+            hangout: hangout
         )
         
         // MARK: Bindind
@@ -291,9 +287,7 @@ final class HangoutDetailViewModel: ViewModelType {
         joinResult
             .compactMap(getValue)
             .filter { $0 }
-            .bind(onNext: { _ in
-                hangoutButtonState$.onNext(.join)
-            })
+            .bind(onNext: { _ in hangoutButtonState$.onNext(.cancel) })
             .disposed(by: disposeBag)
         
         let cancelResult = cancelAlertButtonTapped$
@@ -310,21 +304,22 @@ final class HangoutDetailViewModel: ViewModelType {
         cancelResult
             .compactMap(getValue)
             .filter { $0 }
-            .bind(onNext: { _ in hangoutButtonState$.onNext(.cancel) })
+            .bind(onNext: { _ in hangoutButtonState$.onNext(.join) })
             .disposed(by: disposeBag)
         
         hangoutButtonState$
+            .skip(1)
             .filter { $0 == .join || $0 == .cancel }
-            .map {
+            .map { state -> [Hangout.Info] in
                 var newHangout = dependency.hangout
-                
-                if $0 == .join {
-                    newHangout.joinedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL!))
-                } else {
-                    newHangout.joinedIDs.remove(at: newHangout.joinedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) ?? 0)
+                if let idx = newHangout.joinedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) {
+                    newHangout.joinedIDs.remove(at: idx)
+                    if state == .cancel {
+                        newHangout.joinedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL!))
+                    }
                 }
-                return HangoutParticipantsSectionViewModel(dependency: HangoutParticipantsSectionViewModel.Dependency(hangout: newHangout))
-            }.bind(to: newParticipantsSectionView$)
+                return newHangout.joinedIDs
+            }.bind(to: subViewModels.participantsSectionViewModel.input.joinedIDs)
             .disposed(by: disposeBag)
         
         // FirebaseRemoteConfig로 행아웃 신고사유 리스트 불러오기

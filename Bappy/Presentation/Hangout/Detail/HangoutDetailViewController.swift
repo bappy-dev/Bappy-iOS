@@ -232,14 +232,6 @@ extension HangoutDetailViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.output.newParticipantsSectionView
-            .compactMap { $0 }
-            .emit(onNext: { [weak self] viewModel in
-                self?.participantsSectionView = HangoutParticipantsSectionView(viewModel: viewModel)
-                self?.participantsSectionView.setNeedsDisplay()
-                self?.hangoutButton.setNeedsDisplay() 
-            }).disposed(by: disposeBag)
-        
         viewModel.output.showSignInAlert
             .compactMap { $0 }
             .emit(to: self.rx.showSignInAlert)
