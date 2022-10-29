@@ -10,7 +10,7 @@ import Foundation
 struct UpdateHangoutParticipationResponseDTO: Decodable {
     let status: String
     let data: Bool
-    let token: String
+    let token: Int
     let message: String
 }
 
