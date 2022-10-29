@@ -124,10 +124,10 @@ extension APIEndpoints {
 
 // MARK: - Hangout
 extension APIEndpoints {
-    static func fetchHangouts(with hangoutsRequestDTO: FetchHangoutsRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
+    static func fetchHangouts(with hangoutsRequestDTO: FetchHangoutsRequestDTO, page: Int) -> Endpoint<FetchHangoutsResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "hangout/list/0",
+            path: "hangout/list/\(page-1)",
             method: .get,
             queryParameters: hangoutsRequestDTO)
     }

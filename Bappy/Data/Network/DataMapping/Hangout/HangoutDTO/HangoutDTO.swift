@@ -73,7 +73,7 @@ extension HangoutDTO {
         }
         
         let date = meetTime.toDate(format: "yyyy-MM-dd HH:mm:ss") ?? Date()
-        let postImageURL = URL(string: "\(BAPPY_API_BASEURL)static-file/\(postImageFilename)")!
+        let postImageURL = URL(string: "\(BAPPY_API_BASEURL)static-file/\(postImageFilename)")
         let place = Hangout.Place(name: place.name, address: place.address, latitude: place.latitude, longitude: place.longitude)
         
         return Hangout(id: id,

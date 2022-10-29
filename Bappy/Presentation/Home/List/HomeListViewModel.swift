@@ -190,13 +190,13 @@ final class HomeListViewModel: ViewModelType {
                 refresh$
             )
             .skip(3)
-//            .map { _ in 1 }
-            .map { _ in 0 }
+            .map { _ in 1 }
             .bind(to: page$)
             .disposed(by: disposeBag)
         
         // 행아웃 불러오기 Flow
         let hangoutFlow = page$
+            .observe(on: MainScheduler.asyncInstance)
             .withLatestFrom(Observable.combineLatest(
                 sorting$,
                 category$
@@ -213,8 +213,7 @@ final class HomeListViewModel: ViewModelType {
         
         // Page 1보다 클 때 기존 dataSource에 추가하기
         let extraHangoutPageResult = hangoutFlow
-//            .filter { $0.0 > 1 }
-            .filter { $0.0 < -1 }
+            .filter { $0.0 > 1 }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .observe(on: MainScheduler.asyncInstance)
             .share()
@@ -246,6 +245,7 @@ final class HomeListViewModel: ViewModelType {
             .merge(newHangoutPage, extraHangoutPage)
             .do { [weak self] _ in self?.endRefreshing$.onNext(Void()) }
             .map(\.totalPage)
+            .map { $0 / 10 + 1 }
             .bind(to: totalPage$)
             .disposed(by: disposeBag)
         
@@ -299,7 +299,7 @@ final class HomeListViewModel: ViewModelType {
                     .distinctUntilChanged()
             ) { (row: $0, count: $1) }
             .filter { $0.row == $0.count - 2 }
-            .withLatestFrom(page$)
+            .withLatestFrom(page$) { $1 }
             .withLatestFrom(totalPage$) { (page: $0, totalPage: $1) }
             .filter { $0.page < $0.totalPage }
             .map { $0.page + 1 }
@@ -318,6 +318,7 @@ final class HomeListViewModel: ViewModelType {
         Observable
             .merge(newHangoutPage, extraHangoutPage)
             .map(\.totalPage)
+            .map { $0 / 10 + 1 }
             .withLatestFrom(page$) { (totalPage: $0, page: $1) }
             .filter { $0.totalPage == $0.page }
             .map { _ in false }
