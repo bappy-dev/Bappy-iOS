@@ -192,6 +192,9 @@ extension ProfileHangoutCell {
         placeLabel.text = hangout.place.name
         
         
+        for idx in 0..<4 {
+            participantsImageViews[idx].isHidden = true
+        }
         for idx in 0..<min(hangout.joinedIDs.count, 4) {
             participantsImageViews[idx].kf.setImage(with: hangout.joinedIDs[idx].imageURL, placeholder: UIImage(named: "profile_default"))
             participantsImageViews[idx].isHidden = false

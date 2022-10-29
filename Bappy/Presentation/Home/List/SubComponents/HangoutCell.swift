@@ -291,6 +291,10 @@ extension HangoutCell {
         
         viewModel.output.joinedUsers
             .drive(onNext: { [weak self] infos in
+                for idx in 0..<4 {
+                    self?.participantsImageViews[idx].isHidden = true
+                }
+                
                 for idx in 0..<infos.count {
                     if idx == 3 {
                         self?.participantsImageView4.image = UIImage(named: "Image 1")
