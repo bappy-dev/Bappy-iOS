@@ -94,16 +94,19 @@ final class ProfileDetailInterestsView: UIView {
         let sixthSubviews: [UIView] = [concertsLabel, museumLabel, boardgameLabel]
         let sixthHStackView = UIStackView(arrangedSubviews: sixthSubviews)
         
-        for stackView in [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView] {
+        for stackView in [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView, fifthHStackView, sixthHStackView] {
             stackView.axis = .horizontal
             stackView.spacing = 15.0
         }
+        
         firstHStackView.distribution = .fillEqually
         secondHStackView.distribution = .fillEqually
         thirdHStackView.distribution = .fillProportionally
         fourthHStackView.distribution = .fillProportionally
+        fifthHStackView.distribution = .fillProportionally
+        sixthHStackView.distribution = .fillProportionally
         
-        let vStackSubviews: [UIView] = [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView]
+        let vStackSubviews: [UIView] = [firstHStackView, secondHStackView, thirdHStackView, fourthHStackView, fifthHStackView, sixthHStackView]
         let vStackView = UIStackView(arrangedSubviews: vStackSubviews)
         vStackView.axis = .vertical
         vStackView.distribution = .fillEqually

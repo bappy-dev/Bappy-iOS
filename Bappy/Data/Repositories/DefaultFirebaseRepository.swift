@@ -153,12 +153,12 @@ extension DefaultFirebaseRepository: FirebaseRepository {
         }
     }
     
-    func deleteAccount(completion: @escaping(Result<Void, Error>) -> Void) {
+    func deleteAccount(completion: @escaping(Result<Bool, Error>) -> Void) {
         networkCheckRepository.checkNetworkConnection { [weak self] in
             self?.auth.currentUser?.delete() { error in
                 print(error)
                 if error == nil {
-                    completion(.success(Void()))
+                    completion(.success(true))
                 } else {
                     completion(.failure(FirebaseError.deleteFailed))
                 }
@@ -166,8 +166,8 @@ extension DefaultFirebaseRepository: FirebaseRepository {
         }
     }
     
-    func deleteAccount() -> Single<Result<Void, Error>> {
-        return Single<Result<Void, Error>>.create { [weak self] single in
+    func deleteAccount() -> Single<Result<Bool, Error>> {
+        return Single<Result<Bool, Error>>.create { [weak self] single in
             self?.deleteAccount { result in
                 switch result {
                 case .success(let value):
