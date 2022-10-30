@@ -190,10 +190,10 @@ final class HomeListViewModel: ViewModelType {
             .merge(
                 sorting$.map { _ in },
                 category$.map { _ in },
-                refresh$,
-                viewWillAppear$.map { _ in}
+                refresh$
+//                viewWillAppear$.map { _ in}
             )
-            .skip(4)
+            .skip(3)
             .map { _ in 1 }
             .bind(to: page$)
             .disposed(by: disposeBag)
@@ -203,8 +203,8 @@ final class HomeListViewModel: ViewModelType {
             .observe(on: MainScheduler.asyncInstance)
             .withLatestFrom(Observable.combineLatest(
                 sorting$,
-                category$,
-                viewWillAppear$
+                category$
+//                viewWillAppear$
             )) { ($0, $1.0, $1.1) }
 //            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
             .share()

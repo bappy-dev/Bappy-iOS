@@ -160,6 +160,8 @@ extension HomeSearchViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.cellViewModels
+            .skip(1)
+            .map { [weak self] viewModels in self?.noResultView.isHidden = !viewModels.isEmpty; return viewModels }
             .drive(tableView.rx.items(cellIdentifier: HangoutCell.reuseIdentifier, cellType: HangoutCell.self)) { _, viewModel, cell in
                 cell.bind(viewModel)
             }.disposed(by: disposeBag)

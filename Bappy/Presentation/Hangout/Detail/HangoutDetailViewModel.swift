@@ -273,6 +273,12 @@ final class HangoutDetailViewModel: ViewModelType {
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
+        createResult
+            .compactMap(getValue)
+            .map { _ in }
+            .bind(to: showCreateSuccessView$)
+            .disposed(by: disposeBag)
+        
         let joinResult = hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .join }

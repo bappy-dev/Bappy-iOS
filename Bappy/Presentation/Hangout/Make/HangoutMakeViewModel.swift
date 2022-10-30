@@ -441,7 +441,6 @@ final class HangoutMakeViewModel: ViewModelType {
         subViewModels.continueButtonViewModel.output.continueButtonTapped
             .emit(to: continueButtonTapped$)
             .disposed(by: disposeBag)
-            
     }
 }
 

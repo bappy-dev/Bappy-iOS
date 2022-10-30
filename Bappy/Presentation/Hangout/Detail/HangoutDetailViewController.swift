@@ -29,11 +29,29 @@ final class HangoutDetailViewController: UIViewController {
     
     private let hangoutButton = HangoutButton()
     
+    private lazy var stackView: UIStackView = {
+        let view = UIStackView()
+        view.spacing =  18
+        view.addArrangedSubview(self.hangoutButton)
+        view.addArrangedSubview(self.reportButton)
+        view.axis = .vertical
+        return view
+    }()
+    
     private let shareButton: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "arrowshape.turn.up.right")?.withRenderingMode(.alwaysTemplate), for: .normal)
         btn.tintColor = .white
         return btn
+    }()
+    
+    private let emptyJoinedLbl: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Let's join and wait!"
+        lbl.font = .roboto(size: 20.0, family: .Medium)
+        lbl.textAlignment = .center
+        lbl.isHidden = true
+        return lbl
     }()
     
     private let reportButton: UIButton = {
@@ -108,8 +126,9 @@ final class HangoutDetailViewController: UIViewController {
         view.addSubviews([scrollView, titleTopView])
         scrollView.addSubview(contentView)
         titleTopView.addSubviews([backButton, shareButton])
-        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, hangoutButton, reportButton])
-       
+        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView,
+                                 stackView, emptyJoinedLbl])
+        
         scrollView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
         }
@@ -144,17 +163,23 @@ final class HangoutDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
         }
         
-        hangoutButton.snp.makeConstraints {
-            $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
-            $0.centerX.equalToSuperview()
+        emptyJoinedLbl.snp.makeConstraints {
+            $0.centerX.equalTo(participantsSectionView.snp.centerX)
+            $0.top.equalTo(participantsSectionView.snp.centerY)
         }
         
         reportButton.snp.makeConstraints {
-            $0.top.equalTo(hangoutButton.snp.bottom).offset(18.0)
-            $0.centerX.equalToSuperview()
             $0.width.equalTo(250.0)
             $0.height.equalTo(44.0)
+        }
+        
+        stackView.snp.makeConstraints {
+            $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(250)
             $0.bottom.equalToSuperview().inset(90.0)
+            $0.height.greaterThanOrEqualTo(59).priority(.required)
+            $0.height.lessThanOrEqualTo(121).priority(.high)
         }
         
         titleTopView.snp.makeConstraints {
@@ -228,6 +253,8 @@ extension HangoutDetailViewController {
         
         viewModel.output.hangoutButtonState
             .emit(onNext: { [weak self] state in
+                self?.emptyJoinedLbl.isHidden = state != .create
+                self?.reportButton.isHidden = state == .create
                 self?.hangoutButton.hangoutState = state
             })
             .disposed(by: disposeBag)

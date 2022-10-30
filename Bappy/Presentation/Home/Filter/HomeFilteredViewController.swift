@@ -17,6 +17,8 @@ final class HomeFilteredViewController: UIViewController {
     private let holderView = HomeListHolderView()
     private var filterVC: HomeFilterViewController?
     
+    private let noResultView = NoResultView()
+    
     private let backBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -45,32 +47,6 @@ final class HomeFilteredViewController: UIViewController {
         stackView.addArrangedSubview(notFilteredLbl)
         stackView.spacing = 48
         stackView.axis = .vertical
-        return stackView
-    }()
-    
-    private let noResultStackView: UIStackView = {
-        let stackView = UIStackView()
-        lazy var noResultImageView: UIImageView = {
-            let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 204, height: 254))
-            view.image = UIImage(named: "bappy_sulky")
-            view.contentMode = .scaleAspectFit
-            return view
-        }()
-        
-        lazy var notFilteredLbl: UILabel = {
-            let lbl = UILabel()
-            lbl.text = "Oops, there is no results\nfor your serahing. Try again!"
-            lbl.textAlignment = .center
-            lbl.textColor = .bappyBrown
-            lbl.font = .roboto(size: 25.0, family: .Medium)
-            return lbl
-        }()
-        
-        stackView.addArrangedSubview(noResultImageView)
-        stackView.addArrangedSubview(notFilteredLbl)
-        stackView.spacing = 48
-        stackView.axis = .vertical
-        stackView.isHidden = true
         return stackView
     }()
     
@@ -121,6 +97,7 @@ final class HomeFilteredViewController: UIViewController {
     func configure() {
         self.view.backgroundColor = .white
         holderView.isHidden = true
+        noResultView.isHidden = true
         tableView.refreshControl = refreshControl
     }
     
@@ -128,7 +105,7 @@ final class HomeFilteredViewController: UIViewController {
         let seperateView = UIView()
         seperateView.backgroundColor = .bappyGray
         
-        self.view.addSubviews([backBtn, filterInfoLbl,filteringBtn, seperateView, tableView, holderView, notFilteredStackView, noResultStackView])
+        self.view.addSubviews([backBtn, filterInfoLbl,filteringBtn, seperateView, tableView, holderView, notFilteredStackView, noResultView])
         
         backBtn.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(15.0)
@@ -170,7 +147,7 @@ final class HomeFilteredViewController: UIViewController {
             $0.center.equalToSuperview()
         }
         
-        noResultStackView.snp.makeConstraints {
+        noResultView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
@@ -206,7 +183,7 @@ extension HomeFilteredViewController {
             .skip(1)
             .map { [weak self] value in
                 self?.filterVC?.dismiss(animated: true)
-                self?.noResultStackView.isHidden = !value.isEmpty
+                self?.noResultView.isHidden = !value.isEmpty
                 return value
             }
             .drive(tableView.rx.items(cellIdentifier: HangoutCell.reuseIdentifier, cellType: HangoutCell.self)) { _, viewModel, cell in
