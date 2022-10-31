@@ -183,6 +183,10 @@ final class HangoutDetailViewModel: ViewModelType {
                     .withLatestFrom(currentUser$)
                     .filter { $0.state == .anonymous }
                     .map { _ in "Please sign in to join!" },
+                likeButtonTapped$
+                    .withLatestFrom(currentUser$)
+                    .filter { $0.state == .anonymous }
+                    .map { _ in "Please sign in to like!" },
                 selectedUserID$
                     .withLatestFrom(currentUser$)
                     .filter { $0.state == .anonymous}
@@ -319,6 +323,11 @@ final class HangoutDetailViewModel: ViewModelType {
         let joinResult = hangoutButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 == .join }
+            .withLatestFrom(currentUser$) { ($0, $1) }
+            .filter({ (info, user) in
+                user.state == .normal
+            })
+            .map { $0.0 }
             .withLatestFrom(hangout$)
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap { dependency.hangoutRepository.joinHangout(hangoutID: $0.id) }
@@ -414,6 +423,11 @@ final class HangoutDetailViewModel: ViewModelType {
             .share()
         
         let likeResult = likeFlow
+            .withLatestFrom(currentUser$) { ($0, $1) }
+            .filter({ (info, user) in
+                user.state == .normal
+            })
+            .map { $0.0 }
             .flatMap(dependency.hangoutRepository.likeHangout)
             .observe(on: MainScheduler.asyncInstance)
             .share()

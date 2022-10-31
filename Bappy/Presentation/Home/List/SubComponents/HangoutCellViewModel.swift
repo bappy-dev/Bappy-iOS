@@ -46,6 +46,7 @@ final class HangoutCellViewModel: ViewModelType {
         var state: Driver<Hangout.State?> // <-> View
         var showAnimation: Signal<Void> // <-> View
         var showDetailView: Signal<HangoutDetailViewModel?> // <-> Parent
+        var showSignInAlert: Signal<String?> // <-> Parent
     }
     
     let dependency: Dependency
@@ -101,6 +102,12 @@ final class HangoutCellViewModel: ViewModelType {
         let showDetailView = showDetailView$
             .asSignal(onErrorJustReturn: nil)
         
+        let showSignInAlert = likeButtonTapped$
+            .withLatestFrom(user$)
+            .filter { $0.state == .anonymous }
+            .map { _ in "Please sign in to like!" }
+            .asSignal(onErrorJustReturn: nil)
+        
         // MARK: Input & Output
         self.input = Input(
             hangout: hangout$.asObserver(),
@@ -118,7 +125,8 @@ final class HangoutCellViewModel: ViewModelType {
             userHasLiked: userHasLiked,
             state: state,
             showAnimation: showAnimation,
-            showDetailView: showDetailView
+            showDetailView: showDetailView,
+            showSignInAlert: showSignInAlert
         )
         
         // MARK: Bindind
@@ -132,6 +140,11 @@ final class HangoutCellViewModel: ViewModelType {
             .share()
         
         let likeResult = likeFlow
+            .withLatestFrom(user$) { ($0, $1) }
+            .filter({ (info, user) in
+                user.state == .normal
+            })
+            .map { $0.0 }
             .flatMap(dependency.hangoutRepository.likeHangout)
             .observe(on: MainScheduler.asyncInstance)
             .share()
