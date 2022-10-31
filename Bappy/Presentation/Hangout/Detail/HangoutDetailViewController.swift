@@ -28,6 +28,19 @@ final class HangoutDetailViewController: UIViewController {
     private var participantsSectionView: HangoutParticipantsSectionView
     
     private let hangoutButton = HangoutButton()
+    private let reviewButton: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Write Reviews!", for: .normal)
+        btn.tintColor = .bappyBrown
+        btn.setTitleColor(.bappyBrown, for: .normal)
+        btn.semanticContentAttribute = .forceRightToLeft
+        btn.titleLabel?.font = .roboto(size: 18, family: .Bold)
+        btn.backgroundColor = .bappyYellow
+        btn.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        btn.layer.cornerRadius = 20.0
+        btn.clipsToBounds = true
+        return btn
+    }()
     
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
@@ -168,6 +181,11 @@ final class HangoutDetailViewController: UIViewController {
             $0.top.equalTo(participantsSectionView.snp.centerY)
         }
         
+        reviewButton.snp.makeConstraints {
+            $0.top.equalTo(hangoutButton.snp.bottom).offset(33.0)
+            $0.centerX.equalToSuperview()
+        }
+        
         reportButton.snp.makeConstraints {
             $0.width.equalTo(250.0)
             $0.height.equalTo(44.0)
@@ -210,6 +228,10 @@ extension HangoutDetailViewController {
         
         hangoutButton.rx.tap
             .bind(to: viewModel.input.hangoutButtonTapped)
+            .disposed(by: disposeBag)
+        
+        reviewButton.rx.tap
+            .bind(to: viewModel.input.reviewButtonTapped)
             .disposed(by: disposeBag)
         
         reportButton.rx.tap
@@ -304,6 +326,30 @@ extension HangoutDetailViewController {
         
         viewModel.output.showTranslucentLoader
             .emit(to: ProgressHUD.rx.showTranslucentLoader)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.showReviewButton
+            .emit(onNext: {[unowned self] value in
+                if !value {
+                    self.reportButton.snp.remakeConstraints({
+                        $0.top.equalTo(self.hangoutButton.snp.bottom).offset(18.0)
+                        $0.centerX.equalToSuperview()
+                        $0.width.equalTo(250.0)
+                        $0.height.equalTo(44.0)
+                        $0.bottom.equalToSuperview().inset(90.0)
+                    })
+                    self.reviewButton.removeFromSuperview()
+                }
+            })
+            .disposed(by: disposeBag)
+        viewModel.output.showReviewView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let viewController = WriteReviewViewController(viewModel: viewModel)
+                viewController.modalPresentationStyle = .overCurrentContext
+                viewController.modalTransitionStyle = .coverVertical
+                self?.present(viewController, animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }
