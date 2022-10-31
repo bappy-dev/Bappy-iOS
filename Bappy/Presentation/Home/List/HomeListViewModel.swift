@@ -38,6 +38,7 @@ final class HomeListViewModel: ViewModelType {
         var filterButtonTapped: AnyObserver<Void> // <-> Child(Top)
         var sortingButtonTapped: AnyObserver<Void> // <-> Child(TopSub)
         var viewWillDisappear: AnyObserver<Bool> // <-> View
+        var viewWillAppear: AnyObserver<Bool> // <-> View
         var refresh: AnyObserver<Void> // <-> View
         var willDisplayRow: AnyObserver<Int> // <-> View
         var showDetailView: AnyObserver<HangoutDetailViewModel> // <-> CellViewModel
@@ -79,6 +80,7 @@ final class HomeListViewModel: ViewModelType {
     private let searchButtonTapped$ = PublishSubject<Void>()
     private let filterButtonTapped$ = PublishSubject<Void>()
     private let sortingButtonTapped$ = PublishSubject<Void>()
+    private let viewWillAppear$ = PublishSubject<Bool>()
     private let viewWillDisappear$ = PublishSubject<Bool>()
     private let refresh$ = PublishSubject<Void>()
     private let willDisplayRow$ = PublishSubject<Int>()
@@ -149,6 +151,7 @@ final class HomeListViewModel: ViewModelType {
             filterButtonTapped: filterButtonTapped$.asObserver(),
             sortingButtonTapped: sortingButtonTapped$.asObserver(),
             viewWillDisappear: viewWillDisappear$.asObserver(),
+            viewWillAppear: viewWillAppear$.asObserver(),
             refresh: refresh$.asObserver(),
             willDisplayRow: willDisplayRow$.asObserver(),
             showDetailView: showDetailView$.asObserver()
@@ -188,6 +191,7 @@ final class HomeListViewModel: ViewModelType {
                 sorting$.map { _ in },
                 category$.map { _ in },
                 refresh$
+//                viewWillAppear$.map { _ in}
             )
             .skip(3)
             .map { _ in 1 }
@@ -200,6 +204,7 @@ final class HomeListViewModel: ViewModelType {
             .withLatestFrom(Observable.combineLatest(
                 sorting$,
                 category$
+//                viewWillAppear$
             )) { ($0, $1.0, $1.1) }
 //            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
             .share()

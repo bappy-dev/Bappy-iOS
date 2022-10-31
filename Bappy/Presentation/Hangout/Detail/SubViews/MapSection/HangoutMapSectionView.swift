@@ -22,6 +22,7 @@ final class HangoutMapSectionView: UIView {
         button.layer.cornerRadius = 14.0
         button.clipsToBounds = true
         button.adjustsImageWhenHighlighted = false
+        button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
     

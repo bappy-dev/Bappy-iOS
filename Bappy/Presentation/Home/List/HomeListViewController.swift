@@ -19,6 +19,8 @@ final class HomeListViewController: UIViewController {
     private let topSubView: HomeListTopSubView
     private let holderView = HomeListHolderView()
     
+    private let noResultView = NoResultView()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(HangoutCell.self, forCellReuseIdentifier: HangoutCell.reuseIdentifier)
@@ -66,10 +68,11 @@ final class HomeListViewController: UIViewController {
         view.backgroundColor = .white
         tableView.refreshControl = refreshControl
         tableView.tableFooterView = bottomSpinner
+        noResultView.isHidden = true
     }
     
     private func layout() {
-        self.view.addSubviews([topView, topSubView, tableView, holderView])
+        self.view.addSubviews([topView, topSubView, tableView, holderView, noResultView])
         
         topView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -91,12 +94,21 @@ final class HomeListViewController: UIViewController {
             $0.top.equalTo(topView.snp.bottom)
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
         }
+        
+        noResultView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(10)
+        }
     }
 }
 
 // MARK: - Bind
 extension HomeListViewController {
     private func bind() {
+//        self.rx.viewWillAppear
+//            .bind(to: viewModel.input.viewWillAppear)
+//            .disposed(by: disposeBag)
+        
         self.rx.viewWillDisappear
             .bind(to: viewModel.input.viewWillDisappear)
             .disposed(by: disposeBag)
@@ -115,6 +127,8 @@ extension HomeListViewController {
             .disposed(by: disposeBag)
         
         viewModel.output.cellViewModels
+            .skip(1)
+            .map { [weak self] viewModels in self?.noResultView.isHidden = !viewModels.isEmpty; return viewModels }
             .drive(tableView.rx.items(cellIdentifier: HangoutCell.reuseIdentifier, cellType: HangoutCell.self)) { _, viewModel, cell in
                 cell.bind(viewModel)
             }.disposed(by: disposeBag)

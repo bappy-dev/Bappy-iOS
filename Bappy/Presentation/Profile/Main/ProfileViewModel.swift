@@ -18,15 +18,18 @@ final class ProfileViewModel: ViewModelType {
         let authorization: ProfileAuthorization
         let bappyAuthRepository: BappyAuthRepository
         let hangoutRepository: HangoutRepository
+        let googleMapImageRepository: GoogleMapImageRepository
         
         init(user: BappyUser,
              authorization: ProfileAuthorization,
              bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
-             hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             googleMapImageRepository: GoogleMapImageRepository = DefaultGoogleMapImageRepository()) {
             self.user = user
             self.authorization = authorization
             self.bappyAuthRepository = bappyAuthRepository
             self.hangoutRepository = hangoutRepository
+            self.googleMapImageRepository = googleMapImageRepository
         }
     }
     
@@ -72,6 +75,7 @@ final class ProfileViewModel: ViewModelType {
     let output: Output
     let subViewModels: SubViewModels
     
+    private let key$ = BehaviorSubject<String>(value: Bundle.main.googleMapAPIKey)
     private let user$: BehaviorSubject<BappyUser?>
     private let authorization$: BehaviorSubject<ProfileAuthorization>
     private let results$ = BehaviorSubject<[Any]>(value: [])
@@ -124,7 +128,7 @@ final class ProfileViewModel: ViewModelType {
         let showProfileDetailView = showProfileDetailView$
             .asSignal(onErrorJustReturn: nil)
         
-        let showHangoutDetailView = itemSelected$
+        let hangout = itemSelected$
             .withLatestFrom(results$) { ($0, $1) }
             .filter {
                 if let _ = $1 as? [Hangout] {
@@ -134,17 +138,32 @@ final class ProfileViewModel: ViewModelType {
                 }
             }
             .map { ($0.0, $0.1 as! [Hangout]) }
+            .share()
+        
+        let imageResult = hangout.map { idx, hangouts in
+            return hangouts[idx.item].place.coordinates
+        }.withLatestFrom(key$) { ($1, $0) }
+            .flatMap(dependency.googleMapImageRepository.fetchMapImageData)
+            .share()
+        
+        let mapImage = imageResult
+            .compactMap(getValue)
+            .map(UIImage.init)
+            .share()
+        
+        let showHangoutDetailView = hangout
+            .withLatestFrom(mapImage) { ($0, $1) }
             .withLatestFrom(dependency.bappyAuthRepository.currentUser.compactMap{ $0 }) { element, user -> HangoutDetailViewModel in
-                var hangout = element.1[element.0.row]
+                var hangout = element.0.1[element.0.0.row]
                 hangout.userHasLiked =  hangout.likedIDs.contains(where: { info in
                     info.id == user.id
                 })
                 let dependency = HangoutDetailViewModel.Dependency(
                     currentUser: user,
-                    hangout: hangout)
+                    hangout: hangout,
+                    mapImage: element.1)
                 return HangoutDetailViewModel(dependency: dependency)
-            }
-            .asSignal(onErrorJustReturn: nil)
+            }.asSignal(onErrorJustReturn: nil)
         
         itemSelected$
             .withLatestFrom(results$) { ($0, $1) }
@@ -264,7 +283,7 @@ final class ProfileViewModel: ViewModelType {
             .map(\.count)
             .bind(to: numOfJoinedHangouts$)
             .disposed(by: disposeBag)
-            
+        
         likedHangouts$
             .skip(1)
             .map(\.count)
@@ -301,44 +320,44 @@ final class ProfileViewModel: ViewModelType {
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .do { [weak self] _ in self?.hideHolderView$.onNext(true) }
             .share()
-
+        
         joinedHangoutResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         joinedHangoutResult
             .compactMap(getValue)
             .bind(to: joinedHangouts$)
             .disposed(by: disposeBag)
-
+        
         // fetchLikedHangout
         let likedHangoutResult = startFlowWithUserID
             .map { _ in (.Liked, dependency.user.id) }
             .flatMap(dependency.hangoutRepository.fetchHangouts)
             .share()
-
+        
         likedHangoutResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         likedHangoutResult
             .compactMap(getValue)
             .bind(to: likedHangouts$)
             .disposed(by: disposeBag)
-            
+        
         // fetchReferences
         let referenceResult = startFlowWithUserID
             .map { _ in return dependency.user.id }
             .flatMap(dependency.hangoutRepository.fetchReviews)
             .share()
-
+        
         referenceResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         referenceResult
             .compactMap(getValue)
             .withLatestFrom(dependency.bappyAuthRepository.currentUser) { ($0, $1) }
@@ -355,27 +374,27 @@ final class ProfileViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // Setting 버튼 Flow - 설정 상태 불러오기
-//        let notificationSettingResult = settingButtonTapped$
-//            .do { [weak self] _ in self?.showLoader$.onNext(true) }
-//            .flatMap(dependency.bappyAuthRepository.fetchNotificationSetting)
-//            .observe(on: MainScheduler.asyncInstance)
-//            .do { [weak self] _ in self?.showLoader$.onNext(false) }
-//            .share()
-//        
-//        notificationSettingResult
-//            .compactMap(getErrorDescription)
-//            .bind(to: self.rx.debugError)
-//            .disposed(by: disposeBag)
-//
-//        notificationSettingResult
-//            .compactMap(getValue)
-//            .map { setting -> ProfileSettingViewModel in
-//                let dependency = ProfileSettingViewModel.Dependency(
-//                    notificationSetting: setting)
-//                return ProfileSettingViewModel(dependency: dependency)
-//            }
-//            .bind(to: showSettingView$)
-//            .disposed(by: disposeBag)
+        //        let notificationSettingResult = settingButtonTapped$
+        //            .do { [weak self] _ in self?.showLoader$.onNext(true) }
+        //            .flatMap(dependency.bappyAuthRepository.fetchNotificationSetting)
+        //            .observe(on: MainScheduler.asyncInstance)
+        //            .do { [weak self] _ in self?.showLoader$.onNext(false) }
+        //            .share()
+        //
+        //        notificationSettingResult
+        //            .compactMap(getErrorDescription)
+        //            .bind(to: self.rx.debugError)
+        //            .disposed(by: disposeBag)
+        //
+        //        notificationSettingResult
+        //            .compactMap(getValue)
+        //            .map { setting -> ProfileSettingViewModel in
+        //                let dependency = ProfileSettingViewModel.Dependency(
+        //                    notificationSetting: setting)
+        //                return ProfileSettingViewModel(dependency: dependency)
+        //            }
+        //            .bind(to: showSettingView$)
+        //            .disposed(by: disposeBag)
         
         settingButtonTapped$
             .map { _ in NotificationSetting(myHangout: true, newHangout: true) }

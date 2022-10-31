@@ -14,18 +14,22 @@ final class GotoReviewViewModel: ViewModelType {
         let hangoutID: String
         let bappyAuthRepository: BappyAuthRepository
         let hangoutRepository: HangoutRepository
+        let googleMapImageRepository: GoogleMapImageRepository
         
         init(hangoutID: String,
              bappyAuthRepository: BappyAuthRepository = DefaultBappyAuthRepository.shared,
-             hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
+             hangoutRepository: HangoutRepository = DefaultHangoutRepository(),
+             googleMapImageRepository: GoogleMapImageRepository = DefaultGoogleMapImageRepository()) {
             self.hangoutID = hangoutID
             self.bappyAuthRepository = bappyAuthRepository
             self.hangoutRepository = hangoutRepository
+            self.googleMapImageRepository = googleMapImageRepository
         }
     }
     
     struct Input {
         var okayButtonTapped: AnyObserver<Void> // <-> View
+        var viewWillAppear: AnyObserver<Bool>
     }
     
     struct Output {
@@ -38,6 +42,7 @@ final class GotoReviewViewModel: ViewModelType {
     let output: Output
     
     private let okayButtonTapped$ = PublishSubject<Void>()
+    private let viewWillAppear$ = PublishSubject<Bool>()
     
     private let hangoutDetail$ = BehaviorSubject<Hangout?>(value: nil)
     private let targetList$ = BehaviorSubject<Hangout?>(value: nil)
@@ -49,10 +54,12 @@ final class GotoReviewViewModel: ViewModelType {
         // MARK: Streams
         let currentUser$ = dependency.bappyAuthRepository.currentUser
         let moveToWriteReviewView = moveToWriteReviewView$
+        let key$ = BehaviorSubject<String>(value: Bundle.main.googleMapAPIKey)
         
         // MARK: Input & Output
         self.input = Input(
-            okayButtonTapped: okayButtonTapped$.asObserver()
+            okayButtonTapped: okayButtonTapped$.asObserver(),
+            viewWillAppear: viewWillAppear$.asObserver()
         )
         
         self.output = Output(

@@ -21,7 +21,7 @@ final class NoResultView: UIView {
     
     private let captionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Oops, there is no results\nfor your searching. Try again!\n\n"
+        label.text = "Oops, there is no results\nWhy don't you make one?"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 20.0, family: .Medium)
         label.numberOfLines = 4
