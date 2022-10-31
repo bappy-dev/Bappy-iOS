@@ -91,7 +91,7 @@ final class HomeListViewModel: ViewModelType {
     private let endRefreshing$ = PublishSubject<Void>()
     private let spinnerAnimating$ = PublishSubject<Bool>()
     private let showLocationSettingAlert$ = PublishSubject<Void>()
-    private let showSignInAlert$ = PublishSubject<Void>()
+    private let showSignInAlert$ = PublishSubject<String?>()
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
@@ -140,7 +140,6 @@ final class HomeListViewModel: ViewModelType {
         let sorting = sorting$
             .asDriver(onErrorJustReturn: .Newest)
         let showSignInAlert = showSignInAlert$
-            .map { _ in "Sign in to use location based services!" }
             .asSignal(onErrorJustReturn: nil)
         
         // MARK: Input & Output
@@ -181,7 +180,7 @@ final class HomeListViewModel: ViewModelType {
             .withLatestFrom(currentUser$)
             .compactMap(\.?.state)
             .filter { $0 == .anonymous }
-            .map { _ in }
+            .map { _ in "Sign in to use location based services!" }
             .bind(to: showSignInAlert$)
             .disposed(by: disposeBag)
         
@@ -266,6 +265,10 @@ final class HomeListViewModel: ViewModelType {
                         viewModel.output.showDetailView
                             .compactMap { $0 }
                             .emit(to: self.showDetailView$)
+                            .disposed(by: viewModel.disposeBag)
+                        viewModel.output.showSignInAlert
+                            .compactMap { $0 }
+                            .emit(to: self.showSignInAlert$)
                             .disposed(by: viewModel.disposeBag)
                     }
                     return viewModel
@@ -414,7 +417,7 @@ extension HomeListViewModel: SortingOrderViewModelDelegate {
                   let authorization = try? dependency.locationRepository.authorization.value()
             else { return }
             guard user.state != .anonymous else {
-                showSignInAlert$.onNext(Void())
+                showSignInAlert$.onNext("Sign in to use location based services!")
                 return
             }
             
