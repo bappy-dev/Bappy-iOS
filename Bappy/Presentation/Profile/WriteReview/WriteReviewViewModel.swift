@@ -220,6 +220,16 @@ final class WriteReviewViewModel: ViewModelType {
             .bind(to: showCompleteView$)
             .disposed(by: disposeBag)
         
+        result
+            .compactMap(getValue)
+            .subscribe(onNext: { [unowned self] result in
+                if !result { return }
+                var reviews = UserDefaults.standard.value(forKey: "Reviews") as? [String] ?? []
+                reviews.append(self.dependency.hangoutID)
+                UserDefaults.standard.set(reviews, forKey: "Reviews")
+            })
+            .disposed(by: disposeBag)
+        
         
         // Child(Tag)
         subViewModels.reviewSelectTagViewModel.output.tags
