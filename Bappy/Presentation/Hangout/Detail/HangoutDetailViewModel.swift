@@ -63,6 +63,7 @@ final class HangoutDetailViewModel: ViewModelType {
     struct Input {
         var backButtonTapped: AnyObserver<Void> // <-> View
         var hangoutButtonTapped: AnyObserver<Void> // <-> View
+        var reviewButtonTapped: AnyObserver<Void> // <-> View
         var reportButtonTapped: AnyObserver<Void> // <-> View
         var imageHeight: AnyObserver<CGFloat> // <-> View
         var cancelAlertButtonTapped: AnyObserver<Void> // <-> View
@@ -76,8 +77,10 @@ final class HangoutDetailViewModel: ViewModelType {
         var imageHeight: Signal<CGFloat> // <-> Child(Map)
         var showOpenMapView: Signal<OpenMapPopupViewModel?> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
+        var showReviewButton: Signal<Bool> // <-> View
         var showSignInAlert: Signal<String?> // <-> View
         var showCancelAlert: Signal<Alert?> // <-> View
+        var showReviewView: Signal<WriteReviewViewModel?> // <-> View
         var showReportView: Signal<ReportViewModel?> // <-> View
         var showUserProfile: Signal<ProfileViewModel?> // <-> View
         var showCreateSuccessView: Signal<Void> // <-> View
@@ -102,6 +105,7 @@ final class HangoutDetailViewModel: ViewModelType {
     
     private let backButtonTapped$ = PublishSubject<Void>()
     private let hangoutButtonTapped$ = PublishSubject<Void>()
+    private let reviewButtonTapped$ = PublishSubject<Void>()
     private let reportButtonTapped$ = PublishSubject<Void>()
     private let imageHeight$ = PublishSubject<CGFloat>()
     private let cancelAlertButtonTapped$ = PublishSubject<Void>()
@@ -109,6 +113,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let mapButtonTapped$ = PublishSubject<Void>()
     private let selectedUserID$ = PublishSubject<String>()
     
+    private let showReviewButton$ = PublishSubject<Bool>()
     private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     private let newParticipantsSectionView$ = PublishSubject<HangoutParticipantsSectionViewModel?>()
@@ -142,6 +147,15 @@ final class HangoutDetailViewModel: ViewModelType {
         
         // MARK: Streams
         let hangoutButtonState$ = BehaviorSubject<HangoutButton.State>(value: dependency.hangoutButtonState)
+        
+        var isNeedToShowReviewButton = false
+        if dependency.hangout.state == .expired
+            && dependency.hangout.joinedIDs.contains(where: { $0.id == dependency.currentUser.id }) {
+            let reviews = UserDefaults.standard.value(forKey: "Reviews") as? [String] ?? []
+            isNeedToShowReviewButton = !reviews.contains(where: { $0 == dependency.hangout.id })
+        }
+        let showReviewButton$ = BehaviorSubject<Bool>(value: isNeedToShowReviewButton)
+        
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
         let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
@@ -160,6 +174,8 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let hangoutButtonState = hangoutButtonState$
             .asSignal(onErrorJustReturn: .expired)
+        let showReviewButton = showReviewButton$
+            .asSignal(onErrorJustReturn: false)
         let showSignInAlert = Observable
             .merge(
                 hangoutButtonTapped$
@@ -176,6 +192,24 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showCancelAlert = showCancelAlert$
             .asSignal(onErrorJustReturn: nil)
+        
+        let showReviewView = reviewButtonTapped$
+            .withLatestFrom(showReviewButton$)
+            .filter { $0 }
+            .withLatestFrom(hangout$)
+            .withLatestFrom(currentUser$) { ($0, $1) }
+            .map { (hangout, user) in
+                var targetList = hangout.joinedIDs
+                targetList.removeAll { $0.id == user.id }
+                return (id: hangout.id, targetList: targetList)
+            }
+            .filter { $0.targetList.count > 0 }
+            .map { hangout -> WriteReviewViewModel? in
+                let writeReviewViewModel = WriteReviewViewModel(dependency: .init(hangoutID: hangout.id, targetList: hangout.targetList))
+                return writeReviewViewModel
+            }
+            .asSignal(onErrorJustReturn: nil)
+        
         let showReportView = reportButtonTapped$
             .withLatestFrom(hangoutButtonState$)
             .filter { $0 != .create }
@@ -206,6 +240,7 @@ final class HangoutDetailViewModel: ViewModelType {
         self.input = Input(
             backButtonTapped: backButtonTapped$.asObserver(),
             hangoutButtonTapped: hangoutButtonTapped$.asObserver(),
+            reviewButtonTapped: reviewButtonTapped$.asObserver(),
             reportButtonTapped: reportButtonTapped$.asObserver(),
             imageHeight: imageHeight$.asObserver(),
             cancelAlertButtonTapped: cancelAlertButtonTapped$.asObserver(),
@@ -219,8 +254,10 @@ final class HangoutDetailViewModel: ViewModelType {
             imageHeight: imageHeight,
             showOpenMapView: showOpenMapView,
             hangoutButtonState: hangoutButtonState,
+            showReviewButton: showReviewButton,
             showSignInAlert: showSignInAlert,
             showCancelAlert: showCancelAlert,
+            showReviewView: showReviewView,
             showReportView: showReportView,
             showUserProfile: showUserProfile,
             showCreateSuccessView: showCreateSuccessView,
