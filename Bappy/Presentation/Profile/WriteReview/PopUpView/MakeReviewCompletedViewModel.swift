@@ -59,7 +59,6 @@ final class MakeReviewCompletedViewModel: ViewModelType {
                 let tabBarDependency = BappyTabBarViewModel.Dependency(
                     selectedIndex: 1,
                     user: dependency.user)
-                let tabBarViewModel = BappyTabBarViewModel(dependency: tabBarDependency)
                 return BappyTabBarViewModel(dependency: tabBarDependency)
             }
             .bind(to: moveToProfileView$)

@@ -139,8 +139,7 @@ final class HangoutDetailViewController: UIViewController {
         view.addSubviews([scrollView, titleTopView])
         scrollView.addSubview(contentView)
         titleTopView.addSubviews([backButton, shareButton])
-        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView,
-                                 stackView, emptyJoinedLbl])
+        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, reviewButton, stackView, emptyJoinedLbl])
         
         scrollView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()

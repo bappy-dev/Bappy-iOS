@@ -185,7 +185,6 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             .drive(timeDate$)
             .disposed(by: disposeBag)
         
-        
         shouldShowTimeView
             .filter{ $0 }
             .map { _ -> Date? in nil }
@@ -230,7 +229,6 @@ final class HangoutMakeTimeViewModel: ViewModelType {
             .map { _ in }
             .drive(subViewModels.calendarPickerViewModel.input.initialized)
             .disposed(by: disposeBag)
-        
         
         subViewModels.calendarPickerViewModel.output.calendarDate
             .drive(calendarDate$)

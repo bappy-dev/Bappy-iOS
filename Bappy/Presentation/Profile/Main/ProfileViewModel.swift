@@ -192,7 +192,7 @@ final class ProfileViewModel: ViewModelType {
                 }
             }
             .map { indexPath, states -> String in
-                var states = states as! [ReferenceCellState]
+                let states = states as! [ReferenceCellState]
                 return states[indexPath.row].reference.hangoutID
             }
             .asSignal(onErrorJustReturn: nil)
