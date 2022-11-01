@@ -46,6 +46,7 @@ final class HangoutDetailViewController: UIViewController {
         let view = UIStackView()
         view.spacing =  18
         view.addArrangedSubview(self.hangoutButton)
+        view.addArrangedSubview(self.reviewButton)
         view.addArrangedSubview(self.reportButton)
         view.axis = .vertical
         return view
@@ -139,7 +140,7 @@ final class HangoutDetailViewController: UIViewController {
         view.addSubviews([scrollView, titleTopView])
         scrollView.addSubview(contentView)
         titleTopView.addSubviews([backButton, shareButton])
-        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, reviewButton, stackView, emptyJoinedLbl])
+        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, stackView, emptyJoinedLbl])
         
         scrollView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
@@ -178,11 +179,6 @@ final class HangoutDetailViewController: UIViewController {
         emptyJoinedLbl.snp.makeConstraints {
             $0.centerX.equalTo(participantsSectionView.snp.centerX)
             $0.top.equalTo(participantsSectionView.snp.centerY)
-        }
-        
-        reviewButton.snp.makeConstraints {
-            $0.top.equalTo(hangoutButton.snp.bottom).offset(33.0)
-            $0.centerX.equalToSuperview()
         }
         
         reportButton.snp.makeConstraints {
@@ -330,13 +326,6 @@ extension HangoutDetailViewController {
         viewModel.output.showReviewButton
             .emit(onNext: {[unowned self] value in
                 if !value {
-                    self.reportButton.snp.remakeConstraints({
-                        $0.top.equalTo(self.hangoutButton.snp.bottom).offset(18.0)
-                        $0.centerX.equalToSuperview()
-                        $0.width.equalTo(250.0)
-                        $0.height.equalTo(44.0)
-                        $0.bottom.equalToSuperview().inset(90.0)
-                    })
                     self.reviewButton.removeFromSuperview()
                 }
             })
