@@ -286,7 +286,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                                                  placeLatitude: "\(hangout.place.coordinates.latitude)",
                                                  placeLongitude: "\(hangout.place.coordinates.longitude)",
                                                  placeAddress: hangout.place.address,
-                                                 hangoutMeetTime: hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:MM"),
+                                                 hangoutMeetTime: hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"),
                                                  placeName: hangout.place.name)
         
         let endpoint = APIEndpoints.createHangout(with: requestDTO, data: imageData)

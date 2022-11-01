@@ -54,7 +54,6 @@ final class GotoReviewViewModel: ViewModelType {
         // MARK: Streams
         let currentUser$ = dependency.bappyAuthRepository.currentUser
         let moveToWriteReviewView = moveToWriteReviewView$
-        let key$ = BehaviorSubject<String>(value: Bundle.main.googleMapAPIKey)
         
         // MARK: Input & Output
         self.input = Input(
