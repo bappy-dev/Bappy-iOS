@@ -9,6 +9,9 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import KakaoSDKCommon
+import KakaoSDKShare
+import KakaoSDKTemplate
 
 final class HangoutDetailViewController: UIViewController {
     
@@ -48,11 +51,10 @@ final class HangoutDetailViewController: UIViewController {
     
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
-        view.spacing =  18
-        view.addArrangedSubview(self.hangoutButton)
-        view.addArrangedSubview(self.reviewButton)
-        view.addArrangedSubview(self.reportButton)
         view.axis = .vertical
+        view.spacing =  18
+        view.alignment = .center
+        view.addArrangedSubviews([hangoutButton, reviewButton, reportButton])
         return view
     }()
     
@@ -192,8 +194,8 @@ final class HangoutDetailViewController: UIViewController {
         
         stackView.snp.makeConstraints {
             $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(250)
+            $0.leading.centerX.equalToSuperview()
+//            $0.width.equalTo(250)
             $0.bottom.equalToSuperview().inset(90.0)
             $0.height.greaterThanOrEqualTo(59).priority(.required)
             $0.height.lessThanOrEqualTo(121).priority(.high)
@@ -238,14 +240,8 @@ extension HangoutDetailViewController {
             .disposed(by: disposeBag)
         
         shareButton.rx.tap
-            .bind {
-                let activityVC = UIActivityViewController(activityItems: ["이 일정을 다른 사람과 공유하기"], applicationActivities: nil)
-                activityVC.popoverPresentationController?.sourceView = self.view
-                
-                // 공유하기 기능 중 제외할 기능이 있을 때 사용
-                //        activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList]
-                self.present(activityVC, animated: true, completion: nil)
-            }.disposed(by: disposeBag)
+            .bind(to: viewModel.input.shareButtonTapped)
+            .disposed(by: disposeBag)
         
         scrollView.rx.didScroll
             .withLatestFrom(scrollView.rx.contentOffset)
@@ -255,6 +251,21 @@ extension HangoutDetailViewController {
                 let imageHeight = self?.imageSectionView.frame.height ?? 0
                 return imageHeight - y }
             .bind(to: viewModel.input.imageHeight)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.acitivityView
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] activityVC in
+//                activityVC.popoverPresentationController?.sourceView = self?.view
+                self?.present(activityVC, animated: true, completion: nil)
+            }).disposed(by: disposeBag)
+        
+        viewModel.output.showLikedPeopleList
+            .compactMap { $0 }
+            .emit(onNext: { [weak self] viewModel in
+                let vc = LikedPeopleListViewController(viewModel: viewModel)
+                self?.present(vc, animated: true)
+            })
             .disposed(by: disposeBag)
         
         viewModel.output.popView

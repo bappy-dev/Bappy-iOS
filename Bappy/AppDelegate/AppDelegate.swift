@@ -10,6 +10,7 @@ import Firebase
 import FirebaseCore
 import GoogleSignIn
 import FacebookCore
+import KakaoSDKCommon
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,6 +29,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Firebase Cloud Messaging
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
+        
+        // Kakao SDK Initialize
+        KakaoSDK.initSDK(appKey: Bundle.main.kakaoAPIKey)
         
         DefaultNotificationRepository.shared.requestAuthorization(completion: nil)
         

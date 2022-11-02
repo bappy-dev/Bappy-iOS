@@ -36,7 +36,7 @@ struct Hangout: Equatable, Identifiable {
 extension Hangout {
     struct Info {
         let id: String
-        let imageURL: URL
+        let imageURL: URL?
     }
     
     struct Place {

@@ -142,9 +142,7 @@ final class ProfileButtonSectionView: UIView {
     }
 
     private func layout() {
-        hStackView.addArrangedSubview(joinedButton)
-        hStackView.addArrangedSubview(likedButton)
-        hStackView.addArrangedSubview(referenceButton)
+        hStackView.addArrangedSubviews([joinedButton, likedButton, referenceButton])
         
         self.snp.makeConstraints {
             $0.height.equalTo(107.0)

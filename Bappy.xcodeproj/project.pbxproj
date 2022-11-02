@@ -329,6 +329,10 @@
 		AFEC36B32902B63700687C18 /* ReviewSelectTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */; };
 		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
 		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
+		D6C0326D290F3B150047192F /* KakaoPartnerSDKShare in Frameworks */ = {isa = PBXBuildFile; productRef = D6C0326C290F3B150047192F /* KakaoPartnerSDKShare */; };
+		D6C03270291152F90047192F /* LikedPeopleListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */; };
+		D6C03272291153440047192F /* LikedPeopleListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C03271291153440047192F /* LikedPeopleListViewModel.swift */; };
+		D6C0327429115B340047192F /* LikedPeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C0327329115B340047192F /* LikedPeopleCell.swift */; };
 		D6CC5B6628F1F1E2004C5E9C /* HomeFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */; };
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
@@ -651,6 +655,9 @@
 		AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagView.swift; sourceTree = "<group>"; };
 		AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagViewModel.swift; sourceTree = "<group>"; };
 		AFEC36B72902E1D100687C18 /* BappyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTextField.swift; sourceTree = "<group>"; };
+		D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewController.swift; sourceTree = "<group>"; };
+		D6C03271291153440047192F /* LikedPeopleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewModel.swift; sourceTree = "<group>"; };
+		D6C0327329115B340047192F /* LikedPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleCell.swift; sourceTree = "<group>"; };
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
@@ -678,6 +685,7 @@
 				A77F42FD28306801008BC89A /* RxRelay in Frameworks */,
 				A7CE0F9F2848D3F30063458F /* FacebookLogin in Frameworks */,
 				A7CE0F9D2848D3F30063458F /* FacebookCore in Frameworks */,
+				D6C0326D290F3B150047192F /* KakaoPartnerSDKShare in Frameworks */,
 				A769CCFC282A8EF30086182C /* SnapKit in Frameworks */,
 				A75B11C8283CF70400C49597 /* Lottie in Frameworks */,
 				A76EEE8E2853227D00A2CFF6 /* YPImagePicker in Frameworks */,
@@ -1741,6 +1749,7 @@
 		A78C5361283B79AF00CC41F5 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				D6C0326E291152C10047192F /* ShowLikedPeopleList */,
 				A7F52CFE2865FFDD002523D4 /* ImageSection */,
 				A7F52CFF2865FFE7002523D4 /* MainSection */,
 				A7F52D002865FFEF002523D4 /* MapSection */,
@@ -1755,6 +1764,7 @@
 			children = (
 				A78C535F283B741700CC41F5 /* HangoutImageCell.swift */,
 				A7F52D062866E4EE002523D4 /* HangoutButton.swift */,
+				D6C0327329115B340047192F /* LikedPeopleCell.swift */,
 			);
 			path = SubComponents;
 			sourceTree = "<group>";
@@ -2515,6 +2525,15 @@
 			path = BappyTextField;
 			sourceTree = "<group>";
 		};
+		D6C0326E291152C10047192F /* ShowLikedPeopleList */ = {
+			isa = PBXGroup;
+			children = (
+				D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */,
+				D6C03271291153440047192F /* LikedPeopleListViewModel.swift */,
+			);
+			path = ShowLikedPeopleList;
+			sourceTree = "<group>";
+		};
 		D6CC5B6428F1F1C9004C5E9C /* Filter */ = {
 			isa = PBXGroup;
 			children = (
@@ -2600,6 +2619,7 @@
 				A76EEE8D2853227D00A2CFF6 /* YPImagePicker */,
 				A73BC9CB287D9F0B00FB9FA9 /* RxDataSources */,
 				D6CC5B6A28F1F47E004C5E9C /* FSCalendar */,
+				D6C0326C290F3B150047192F /* KakaoPartnerSDKShare */,
 			);
 			productName = Bappy;
 			productReference = A769CCDA282A8C300086182C /* Bappy.app */;
@@ -2640,6 +2660,7 @@
 				A76EEE8C2853227D00A2CFF6 /* XCRemoteSwiftPackageReference "YPImagePicker" */,
 				A73BC9CA287D9F0B00FB9FA9 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */,
 			);
 			productRefGroup = A769CCDB282A8C300086182C /* Products */;
 			projectDirPath = "";
@@ -2683,6 +2704,7 @@
 				A71411C028985F8A002D4714 /* ProfileDetailPersonalityViewModel.swift in Sources */,
 				A73BC9CE287DACAC00FB9FA9 /* LocaleSettingSection.swift in Sources */,
 				A77F4BD2282BC5910046921B /* RegisterBirthView.swift in Sources */,
+				D6C03270291152F90047192F /* LikedPeopleListViewController.swift in Sources */,
 				A709062F285717A00096E9A0 /* ContinueButtonViewModel.swift in Sources */,
 				A7F52CE0286446E3002523D4 /* LocaleSettingViewController.swift in Sources */,
 				A7A6B01A2845D2A100911861 /* HangoutMakePlanView.swift in Sources */,
@@ -2795,6 +2817,7 @@
 				A76EEE862852CF5000A2CFF6 /* ProgressHUD.swift in Sources */,
 				A72838F22862F7F500BBBD9C /* HomeLocationViewController.swift in Sources */,
 				A71411D528985F8A002D4714 /* ProfileSettingNotificationViewModel.swift in Sources */,
+				D6C03272291153440047192F /* LikedPeopleListViewModel.swift in Sources */,
 				A7F52CEC2864A66F002523D4 /* Location.swift in Sources */,
 				A70B0D69286C7395009EBF33 /* CreateUserResponseDTO+Mapping.swift in Sources */,
 				AF0A3B24290699E200AFD752 /* MoveWithKeyboardView.swift in Sources */,
@@ -2928,6 +2951,7 @@
 				A7F52CF12865C339002523D4 /* SortingOrderCell.swift in Sources */,
 				A78C5364283BA3E000CC41F5 /* HangoutMainSectionView.swift in Sources */,
 				A7D80C25285DA7EF00F9951A /* RxExtension.swift in Sources */,
+				D6C0327429115B340047192F /* LikedPeopleCell.swift in Sources */,
 				A71411DE28985F8A002D4714 /* ProfileViewController.swift in Sources */,
 				A71411CE28985F8A002D4714 /* DeleteAccountFirstPageView.swift in Sources */,
 				A7850303285A1833000FA592 /* HangoutMakePlanViewModel.swift in Sources */,
@@ -3284,6 +3308,14 @@
 				version = 13.2.0;
 			};
 		};
+		D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-partner-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
@@ -3369,6 +3401,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A7CE0F9B2848D3F30063458F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		D6C0326C290F3B150047192F /* KakaoPartnerSDKShare */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */;
+			productName = KakaoPartnerSDKShare;
 		};
 		D6CC5B6A28F1F47E004C5E9C /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
