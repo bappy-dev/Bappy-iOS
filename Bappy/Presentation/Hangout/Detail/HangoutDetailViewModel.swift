@@ -149,7 +149,8 @@ final class HangoutDetailViewModel: ViewModelType {
         
         var isNeedToShowReviewButton = false
         if dependency.hangout.state == .expired
-            && dependency.hangout.joinedIDs.contains(where: { $0.id == dependency.currentUser.id }) {
+            && dependency.hangout.joinedIDs.contains(where: { $0.id == dependency.currentUser.id })
+            && dependency.hangout.joinedIDs.count > 1 {
             let reviews = UserDefaults.standard.value(forKey: "Reviews") as? [String] ?? []
             isNeedToShowReviewButton = !reviews.contains(where: { $0 == dependency.hangout.id })
         }
