@@ -30,14 +30,18 @@ final class HangoutDetailViewController: UIViewController {
     private let hangoutButton = HangoutButton()
     private let reviewButton: UIButton = {
         let btn = UIButton()
-        btn.setTitle("Write Reviews!", for: .normal)
-        btn.tintColor = .bappyBrown
-        btn.setTitleColor(.bappyBrown, for: .normal)
-        btn.semanticContentAttribute = .forceRightToLeft
-        btn.titleLabel?.font = .roboto(size: 18, family: .Bold)
         btn.backgroundColor = .bappyYellow
-        btn.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        btn.layer.cornerRadius = 20.0
+        btn.setBappyTitle(
+            title: "Write Reviews!",
+            font: .roboto(size: 28.0, family: .Bold))
+        btn.addBappyShadow()
+        btn.isEnabled = true
+        
+        btn.layer.cornerRadius = 29.5
+        btn.snp.makeConstraints {
+            $0.width.equalTo(215.0)
+            $0.height.equalTo(59.0)
+        }
         btn.clipsToBounds = true
         return btn
     }()
