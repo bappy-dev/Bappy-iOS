@@ -66,7 +66,7 @@ final class HangoutButton: UIButton {
     private func layout() {
         self.layer.cornerRadius = 29.5
         self.snp.makeConstraints {
-            $0.width.equalTo(215.0)
+            $0.width.equalTo(250.0)
             $0.height.equalTo(59.0)
         }
     }

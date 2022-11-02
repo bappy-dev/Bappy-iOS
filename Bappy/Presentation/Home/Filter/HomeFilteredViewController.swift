@@ -43,8 +43,7 @@ final class HomeFilteredViewController: UIViewController {
             return lbl
         }()
         
-        stackView.addArrangedSubview(notFilteredImageView)
-        stackView.addArrangedSubview(notFilteredLbl)
+        stackView.addArrangedSubviews([notFilteredImageView, notFilteredLbl])
         stackView.spacing = 48
         stackView.axis = .vertical
         return stackView

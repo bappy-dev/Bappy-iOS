@@ -71,6 +71,7 @@ final class HangoutImageSectionView: UIView {
 extension HangoutImageSectionView {
     private func bind() {
         likeButton.rx.tap
+            .throttle(.milliseconds(1500), latest: false, scheduler: MainScheduler.instance)
             .bind(to: viewModel.input.likeButtonTapped)
             .disposed(by: disposeBag)
 
