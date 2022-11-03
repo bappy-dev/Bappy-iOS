@@ -361,3 +361,5 @@ extension HangoutDetailViewController {
             .disposed(by: disposeBag)
     }
 }
+
+extension HangoutDetailViewController: NSUserActivityDelegate { }
