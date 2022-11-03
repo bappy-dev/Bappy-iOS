@@ -208,7 +208,18 @@ extension HomeFilteredViewController {
                 if self.filterVC == nil {
                     self.filterVC = HomeFilterViewController(viewModel: viewModel)
                 }
-                self.navigationController?.present(self.filterVC!, animated: true)
+                
+                let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
+                let image = UIImage(systemName: "xmark", withConfiguration: configuration)
+                
+                let presentVC = BappyPresentBaseViewController(baseViewController: self.filterVC!,
+                                                               title: "Filter",
+                                                               leftBarButton: UIBarButtonItem(image: image, style: .plain, target: nil, action: nil),
+                                                               rightBarButton: nil,
+                                                               backBarButton: nil)
+                
+                presentVC.modalPresentationStyle = .overCurrentContext
+                self.navigationController?.present(presentVC,  animated: true)
             })
             .disposed(by: disposeBag)
     }

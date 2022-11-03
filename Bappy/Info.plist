@@ -2,12 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow &quot;Bappy&quot; to access your photo library to upload your photo.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow &quot;Bappy&quot; to access your camera to take a picture.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow &quot;Bappy&quot; to access your location to find nearby hangouts.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -19,9 +18,21 @@
 			</array>
 		</dict>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>&quot;fb{FacebookAppID}&quot;을 입력하세요</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Kakao Share</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao{KAKAO_API_KEY}</string>
 			</array>
 		</dict>
 	</array>
@@ -35,6 +46,8 @@
 	<string>&quot;FacebookClientToken&quot;을 입력하세요</string>
 	<key>FacebookDisplayName</key>
 	<string>&quot;FacebookDisplayName&quot;을 입력하세요</string>
+	<key>KAKAO_APP_KEY</key>
+	<string>카카오 API NATIVE  KEY 입력</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Black.ttf</string>
@@ -65,7 +78,5 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDarkContent</string>
 </dict>
 </plist>

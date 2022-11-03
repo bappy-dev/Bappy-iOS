@@ -195,7 +195,6 @@ final class HangoutDetailViewController: UIViewController {
         stackView.snp.makeConstraints {
             $0.top.equalTo(participantsSectionView.snp.bottom).offset(33.0)
             $0.leading.centerX.equalToSuperview()
-//            $0.width.equalTo(250)
             $0.bottom.equalToSuperview().inset(90.0)
             $0.height.greaterThanOrEqualTo(59).priority(.required)
             $0.height.lessThanOrEqualTo(121).priority(.high)
@@ -256,7 +255,11 @@ extension HangoutDetailViewController {
         viewModel.output.acitivityView
             .compactMap { $0 }
             .emit(onNext: { [weak self] activityVC in
-//                activityVC.popoverPresentationController?.sourceView = self?.view
+                if let self = self {
+                    activityVC.userActivity?.delegate = self
+                }
+                
+                activityVC.popoverPresentationController?.sourceView = self?.view
                 self?.present(activityVC, animated: true, completion: nil)
             }).disposed(by: disposeBag)
         
@@ -264,7 +267,9 @@ extension HangoutDetailViewController {
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in
                 let vc = LikedPeopleListViewController(viewModel: viewModel)
-                self?.present(vc, animated: true)
+                let presentVC = BappyPresentBaseViewController(baseViewController: vc, title: "Like")
+                presentVC.modalPresentationStyle = .overCurrentContext
+                self?.present(presentVC, animated: true)
             })
             .disposed(by: disposeBag)
         

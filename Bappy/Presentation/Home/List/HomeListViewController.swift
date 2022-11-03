@@ -13,7 +13,7 @@ import RxCocoa
 final class HomeListViewController: UIViewController {
     
     // MARK: Properties
-    private let viewModel: HomeListViewModel
+    let viewModel: HomeListViewModel
     private let disposeBag = DisposeBag()
     private let topView: HomeListTopView
     private let topSubView: HomeListTopSubView
@@ -135,10 +135,9 @@ extension HomeListViewController {
         
         viewModel.output.showLocaleView
             .compactMap { $0 }
-            .emit(onNext: { [weak self] viewModel in
-                let viewController = HomeLocationViewController(viewModel: viewModel)
-                viewController.modalPresentationStyle = .overCurrentContext
-                self?.tabBarController?.present(viewController, animated: false)
+            .emit(onNext: { [weak self] bappyVC in
+                bappyVC.modalPresentationStyle = .overCurrentContext
+                self?.tabBarController?.present(bappyVC, animated: false)
             })
             .disposed(by: disposeBag)
         
@@ -212,8 +211,12 @@ extension HomeListViewController {
                 let action = Alert.Action(
                     actionTitle: actionTitle,
                     actionStyle: .disclosure) {
-                        let viewModel = HomeLocationViewModel()
-                        let viewController = HomeLocationViewController(viewModel: viewModel)
+                        let rootViewController = LocaleSettingViewController(viewModel: LocaleSettingViewModel())
+                        let viewController = BappyPresentBaseViewController(baseViewController: rootViewController,
+                                                                            title: "Location Setting",
+                                                                            leftBarButton: nil,
+                                                                            rightBarButton: nil,
+                                                                            backBarButton: UIBarButtonItem(title: "Setting", style: .plain, target: nil, action: nil))
                         viewController.modalPresentationStyle = .overCurrentContext
                         self?.tabBarController?.present(viewController, animated: false)
                     }

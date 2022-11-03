@@ -26,6 +26,29 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        handleURL(with: URLContexts.first?.url)
+    }
+    
+    func handleURL(with urlToOpen: URL?) {
+        guard let url = urlToOpen,
+              let title = url.absoluteString.split(separator: "=").last else { return }
+        
+        if let nav = window?.rootViewController as? BappyNavigationViewController {
+            if let tabbar = nav.viewControllers.first as? BappyTabBarController {
+                if let listNav = tabbar.viewControllers?[0] as? UINavigationController,
+                   let listVC = listNav.viewControllers.first as? HomeListViewController {
+                    listVC.viewModel.input.searchButtonTapped.onNext(())
+                    if let searchVC = window?.visibleViewConroller as? HomeSearchViewController {
+                        searchVC.needToOpenKeyboard = false
+                        searchVC.viewModel.input.text.onNext(String(title))
+                        searchVC.viewModel.input.searchButtonClicked.onNext(())
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension SceneDelegate {
