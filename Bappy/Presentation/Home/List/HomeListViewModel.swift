@@ -47,7 +47,7 @@ final class HomeListViewModel: ViewModelType {
     struct Output {
         var scrollToTop: Signal<Void> // <-> View
         var cellViewModels: Driver<[HangoutCellViewModel]> // <-> View
-        var showLocaleView: Signal<HomeLocationViewModel?> // <-> View
+        var showLocaleView: Signal<BappyPresentBaseViewController?> // <-> View
         var showSearchView: Signal<HomeSearchViewModel?> // <-> View
         var showFilteredView: Signal<HomeFilteredViewModel?> // <-> View
         var showSortingView: Signal<SortingOrderViewModel?> // <-> View
@@ -111,7 +111,14 @@ final class HomeListViewModel: ViewModelType {
             .withLatestFrom(currentUser$)
             .compactMap(\.?.state)
             .filter { $0 == .normal }
-            .map { _ in HomeLocationViewModel() }
+            .map { _ in
+                let rootVC = LocaleSettingViewController(viewModel: LocaleSettingViewModel())
+                return BappyPresentBaseViewController(baseViewController: rootVC,
+                                                      title: "Location Setting",
+                                                      leftBarButton: nil,
+                                                      rightBarButton: nil,
+                                                      backBarButton: UIBarButtonItem(title: "Setting", style: .plain, target: nil, action: nil))
+            }
             .asSignal(onErrorJustReturn: nil)
         let showSearchView = searchButtonTapped$
             .withLatestFrom(currentUser$.compactMap { $0 })
@@ -159,7 +166,7 @@ final class HomeListViewModel: ViewModelType {
         self.output = Output(
             scrollToTop: scrollToTop,
             cellViewModels: cellViewModels,
-            showLocaleView: showLocaleView,
+                        showLocaleView: showLocaleView,
             showSearchView: showSearchView,
             showFilteredView: showFilteredView,
             showSortingView: showSortingView,
@@ -190,7 +197,7 @@ final class HomeListViewModel: ViewModelType {
                 sorting$.map { _ in },
                 category$.map { _ in },
                 refresh$
-//                viewWillAppear$.map { _ in}
+                //                viewWillAppear$.map { _ in}
             )
             .skip(3)
             .map { _ in 1 }
@@ -203,9 +210,9 @@ final class HomeListViewModel: ViewModelType {
             .withLatestFrom(Observable.combineLatest(
                 sorting$,
                 category$
-//                viewWillAppear$
+                //                viewWillAppear$
             )) { ($0, $1.0, $1.1) }
-//            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
+        //            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
             .share()
         
         // Page 1일 때 dataSource 새로 만들기

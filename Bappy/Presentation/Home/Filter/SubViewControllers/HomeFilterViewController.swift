@@ -60,28 +60,11 @@ final class HomeFilterViewController: UIViewController {
     private var year: [Int] = []
     private let month: [String] = ["January", "February", "March", "April", "May","June", "July", "August", "September", "October", "November", "December"]
     
-    private let closeButton: UIButton = {
-        let button = UIButton(type: .system)
-        let configuration = UIImage.SymbolConfiguration(pointSize: 15.0, weight: .medium)
-        let image = UIImage(systemName: "xmark", withConfiguration: configuration)
-        button.setImage(image, for: .normal)
-        button.tintColor = .bappyBrown
-        return button
-    }()
-    
     private let pickerView: UIPickerView = {
         let view = UIPickerView()
         view.isHidden = true
         view.backgroundColor = .white
         return view
-    }()
-    
-    private let filterTitleLbl: UILabel = {
-        let lbl = UILabel()
-        lbl.text = "Filter"
-        lbl.textColor = .bappyBrown
-        lbl.font = .systemFont(ofSize: 27, weight: .semibold)
-        return lbl
     }()
     
     private let dayInfoLbl: UILabel = {
@@ -285,23 +268,12 @@ final class HomeFilterViewController: UIViewController {
         
         let baseView = UIView()
         
-        self.view.addSubviews([filterTitleLbl, scrollView, closeButton])
+        self.view.addSubview(scrollView)
         scrollView.addSubview(baseView)
         baseView.addSubviews([dayInfoLbl, seperatView, calendar, imageView, previousCalendarPageBtn, nextCalendarPageBtn, seperatView2, pickerView, weekInfoLbl, weekDayScrollView, seperatView3, categoryInfoLbl, vStackView, seperatView4, languageInfoLbl, moreBtn, languageVStackView, applyBtn])
         
-        closeButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(15.0)
-            $0.leading.equalToSuperview().inset(5.5)
-            $0.width.height.equalTo(44.0)
-        }
-        
-        filterTitleLbl.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalTo(closeButton.snp.centerY)
-        }
-        
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(filterTitleLbl.snp.bottom).offset(15)
+            $0.top.equalToSuperview().inset(15)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
@@ -471,11 +443,7 @@ extension HomeFilterViewController {
             }.disposed(by: disposeBag)
         
         let subViewModel = viewModel.subViewModels.hangoutMakeCategoryViewModel
-        
-        closeButton.rx.tap
-            .bind { [weak self] in
-                self?.dismiss(animated: true)
-            }.disposed(by: disposeBag)
+
         sundayButton.rx.tap
             .bind(to: viewModel.input.sundayButtonTapped)
             .disposed(by: disposeBag)

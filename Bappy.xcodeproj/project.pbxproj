@@ -101,7 +101,6 @@
 		A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEB283553890052C60A /* BappyTabBarController.swift */; };
 		A71EBAF0283555B90052C60A /* HomeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71EBAEF283555B90052C60A /* HomeListViewController.swift */; };
 		A7202D592898B9EF00878012 /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7202D582898B9EF00878012 /* Example.swift */; };
-		A72838F22862F7F500BBBD9C /* HomeLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */; };
 		A72838F5286301F100BBBD9C /* Hangout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72838F4286301F100BBBD9C /* Hangout.swift */; };
 		A72964C3289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */; };
 		A72964C8289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */; };
@@ -136,7 +135,6 @@
 		A73BC9A82875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9A72875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift */; };
 		A73BC9AB28759F0000FB9FA9 /* HomeListTopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9AA28759F0000FB9FA9 /* HomeListTopViewModel.swift */; };
 		A73BC9AD28759F0500FB9FA9 /* HomeListTopSubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9AC28759F0500FB9FA9 /* HomeListTopSubViewModel.swift */; };
-		A73BC9B12875A49000FB9FA9 /* HomeLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B02875A49000FB9FA9 /* HomeLocationViewModel.swift */; };
 		A73BC9B32875A4D500FB9FA9 /* HomeSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B22875A4D500FB9FA9 /* HomeSearchViewModel.swift */; };
 		A73BC9B5287ABFE400FB9FA9 /* SortingOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B4287ABFE400FB9FA9 /* SortingOrderViewModel.swift */; };
 		A73BC9BA287B168400FB9FA9 /* CLLocationManager+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BC9B9287B168400FB9FA9 /* CLLocationManager+Rx.swift */; };
@@ -343,6 +341,8 @@
 		D6F660B32900791500C0EF87 /* HomeFilteredViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */; };
 		D6F660B52900792600C0EF87 /* HomeFilteredViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */; };
 		D6F660B82903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */; };
+		D6F7EFE72912BCD100A99FC2 /* BappyPresentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F7EFE62912BCD100A99FC2 /* BappyPresentViewController.swift */; };
+		D6F7EFEA2912C96E00A99FC2 /* CustomActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F7EFE92912C96E00A99FC2 /* CustomActivity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -441,7 +441,6 @@
 		A71EBAEB283553890052C60A /* BappyTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTabBarController.swift; sourceTree = "<group>"; };
 		A71EBAEF283555B90052C60A /* HomeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListViewController.swift; sourceTree = "<group>"; };
 		A7202D582898B9EF00878012 /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
-		A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocationViewController.swift; sourceTree = "<group>"; };
 		A72838F4286301F100BBBD9C /* Hangout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hangout.swift; sourceTree = "<group>"; };
 		A72964C2289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateHangoutRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A72964C7289A6E4A00970807 /* CreateHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
@@ -476,7 +475,6 @@
 		A73BC9A72875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchHangoutsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A73BC9AA28759F0000FB9FA9 /* HomeListTopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListTopViewModel.swift; sourceTree = "<group>"; };
 		A73BC9AC28759F0500FB9FA9 /* HomeListTopSubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeListTopSubViewModel.swift; sourceTree = "<group>"; };
-		A73BC9B02875A49000FB9FA9 /* HomeLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLocationViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B22875A4D500FB9FA9 /* HomeSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSearchViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B4287ABFE400FB9FA9 /* SortingOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingOrderViewModel.swift; sourceTree = "<group>"; };
 		A73BC9B9287B168400FB9FA9 /* CLLocationManager+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Rx.swift"; sourceTree = "<group>"; };
@@ -668,6 +666,8 @@
 		D6F660B22900791500C0EF87 /* HomeFilteredViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilteredViewController.swift; sourceTree = "<group>"; };
 		D6F660B42900792600C0EF87 /* HomeFilteredViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilteredViewModel.swift; sourceTree = "<group>"; };
 		D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GetGPSResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		D6F7EFE62912BCD100A99FC2 /* BappyPresentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyPresentViewController.swift; sourceTree = "<group>"; };
+		D6F7EFE92912C96E00A99FC2 /* CustomActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -829,6 +829,8 @@
 		A717323D28361F5F0073E702 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				D6F7EFE82912C95D00A99FC2 /* CustomActivity */,
+				D6F7EFE52912BCBA00A99FC2 /* BappyPresentViewController */,
 				AFEC36B62902E1BD00687C18 /* BappyTextField */,
 				A709062A28570BB50096E9A0 /* BappyNavigationView */,
 				A709062628570B3A0096E9A0 /* ProgressBar */,
@@ -958,14 +960,15 @@
 			path = SignInAlertController;
 			sourceTree = "<group>";
 		};
-		A72838F32862FCFC00BBBD9C /* HomeLocation */ = {
+		A72838F32862FCFC00BBBD9C /* LocaleSetting */ = {
 			isa = PBXGroup;
 			children = (
-				A72838F12862F7F500BBBD9C /* HomeLocationViewController.swift */,
-				A73BC9B02875A49000FB9FA9 /* HomeLocationViewModel.swift */,
-				A7F52CE1286459CB002523D4 /* SubViews */,
+				A7F52CDF286446E3002523D4 /* LocaleSettingViewController.swift */,
+				A73BC9C6287D7E0700FB9FA9 /* LocaleSettingViewModel.swift */,
+				A7F52CE628646370002523D4 /* SubComponents */,
+				A7F52CEA286463C1002523D4 /* LocaleSearch */,
 			);
-			path = HomeLocation;
+			path = LocaleSetting;
 			sourceTree = "<group>";
 		};
 		A72964C1289A651C00970807 /* CreateHangoutDTO */ = {
@@ -1872,7 +1875,7 @@
 		A7B6448D284663D000A509AB /* PopupView */ = {
 			isa = PBXGroup;
 			children = (
-				A72838F32862FCFC00BBBD9C /* HomeLocation */,
+				A72838F32862FCFC00BBBD9C /* LocaleSetting */,
 				A731AC032873440A00C81E30 /* SortingOrder */,
 			);
 			path = PopupView;
@@ -1959,15 +1962,6 @@
 			path = Font;
 			sourceTree = "<group>";
 		};
-		A7F52CE1286459CB002523D4 /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-				A7F52CE9286463B9002523D4 /* LocaleSetting */,
-				A7F52CEA286463C1002523D4 /* LocaleSearch */,
-			);
-			path = SubViews;
-			sourceTree = "<group>";
-		};
 		A7F52CE628646370002523D4 /* SubComponents */ = {
 			isa = PBXGroup;
 			children = (
@@ -1975,16 +1969,6 @@
 				A7751AF4287EADEF00F23241 /* Cell */,
 			);
 			path = SubComponents;
-			sourceTree = "<group>";
-		};
-		A7F52CE9286463B9002523D4 /* LocaleSetting */ = {
-			isa = PBXGroup;
-			children = (
-				A7F52CDF286446E3002523D4 /* LocaleSettingViewController.swift */,
-				A73BC9C6287D7E0700FB9FA9 /* LocaleSettingViewModel.swift */,
-				A7F52CE628646370002523D4 /* SubComponents */,
-			);
-			path = LocaleSetting;
 			sourceTree = "<group>";
 		};
 		A7F52CEA286463C1002523D4 /* LocaleSearch */ = {
@@ -2586,6 +2570,22 @@
 			path = GetGPSDTO;
 			sourceTree = "<group>";
 		};
+		D6F7EFE52912BCBA00A99FC2 /* BappyPresentViewController */ = {
+			isa = PBXGroup;
+			children = (
+				D6F7EFE62912BCD100A99FC2 /* BappyPresentViewController.swift */,
+			);
+			path = BappyPresentViewController;
+			sourceTree = "<group>";
+		};
+		D6F7EFE82912C95D00A99FC2 /* CustomActivity */ = {
+			isa = PBXGroup;
+			children = (
+				D6F7EFE92912C96E00A99FC2 /* CustomActivity.swift */,
+			);
+			path = CustomActivity;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2733,6 +2733,7 @@
 				A71411D728985F8A002D4714 /* ProfileSettingViewController.swift in Sources */,
 				A73BC9A02875933500FB9FA9 /* HangoutRepository.swift in Sources */,
 				A7A6B0032844F6FE00911861 /* SearchPlaceViewController.swift in Sources */,
+				D6F7EFE72912BCD100A99FC2 /* BappyPresentViewController.swift in Sources */,
 				A7F52D072866E4EE002523D4 /* HangoutButton.swift in Sources */,
 				A7090621285616420096E9A0 /* SelectNationalityViewController.swift in Sources */,
 				A709063328571FEC0096E9A0 /* BappyUser.swift in Sources */,
@@ -2767,7 +2768,6 @@
 				A70C3CCF286B4DFF00BB7219 /* FetchProfileRequestDTO+Mapping.swift in Sources */,
 				A72E6F022893BDF300E06BED /* Alertable.swift in Sources */,
 				A71411A828985F8A002D4714 /* CustomerServiceViewController.swift in Sources */,
-				A73BC9B12875A49000FB9FA9 /* HomeLocationViewModel.swift in Sources */,
 				AFBAB3082908198400F23E9F /* MakeReviewCompletedViewController.swift in Sources */,
 				A71411B628985F8A002D4714 /* ProfileEditLanguageViewModel.swift in Sources */,
 				A71432CD2860AB5A00380DF7 /* SelectionLabel.swift in Sources */,
@@ -2804,6 +2804,7 @@
 				A76EEE71285065B700A2CFF6 /* URLSessionable.swift in Sources */,
 				AFEC369A2900310300687C18 /* Reference.swift in Sources */,
 				A73BC9B5287ABFE400FB9FA9 /* SortingOrderViewModel.swift in Sources */,
+				D6F7EFEA2912C96E00A99FC2 /* CustomActivity.swift in Sources */,
 				A785030B285A193B000FA592 /* HangoutMakePictureViewModel.swift in Sources */,
 				A7E13A562888904400413AE2 /* ReportViewModel.swift in Sources */,
 				A70C3CCD286B4DF300BB7219 /* FetchProfileResponseDTO+Mapping.swift in Sources */,
@@ -2815,7 +2816,6 @@
 				A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */,
 				A71411CF28985F8A002D4714 /* DeleteAccountSecondPageViewModel.swift in Sources */,
 				A76EEE862852CF5000A2CFF6 /* ProgressHUD.swift in Sources */,
-				A72838F22862F7F500BBBD9C /* HomeLocationViewController.swift in Sources */,
 				A71411D528985F8A002D4714 /* ProfileSettingNotificationViewModel.swift in Sources */,
 				D6C03272291153440047192F /* LikedPeopleListViewModel.swift in Sources */,
 				A7F52CEC2864A66F002523D4 /* Location.swift in Sources */,

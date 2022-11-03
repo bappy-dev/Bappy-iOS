@@ -15,27 +15,10 @@ final class LikedPeopleListViewController: UIViewController {
     let viewModel: LikedPeopleListViewModel
     var disposeBag = DisposeBag()
     
-    let titleLbl: UILabel = {
-        let lbl = UILabel()
-        lbl.text = "Like"
-        lbl.font = .roboto(size: 21, family: .Medium)
-        lbl.textColor = .bappyBrown
-        return lbl
-    }()
-    
-    private let closeBtn: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "  Close", style: .plain, target: nil, action: nil)
-        button.setTitleTextAttributes([
-            .font: UIFont.roboto(size: 18.0, family: .Medium)
-        ], for: .normal)
-        return button
-    }()
-    
     let tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .plain)
         view.register(LikedPeopleCell.self, forCellReuseIdentifier: LikedPeopleCell.reuseIndentifier)
         view.separatorStyle = .none
-        view.backgroundColor = .bappyLightgray
         view.rowHeight = 80
         return view
     }()
@@ -55,37 +38,14 @@ final class LikedPeopleListViewController: UIViewController {
     }
     
     private func configure() {
-        navigationItem.title = "Like"
-        
-        navigationItem.leftBarButtonItem = closeBtn
-        
         self.view.backgroundColor = .bappyLightgray
     }
     
     private func layout() {
-        let seperateView = UIView()
-        seperateView.backgroundColor = .black
-        
-        self.view.addSubviews([titleLbl, seperateView, tableView])
-        
-        titleLbl.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(15)
-            $0.centerX.equalToSuperview()
-        }
-        //
-        //        closeBtn.snp.makeConstraints {
-        //            $0.centerY.equalTo(titleLbl.snp.centerY)
-        //            $0.leading.equalToSuperview().inset(20)
-        //        }
-        
-        seperateView.snp.makeConstraints {
-            $0.height.equalTo(1)
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalTo(titleLbl.snp.bottom).offset(15)
-        }
+        self.view.addSubview(tableView)
         
         tableView.snp.makeConstraints {
-            $0.top.equalTo(seperateView.snp.bottom)
+            $0.top.equalToSuperview().inset(1)
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }
@@ -93,11 +53,6 @@ final class LikedPeopleListViewController: UIViewController {
 
 extension LikedPeopleListViewController {
     private func bind() {
-        closeBtn.rx.tap
-            .bind { [weak self] _ in
-                self?.dismiss(animated: true)
-            }.disposed(by: disposeBag)
-        
         tableView.rx.modelSelected(Hangout.Info.self)
             .map { [weak self] info in
                 self?.dismiss(animated: true)

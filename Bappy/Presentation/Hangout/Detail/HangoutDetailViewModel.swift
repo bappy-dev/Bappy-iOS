@@ -226,27 +226,25 @@ final class HangoutDetailViewModel: ViewModelType {
             .withLatestFrom(hangout$)
             .map { hangout -> UIActivityViewController? in
                 // URL이 되면 본문에 추가, 안되면 앱 설치 URL
-                var urlStrToUse: String!
+                var urlStrToUse: String = ""
                 var customActivities: [UIActivity] = []
                 
-                // 카톡공유가 되면 추가, 안되면 안추가
-                if let url = ShareApi.shared.makeCustomUrl(templateId: 85131, templateArgs:["TITLE":"\(hangout.title).", "DESC":"\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))"]) { // UR
+                if let url = ShareApi.shared.makeCustomUrl(templateId: 85131, templateArgs:["TITLE":"\(hangout.title).",
+                                                                                            "DESC":"\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))"]) {
                     
                     urlStrToUse = "이 행아웃을 공유해보세요\n\n" + url.absoluteString
-      
+                    
                 } else {
-                    urlStrToUse = "이 앱을 공유해보세요\n\n"//앱설치 URL
+                    urlStrToUse = "이 앱을 공유해보세요\n\n" + "itms-apps://itunes.apple.com/app/apple-store/ASDASD"
                 }
-                
-                if ShareApi.isKakaoTalkSharingAvailable() { // 그거 추가?
-//                    CustomActi
-                }
+                    let asd = CustomActivity(title: hangout.title, desc: "\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))")
+                    customActivities.append(asd)
                 
                 let activityVC = UIActivityViewController(activityItems: [urlStrToUse], applicationActivities: customActivities)
-                                    activityVC.excludedActivityTypes = [
-                                        UIActivity.ActivityType.airDrop,
-                                        UIActivity.ActivityType.addToReadingList
-                                    ]
+                activityVC.excludedActivityTypes = [
+                    UIActivity.ActivityType.airDrop,
+                    UIActivity.ActivityType.addToReadingList
+                ]
                 return activityVC
             }.asSignal(onErrorJustReturn: nil)
         
@@ -497,12 +495,10 @@ final class HangoutDetailViewModel: ViewModelType {
             .withLatestFrom(hangout$)
             .map { hangout -> [Hangout.Info] in
                 var newHangout = hangout
-                
-                if hangout.userHasLiked {
-                    newHangout.likedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
-                } else {
-                    if let idx = newHangout.likedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) {
-                        newHangout.likedIDs.remove(at: idx)
+                if let idx = newHangout.likedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) {
+                    newHangout.likedIDs.remove(at: idx)
+                    if newHangout.userHasLiked {
+                        newHangout.likedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
                     }
                 }
                 
@@ -558,5 +554,11 @@ final class HangoutDetailViewModel: ViewModelType {
 extension HangoutDetailViewModel: LikedPeopleListViewModelDelegate {
     func selectedUser(id: String) {
         input.selectedUserID.onNext(id)
+    }
+}
+
+extension HangoutDetailViewModel: CustomActivityDelegate {
+    func performActionCompletion(actvity: CustomActivity) {
+        actvity.perform()
     }
 }

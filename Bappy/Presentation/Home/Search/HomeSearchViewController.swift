@@ -13,7 +13,8 @@ import RxCocoa
 final class HomeSearchViewController: UIViewController {
     
     // MARK: Properties
-    private let viewModel: HomeSearchViewModel
+    var needToOpenKeyboard: Bool = true
+    let viewModel: HomeSearchViewModel
     private let disposeBag = DisposeBag()
     
     private let backButton: UIButton = {
@@ -79,7 +80,9 @@ final class HomeSearchViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        _ = searchTextField.becomeFirstResponder()
+        if needToOpenKeyboard {
+            _ = searchTextField.becomeFirstResponder()
+        }
     }
     
     // MARK: Actions
