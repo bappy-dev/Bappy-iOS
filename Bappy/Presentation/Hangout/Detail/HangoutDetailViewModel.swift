@@ -238,8 +238,8 @@ final class HangoutDetailViewModel: ViewModelType {
                 } else {
                     urlStrToUse = "이 앱을 공유해보세요\n\n" + "itms-apps://itunes.apple.com/app/apple-store/ASDASD"
                 }
-                    let asd = CustomActivity(title: hangout.title, desc: "\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))")
-                    customActivities.append(asd)
+                let asd = CustomActivity(title: hangout.title, desc: "\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))")
+                customActivities.append(asd)
                 
                 let activityVC = UIActivityViewController(activityItems: [urlStrToUse], applicationActivities: customActivities)
                 activityVC.excludedActivityTypes = [
@@ -494,8 +494,9 @@ final class HangoutDetailViewModel: ViewModelType {
         likeResult
             .map { _ in () }
             .withLatestFrom(hangout$)
-            .map { hangout -> [Hangout.Info] in
+            .map { hangout -> Hangout in
                 var newHangout = hangout
+                
                 if let idx = newHangout.likedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) {
                     newHangout.likedIDs.remove(at: idx)
                 }
@@ -504,8 +505,11 @@ final class HangoutDetailViewModel: ViewModelType {
                     newHangout.likedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
                 }
                 
-                return newHangout.likedIDs
-            }.bind(to: subViewModels.participantsSectionViewModel.input.likedIDs)
+                return newHangout
+            }.bind { [weak self] hangout in
+                hangout$.onNext(hangout)
+                self?.subViewModels.participantsSectionViewModel.input.likedIDs.onNext(hangout.likedIDs)
+            }
             .disposed(by: disposeBag)
         
         showLikedPeopleListButtonTapped$
@@ -564,3 +568,4 @@ extension HangoutDetailViewModel: CustomActivityDelegate {
         actvity.perform()
     }
 }
+
