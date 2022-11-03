@@ -498,9 +498,10 @@ final class HangoutDetailViewModel: ViewModelType {
                 var newHangout = hangout
                 if let idx = newHangout.likedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) {
                     newHangout.likedIDs.remove(at: idx)
-                    if newHangout.userHasLiked {
-                        newHangout.likedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
-                    }
+                }
+                
+                if newHangout.userHasLiked {
+                    newHangout.likedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
                 }
                 
                 return newHangout.likedIDs
