@@ -32,7 +32,7 @@
 			<string>Kakao Share</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao{KAKAO_APP_KEY}</string>
+				<string>"kakao + KAKAO_APP_KEY 추가해서 넣어주세요 ( 빈칸없이 )"</string>
 			</array>
 		</dict>
 	</array>
