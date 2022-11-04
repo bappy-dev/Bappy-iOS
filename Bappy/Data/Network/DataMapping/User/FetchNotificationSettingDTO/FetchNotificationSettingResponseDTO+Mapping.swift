@@ -22,8 +22,8 @@ extension FetchNotificationSettingResponseDTO {
         let newHangout: Bool
         
         private enum CodingKeys: String, CodingKey {
-            case myHangout = "myHangout"
-            case newHangout = "newHangout"
+            case myHangout = "hangoutNoti"
+            case newHangout = "newHangoutNoti"
         }
     }
     

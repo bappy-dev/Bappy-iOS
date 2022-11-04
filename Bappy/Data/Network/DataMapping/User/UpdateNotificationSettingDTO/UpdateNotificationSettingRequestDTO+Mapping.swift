@@ -8,6 +8,6 @@
 import Foundation
 
 struct UpdateNotificationSettingRequestDTO: Encodable {
-    let myHangout: Bool?
-    let newHangout: Bool?
+    let hangoutNoti: Bool?
+    let newHangoutNoti: Bool?
 }

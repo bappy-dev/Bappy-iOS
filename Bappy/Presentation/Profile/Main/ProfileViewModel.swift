@@ -376,24 +376,19 @@ final class ProfileViewModel: ViewModelType {
         // Setting 버튼 Flow - 설정 상태 불러오기
                 let notificationSettingResult = settingButtonTapped$
                     .do { [weak self] _ in self?.showLoader$.onNext(true) }
-                    .map { _ in
-                        let myHangout = UserDefaults.standard.value(forKey: "MyHangoutNotificationSetting") as? Bool ?? false
-                        let newHangout = UserDefaults.standard.value(forKey: "NewHangoutNotificationSetting") as? Bool ?? false
-                        return NotificationSetting(myHangout: myHangout, newHangout: newHangout)
-                    }
-                    // .flatMap(dependency.bappyAuthRepository.fetchNotificationSetting)
+                    .flatMap(dependency.bappyAuthRepository.fetchNotificationSetting)
                     .observe(on: MainScheduler.asyncInstance)
                     .do { [weak self] _ in self?.showLoader$.onNext(false) }
                     .share()
         
-//                notificationSettingResult
-//                    .compactMap(getErrorDescription)
-//                    .bind(to: self.rx.debugError)
-//                    .disposed(by: disposeBag)
+                notificationSettingResult
+                    .compactMap(getErrorDescription)
+                    .bind(to: self.rx.debugError)
+                    .disposed(by: disposeBag)
         
                 notificationSettingResult
                     .compactMap { $0 }
-                    //.compactMap(getValue)
+                    .compactMap(getValue)
                     .map { setting -> ProfileSettingViewModel in
                         let dependency = ProfileSettingViewModel.Dependency(
                             notificationSetting: setting)
