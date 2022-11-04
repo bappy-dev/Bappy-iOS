@@ -53,16 +53,23 @@ final class LikedPeopleListViewController: UIViewController {
 
 extension LikedPeopleListViewController {
     private func bind() {
-        tableView.rx.modelSelected(Hangout.Info.self)
+        tableView.rx.modelSelected((String, Hangout.Info).self)
             .map { [weak self] info in
                 self?.dismiss(animated: true)
-                return info.id
+                return info.1.id
             }
             .bind(to: viewModel.input.selectedUserID)
             .disposed(by: disposeBag)
         
-        viewModel.output.likedIDs
-            .drive(tableView.rx.items(cellIdentifier: LikedPeopleCell.reuseIndentifier, cellType: LikedPeopleCell.self)) { _, element, cell in
+        Observable.zip(viewModel.output.likedNames.asObservable(), viewModel.output.likedIDs.asObservable())
+            .filter { $0.0.count == $0.1.count }
+            .map { liked, infos -> [(String, Hangout.Info)] in
+                var arr: [(String, Hangout.Info)] = []
+                for idx in 0..<liked.count {
+                    arr.append((liked[idx], infos[idx]))
+                }
+                return arr
+            }.bind(to: tableView.rx.items(cellIdentifier: LikedPeopleCell.reuseIndentifier, cellType: LikedPeopleCell.self)) { _, element, cell in
                 cell.bind(element)
             }.disposed(by: disposeBag)
     }

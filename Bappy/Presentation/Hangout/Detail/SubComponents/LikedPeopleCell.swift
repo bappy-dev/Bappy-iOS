@@ -73,8 +73,8 @@ class LikedPeopleCell: UITableViewCell {
         }
     }
     
-    func bind(_ info: Hangout.Info) {
-        userImageView.kf.setImage(with: info.imageURL, placeholder: UIImage(named: "hangout_no_profile"))
-        userIDLbl.text = info.id
+    func bind(_ info: (String, Hangout.Info)) {
+        userImageView.kf.setImage(with: info.1.imageURL, placeholder: UIImage(named: "hangout_no_profile"))
+        userIDLbl.text = info.0
     }
 }

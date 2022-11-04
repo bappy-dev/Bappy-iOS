@@ -343,6 +343,7 @@
 		D6F660B82903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */; };
 		D6F7EFE72912BCD100A99FC2 /* BappyPresentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F7EFE62912BCD100A99FC2 /* BappyPresentViewController.swift */; };
 		D6F7EFEA2912C96E00A99FC2 /* CustomActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F7EFE92912C96E00A99FC2 /* CustomActivity.swift */; };
+		D6F7EFED2914BBB900A99FC2 /* FetchLikedPeopleResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F7EFEC2914BBB900A99FC2 /* FetchLikedPeopleResponseDTO+Mapping.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -668,6 +669,7 @@
 		D6F660B72903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GetGPSResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		D6F7EFE62912BCD100A99FC2 /* BappyPresentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyPresentViewController.swift; sourceTree = "<group>"; };
 		D6F7EFE92912C96E00A99FC2 /* CustomActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivity.swift; sourceTree = "<group>"; };
+		D6F7EFEC2914BBB900A99FC2 /* FetchLikedPeopleResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchLikedPeopleResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1009,6 +1011,7 @@
 		A72964C6289A677300970807 /* Hangout */ = {
 			isa = PBXGroup;
 			children = (
+				D6F7EFEB2914BB9000A99FC2 /* FetchHangoutLikedPeopleDTO */,
 				AF0A3B2E2906E15C00AFD752 /* FetchReviewsDTO */,
 				AF0A3B292906D97600AFD752 /* MakeReviewDTO */,
 				AFEC36A929028BDA00687C18 /* FetchHangoutDTO */,
@@ -2586,6 +2589,14 @@
 			path = CustomActivity;
 			sourceTree = "<group>";
 		};
+		D6F7EFEB2914BB9000A99FC2 /* FetchHangoutLikedPeopleDTO */ = {
+			isa = PBXGroup;
+			children = (
+				D6F7EFEC2914BBB900A99FC2 /* FetchLikedPeopleResponseDTO+Mapping.swift */,
+			);
+			path = FetchHangoutLikedPeopleDTO;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2935,6 +2946,7 @@
 				A71EBAEC283553890052C60A /* BappyTabBarController.swift in Sources */,
 				D6F660B82903BE4900C0EF87 /* GetGPSResponseDTO+Mapping.swift in Sources */,
 				A71411B028985F8A002D4714 /* ProfileLanguageViewController.swift in Sources */,
+				D6F7EFED2914BBB900A99FC2 /* FetchLikedPeopleResponseDTO+Mapping.swift in Sources */,
 				A76AE73328A0F0DB00A8EB9B /* FetchNotificationSettingResponseDTO+Mapping.swift in Sources */,
 				A71411C228985F8A002D4714 /* ProfileDetailIntroduceView.swift in Sources */,
 				AFEC36B32902B63700687C18 /* ReviewSelectTagView.swift in Sources */,

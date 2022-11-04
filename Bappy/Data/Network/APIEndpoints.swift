@@ -206,7 +206,7 @@ extension APIEndpoints {
             method: .get,
             queryParameters: searchHangoutsRequestDTO)
     }
-
+    
     static func filterHangouts(with filterHangoutRequestDTO: FilterHangoutRequestDTO) -> Endpoint<FetchHangoutsResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -236,6 +236,12 @@ extension APIEndpoints {
             path: "hangout/review",
             method: .get)
     }
+    
+    static func fetchLikedPeople(id: String) -> Endpoint<FetchLikedPeopleResponseDTO> {
+        return Endpoint(baseURL: BAPPY_API_BASEURL,
+                        path: "hangout/like/\(id)",
+                        method: .get)
+    }
 }
 
 // MARK: - Location
@@ -246,7 +252,7 @@ extension APIEndpoints {
             path: "user/locations",
             method: .get)
     }
-
+    
     static func createLocation(with createLocationRequestDTO: CreateLocationRequestDTO) -> Endpoint<CreateLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -255,7 +261,7 @@ extension APIEndpoints {
             bodyParameters: createLocationRequestDTO,
             contentType: .urlencoded)
     }
-
+    
     static func deleteLocation(with deleteLocationRequestDTO: DeleteLocationRequestDTO) -> Endpoint<DeleteLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
@@ -263,7 +269,7 @@ extension APIEndpoints {
             method: .delete,
             queryParameters: deleteLocationRequestDTO)
     }
-
+    
     static func selectLocation(with selectLocationRequestDTO: SelectLocationRequestDTO) -> Endpoint<SelectLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
