@@ -28,6 +28,7 @@ struct FetchReviewsResponseDTO: Decodable {
     
     struct ReferenceDTO: Decodable {
         let hangoutId: String
+        let writerId: String
         let writerName: String
         let writerProfileImageURL: String
         let tags: [String]
@@ -36,7 +37,8 @@ struct FetchReviewsResponseDTO: Decodable {
         let createTime: String
         
         func toDomain() -> Reference {
-            Reference(writerName: writerName,
+            Reference(writerID: writerId,
+                      writerName: writerName,
                       writerProfileImageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\(writerProfileImageURL)"),
                       tags: tags,
                       contents: message,
