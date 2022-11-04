@@ -400,7 +400,7 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
     }
     
     func updateNotificationSetting(myHangout: Bool?, newHangout: Bool?) -> Single<Result<Bool, Error>> {
-        let requestDTO = UpdateNotificationSettingRequestDTO(myHangout: myHangout, newHangout: newHangout)
+        let requestDTO = UpdateNotificationSettingRequestDTO(hangoutNoti: myHangout, newHangoutNoti: newHangout)
         let endpoint = APIEndpoints.updateNotificationSetting(with: requestDTO)
         return  provider.request(with: endpoint)
             .map { result -> Result<Bool, Error> in
