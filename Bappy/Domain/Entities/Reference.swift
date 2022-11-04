@@ -8,6 +8,7 @@
 import Foundation
 
 struct Reference {
+    var writerID: String
     var writerName: String
     var writerProfileImageURL: URL?
     var tags: [String]

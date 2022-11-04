@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+import RxSwift
+
 extension ProfileReferenceCell {
     static let cellHorizontalInset: CGFloat = 10.0
     
@@ -18,6 +20,8 @@ extension ProfileReferenceCell {
 }
 
 final class ProfileReferenceCell: UITableViewCell {
+    
+    let disposeBag = DisposeBag()
     
     // MARK: Properties
     var blurEffectView: UIVisualEffectView?
@@ -82,6 +86,8 @@ final class ProfileReferenceCell: UITableViewCell {
         frameView.backgroundColor = .white
         frameView.layer.cornerRadius = 9.0
         frameView.clipsToBounds = true
+        
+        profileImageView.isUserInteractionEnabled = true
     }
     
     private func layout() {
@@ -191,6 +197,26 @@ extension ProfileReferenceCell {
         } else {
             contentLabel.numberOfLines = 3
         }
+        
+        profileImageView.gestureRecognizers?.forEach({ recognizer in
+            profileImageView.removeGestureRecognizer(recognizer)
+        })
+        let tapGesture = UITapGestureRecognizer()
+        profileImageView.addGestureRecognizer(tapGesture)
+
+        tapGesture.rx.event
+            .map { _ in referenceCellState.reference.writerID}
+            .flatMap(DefaultUserProfileRepository().fetchUserProfile)
+            .observe(on: MainScheduler.asyncInstance)
+            .compactMap(getValue)
+            .subscribe(onNext: { [weak self] user in
+                let dependency = ProfileViewModel.Dependency(
+                    user: user,
+                    authorization: .view)
+                let viewController = ProfileViewController(viewModel: ProfileViewModel(dependency: dependency))
+                self?.parentViewController?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -206,5 +232,11 @@ class CustomIntensityVisualEffectView: UIVisualEffectView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError()
+    }
+}
+
+extension UIResponder {
+    public var parentViewController: UIViewController? {
+        return next as? UIViewController ?? next?.parentViewController
     }
 }
