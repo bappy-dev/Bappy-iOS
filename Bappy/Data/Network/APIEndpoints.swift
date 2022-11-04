@@ -77,17 +77,17 @@ struct APIEndpoints {
     static func fetchNotificationSetting() -> Endpoint<FetchNotificationSettingResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "user/notification",
+            path: "notification",
             method: .get)
     }
     
     static func updateNotificationSetting(with updateNotificationSettingRequestDTO: UpdateNotificationSettingRequestDTO) -> Endpoint<UpdateNotificationSettingResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "user/notification",
+            path: "notification",
             method: .put,
             bodyParameters: updateNotificationSettingRequestDTO,
-            contentType: .urlencoded)
+            contentType: .none)
     }
 }
 
