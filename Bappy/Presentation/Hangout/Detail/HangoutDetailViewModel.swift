@@ -512,10 +512,21 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .disposed(by: disposeBag)
         
-        showLikedPeopleListButtonTapped$
-            .withLatestFrom(hangout$)
-            .map  { hangout -> LikedPeopleListViewModel in
-                let dependency = LikedPeopleListViewModel.Dependency(hangout: hangout)
+        let likedPeople = showLikedPeopleListButtonTapped$
+            .withLatestFrom(hangout$) { ($1.id) }
+            .flatMap(dependency.hangoutRepository.fetchLikedPeople)
+            .share()
+        
+        likedPeople
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        likedPeople
+            .compactMap(getValue)
+            .withLatestFrom(hangout$) { (liked: $0, hangout: $1) }
+            .map  { likedList, hangout -> LikedPeopleListViewModel in
+                let dependency = LikedPeopleListViewModel.Dependency(hangout: hangout, likedNames: likedList)
                 let viewModel = LikedPeopleListViewModel(dependency: dependency)
                 viewModel.delegate = self
                 return viewModel
