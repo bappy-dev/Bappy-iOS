@@ -114,45 +114,33 @@ final class ProfileSettingNotificationViewModel: ViewModelType {
             .share()
         
         let allSettingResult = allSettingFlow
-            .do { setting in
-                UserDefaults.standard.set(setting.myHangout, forKey: "MyHangoutNotificationSetting")
-                UserDefaults.standard.set(setting.newHangout, forKey: "NewHangoutNotificationSetting")
-            }
-            //.flatMap(dependency.bappyAuthRepository.updateNotificationSetting)
+            .flatMap(dependency.bappyAuthRepository.updateNotificationSetting)
             .share()
         
         let mySettingResult = mySettingFlow
-            .do { setting in
-                UserDefaults.standard.set(setting.myHangout, forKey: "MyHangoutNotificationSetting")
-                UserDefaults.standard.set(setting.newHangout, forKey: "NewHangoutNotificationSetting")
-            }
-            //.flatMap(dependency.bappyAuthRepository.updateNotificationSetting)
+            .flatMap(dependency.bappyAuthRepository.updateNotificationSetting)
             .share()
         
         let newSettingResult = newSettingFlow
-            .do { setting in
-                UserDefaults.standard.set(setting.myHangout, forKey: "MyHangoutNotificationSetting")
-                UserDefaults.standard.set(setting.newHangout, forKey: "NewHangoutNotificationSetting")
-            }
-            //.flatMap(dependency.bappyAuthRepository.updateNotificationSetting)
+            .flatMap(dependency.bappyAuthRepository.updateNotificationSetting)
             .share()
         
-//        Observable
-//            .merge(allSettingResult, mySettingResult, newSettingResult)
-//            .compactMap(getErrorDescription)
-//            .bind(to: self.rx.debugError)
-//            .disposed(by: disposeBag)
+        Observable
+            .merge(allSettingResult, mySettingResult, newSettingResult)
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
         
         Observable
             .merge(
                 allSettingResult
-                    //.compactMap(getValue)
+                    .compactMap(getValue)
                     .withLatestFrom(allSettingFlow),
                 mySettingResult
-                    //.compactMap(getValue)
+                    .compactMap(getValue)
                     .withLatestFrom(mySettingFlow),
                 newSettingResult
-                    //.compactMap(getValue)
+                    .compactMap(getValue)
                     .withLatestFrom(newSettingFlow)
             )
             .map(NotificationSetting.init)
