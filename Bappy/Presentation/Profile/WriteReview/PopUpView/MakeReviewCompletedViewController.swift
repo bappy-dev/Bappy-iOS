@@ -52,6 +52,7 @@ final class MakeReviewCompletedViewController: UIViewController {
         label.numberOfLines = 0
         label.textColor = .bappyBrown
         label.font = .roboto(size: 16.0)
+        label.textAlignment = .center
         return label
     }()
     
