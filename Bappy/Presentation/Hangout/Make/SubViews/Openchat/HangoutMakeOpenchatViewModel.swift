@@ -40,14 +40,14 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
         
         // MARK: Streams
         let isOpenchatValid = text$
-            .map(validation)
+            .map { $0.count > 2}
             .share()
         let shouldHideRule = isOpenchatValid
             .asSignal(onErrorJustReturn: false)
         let keyboardWithButtonHeight = keyboardWithButtonHeight$
             .asSignal(onErrorJustReturn: 0)
         let openchatText = text$
-            .filter(validation)
+            .filter { $0.count > 2 }
             .asSignal(onErrorJustReturn: "")
         let isValid = isOpenchatValid
             .distinctUntilChanged()
@@ -67,8 +67,4 @@ final class HangoutMakeOpenchatViewModel: ViewModelType {
             isValid: isValid
         )
     }
-}
-
-private func validation(text: String) -> Bool {
-    return text.hasPrefix("https://open.kakao.com/o/") && text.count == 33
 }

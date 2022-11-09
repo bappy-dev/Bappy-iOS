@@ -92,7 +92,6 @@ final class HangoutCellViewModel: ViewModelType {
         let userHasLiked = hangout$
             .map(\.userHasLiked)
             .asDriver(onErrorJustReturn: false)
-        //        let mapImage = hangout$.map(\.place.)
         let state = hangout$
             .map(\.state)
             .map(Hangout.State?.init)
@@ -158,9 +157,19 @@ final class HangoutCellViewModel: ViewModelType {
             .compactMap(getValue)
             .withLatestFrom(likeFlow.map(\.userHasLiked))
             .withLatestFrom(hangout$) { (like: $0, hangout: $1) }
+            .withLatestFrom(user$) { (like: $0.0, hangout: $0.1, user: $1) }
             .map { element -> Hangout in
                 var hangout = element.hangout
                 hangout.userHasLiked = element.like
+                
+                if let idx = hangout.likedIDs.firstIndex(where: { $0.id == element.user.id }) {
+                    hangout.likedIDs.remove(at: idx)
+                }
+                
+                if hangout.userHasLiked {
+                    hangout.likedIDs.append(Hangout.Info(id: element.user.id, imageURL: element.user.profileImageURL))
+                }
+                
                 return hangout
             }
             .bind(to: hangout$)
@@ -185,7 +194,6 @@ final class HangoutCellViewModel: ViewModelType {
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-        
         
         let mapImage = result
             .compactMap(getValue)

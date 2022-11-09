@@ -21,7 +21,7 @@ final class HangoutMakeOpenchatView: UIView {
     
     private let openchatCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Make\nKakao Openchat"
+        label.text = "Make chat"
         label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = .bappyBrown
         label.numberOfLines = 2
@@ -33,7 +33,7 @@ final class HangoutMakeOpenchatView: UIView {
         textField.font = .roboto(size: 14.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Enter the URL",
+            string: "Enter the URL or Leave your Kakao ID",
             attributes: [.foregroundColor: UIColor.bappyGray])
         textField.keyboardType = .URL
         textField.autocorrectionType = .no
@@ -91,7 +91,7 @@ final class HangoutMakeOpenchatView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        ruleDescriptionLabel.text = "Write the valid URL form"
+        ruleDescriptionLabel.text = "Text Over 3 Words"
         scrollView.isScrollEnabled = false
     }
     

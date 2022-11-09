@@ -11,9 +11,15 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
+protocol BappyPresentDelegate: AnyObject {
+    func leftButtonTapped()
+    func rightButtonTapped()
+}
+
 final class BappyPresentBaseViewController: UIViewController {
     
     // MARK: Properties
+    weak var delegate: BappyPresentDelegate?
     private let disposeBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
@@ -35,6 +41,8 @@ final class BappyPresentBaseViewController: UIViewController {
         return button
     }()
     
+    private var rightButton = UIBarButtonItem()
+    
     private let dimmedView = UIView()
     
     private let childViewController: UINavigationController
@@ -42,11 +50,12 @@ final class BappyPresentBaseViewController: UIViewController {
     // MARK: Lifecycle
     init(baseViewController: UIViewController, title: String? = nil, leftBarButton: UIBarButtonItem? = nil, rightBarButton: UIBarButtonItem? = nil, backBarButton: UIBarButtonItem? =  nil) {
         let nav = UINavigationController(rootViewController: baseViewController)
-//        leftBarButton == nil ? closeButton : close
         closeButton = leftBarButton ?? closeButton
+        rightButton = rightBarButton ?? rightButton
         baseViewController.navigationController?.navigationBar.isTranslucent = false
         baseViewController.navigationItem.leftBarButtonItem = closeButton
         baseViewController.navigationItem.backBarButtonItem = backBarButton
+        baseViewController.navigationItem.rightBarButtonItem = rightButton
         baseViewController.title = title
         self.childViewController = nav
         super.init(nibName: nil, bundle: nil)
@@ -139,7 +148,14 @@ final class BappyPresentBaseViewController: UIViewController {
 extension BappyPresentBaseViewController {
     private func bind() {
         closeButton.rx.tap
-            .bind { [weak self] in self?.animateDismissView() }
-            .disposed(by: disposeBag)
+            .bind { [weak self] in
+                self?.animateDismissView()
+                self?.delegate?.leftButtonTapped()
+            }.disposed(by: disposeBag)
+        
+        rightButton.rx.tap
+            .bind { [weak self] in
+                self?.delegate?.rightButtonTapped()
+            }.disposed(by: disposeBag)
     }
 }

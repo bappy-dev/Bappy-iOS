@@ -136,9 +136,3 @@ final class HomeFilteredViewModel: ViewModelType {
             .disposed(by: disposeBag)
     }
 }
-
-// 1 프로파일 수정 후 모든 서버 재 호출 수정 필요
-// 2 계정 삭제
-// 3 서치
-// 4 신고 후 팝
-//

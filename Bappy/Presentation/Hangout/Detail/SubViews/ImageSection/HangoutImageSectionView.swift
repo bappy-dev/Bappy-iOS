@@ -19,7 +19,6 @@ final class HangoutImageSectionView: UIView {
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = Constant.hangoutDefaultImages.randomElement() as? UIImage
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -74,17 +73,11 @@ extension HangoutImageSectionView {
             .throttle(.milliseconds(1500), latest: false, scheduler: MainScheduler.instance)
             .bind(to: viewModel.input.likeButtonTapped)
             .disposed(by: disposeBag)
-
-        viewModel.output.imageURL
-            .emit(onNext: { [weak self] url in
-                self?.postImageView.kf.setImage(with: url, placeholder: Constant.hangoutDefaultImages.randomElement() as? UIImage)
-            })
-            .disposed(by: disposeBag)
         
         viewModel.output.image
-            .filter { $0 != nil }
-            .emit(to: postImageView.rx.image)
-            .disposed(by: disposeBag)
+            .emit { [weak self] url, image in
+                self?.postImageView.kf.setImage(with: url, placeholder: image)
+            }.disposed(by: disposeBag)
         
         viewModel.output.userHasLiked
             .drive(likeButton.rx.isSelected)
@@ -94,6 +87,10 @@ extension HangoutImageSectionView {
             .emit(onNext: { [weak self] height in
                 self?.updateImageHeight(height)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.likeButtonHidden
+            .emit(to: likeButton.rx.isHidden)
             .disposed(by: disposeBag)
     }
 }

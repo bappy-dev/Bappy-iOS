@@ -166,7 +166,7 @@ final class HomeListViewModel: ViewModelType {
         self.output = Output(
             scrollToTop: scrollToTop,
             cellViewModels: cellViewModels,
-                        showLocaleView: showLocaleView,
+            showLocaleView: showLocaleView,
             showSearchView: showSearchView,
             showFilteredView: showFilteredView,
             showSortingView: showSortingView,

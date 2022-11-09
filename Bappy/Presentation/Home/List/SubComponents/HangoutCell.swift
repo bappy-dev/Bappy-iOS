@@ -24,7 +24,6 @@ final class HangoutCell: UITableViewCell {
     
     private let postImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = Constant.hangoutDefaultImages.randomElement() as? UIImage
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .bappyLightgray
@@ -178,40 +177,38 @@ final class HangoutCell: UITableViewCell {
     }
     
     private func layout() {
-        contentView.addSubview(postImageView)
+        contentView.addSubviews([postImageView, disabledImageView, animationView])
+        self.addSubviews([moreButton, likeButton])
+        postImageView.addSubview(transparentView)
+        transparentView.addSubviews([titleLabel, timeImageView, timeLabel, placeImageView, placeLabel])
         postImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().inset(11.0)
         }
         
-        postImageView.addSubview(transparentView)
         transparentView.snp.makeConstraints {
             $0.bottom.equalTo(postImageView).offset(30.0)
             $0.top.equalTo(postImageView.snp.bottom).offset(-153.0)
             $0.leading.trailing.equalToSuperview()
         }
         
-        transparentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(13.0)
             $0.leading.equalToSuperview().inset(20.0)
             $0.trailing.lessThanOrEqualToSuperview().inset(20.0)
         }
         
-        transparentView.addSubview(timeImageView)
         timeImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(56.3)
             $0.leading.equalToSuperview().inset(23.3)
             $0.width.height.equalTo(16.8)
         }
         
-        transparentView.addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
             $0.leading.equalTo(timeImageView.snp.trailing).offset(5.0)
             $0.centerY.equalTo(timeImageView)
         }
         
-        transparentView.addSubview(placeImageView)
         placeImageView.snp.makeConstraints {
             $0.top.equalTo(timeImageView.snp.bottom).offset(7.4)
             $0.centerX.equalTo(timeImageView)
@@ -240,7 +237,6 @@ final class HangoutCell: UITableViewCell {
             $0.leading.equalTo(titleLabel).offset(6.0)
         }
         
-        self.addSubview(moreButton)
         moreButton.snp.makeConstraints {
             $0.bottom.equalTo(postImageView).offset(-15.0)
             $0.trailing.equalToSuperview().inset(14.0)
@@ -248,26 +244,22 @@ final class HangoutCell: UITableViewCell {
             $0.height.equalTo(57.0)
         }
         
-        transparentView.addSubview(placeLabel)
         placeLabel.snp.makeConstraints {
             $0.leading.equalTo(timeLabel)
             $0.trailing.equalTo(moreButton.snp.leading).offset(-8)
             $0.centerY.equalTo(placeImageView)
         }
         
-        self.addSubview(likeButton)
         likeButton.snp.makeConstraints {
             $0.top.equalToSuperview().inset(5.0)
             $0.trailing.equalToSuperview().inset(4.0)
             $0.width.height.equalTo(44.0)
         }
         
-        contentView.addSubview(disabledImageView)
         disabledImageView.snp.makeConstraints {
             $0.edges.equalTo(postImageView)
         }
         
-        contentView.addSubview(animationView)
         animationView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.height.equalTo(600.0)
@@ -307,6 +299,23 @@ extension HangoutCell {
             .drive(likeButton.rx.isSelected)
             .disposed(by: disposeBag)
         
+        viewModel.output.state
+            .compactMap { $0 }
+            .drive(self.rx.state)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.postImageURL
+            .compactMap { $0 }
+            .drive(onNext: { [weak self] url in
+                self?.postImageView.kf.setImage(with: url)
+            }).disposed(by: disposeBag)
+        
+        viewModel.output.showAnimation
+            .emit(onNext: { [weak self] _ in
+                self?.playAnimation()
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.output.joinedUsers
             .drive(onNext: { [weak self] infos in
                 for idx in 0..<4 {
@@ -323,23 +332,6 @@ extension HangoutCell {
                     self?.participantsImageViews[idx].isHidden = false
                 }
             }).disposed(by: disposeBag)
-        
-        viewModel.output.state
-            .compactMap { $0 }
-            .drive(self.rx.state)
-            .disposed(by: disposeBag)
-        
-        viewModel.output.postImageURL
-            .compactMap { $0 }
-            .drive(onNext: { [weak self] url in
-                self?.postImageView.kf.setImage(with: url, placeholder: Constant.hangoutDefaultImages.randomElement() as? UIImage)
-            }).disposed(by: disposeBag)
-        
-        viewModel.output.showAnimation
-            .emit(onNext: { [weak self] _ in
-                self?.playAnimation()
-            })
-            .disposed(by: disposeBag)
     }
 }
 

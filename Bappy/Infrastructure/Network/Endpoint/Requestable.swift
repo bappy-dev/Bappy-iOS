@@ -89,8 +89,13 @@ extension Requestable {
         var urlQueryItems = [URLQueryItem]()
         if let queryParameters = try queryParameters?.toDictionary() {
             queryParameters.forEach {
-                let queryItem = URLQueryItem(name: $0.key, value: "\($0.value)")
-                urlQueryItems.append(queryItem)
+                if let data = $0.value as? [String] {
+                    let queryItem = URLQueryItem(name: $0.key, value: data.joined(separator: ", "))
+                    urlQueryItems.append(queryItem)
+                } else {
+                    let queryItem = URLQueryItem(name: $0.key, value: "\($0.value)")
+                    urlQueryItems.append(queryItem)
+                }
             }
         }
         urlComponents.queryItems = !urlQueryItems.isEmpty ? urlQueryItems : nil
@@ -145,12 +150,12 @@ extension Requestable {
         
         return data
     }
-
+    
     private func convertFileData(fieldName: String,
-                                fileName: String,
-                                mimeType: String,
-                                fileData: Data,
-                                boundary: String) -> Data {
+                                 fileName: String,
+                                 mimeType: String,
+                                 fileData: Data,
+                                 boundary: String) -> Data {
         var data = Data()
         let boundaryPrefix = "--\(boundary)\r\n"
         
