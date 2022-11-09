@@ -8,9 +8,9 @@
 import Foundation
 
 struct FilterHangoutRequestDTO: Encodable {
-    var week: [String]
-    var language: [String]
-    var hangoutCategory: [String]
-    var startDate: String
-    var endDate: String
+    var week: [String]?
+    var language: [String]?
+    var hangoutCategory: [String]?
+    var startDate: String?
+    var endDate: String?
 }

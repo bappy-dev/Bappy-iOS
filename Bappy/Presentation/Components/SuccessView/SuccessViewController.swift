@@ -16,7 +16,7 @@ final class SuccessViewController: UIViewController {
     private let successMessage: String
     private var completion: (() -> Void)?
     
-    private let timeInterval: TimeInterval = 0.1
+    private let timeInterval: TimeInterval = 1.3
     private var leftTime = 5.0
     
     private let animationView: AnimationView = {
@@ -67,7 +67,7 @@ final class SuccessViewController: UIViewController {
         animationView.play { _ in
             UIView.animate(withDuration: 0.4, delay: 0.4, options: .transitionCrossDissolve) {
                 self.titleLabel.isHidden = false
-                self.timeLabel.isHidden = false
+//                self.timeLabel.isHidden = false
                 self.view.layoutIfNeeded()
             } completion: { _ in
                 
@@ -83,17 +83,19 @@ final class SuccessViewController: UIViewController {
     // MARK: Actions
     @objc
     private func onTimeFires() {
-        leftTime -= timeInterval
-        timeLabel.attributedText = getTimerText(time: leftTime)
-        
-        if messageLabel.isHidden, leftTime <= 3.6 {
-            self.messageLabel.isHidden = false
-        }
-        
-        if leftTime <= 0 {
-            self.completion?()
-            self.dismiss(animated: true)
-        }
+        self.completion?()
+        self.dismiss(animated: true)
+//        leftTime -= timeInterval
+//        timeLabel.attributedText = getTimerText(time: leftTime)
+//        
+//        if messageLabel.isHidden, leftTime <= 3.6 {
+//            self.messageLabel.isHidden = false
+//        }
+//        
+//        if leftTime <= 0 {
+//            self.completion?()
+//            self.dismiss(animated: true)
+//        }
     }
     
     // MARK: Helpers

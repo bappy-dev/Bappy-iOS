@@ -19,13 +19,16 @@ final class DefaultHangoutRepository {
 }
 
 extension DefaultHangoutRepository: HangoutRepository {
-    func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?) -> Single<Result<HangoutPage, Error>> {
-        var endDateToUse = endDate
-        if endDateToUse == nil {
-            endDateToUse = startDate
-        }
+    func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], date: (Date?, Date?)) -> Single<Result<HangoutPage, Error>> {
+        let weekParam = week.map { $0.rawValue }
+        let categoryParam = hangoutCategory.map { $0.description }
         
-        let requestDTO = FilterHangoutRequestDTO(week: week.map { $0.rawValue }, language: language, hangoutCategory: hangoutCategory.map { $0.description }, startDate: startDate.toString(dateFormat: "yyyy-MM-dd"), endDate: endDateToUse!.toString(dateFormat: "yyyy-MM-dd"))
+        let requestDTO = FilterHangoutRequestDTO(week: weekParam.isEmpty ? nil : weekParam,
+                                                 language: language.isEmpty ? nil : language,
+                                                 hangoutCategory: categoryParam.isEmpty ? nil : categoryParam,
+                                                 startDate: date.0?.toString(dateFormat: "yyyy-MM-dd"),
+                                                 endDate: date.1?.toString(dateFormat: "yyyy-MM-dd"))
+        
         let endpoint = APIEndpoints.filterHangouts(with: requestDTO)
         
         return provider.request(with: endpoint)
@@ -160,7 +163,6 @@ extension DefaultHangoutRepository: HangoutRepository {
             .map { result -> Result<[Hangout], Error> in
                 switch result {
                 case .success(let responseDTO):
-                    print("얍", responseDTO.toDomain())
                     return .success(responseDTO.toDomain())
                 case .failure(let error):
                     return .failure(error)
@@ -175,7 +177,6 @@ extension DefaultHangoutRepository: HangoutRepository {
             .map { result -> Result<Hangout, Error> in
                 switch result {
                 case .success(let responseDTO):
-                    print("얍", responseDTO.toDomain())
                     return .success(responseDTO.toDomain())
                 case .failure(let error):
                     return .failure(error)
@@ -433,7 +434,6 @@ extension DefaultHangoutRepository: HangoutRepository {
             .map { result -> Result<[Reference], Error> in
                 switch result {
                 case .success(let responseDTO):
-                    print("얍 \(id)", responseDTO.toDomain())
                     return .success(responseDTO.toDomain())
                 case .failure(let error):
                     return .failure(error)

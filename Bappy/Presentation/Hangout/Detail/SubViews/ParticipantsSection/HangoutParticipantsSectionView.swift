@@ -56,6 +56,15 @@ final class HangoutParticipantsSectionView: UIView {
         return label
     }()
     
+    private let emptyJoinedLbl: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Let's join and wait!"
+        lbl.font = .roboto(size: 20.0, family: .Medium)
+        lbl.textAlignment = .center
+        lbl.isHidden = true
+        return lbl
+    }()
+    
     private lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
@@ -88,7 +97,7 @@ final class HangoutParticipantsSectionView: UIView {
     }
     
     private func layout() {
-        self.addSubviews([joinCaptionLabel, numOfParticipantsLabel, collectionView, heartImageView, likedPeopleCountLbl, likedPeopleStackView])
+        self.addSubviews([joinCaptionLabel, numOfParticipantsLabel, collectionView, emptyJoinedLbl, heartImageView, likedPeopleCountLbl, likedPeopleStackView])
         
         joinCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(8.0)
@@ -104,6 +113,11 @@ final class HangoutParticipantsSectionView: UIView {
             $0.top.equalTo(joinCaptionLabel.snp.bottom).offset(15.0)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(48.0)
+        }
+        
+        emptyJoinedLbl.snp.makeConstraints {
+            $0.bottom.equalTo(collectionView.snp.bottom)
+            $0.centerX.equalToSuperview()
         }
         
         heartImageView.snp.makeConstraints {
@@ -140,15 +154,16 @@ extension HangoutParticipantsSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.joinedIDs
-            .drive(collectionView.rx.items(cellIdentifier: ParticipantImageCell.reuseIdentifier, cellType: ParticipantImageCell.self)) { _, element, cell in
+            .map { [weak self] IDS -> [Hangout.Info] in
+                self?.emptyJoinedLbl.isHidden = !IDS.isEmpty
+                return IDS
+            }.drive(collectionView.rx.items(cellIdentifier: ParticipantImageCell.reuseIdentifier, cellType: ParticipantImageCell.self)) { _, element, cell in
                 cell.bind(with: element.imageURL)
             }.disposed(by: disposeBag)
         
         viewModel.output.likedIDs
             .drive { [weak self] infos in
                 guard let self = self else { return }
-                print("infos!", infos)
-                self.likedPeopleStackView.arrangedSubviews.map { $0.removeFromSuperview() }
                 self.heartImageView.isSelected = !infos.isEmpty
                 self.likedPeopleCountLbl.text = "+\(infos.count)"
                 for idx in 0..<infos.count {

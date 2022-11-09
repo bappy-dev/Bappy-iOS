@@ -15,7 +15,6 @@ final class HomeSearchViewModel: ViewModelType {
     struct Dependency {
         var user: BappyUser
         let hangoutRepository: HangoutRepository
-        var minimumLength: Int { 2 }
         
         init(user: BappyUser,
              hangoutRepository: HangoutRepository = DefaultHangoutRepository()) {
@@ -51,7 +50,6 @@ final class HomeSearchViewModel: ViewModelType {
     private let user$: BehaviorSubject<BappyUser>
     private let page$ = BehaviorSubject<Int>(value: 1)
     private let totalPage$ = BehaviorSubject<Int>(value: 1)
-    private let minimumLength$: BehaviorSubject<Int>
     private let searchedText$ = BehaviorSubject<String>(value: "")
     
     private let text$ = BehaviorSubject<String>(value: "")
@@ -72,7 +70,6 @@ final class HomeSearchViewModel: ViewModelType {
         
         // MARK: Streams
         let user$ = BehaviorSubject<BappyUser>(value: dependency.user)
-        let minimumLength$ = BehaviorSubject<Int>(value: dependency.minimumLength)
         
         let scrollToTop = scrollToTop$
             .asSignal(onErrorJustReturn: Void())
@@ -116,14 +113,10 @@ final class HomeSearchViewModel: ViewModelType {
         
         // MARK: Bindind
         self.user$ = user$
-        self.minimumLength$ = minimumLength$
         
         // 검색 버튼 클릭 Flow
         let newHangoutFlow = searchButtonClicked$
-            .withLatestFrom(text$)
-            .withLatestFrom(minimumLength$) { (text: $0, minimumLenth: $1) }
-            .filter { $0.text.count >= $0.minimumLenth }
-            .map { $0.text }
+            .withLatestFrom(text$) { ($1)}
             .share()
         
         newHangoutFlow

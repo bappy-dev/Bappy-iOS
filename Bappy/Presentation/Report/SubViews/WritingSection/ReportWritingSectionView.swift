@@ -62,7 +62,14 @@ final class ReportWritingSectionView: UIView {
         label.text = "Write More"
         return label
     }()
-
+    
+    private let asterisk2Label: UILabel = {
+        let label = UILabel()
+        label.text = "*"
+        label.font = .roboto(size: 18.0, family: .Medium)
+        label.textColor = .bappyYellow
+        return label
+    }()
     
     private let reportingDetailBackgroundView: UIView = {
         let backgroundView = UIView()
@@ -139,6 +146,12 @@ final class ReportWritingSectionView: UIView {
         reportingDetailCaptionLabel.snp.makeConstraints {
             $0.top.equalTo(reportingTypeBackgroundView.snp.bottom).offset(48.0)
             $0.leading.equalToSuperview().inset(33.0)
+        }
+        
+        self.addSubview(asterisk2Label)
+        asterisk2Label.snp.makeConstraints {
+            $0.top.equalTo(reportingDetailCaptionLabel).offset(-3.0)
+            $0.leading.equalTo(reportingDetailCaptionLabel.snp.trailing).offset(2.0)
         }
         
         self.addSubview(reportingDetailBackgroundView)

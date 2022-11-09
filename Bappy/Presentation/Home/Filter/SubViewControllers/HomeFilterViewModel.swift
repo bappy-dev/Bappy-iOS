@@ -30,8 +30,7 @@ final class HomeFilterViewModel: ViewModelType {
     
     struct Input {
         var applyButtonTapped: AnyObserver<Void>
-        var firstDateSelected: AnyObserver<Date?>
-        var secondDateSelected: AnyObserver<Date?>
+        var dateSelected: AnyObserver<(Date?, Date?)>
         var sundayButtonTapped: AnyObserver<Void> // <-> View
         var mondayButtonTapped: AnyObserver<Void> // <-> View
         var tuesdayButtonTapped: AnyObserver<Void> // <-> View
@@ -47,10 +46,7 @@ final class HomeFilterViewModel: ViewModelType {
     }
     
     struct Output {
-        var firstDate: Signal<Date>
-        var secondDate: Signal<Date?> // <-> Parent
-        var language: Signal<[Language]>
-        var weekdays: Signal<[Weekday]> // <-> Parent
+        var isValid: Driver<Bool> // <-> Parent
         var isSundayButtonEnabled: Driver<Bool> // <-> View
         var isMondayButtonEnabled: Driver<Bool> // <-> View
         var isTuesdayButtonEnabled: Driver<Bool> // <-> View
@@ -59,16 +55,14 @@ final class HomeFilterViewModel: ViewModelType {
         var isFridayButtonEnabled: Driver<Bool> // <-> View
         var isSaturdayButtonEnabled: Driver<Bool> // <-> View
         var showSelectLanguageView: Signal<SelectLanguageViewModel?>
-        var isValid: Driver<Bool> // <-> Parent
         var isChineseButtonEnabled: Driver<Bool> // <-> View
         var isEnglishButtonEnabled: Driver<Bool> // <-> View
         var isKoreanButtonEnabled: Driver<Bool> // <-> View
         var isJapaneseButtonEnabled: Driver<Bool> // <-> View
-        var filterForm: Signal<(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?)>
+        var filterForm: Signal<(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], date: (Date?, Date?))>
     }
     
-    private let firstDateSelected$ = PublishSubject<Date?>()
-    private let secondDateSelected$ = PublishSubject<Date?>()
+    
     private let weekdays: BehaviorSubject<[Weekday: Bool]>
     private let sundayButtonTapped$ = PublishSubject<Void>()
     private let mondayButtonTapped$ = PublishSubject<Void>()
@@ -84,6 +78,7 @@ final class HomeFilterViewModel: ViewModelType {
     private let chineseButtonTapped$ = PublishSubject<Void>()
     private let applyButtonTapped$ = PublishSubject<Void>()
     private let language$ = BehaviorSubject<[Language]>(value: [])
+    private let dateSelected$ = BehaviorSubject<(Date?, Date?)>(value: (nil,nil) )
     private let isSundayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isMondayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isTuesdayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
@@ -96,7 +91,7 @@ final class HomeFilterViewModel: ViewModelType {
     private let isKoreanButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isJapaneseButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let showSelectLanguageView$ = PublishSubject<SelectLanguageViewModel?>()
-    private let filterForm = BehaviorSubject<(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?)>(value: ([],[],[],Date(),nil))
+    private let filterForm = BehaviorSubject<(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], date: (Date?, Date?))>(value: ([],[],[],(nil,nil)))
     
     var dependency: Dependency
     let input: Input
@@ -176,10 +171,10 @@ final class HomeFilterViewModel: ViewModelType {
         let isWeekdaysValid = weekdays.map { !$0.isEmpty }.asObservable().startWith(false)
         let isLanguageValid = language$.map { !$0.isEmpty }.startWith(false)
         let isCateValid = subViewModels.hangoutMakeCategoryViewModel.output.isValid.asObservable()
-        let isSelectedDateValid = firstDateSelected$.map { $0 != nil }.startWith(false)
+        let isSelectedDateValid = dateSelected$.map { $0.0 != nil }.startWith(false)
 
         let isValid = Observable.combineLatest(isWeekdaysValid, isLanguageValid, isCateValid, isSelectedDateValid)
-            .map { $0 && $1 && $2 && $3 }
+            .map { $0 || $1 || $2 || $3 }
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
         
@@ -187,8 +182,7 @@ final class HomeFilterViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
 
         self.input = Input(applyButtonTapped: applyButtonTapped$.asObserver(),
-                           firstDateSelected: firstDateSelected$.asObserver(),
-                           secondDateSelected: secondDateSelected$.asObserver(),
+                           dateSelected: dateSelected$.asObserver(),
                            sundayButtonTapped: sundayButtonTapped$.asObserver(),
                            mondayButtonTapped: mondayButtonTapped$.asObserver(),
                            tuesdayButtonTapped: tuesdayButtonTapped$.asObserver(),
@@ -202,10 +196,7 @@ final class HomeFilterViewModel: ViewModelType {
                            japaneseButtonTapped: japaneseButtonTapped$.asObserver(),
                            chineseButtonTapped: chineseButtonTapped$.asObserver())
         
-        self.output = Output(firstDate: firstDateSelected$.map { $0! }.asSignal(onErrorJustReturn: Date()),
-                             secondDate: secondDateSelected$.asSignal(onErrorJustReturn: nil),
-                             language: language$.asSignal(onErrorJustReturn: []),
-                             weekdays: weekdays,
+        self.output = Output(isValid: isValid,
                              isSundayButtonEnabled: isSundayButtonEnabled,
                              isMondayButtonEnabled: isMondayButtonEnabled,
                              isTuesdayButtonEnabled: isTuesdayButtonEnabled,
@@ -214,12 +205,11 @@ final class HomeFilterViewModel: ViewModelType {
                              isFridayButtonEnabled: isFridayButtonEnabled,
                              isSaturdayButtonEnabled: isSaturdayButtonEnabled,
                              showSelectLanguageView: showSelectLanguageView,
-                             isValid: isValid,
                              isChineseButtonEnabled: isChineseButtonEnabled,
                              isEnglishButtonEnabled: isEnglishButtonEnabled,
                              isKoreanButtonEnabled: isKoreanButtonEnabled,
                              isJapaneseButtonEnabled: isJapaneseButtonEnabled,
-                             filterForm: filterForm.asSignal(onErrorJustReturn: ([],[],[],Date(),nil)))
+                             filterForm: filterForm.asSignal(onErrorJustReturn: ([],[],[],(nil,nil))))
         
         // MARK: Binding
         self.weekdays = weekdays$
@@ -321,9 +311,8 @@ final class HomeFilterViewModel: ViewModelType {
                 Observable.combineLatest(weekdays.asObservable(),
                                          language$,
                                          subViewModels.hangoutMakeCategoryViewModel.output.categories.asObservable(),
-                                         firstDateSelected$,
-                                         secondDateSelected$))
-            .map { ($0, $1, $2, $3!, $4) }
+                                         dateSelected$))
+            .map { ($0, $1, $2, $3) }
             .bind(to: filterForm)
             .disposed(by: disposeBag)
         

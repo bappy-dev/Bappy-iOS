@@ -103,10 +103,8 @@ final class WriteReviewViewModel: ViewModelType {
             .withLatestFrom(reviews$) { ($0, $1) }
             .map { (index, reviews) in
                 if index >= 0 && index < reviews.count {
-                    print("nowValues", index, reviews[index])
                     return reviews[index]
                 } else {
-                    print("nowValues 새 거", index)
                     return MakeReferenceModel(targetID: "", tags: [], message: "")
                 }
             }
@@ -148,10 +146,7 @@ final class WriteReviewViewModel: ViewModelType {
         backButtonTapped$
             .withLatestFrom(index$) { $1 - 1 }
             .filter { $0 >= 0 }
-            .map {
-                print("지금", $0)
-                return $0
-            }
+            .map { $0 }
             .bind(to: index$)
             .disposed(by: disposeBag)
         
@@ -180,12 +175,10 @@ final class WriteReviewViewModel: ViewModelType {
                 let review = MakeReferenceModel(targetID: dependency.targetList[index].id,
                                                 tags: tags,
                                                 message: message)
-                print(index, reviews, review)
                 if index >= reviews.count {
                     return reviews + [review]
                 } else {
                     var reviews = reviews
-                    print("업데이트", review)
                     reviews[index] = review
                     return reviews
                 }

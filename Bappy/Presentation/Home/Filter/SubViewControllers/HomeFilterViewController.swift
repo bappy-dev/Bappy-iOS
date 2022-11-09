@@ -125,19 +125,6 @@ final class HomeFilterViewController: UIViewController {
         return btn
     }()
     
-    private let applyBtn: UIButton = {
-        let btn = UIButton()
-        btn.setTitleColor(.bappyGray, for: .disabled)
-        btn.setTitleColor(.bappyBrown, for: .normal)
-        btn.setTitle("Apply", for: .normal)
-        btn.titleLabel?.font = .roboto(size: 28.0, family: .Bold)
-        btn.isEnabled = true
-        btn.backgroundColor = .rgb(238, 238, 234, 1)
-        btn.layer.cornerRadius = 29.5
-        btn.backgroundColor = .bappyGray.withAlphaComponent(0.15)
-        return btn
-    }()
-    
     private let previousCalendarPageBtn: UIButton = {
         let btn = UIButton()
         btn.setImage(UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -270,7 +257,7 @@ final class HomeFilterViewController: UIViewController {
         
         self.view.addSubview(scrollView)
         scrollView.addSubview(baseView)
-        baseView.addSubviews([dayInfoLbl, seperatView, calendar, imageView, previousCalendarPageBtn, nextCalendarPageBtn, seperatView2, pickerView, weekInfoLbl, weekDayScrollView, seperatView3, categoryInfoLbl, vStackView, seperatView4, languageInfoLbl, moreBtn, languageVStackView, applyBtn])
+        baseView.addSubviews([dayInfoLbl, seperatView, calendar, imageView, previousCalendarPageBtn, nextCalendarPageBtn, seperatView2, pickerView, weekInfoLbl, weekDayScrollView, seperatView3, categoryInfoLbl, vStackView, seperatView4, languageInfoLbl, moreBtn, languageVStackView])
         
         scrollView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(15)
@@ -394,14 +381,7 @@ final class HomeFilterViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(29)
             $0.height.equalTo(36)
             $0.top.equalTo(languageInfoLbl.snp.bottom).offset(13)
-        }
-        
-        applyBtn.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(languageVStackView.snp.bottom).offset(37)
             $0.bottom.equalToSuperview().inset(26)
-            $0.width.equalTo(215.0)
-            $0.height.equalTo(59.0)
         }
     }
     
@@ -479,9 +459,6 @@ extension HomeFilterViewController {
             .disposed(by: disposeBag)
         moreBtn.rx.tap
             .bind(to: viewModel.input.moreButtonTapped)
-            .disposed(by: disposeBag)
-        applyBtn.rx.tap
-            .bind(to: viewModel.input.applyButtonTapped)
             .disposed(by: disposeBag)
         travelButton.rx.tap
             .bind(to: subViewModel.input.travelButtonTapped)
@@ -576,14 +553,14 @@ extension HomeFilterViewController {
         viewModel.output.isChineseButtonEnabled
             .drive(chineseButton.rx.isSelected)
             .disposed(by: disposeBag)
-        viewModel.output.isValid
-            .map { [weak self] isValid in
-                self?.applyBtn.isEnabled = isValid
-                self?.applyBtn.backgroundColor = isValid ? .bappyYellow : .rgb(238, 238, 234, 1)
-                return isValid
-            }
-            .drive(applyBtn.rx.isEnabled)
-            .disposed(by: disposeBag)
+//        viewModel.output.isValid
+//            .map { [weak self] isValid in
+//                self?.applyBtn.isEnabled = isValid
+//                self?.applyBtn.backgroundColor = isValid ? .bappyYellow : .rgb(238, 238, 234, 1)
+//                return isValid
+//            }
+//            .drive(applyBtn.rx.isEnabled)
+//            .disposed(by: disposeBag)
         subViewModel.output.isTravelButtonEnabled
             .drive(travelButton.rx.isSelected)
             .disposed(by: disposeBag)
@@ -736,14 +713,7 @@ extension HomeFilterViewController: FSCalendarDelegate, FSCalendarDataSource, FS
             datesRange = []
         }
         
-        Observable.of(firstDate)
-            .bind(to: viewModel.input.firstDateSelected)
-            .disposed(by: disposeBag)
-        
-        Observable.of(lastDate)
-            .bind(to: viewModel.input.secondDateSelected)
-            .disposed(by: disposeBag)
-        
+        viewModel.input.dateSelected.onNext((firstDate, lastDate))
         configureVisibleCells()
     }
     
@@ -757,14 +727,7 @@ extension HomeFilterViewController: FSCalendarDelegate, FSCalendarDataSource, FS
         
         datesRange = []
         
-        Observable.of(firstDate)
-            .bind(to: viewModel.input.firstDateSelected)
-            .disposed(by: disposeBag)
-        
-        Observable.of(lastDate)
-            .bind(to: viewModel.input.secondDateSelected)
-            .disposed(by: disposeBag)
-        
+        viewModel.input.dateSelected.onNext((firstDate, lastDate))
         configureVisibleCells()
     }
     
@@ -808,5 +771,14 @@ extension HomeFilterViewController: UIPickerViewDelegate, UIPickerViewDataSource
         
         let date = Calendar.current.date(from: dateComponenet) ?? Date()
         self.calendar.setCurrentPage(date, animated: false)
+    }
+}
+
+extension HomeFilterViewController: BappyPresentDelegate {
+    func leftButtonTapped() { }
+    
+    func rightButtonTapped() {
+        
+        viewModel.input.applyButtonTapped.onNext(())
     }
 }

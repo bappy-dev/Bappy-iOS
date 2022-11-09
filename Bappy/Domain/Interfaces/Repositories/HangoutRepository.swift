@@ -19,7 +19,7 @@ protocol HangoutRepository {
     func cancelHangout(hangoutID: String) -> Single<Result<Bool, Error>>
     func reportHangout(hangoutID: String, reportType: String, detail: String, imageDatas: [Data]?) -> Single<Result<Bool, Error>>
     func searchHangouts(title: String) -> Single<Result<HangoutPage, Error>>
-    func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], startDate: Date, endDate: Date?) -> Single<Result<HangoutPage, Error>>
+    func filterHangouts(week: [Weekday], language: [String], hangoutCategory: [Hangout.Category], date: (Date?, Date?)) -> Single<Result<HangoutPage, Error>>
     func makeReviews(referenceModels: [MakeReferenceModel], hangoutID: String) -> Single<Result<Bool, Error>>
     func fetchReviews(id: String?) -> Single<Result<[Reference], Error>>
     func fetchLikedPeople(id: String) -> Single<Result<[String], Error>>

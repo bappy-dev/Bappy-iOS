@@ -214,9 +214,10 @@ extension HomeFilteredViewController {
                 
                 let presentVC = BappyPresentBaseViewController(baseViewController: self.filterVC!,
                                                                title: "Filter",
-                                                               leftBarButton: UIBarButtonItem(image: image, style: .plain, target: nil, action: nil),
-                                                               rightBarButton: nil,
+                                                               leftBarButton: UIBarButtonItem(image: image, style: .done, target: nil, action: nil),
+                                                               rightBarButton: UIBarButtonItem(title: "Apply", style: .done, target: nil, action: nil),
                                                                backBarButton: nil)
+                presentVC.delegate = self.filterVC
                 
                 presentVC.modalPresentationStyle = .overCurrentContext
                 self.navigationController?.present(presentVC,  animated: true)

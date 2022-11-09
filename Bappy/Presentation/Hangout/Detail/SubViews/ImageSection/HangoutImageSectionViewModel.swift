@@ -23,11 +23,11 @@ final class HangoutImageSectionViewModel: ViewModelType {
     }
     
     struct Output {
-        var imageURL: Signal<URL?> // <-> View
-        var image: Signal<UIImage?> // <-> View
+        var image: Signal<(URL?, UIImage?)> // <-> View
         var userHasLiked: Driver<Bool> // <-> View
         var imageHeight: Signal<CGFloat> // <-> View
         var likeButtonTapped: Signal<Void> // <-> Parent
+        var likeButtonHidden: Signal<Bool>
     }
     
     let dependency: Dependency
@@ -48,14 +48,10 @@ final class HangoutImageSectionViewModel: ViewModelType {
         let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
         let postImage$ = BehaviorSubject<UIImage?>(value: dependency.postImage)
         
-        let imageURL = hangout$
-            .filter { $0.state != .preview }
-            .map(\.postImageURL)
-            .asSignal(onErrorJustReturn: URL(string: BAPPY_API_BASEURL)!)
         let image = hangout$
-            .filter { $0.state == .preview }
-            .withLatestFrom(postImage$)
-            .asSignal(onErrorJustReturn: nil)
+            .withLatestFrom(postImage$) { ($0, $1)}
+            .map { ($0.0.postImageURL, $0.1) }
+            .asSignal(onErrorJustReturn: (nil, nil))
         let userHasLiked = hangout$
             .map(\.userHasLiked)
             .asDriver(onErrorJustReturn: false)
@@ -63,6 +59,10 @@ final class HangoutImageSectionViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: 0)
         let likeButtonTapped = likeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
+        let likeButtonHidden = hangout$
+            .map(\.state)
+            .map { $0 == .preview }
+            .asSignal(onErrorJustReturn: true)
         
         // MARK: Input & Output
         self.input = Input(
@@ -72,11 +72,11 @@ final class HangoutImageSectionViewModel: ViewModelType {
         )
         
         self.output = Output(
-            imageURL: imageURL,
             image: image,
             userHasLiked: userHasLiked,
             imageHeight: imageHeight,
-            likeButtonTapped: likeButtonTapped
+            likeButtonTapped: likeButtonTapped,
+            likeButtonHidden: likeButtonHidden
         )
         
         // MARK: Bindind

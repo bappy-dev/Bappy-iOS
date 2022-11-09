@@ -65,15 +65,6 @@ final class HangoutDetailViewController: UIViewController {
         return btn
     }()
     
-    private let emptyJoinedLbl: UILabel = {
-        let lbl = UILabel()
-        lbl.text = "Let's join and wait!"
-        lbl.font = .roboto(size: 20.0, family: .Medium)
-        lbl.textAlignment = .center
-        lbl.isHidden = true
-        return lbl
-    }()
-    
     private let reportButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "detail_report"), for: .normal)
@@ -146,7 +137,7 @@ final class HangoutDetailViewController: UIViewController {
         view.addSubviews([scrollView, titleTopView])
         scrollView.addSubview(contentView)
         titleTopView.addSubviews([backButton, shareButton])
-        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, stackView, emptyJoinedLbl])
+        contentView.addSubviews([imageSectionView, mainSectionView, mapSectionView, planSectionView, participantsSectionView, stackView])
         
         scrollView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
@@ -180,11 +171,6 @@ final class HangoutDetailViewController: UIViewController {
         participantsSectionView.snp.makeConstraints {
             $0.top.equalTo(planSectionView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-        }
-        
-        emptyJoinedLbl.snp.makeConstraints {
-            $0.centerX.equalTo(participantsSectionView.snp.centerX)
-            $0.top.equalTo(participantsSectionView.snp.centerY)
         }
         
         reportButton.snp.makeConstraints {
@@ -290,7 +276,6 @@ extension HangoutDetailViewController {
         
         viewModel.output.hangoutButtonState
             .emit(onNext: { [weak self] state in
-                self?.emptyJoinedLbl.isHidden = state != .create
                 self?.reportButton.isHidden = state == .create
                 self?.hangoutButton.hangoutState = state
             })

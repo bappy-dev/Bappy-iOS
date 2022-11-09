@@ -293,10 +293,11 @@ final class HangoutMakeViewModel: ViewModelType {
                 currentUser$, hangout, picture$
             )) { (mapImage: $0, user: $1.0, hangout: $1.1, postImage: $1.2) }
             .map { element -> HangoutDetailViewModel in
+                let realImage = element.postImage == nil ? Constant.hangoutDefaultImages.randomElement()! : element.postImage
                 let dependency = HangoutDetailViewModel.Dependency(
                     currentUser: element.user,
                     hangout: element.hangout,
-                    postImage: element.postImage,
+                    postImage: realImage,
                     mapImage: element.mapImage)
                 return HangoutDetailViewModel(dependency: dependency)
             }
