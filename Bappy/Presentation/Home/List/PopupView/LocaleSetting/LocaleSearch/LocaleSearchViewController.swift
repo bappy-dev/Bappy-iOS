@@ -61,6 +61,10 @@ final class LocaleSearchViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("deinit LocaleSearchViewController")
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         
@@ -180,11 +184,10 @@ extension LocaleSearchViewController {
             .drive(bottomSpinner.rx.isAnimating)
             .disposed(by: disposeBag)
         
-        viewModel.output.popView
-            .emit(onNext: { [weak self] _ in
+        viewModel.output.hangouts
+            .emit { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
-            })
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in

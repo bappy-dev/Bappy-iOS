@@ -19,7 +19,8 @@ final class ProfileHeaderView: UIView {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 45.5
         imageView.clipsToBounds = true
         return imageView
@@ -46,7 +47,14 @@ final class ProfileHeaderView: UIView {
         return label
     }()
     
-    private let profileButton = UIButton()
+    private let profileButton: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .scaleAspectFit
+//        btn.layer.cornerRadius = 45.5
+//        btn.clipsToBounds = true
+        btn.setImage(UIImage(named: "profile_more"), for: .normal)
+        return btn
+    }()
     
     private let buttonSectionView: ProfileButtonSectionView
     
@@ -69,7 +77,7 @@ final class ProfileHeaderView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        profileButton.setImage(UIImage(named: "profile_more"), for: .normal)
+        
     }
     
     private func layout() {
@@ -101,7 +109,8 @@ final class ProfileHeaderView: UIView {
         self.addSubview(profileButton)
         profileButton.snp.makeConstraints {
             $0.centerY.equalTo(genderAndBirthLabel)
-            $0.height.equalTo(44.0)
+            $0.height.equalTo(33)
+            $0.width.equalTo(65)
             $0.trailing.equalToSuperview().inset(34.0)
         }
 

@@ -178,7 +178,6 @@
 		A76AE73A28A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73928A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift */; };
 		A76AE73D28A0F98B00A8EB9B /* SettingSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73C28A0F98B00A8EB9B /* SettingSwitch.swift */; };
 		A76AE73F28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE73E28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift */; };
-		A76AE74328A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74228A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift */; };
 		A76AE74528A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74428A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift */; };
 		A76AE74828A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74728A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift */; };
 		A76AE74A28A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */; };
@@ -335,6 +334,11 @@
 		D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */; };
 		D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = D6CC5B6A28F1F47E004C5E9C /* FSCalendar */; };
 		D6CC5B6D28F5CB44004C5E9C /* CustomCalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */; };
+		D6CCB5C7292742E3007A4657 /* CreateLocationResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CCB5C6292742E3007A4657 /* CreateLocationResponseDTO+Mapping.swift */; };
+		D6CCB5C929274673007A4657 /* TinyURLRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CCB5C829274673007A4657 /* TinyURLRepository.swift */; };
+		D6CCB5CC292746B0007A4657 /* CreateTinyURLRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CCB5CB292746B0007A4657 /* CreateTinyURLRequestDTO.swift */; };
+		D6CCB5CE292746BD007A4657 /* CreateTinyURLResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CCB5CD292746BD007A4657 /* CreateTinyURLResponseDTO.swift */; };
+		D6CCB5D02927486D007A4657 /* DefaultTinyURLRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CCB5CF2927486D007A4657 /* DefaultTinyURLRepository.swift */; };
 		D6D6F05F28C943BB0078FBB9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */; };
 		D6D6F06428CA34140078FBB9 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D6F06328CA34140078FBB9 /* Constant.swift */; };
 		D6DED0DB28FB746500FFB89F /* FilterHangoutRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DED0DA28FB746500FFB89F /* FilterHangoutRequestDTO.swift */; };
@@ -516,7 +520,6 @@
 		A76AE73928A0F28300A8EB9B /* UpdateNotificationSettingRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateNotificationSettingRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76AE73C28A0F98B00A8EB9B /* SettingSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSwitch.swift; sourceTree = "<group>"; };
 		A76AE73E28A1317700A8EB9B /* FetchLocationsResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FetchLocationsResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
-		A76AE74228A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76AE74428A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateLocationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76AE74728A131E900A8EB9B /* DeleteLocationRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteLocationRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		A76AE74928A131F500A8EB9B /* DeleteLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeleteLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
@@ -660,6 +663,11 @@
 		D6CC5B6528F1F1E2004C5E9C /* HomeFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewController.swift; sourceTree = "<group>"; };
 		D6CC5B6728F1F1EE004C5E9C /* HomeFilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFilterViewModel.swift; sourceTree = "<group>"; };
 		D6CC5B6C28F5CB43004C5E9C /* CustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarCell.swift; sourceTree = "<group>"; };
+		D6CCB5C6292742E3007A4657 /* CreateLocationResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateLocationResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		D6CCB5C829274673007A4657 /* TinyURLRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinyURLRepository.swift; sourceTree = "<group>"; };
+		D6CCB5CB292746B0007A4657 /* CreateTinyURLRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTinyURLRequestDTO.swift; sourceTree = "<group>"; };
+		D6CCB5CD292746BD007A4657 /* CreateTinyURLResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTinyURLResponseDTO.swift; sourceTree = "<group>"; };
+		D6CCB5CF2927486D007A4657 /* DefaultTinyURLRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTinyURLRepository.swift; sourceTree = "<group>"; };
 		D6D6F05E28C943BB0078FBB9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D6D6F06028C943C50078FBB9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6D6F06328CA34140078FBB9 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
@@ -872,6 +880,7 @@
 				A73BC9BF287B176900FB9FA9 /* CLLocationRepository.swift */,
 				A7751B032886F52300F23241 /* NotificationRepository.swift */,
 				A72E6F0C2894149B00E06BED /* NetworkCheckRepository.swift */,
+				D6CCB5C829274673007A4657 /* TinyURLRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -896,6 +905,7 @@
 				A73BC9BD287B173600FB9FA9 /* DefaultCLLocationRepository.swift */,
 				A7751B052886F66800F23241 /* DefaultNotificationRepository.swift */,
 				A72E6F0A2894113E00E06BED /* DefaultNetworkCheckRepository.swift */,
+				D6CCB5CF2927486D007A4657 /* DefaultTinyURLRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -1457,7 +1467,7 @@
 			isa = PBXGroup;
 			children = (
 				A76AE74428A131C700A8EB9B /* CreateLocationRequestDTO+Mapping.swift */,
-				A76AE74228A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift */,
+				D6CCB5C6292742E3007A4657 /* CreateLocationResponseDTO+Mapping.swift */,
 			);
 			path = CreateLocationDTO;
 			sourceTree = "<group>";
@@ -1567,6 +1577,7 @@
 		A76EEE7E2850B13600A2CFF6 /* DataMapping */ = {
 			isa = PBXGroup;
 			children = (
+				D6CCB5CA2927468E007A4657 /* TinyURL */,
 				A72964C4289A676500970807 /* User */,
 				A72964C5289A676D00970807 /* Map */,
 				A72964C6289A677300970807 /* Hangout */,
@@ -2532,6 +2543,15 @@
 			path = Filter;
 			sourceTree = "<group>";
 		};
+		D6CCB5CA2927468E007A4657 /* TinyURL */ = {
+			isa = PBXGroup;
+			children = (
+				D6CCB5CB292746B0007A4657 /* CreateTinyURLRequestDTO.swift */,
+				D6CCB5CD292746BD007A4657 /* CreateTinyURLResponseDTO.swift */,
+			);
+			path = TinyURL;
+			sourceTree = "<group>";
+		};
 		D6D6F06228CA340B0078FBB9 /* Constant */ = {
 			isa = PBXGroup;
 			children = (
@@ -2722,7 +2742,6 @@
 				A7A6B01E2845D31600911861 /* HangoutMakeOpenchatView.swift in Sources */,
 				A77F42F8283067B9008BC89A /* RegisterViewModel.swift in Sources */,
 				A788CC6828406BFB00490B0F /* HangoutMakeTitleView.swift in Sources */,
-				A76AE74328A131BF00A8EB9B /* CreateLocationResponseDTO+Mapping.swift in Sources */,
 				A7751AFD2880033B00F23241 /* BappyAlertController.swift in Sources */,
 				A739AB93289CE8A800C6CE90 /* UpdateHangoutParticipationRequestDTO+Mapping.swift in Sources */,
 				A71411C528985F8A002D4714 /* ProfileDetailLanguageViewModel.swift in Sources */,
@@ -2762,6 +2781,7 @@
 				A71411D028985F8A002D4714 /* DeleteAccountSecondPageView.swift in Sources */,
 				A71411B228985F8A002D4714 /* ProfileEditPersonalityViewModel.swift in Sources */,
 				A78502EE2858F075000FA592 /* RegisterCompletedViewModel.swift in Sources */,
+				D6CCB5C7292742E3007A4657 /* CreateLocationResponseDTO+Mapping.swift in Sources */,
 				A72C06C6283666820068897C /* HangoutCell.swift in Sources */,
 				A75B11C5283CBC1F00C49597 /* BappyDropdownCell.swift in Sources */,
 				A71432D92860CB6F00380DF7 /* HomeSearchViewController.swift in Sources */,
@@ -2784,6 +2804,7 @@
 				A71432CD2860AB5A00380DF7 /* SelectionLabel.swift in Sources */,
 				A76AE75528A137DC00A8EB9B /* SelectLocationResponseDTO+Mapping.swift in Sources */,
 				A76EEE802850B17400A2CFF6 /* FetchMapsRequestDTO+Mapping.swift in Sources */,
+				D6CCB5CE292746BD007A4657 /* CreateTinyURLResponseDTO.swift in Sources */,
 				A788CC702840744D00490B0F /* HangoutMakeTimeView.swift in Sources */,
 				A73BC9C0287B176900FB9FA9 /* CLLocationRepository.swift in Sources */,
 				A73BC9AD28759F0500FB9FA9 /* HomeListTopSubViewModel.swift in Sources */,
@@ -2793,6 +2814,7 @@
 				A7850305285A183A000FA592 /* HangoutMakeLanguageViewModel.swift in Sources */,
 				A717323C28361F580073E702 /* TitleTopView.swift in Sources */,
 				A77F4BEB282CA3150046921B /* BirthPickerView.swift in Sources */,
+				D6CCB5D02927486D007A4657 /* DefaultTinyURLRepository.swift in Sources */,
 				A71411BF28985F8A002D4714 /* ProfileDetailViewController.swift in Sources */,
 				A71411AC28985F8A002D4714 /* LanguageSettingSection.swift in Sources */,
 				A71411BE28985F8A002D4714 /* ProfileEditViewModel.swift in Sources */,
@@ -2809,6 +2831,7 @@
 				A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */,
 				A7F52CF72865FFAA002523D4 /* HangoutMainSectionViewModel.swift in Sources */,
 				A7850307285A1840000FA592 /* HangoutMakeOpenchatViewModel.swift in Sources */,
+				D6CCB5C929274673007A4657 /* TinyURLRepository.swift in Sources */,
 				A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */,
 				A739ABA9289D874200C6CE90 /* NoHangoutsView.swift in Sources */,
 				A739ABA2289D07ED00C6CE90 /* FetchHangoutsOfUserResponseDTO+Mapping.swift in Sources */,
@@ -2855,6 +2878,7 @@
 				A73BC9A82875984E00FB9FA9 /* FetchHangoutsResponseDTO+Mapping.swift in Sources */,
 				A71411CC28985F8A002D4714 /* ProfileDetailViewModel.swift in Sources */,
 				A76AE73628A0F1B300A8EB9B /* NotificationSetting.swift in Sources */,
+				D6CCB5CC292746B0007A4657 /* CreateTinyURLRequestDTO.swift in Sources */,
 				D6CC5B6828F1F1EE004C5E9C /* HomeFilterViewModel.swift in Sources */,
 				A76EEE7728507AD400A2CFF6 /* APIEndpoints.swift in Sources */,
 				A73BC9BA287B168400FB9FA9 /* CLLocationManager+Rx.swift in Sources */,

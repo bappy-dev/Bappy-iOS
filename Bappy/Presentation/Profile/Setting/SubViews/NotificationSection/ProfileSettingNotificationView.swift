@@ -45,7 +45,7 @@ final class ProfileSettingNotificationView: UIView {
     
     private let myHangoutCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "New join, New hearts, Hangout alarm"
+        label.text = "New join, New likes, Hangout alarm"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 13.0)
         return label
@@ -61,7 +61,7 @@ final class ProfileSettingNotificationView: UIView {
     
     private let newHangoutCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hangout post"
+        label.text = "New Hangout alarm"
         label.textColor = .bappyBrown
         label.font = .roboto(size: 13.0)
         return label

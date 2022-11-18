@@ -38,7 +38,7 @@ final class LocaleSearchViewModel: ViewModelType {
         var dismissKeyboard: Signal<Void> // <-> View
         var showLoader: Signal<Bool> // <-> View
         var shouldSpinnerAnimating: Driver<Bool> // <-> View
-        var popView: Signal<Void> // <-> View
+        var hangouts: Signal<[Hangout]>
     }
     
     let dependency: Dependency
@@ -49,6 +49,7 @@ final class LocaleSearchViewModel: ViewModelType {
     private let key$: BehaviorSubject<String>
     private let language$: BehaviorSubject<String>
     private let maps$ = BehaviorSubject<[Map]>(value: [])
+    private let hangouts$ = BehaviorSubject<[Hangout]>(value: [])
     private let nextPageToken$ = BehaviorSubject<String?>(value: nil)
     private let usedPageToken$ = BehaviorSubject<[String?]>(value: [])
     private let isCommunicating$ = BehaviorSubject<Bool>(value: false)
@@ -58,9 +59,7 @@ final class LocaleSearchViewModel: ViewModelType {
     private let willDisplayIndex$ = PublishSubject<IndexPath>()
     private let prefetchRows$ = PublishSubject<[IndexPath]>()
     private let itemSelected$ = PublishSubject<IndexPath>()
-    
     private let showLoader$ = PublishSubject<Bool>()
-    private let popView$ = PublishSubject<Void>()
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
@@ -85,8 +84,8 @@ final class LocaleSearchViewModel: ViewModelType {
         let shouldSpinnerAnimating = nextPageToken$
             .map { $0 != nil }
             .asDriver(onErrorJustReturn: false)
-        let popView = popView$
-            .asSignal(onErrorJustReturn: Void())
+        let hangouts = hangouts$
+            .asSignal(onErrorJustReturn: [])
         
         // MARK: Input & Output
         self.input = Input(
@@ -103,7 +102,7 @@ final class LocaleSearchViewModel: ViewModelType {
             dismissKeyboard: dismissKeyboard,
             showLoader: showLoader,
             shouldSpinnerAnimating: shouldSpinnerAnimating,
-            popView: popView
+            hangouts: hangouts
         )
         
         // MARK: Bindind
@@ -190,18 +189,19 @@ final class LocaleSearchViewModel: ViewModelType {
                     isSelected: false)
             }
             .flatMap(dependency.bappyAuthRepository.createLocation)
-            .do { [weak self] _ in self?.showLoader$.onNext(false) }
             .share()
 
         createLocationResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         createLocationResult
             .compactMap(getValue)
-            .map { _ in }
-            .bind(to: popView$)
+            .do(onNext: { [weak self] _ in self?.showLoader$.onNext(false) },
+                onError: { [weak self] _ in self?.showLoader$.onNext(false)
+            })
+            .bind(to: hangouts$)
             .disposed(by: disposeBag)
     }
 }

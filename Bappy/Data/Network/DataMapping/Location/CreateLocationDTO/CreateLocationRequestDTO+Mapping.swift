@@ -8,10 +8,10 @@
 import Foundation
 
 struct CreateLocationRequestDTO: Encodable {
-    let locationID: String
-    let locationName: String
-    let locationAddress: String
-    let latitude: Double
-    let longitude: Double
-    let isSelected: Bool
+//    let locationID: String
+//    let locationName: String
+//    let locationAddress: String
+    let lat: Double //itude: Double
+    let lng: Double//itude: Double
+//    let isSelected: Bool
 }

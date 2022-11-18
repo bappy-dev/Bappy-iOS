@@ -21,7 +21,7 @@ final class HangoutMakeOpenchatView: UIView {
     
     private let openchatCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Make chat"
+        label.text = "Make Openchat\nor Zoom"
         label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = .bappyBrown
         label.numberOfLines = 2
@@ -91,7 +91,7 @@ final class HangoutMakeOpenchatView: UIView {
     // MARK: Helpers
     private func configure() {
         self.backgroundColor = .white
-        ruleDescriptionLabel.text = "Text Over 3 Words"
+        ruleDescriptionLabel.text = "Enter the URL"
         scrollView.isScrollEnabled = false
     }
     

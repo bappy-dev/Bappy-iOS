@@ -79,29 +79,12 @@ final class CustomerServiceViewController: UIViewController {
             
             let message = """
 - Please fill out the information
-below to understand the exact inquiry!
-
-
-1. Issue situation:
-
-
-2. Details:
-
-
+below to understand the exact inquiry!\n\n\n
+1. Issue situation:\n\n2. Details:\n\n
 - OS version: iOS \(osVersion)
 - App version: iOS \(appVersion)
-- Device: \(device)
-
-
-If you attach a screenshot of your inquiry,
-we can check it quickly.
-
-
-
-\(dottedLine)
-
-
-Bappy can collect and use personal information and
+- Device: \(device)\n\nIf you attach a screenshot of your inquiry,\nwe can check it quickly.\n\n\n
+\(dottedLine)\n\n\nBappy can collect and use personal information and
 contact information included in the inquiry. However,
 this information will only be processed for answer
 purposes. For more information, please refer to the
@@ -208,20 +191,20 @@ Bappy app's My Page
             $0.height.equalTo(126.0)
         }
         
-        contentView.addSubview(bappyImageView)
-        bappyImageView.snp.makeConstraints {
-            $0.top.equalTo(vStackView.snp.bottom).offset(53.0)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(211.0)
-            $0.height.equalTo(294.0)
-        }
-        
         contentView.addSubview(descriptionLabel)
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(bappyImageView.snp.bottom).offset(35.0)
+            $0.top.equalTo(vStackView.snp.bottom).offset(18.0)
             $0.leading.equalToSuperview().inset(58.0)
             $0.trailing.equalToSuperview().inset(54.0)
+        }
+        
+        contentView.addSubview(bappyImageView)
+        bappyImageView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(35.0)
+            $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(40.0)
+            $0.width.equalTo(211.0)
+            $0.height.equalTo(294.0)
         }
     }
 }

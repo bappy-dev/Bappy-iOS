@@ -81,14 +81,14 @@ extension Hangout {
     }
     
     enum SortingOrder: Int {
-        case Newest, Nearest, ManyViews, manyHearts, lessSeats
+        case Newest, Nearest, ManyViews, manyLikes, lessSeats
         
         var description: String {
             switch self {
             case .Newest: return "Newest"
             case .Nearest: return "Nearest"
             case .ManyViews: return "Many views"
-            case .manyHearts: return "Many hearts"
+            case .manyLikes: return "Many Likes"
             case .lessSeats: return "Less seats"
             }
         }

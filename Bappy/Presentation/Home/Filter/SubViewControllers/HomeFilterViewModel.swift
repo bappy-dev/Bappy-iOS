@@ -79,14 +79,14 @@ final class HomeFilterViewModel: ViewModelType {
     private let applyButtonTapped$ = PublishSubject<Void>()
     private let language$ = BehaviorSubject<[Language]>(value: [])
     private let dateSelected$ = BehaviorSubject<(Date?, Date?)>(value: (nil,nil) )
-    private let isSundayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isMondayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isTuesdayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isWedsdayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isThursdayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isFridayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isSaturdayButtonEnabled$ = BehaviorSubject<Bool>(value: false)
-    private let isEnglishButtonEnabled$ = BehaviorSubject<Bool>(value: false)
+    private let isSundayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isMondayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isTuesdayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isWedsdayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isThursdayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isFridayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isSaturdayButtonEnabled$ = BehaviorSubject<Bool>(value: true)
+    private let isEnglishButtonEnabled$ = BehaviorSubject<Bool>(value: true)
     private let isChineseButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isKoreanButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isJapaneseButtonEnabled$ = BehaviorSubject<Bool>(value: false)
@@ -101,7 +101,9 @@ final class HomeFilterViewModel: ViewModelType {
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
-        self.subViewModels = SubViewModels(hangoutMakeCategoryViewModel: HangoutMakeCategoryViewModel(),
+        
+        let categoryDependency = HangoutMakeCategoryViewModel.Dependency(isStartWith: true)
+        self.subViewModels = SubViewModels(hangoutMakeCategoryViewModel: HangoutMakeCategoryViewModel(dependency: categoryDependency),
                                            languageViewModel: HangoutMakeLanguageViewModel())
         
         
@@ -116,37 +118,37 @@ final class HomeFilterViewModel: ViewModelType {
             .withLatestFrom(isSundayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isMondayButtonEnabled = mondayButtonTapped$
             .withLatestFrom(isMondayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isTuesdayButtonEnabled = tuesdayButtonTapped$
             .withLatestFrom(isTuesdayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isWedsdayButtonEnabled = wedsdayButtonTapped$
             .withLatestFrom(isWedsdayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isThursdayButtonEnabled = thursdayButtonTapped$
             .withLatestFrom(isThursdayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isFridayButtonEnabled = fridayButtonTapped$
             .withLatestFrom(isFridayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isSaturdayButtonEnabled = satdayButtonTapped$
             .withLatestFrom(isSaturdayButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isKoreanButtonEnabled = koreanButtonTapped$
             .withLatestFrom(isKoreanButtonEnabled$)
             .map { !$0 }
@@ -156,7 +158,7 @@ final class HomeFilterViewModel: ViewModelType {
             .withLatestFrom(isEnglishButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(true)
         let isChineseButtonEnabled = chineseButtonTapped$
             .withLatestFrom(isChineseButtonEnabled$)
             .map { !$0 }
@@ -168,15 +170,15 @@ final class HomeFilterViewModel: ViewModelType {
             .asDriver(onErrorJustReturn: false)
             .startWith(false)
         
-        let isWeekdaysValid = weekdays.map { !$0.isEmpty }.asObservable().startWith(false)
-        let isLanguageValid = language$.map { !$0.isEmpty }.startWith(false)
-        let isCateValid = subViewModels.hangoutMakeCategoryViewModel.output.isValid.asObservable()
-        let isSelectedDateValid = dateSelected$.map { $0.0 != nil }.startWith(false)
+        let isWeekdaysValid = weekdays.map { !$0.isEmpty }.asObservable().startWith(true)
+        let isLanguageValid = language$.map { !$0.isEmpty }.startWith(true)
+        let isCateValid = subViewModels.hangoutMakeCategoryViewModel.output.isValid.asObservable().startWith(true)
+        let isSelectedDateValid = dateSelected$.map { $0.0 != nil }.startWith(true)
 
         let isValid = Observable.combineLatest(isWeekdaysValid, isLanguageValid, isCateValid, isSelectedDateValid)
             .map { $0 || $1 || $2 || $3 }
             .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
+            .asDriver(onErrorJustReturn: true)
         
         let showSelectLanguageView = showSelectLanguageView$
             .asSignal(onErrorJustReturn: nil)
