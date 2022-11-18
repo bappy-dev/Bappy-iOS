@@ -256,10 +256,9 @@ extension APIEndpoints {
     static func createLocation(with createLocationRequestDTO: CreateLocationRequestDTO) -> Endpoint<CreateLocationResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,
-            path: "user/location",
-            method: .post,
-            bodyParameters: createLocationRequestDTO,
-            contentType: .urlencoded)
+            path: "hangout/location",
+            method: .get,
+            queryParameters: createLocationRequestDTO)
     }
     
     static func deleteLocation(with deleteLocationRequestDTO: DeleteLocationRequestDTO) -> Endpoint<DeleteLocationResponseDTO> {
@@ -277,5 +276,15 @@ extension APIEndpoints {
             method: .delete,
             bodyParameters: selectLocationRequestDTO,
             contentType: .urlencoded)
+    }
+}
+
+extension APIEndpoints {
+    static func createTinyURL(with requestDTO: CreateTinyURLRequestDTO) -> Endpoint<CreateTinyURLResponseDTO> {
+        return Endpoint(
+            baseURL: "https://api.tinyurl.com",
+            path: "/create",
+            method: .post,
+            bodyParameters: requestDTO)
     }
 }

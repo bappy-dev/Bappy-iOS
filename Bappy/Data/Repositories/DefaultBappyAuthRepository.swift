@@ -287,20 +287,16 @@ extension DefaultBappyAuthRepository: BappyAuthRepository {
         //        }
     }
     
-    func createLocation(location: Location) -> Single<Result<Bool, Error>> {
-        let requestDTO = CreateLocationRequestDTO(
-            locationID: location.identity,
-            locationName: location.name,
-            locationAddress: location.address,
-            latitude: location.coordinates.latitude,
-            longitude: location.coordinates.longitude,
-            isSelected: location.isSelected)
+    func createLocation(location: Location) -> Single<Result<[Hangout], Error>> {
+        let requestDTO = CreateLocationRequestDTO(lat: location.coordinates.latitude,
+                                                  lng: location.coordinates.longitude)
+
         let endpoint = APIEndpoints.createLocation(with: requestDTO)
-        return  provider.request(with: endpoint)
-            .map { result -> Result<Bool, Error> in
+        return provider.request(with: endpoint)
+            .map { result -> Result<[Hangout], Error> in
                 switch result {
                 case .success(let responseDTO):
-                    return .success(responseDTO.toDomain())
+                    return .success(responseDTO.data.map { $0.toDomain() })
                 case .failure(let error):
                     return .failure(error)
                 }

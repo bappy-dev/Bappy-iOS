@@ -92,6 +92,7 @@ final class HomeListViewModel: ViewModelType {
     private let spinnerAnimating$ = PublishSubject<Bool>()
     private let showLocationSettingAlert$ = PublishSubject<Void>()
     private let showSignInAlert$ = PublishSubject<String?>()
+    private let showSearchView$ = PublishSubject<BappyPresentBaseViewController?>()
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
@@ -107,19 +108,9 @@ final class HomeListViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let cellViewModels = cellViewModels$
             .asDriver(onErrorJustReturn: [])
-        let showLocaleView = localeButtonTapped$
-            .withLatestFrom(currentUser$)
-            .compactMap(\.?.state)
-            .filter { $0 == .normal }
-            .map { _ in
-                let rootVC = LocaleSettingViewController(viewModel: LocaleSettingViewModel())
-                return BappyPresentBaseViewController(baseViewController: rootVC,
-                                                      title: "Location Setting",
-                                                      leftBarButton: nil,
-                                                      rightBarButton: nil,
-                                                      backBarButton: UIBarButtonItem(title: "Setting", style: .plain, target: nil, action: nil))
-            }
+        let showLocaleView = showSearchView$
             .asSignal(onErrorJustReturn: nil)
+        
         let showSearchView = searchButtonTapped$
             .withLatestFrom(currentUser$.compactMap { $0 })
             .map { user -> HomeSearchViewModel? in
@@ -181,6 +172,23 @@ final class HomeListViewModel: ViewModelType {
         
         // MARK: Bindind
         self.currentUser$ = currentUser$
+        
+       localeButtonTapped$
+            .withLatestFrom(currentUser$)
+            .compactMap(\.?.state)
+            .filter { $0 == .normal }
+            .map { _ -> BappyPresentBaseViewController in
+                let viewModel = LocaleSettingViewModel()
+                viewModel.delegate = self
+                let rootVC = LocaleSettingViewController(viewModel: viewModel)
+                return BappyPresentBaseViewController(baseViewController: rootVC,
+                                                      title: "Location Setting",
+                                                      leftBarButton: nil,
+                                                      rightBarButton: nil,
+                                                      backBarButton: UIBarButtonItem(title: "Setting", style: .plain, target: nil, action: nil))
+            }
+            .bind(to: showSearchView$)
+            .disposed(by: disposeBag)
         
         // Guest 모드시 위치 설정 불가
         localeButtonTapped$
@@ -428,11 +436,35 @@ extension HomeListViewModel: SortingOrderViewModelDelegate {
                 return
             }
             
+            print((user.isUserUsingGPS ?? false))
+                  print(authorization == .authorizedWhenInUse)
             guard ((user.isUserUsingGPS ?? false) && authorization == .authorizedWhenInUse) || user.coordinates != nil else {
                 showLocationSettingAlert$.onNext(Void())
                 return
             }
         }
         sorting$.onNext(sorting)
+    }
+}
+
+extension HomeListViewModel: LocaleSettingViewModelProtocol {
+    func nearestHangouts(_ hangouts: [Hangout]) {
+        Observable.of(hangouts)
+            .withLatestFrom(currentUser$.compactMap { $0 }) { (hangouts: $0, user: $1) }
+            .map { [weak self] element -> [HangoutCellViewModel] in
+                element.hangouts.map { hangout -> HangoutCellViewModel in
+                    let dependency = HangoutCellViewModel.Dependency(
+                        user: element.user, hangout: hangout)
+                    let viewModel = HangoutCellViewModel(dependency: dependency)
+                    if let self = self {
+                        viewModel.output.showDetailView
+                            .compactMap { $0 }
+                            .emit(to: self.showDetailView$)
+                            .disposed(by: viewModel.disposeBag)
+                    }
+                    return viewModel
+                }
+            }.bind(to: cellViewModels$)
+            .disposed(by: disposeBag)
     }
 }

@@ -15,7 +15,7 @@ import FSCalendar
 final class HomeFilterViewController: UIViewController {
     
     // MARK: Properties
-    var isasdas = false
+    var isNotSelected = false
     let tapGesture = UITapGestureRecognizer()
     private var imageLeading: Constraint!
     private let viewModel: HomeFilterViewModel
@@ -168,6 +168,10 @@ final class HomeFilterViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        print("HomeFilterViewController deinit")
     }
     
     // MARK: Helpers
@@ -402,17 +406,17 @@ final class HomeFilterViewController: UIViewController {
 extension HomeFilterViewController {
     private func bind() {
         tapGesture.rx.event.bind { [weak self] _ in
-            let asd = self?.isasdas ?? true
+            let isNotSelected = self?.isNotSelected ?? true
             
-            self?.calendar.appearance.headerTitleColor = asd ? .black : .bappyYellow
-            self?.pickerView.isHidden = asd
-            self?.previousCalendarPageBtn.isHidden = !asd
-            self?.nextCalendarPageBtn.isHidden = !asd
+            self?.calendar.appearance.headerTitleColor = isNotSelected ? .black : .bappyYellow
+            self?.pickerView.isHidden = isNotSelected
+            self?.previousCalendarPageBtn.isHidden = !isNotSelected
+            self?.nextCalendarPageBtn.isHidden = !isNotSelected
             UIView.animate(withDuration: 0.5, delay: 0) {
-                self?.imageView.transform = CGAffineTransform(rotationAngle: asd ? 0 :  1.57)
+                self?.imageView.transform = CGAffineTransform(rotationAngle: isNotSelected ? 0 :  1.57)
             }
             
-            self?.isasdas.toggle()
+            self?.isNotSelected.toggle()
         }.disposed(by: disposeBag)
         
         Observable.merge(previousCalendarPageBtn.rx.tap.map { -1 }, nextCalendarPageBtn.rx.tap.map { 1 })
@@ -423,6 +427,25 @@ extension HomeFilterViewController {
             }.disposed(by: disposeBag)
         
         let subViewModel = viewModel.subViewModels.hangoutMakeCategoryViewModel
+        
+        self.rx.viewWillAppear
+            .take(1)
+            .bind { [weak self] _ in
+                guard let self = self else { return }
+                let startDate = Date().startOfMonth()
+                let lastDate = Date().endOfMonth()
+                let range = self.datesRange(from: startDate, to: lastDate)
+                
+                for day in range {
+                    self.calendar.select(day, scrollToDate: false)
+                }
+            
+                self.firstDate = startDate
+                self.lastDate = lastDate
+                self.datesRange = range
+                self.configureVisibleCells()
+                self.viewModel.input.dateSelected.onNext((startDate, lastDate))
+            }.disposed(by: disposeBag)
 
         sundayButton.rx.tap
             .bind(to: viewModel.input.sundayButtonTapped)
@@ -780,5 +803,15 @@ extension HomeFilterViewController: BappyPresentDelegate {
     func rightButtonTapped() {
         
         viewModel.input.applyButtonTapped.onNext(())
+    }
+}
+
+extension Date {
+    func startOfMonth() -> Date {
+        return Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: self)))!
+    }
+    
+    func endOfMonth() -> Date {
+        return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: self.startOfMonth())!
     }
 }

@@ -185,6 +185,15 @@ extension LocaleSettingViewController {
             .drive(tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
         
+        viewModel.output.showLoader
+            .emit(to: ProgressHUD.rx.showTranslucentLoader)
+            .disposed(by: disposeBag)
+        
+        viewModel.output.popView
+            .emit { [weak self] _ in
+                self?.dismiss(animated: true)
+            }.disposed(by: disposeBag)
+        
         viewModel.output.showSearchView
             .compactMap { $0 }
             .emit(onNext: { [weak self] viewModel in

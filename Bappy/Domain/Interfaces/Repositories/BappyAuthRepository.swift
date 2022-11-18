@@ -21,7 +21,7 @@ protocol BappyAuthRepository {
     func registerFCMToken(_ fcmToken: String)
     
     func fetchLocations() -> Single<Result<[Location], Error>>
-    func createLocation(location: Location) -> Single<Result<Bool, Error>>
+    func createLocation(location: Location) -> Single<Result<[Hangout], Error>>
     func deleteLocation(id: String) -> Single<Result<Bool, Error>>
     func selectLocation(id: String, isSelected: Bool) -> Single<Result<Bool, Error>>
     

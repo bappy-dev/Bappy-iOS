@@ -11,7 +11,9 @@ import RxCocoa
 
 final class HangoutMakeCategoryViewModel: ViewModelType {
     
-    struct Dependency {}
+    struct Dependency {
+        let isStartWith: Bool
+    }
     
     struct Input {
         var travelButtonTapped: AnyObserver<Void> // <-> View
@@ -98,7 +100,7 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
     private let isRunningButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     private let isMusicButtonEnabled$ = BehaviorSubject<Bool>(value: false)
     
-    init(dependency: Dependency = Dependency()) {
+    init(dependency: Dependency = Dependency(isStartWith: false)) {
         self.dependency = dependency
         
         // MARK: Streams
@@ -113,94 +115,93 @@ final class HangoutMakeCategoryViewModel: ViewModelType {
             .withLatestFrom(isTravelButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isCafeButtonEnabled = cafeButtonTapped$
             .withLatestFrom(isCafeButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isHikingButtonEnabled = hikingButtonTapped$
             .withLatestFrom(isHikingButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isFoodButtonEnabled = foodButtonTapped$
             .withLatestFrom(isFoodButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isBarButtonEnabled = barButtonTapped$
             .withLatestFrom(isBarButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isCookButtonEnabled = cookButtonTapped$
             .withLatestFrom(isCookButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isShoppingButtonEnabled = shoppingButtonTapped$
             .withLatestFrom(isShoppingButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isVolunteerButtonEnabled = volunteerButtonTapped$
             .withLatestFrom(isVolunteerButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isLanguageButtonEnabled = languageButtonTapped$
             .withLatestFrom(isLanguageButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isCraftingButtonEnabled = craftingButtonTapped$
             .withLatestFrom(isCraftingButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isBallGameButtonEnabled = ballGameButtonTapped$
             .withLatestFrom(isBallGameButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isVeganButtonEnabled = veganButtonTapped$
             .withLatestFrom(isVeganButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isRunningButtonEnabled = runningButtonTapped$
             .withLatestFrom(isRunningButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isMusicButtonEnabled = musicButtonTapped$
             .withLatestFrom(isMusicButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isConcertsButtonEnabled = concertsButtonTapped$
             .withLatestFrom(isConcertsButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isMuseumButtonEnabled = museumButtonTapped$
             .withLatestFrom(isMuseumButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isBoardgameButtonEnabled = boardgameButtonTapped$
             .withLatestFrom(isBoardgameButtonEnabled$)
             .map { !$0 }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         
         let shouldHideRule = categories
             .map { !$0.isEmpty }
             .asDriver(onErrorJustReturn: false)
-            .startWith(false)
+            .startWith(dependency.isStartWith)
         let isValid = shouldHideRule
-        
         
         // MARK: Input & Output
         self.input = Input(

@@ -64,6 +64,7 @@ final class HangoutDetailViewModel: ViewModelType {
     }
     
     struct Input {
+        var viewWillAppear: AnyObserver<Void>
         var backButtonTapped: AnyObserver<Void> // <-> View
         var hangoutButtonTapped: AnyObserver<Void> // <-> View
         var reviewButtonTapped: AnyObserver<Void> // <-> View
@@ -109,6 +110,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let postImage$: BehaviorSubject<UIImage?>
     private let reasonsForReport$ = BehaviorSubject<[String]?>(value: nil)
     
+    private let viewWillAppear$ = PublishSubject<Void>()
     private let backButtonTapped$ = PublishSubject<Void>()
     private let hangoutButtonTapped$ = PublishSubject<Void>()
     private let reviewButtonTapped$ = PublishSubject<Void>()
@@ -223,23 +225,33 @@ final class HangoutDetailViewModel: ViewModelType {
             }
             .asSignal(onErrorJustReturn: nil)
         
-        let activityView = shareButtonTapped$
+        let getUrl = viewWillAppear$
             .withLatestFrom(hangout$)
-            .map { hangout -> UIActivityViewController? in
+            .map { hangout in
+                ShareApi.shared.makeCustomUrl(templateId: 85131, templateArgs:["TITLE":"\(hangout.title).",
+                                                                               "DESC":"\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))"])
+            }.compactMap { $0 }
+            .flatMap(DefaultTinyURLRepository().getTinyURL)
+            .compactMap(getValue)
+            .map { ("[BAPPY]\nJoin gatherings and be happy bappy!\n\n" + $0) }
+            .share()
+        
+        let activityView = shareButtonTapped$
+            .withLatestFrom(getUrl)
+            .withLatestFrom(hangout$) { (hangout: $1, url: $0)}
+            .map { element -> UIActivityViewController? in
                 // URL이 되면 본문에 추가, 안되면 앱 설치 URL
+
                 var urlStrToUse: String = ""
                 var customActivities: [UIActivity] = []
-                
-                if let url = ShareApi.shared.makeCustomUrl(templateId: 85131, templateArgs:["TITLE":"\(hangout.title).",
-                                                                                            "DESC":"\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))"]) {
-                    
-                    urlStrToUse = "이 행아웃을 공유해보세요\n\n" + url.absoluteString
-                    
+                if element.url == "" {
+                    urlStrToUse = "[BAPPY]\nJoin gatherings and be happy bappy!\n\n" + "itms-apps://itunes.apple.com/app/apple-store/ASDASD"
                 } else {
-                    urlStrToUse = "이 앱을 공유해보세요\n\n" + "itms-apps://itunes.apple.com/app/apple-store/ASDASD"
+                    urlStrToUse = element.url
                 }
-                let asd = CustomActivity(title: hangout.title, desc: "\(hangout.place.name) - \(hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))")
-                customActivities.append(asd)
+                
+                let customActivity = CustomActivity(title: element.hangout.title, desc: "\(element.hangout.place.name) - \(element.hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"))")
+                customActivities.append(customActivity)
                 
                 let activityVC = UIActivityViewController(activityItems: [urlStrToUse], applicationActivities: customActivities)
                 activityVC.excludedActivityTypes = [
@@ -277,6 +289,7 @@ final class HangoutDetailViewModel: ViewModelType {
         
         // MARK: Input & Output
         self.input = Input(
+            viewWillAppear: viewWillAppear$.asObserver(),
             backButtonTapped: backButtonTapped$.asObserver(),
             hangoutButtonTapped: hangoutButtonTapped$.asObserver(),
             reviewButtonTapped: reviewButtonTapped$.asObserver(),

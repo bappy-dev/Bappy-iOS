@@ -10,6 +10,10 @@ import RxSwift
 import RxCocoa
 import CoreLocation
 
+protocol LocaleSettingViewModelProtocol: AnyObject {
+    func nearestHangouts(_ hangouts: [Hangout])
+}
+
 final class LocaleSettingViewModel: ViewModelType {
     
     struct Dependency {
@@ -24,6 +28,7 @@ final class LocaleSettingViewModel: ViewModelType {
     }
     
     struct SubViewModels {
+        let searchViewModel: LocaleSearchViewModel
         let headerViewModel: LocaleSettingHeaderViewModel
     }
     
@@ -41,6 +46,8 @@ final class LocaleSettingViewModel: ViewModelType {
         var localeSettingSection: Driver<[LocaleSettingSection]> // <-> View
         var showSearchView: Signal<LocaleSearchViewModel?> // <-> View
         var showAuthorizationAlert: Signal<Void> // <-> Parent
+        var showLoader: Signal<Bool> // <-> View
+        var popView: Signal<Void> // <-> View
     }
     
     let dependency: Dependency
@@ -48,6 +55,7 @@ final class LocaleSettingViewModel: ViewModelType {
     var disposeBag = DisposeBag()
     let input: Input
     let output: Output
+    weak var delegate: LocaleSettingViewModelProtocol?
     
     private let user$: BehaviorSubject<BappyUser?>
     private let authorization$: BehaviorSubject<CLAuthorizationStatus>
@@ -63,6 +71,8 @@ final class LocaleSettingViewModel: ViewModelType {
     private let itemDeleted$ = PublishSubject<IndexPath>()
     private let localeButtonTapped$ = PublishSubject<Void>()
     
+    private let popView$ = PublishSubject<Void>()
+    private let showLoader$ = PublishSubject<Bool>()
     private let localeSettingSection$ = BehaviorSubject<[LocaleSettingSection]>(value: [.init(items: [])])
     private let showSearchView$ = PublishSubject<LocaleSearchViewModel?>()
     private let showAuthorizationAlert$ = PublishSubject<Void>()
@@ -70,6 +80,7 @@ final class LocaleSettingViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
+            searchViewModel: LocaleSearchViewModel(dependency: .init()),
             headerViewModel: LocaleSettingHeaderViewModel(dependency: .init())
         )
         
@@ -78,6 +89,9 @@ final class LocaleSettingViewModel: ViewModelType {
         let authorization$ = dependency.locationRepsitory.authorization
         let userGPSWithAuthorization$ = BehaviorSubject<(gps: Bool, authorization: CLAuthorizationStatus)>(value: (gps: false, authorization: .notDetermined))
         
+        let showLoader = showLoader$.asSignal(onErrorJustReturn: false)
+        let popView = popView$
+            .asSignal(onErrorJustReturn: Void())
         let closeButtonTapped = closeButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let localeSettingSection = localeSettingSection$
@@ -101,7 +115,9 @@ final class LocaleSettingViewModel: ViewModelType {
             closeButtonTapped: closeButtonTapped,
             localeSettingSection: localeSettingSection,
             showSearchView: showSearchView,
-            showAuthorizationAlert: showAuthorizationAlert
+            showAuthorizationAlert: showAuthorizationAlert,
+            showLoader: showLoader,
+            popView: popView
         )
         
         // MARK: Bindind
@@ -158,7 +174,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         // 검색창 눌렀을 때 검색뷰 띄우기
         editingDidBegin$
-            .map { _ in LocaleSearchViewModel() }
+            .map { [weak self] _ in self?.subViewModels.searchViewModel }
             .bind(to: showSearchView$)
             .disposed(by: disposeBag)
         
@@ -172,14 +188,19 @@ final class LocaleSettingViewModel: ViewModelType {
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         locationsResult
             .compactMap(getValue)
             .bind(to: locationss$)
             .disposed(by: disposeBag)
         
+        let asdas = editingDidBegin$
+            .withLatestFrom(userGPSWithAuthorization$)
+            .filter { !$0.gps }
+            .map { _ in }
+        
         // 4가지 상태(GPS, Authorization): Off/Off, On/Off, Off/On, On/On
-        let startFlow = localeButtonTapped$
+        let startFlow = Observable.merge(localeButtonTapped$, asdas)
             .withLatestFrom(userGPSWithAuthorization$)
             .share()
         
@@ -192,7 +213,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         let startNormalFlow = startFlow
             .filter { $0.authorization != .denied }
-            .map { (gps: $0, authorization: $1 == .authorizedWhenInUse) }
+            .map { print("들어옴"); return (gps: $0, authorization: $1 == .authorizedWhenInUse) }
             .share()
         
         // 1. Off/Off - 권한 요청 후 승인시 서버에 On 상태 저장
@@ -224,7 +245,7 @@ final class LocaleSettingViewModel: ViewModelType {
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
         
-//         셀 선택 Flow
+        // 셀 선택 Flow
         let selectResult = itemSelected$
             .withLatestFrom(locations$) { indexPath, locations -> Location in
                 return locations[indexPath.row]
@@ -232,12 +253,12 @@ final class LocaleSettingViewModel: ViewModelType {
             .map { (id: $0.identity, isSelcted: !$0.isSelected) }
             .flatMap(dependency.bappyAuthRepository.selectLocation)
             .share()
-
+        
         selectResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         // 선택 상태 뒤집기
         selectResult
             .compactMap(getValue)
@@ -257,18 +278,18 @@ final class LocaleSettingViewModel: ViewModelType {
             }
             .bind(to: locations$)
             .disposed(by: disposeBag)
-
+        
         // 셀 삭제 Flow
         let deleteResult = itemDeleted$
             .withLatestFrom(locations$) { $1[$0.row].identity }
             .flatMap(dependency.bappyAuthRepository.deleteLocation)
             .share()
-
+        
         deleteResult
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         deleteResult
             .compactMap(getValue)
             .withLatestFrom(itemDeleted$)
@@ -279,15 +300,30 @@ final class LocaleSettingViewModel: ViewModelType {
             }
             .bind(to: locations$)
             .disposed(by: disposeBag)
-
+        
         // Child
         userGPSWithAuthorization$
             .map { $0.gps && ($0.authorization == .authorizedWhenInUse) }
             .bind(to: subViewModels.headerViewModel.input.isUserUsingGPS)
             .disposed(by: disposeBag)
-
+        
         subViewModels.headerViewModel.output.localeButtonTapped
             .emit(to: localeButtonTapped$)
             .disposed(by: disposeBag)
+        
+        subViewModels.searchViewModel.output.hangouts
+            .asObservable()
+                    .skip(1)
+//                    .distinctUntilChanged()
+        //                 .take(1)
+//                    .delay(.milliseconds(1700), scheduler: MainScheduler.instance)
+                            .do { [weak self] _ in self?.showLoader$.onNext(true) }
+            .map { [weak self] in self?.delegate?.nearestHangouts($0) }
+            .map { _ in true }
+            .flatMap(dependency.bappyAuthRepository.updateGPSSetting)
+                                            .do { [weak self] _ in self?.showLoader$.onNext(false) }
+            .bind { [weak self] _ in
+                self?.popView$.onNext(())
+            }.disposed(by: disposeBag)
     }
 }

@@ -208,6 +208,11 @@ final class HangoutDetailViewController: UIViewController {
 // MARK: - Bind
 extension HangoutDetailViewController {
     private func bind() {
+        self.rx.viewWillAppear
+            .map { _ in }
+            .bind(to: viewModel.input.viewWillAppear)
+            .disposed(by: disposeBag)
+        
         backButton.rx.tap
             .bind(to: viewModel.input.backButtonTapped)
             .disposed(by: disposeBag)

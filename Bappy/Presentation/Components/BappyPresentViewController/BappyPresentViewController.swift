@@ -155,6 +155,7 @@ extension BappyPresentBaseViewController {
         
         rightButton.rx.tap
             .bind { [weak self] in
+                self?.animateDismissView()
                 self?.delegate?.rightButtonTapped()
             }.disposed(by: disposeBag)
     }
