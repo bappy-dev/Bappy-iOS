@@ -33,7 +33,7 @@ final class HangoutMakeOpenchatView: UIView {
         textField.font = .roboto(size: 14.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Enter the URL or Leave your Kakao ID",
+            string: "Enter the URL",
             attributes: [.foregroundColor: UIColor.bappyGray])
         textField.keyboardType = .URL
         textField.autocorrectionType = .no

@@ -8,9 +8,9 @@
 import Foundation
 
 #if DEBUG
-    let BAPPY_API_BASEURL = "https://api.bappy.kr/"
+    let BAPPY_API_BASEURL = "http://43.200.91.114/"
 #else
-    let BAPPY_API_BASEURL = "https://api.bappy.kr/"
+    let BAPPY_API_BASEURL = "http://43.200.91.114/"
 #endif
 
 let GOOGLE_MAP_API_BASEURL = "https://maps.googleapis.com/"
