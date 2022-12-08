@@ -327,6 +327,7 @@
 		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
 		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
 		D604C0DC292FD1D7008A4B37 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D604C0DB292FD1D7008A4B37 /* Logger.swift */; };
+		D64D7A552941D8D80024EF91 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = D64D7A542941D8D80024EF91 /* Toast */; };
 		D6B724A02939F8B1004063BA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */; };
 		D6B724A22939F99C004063BA /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */; };
 		D6B724A42939F9B7004063BA /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6B724A32939F9B7004063BA /* GoogleSignInSwift */; };
@@ -702,6 +703,7 @@
 				A7CE0F9D2848D3F30063458F /* FacebookCore in Frameworks */,
 				D6C0326D290F3B150047192F /* KakaoPartnerSDKShare in Frameworks */,
 				A769CCFC282A8EF30086182C /* SnapKit in Frameworks */,
+				D64D7A552941D8D80024EF91 /* Toast in Frameworks */,
 				D6B724A22939F99C004063BA /* FirebaseAnalyticsSwift in Frameworks */,
 				A75B11C8283CF70400C49597 /* Lottie in Frameworks */,
 				A76EEE8E2853227D00A2CFF6 /* YPImagePicker in Frameworks */,
@@ -2672,6 +2674,7 @@
 				D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */,
 				D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */,
 				D6B724A32939F9B7004063BA /* GoogleSignInSwift */,
+				D64D7A542941D8D80024EF91 /* Toast */,
 			);
 			productName = Bappy;
 			productReference = A769CCDA282A8C300086182C /* Bappy.app */;
@@ -2713,6 +2716,7 @@
 				A73BC9CA287D9F0B00FB9FA9 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */,
+				D64D7A532941D8D80024EF91 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 			);
 			productRefGroup = A769CCDB282A8C300086182C /* Products */;
 			projectDirPath = "";
@@ -3406,6 +3410,14 @@
 				version = 13.2.0;
 			};
 		};
+		D64D7A532941D8D80024EF91 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-partner-ios-sdk.git";
@@ -3499,6 +3511,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A7CE0F9B2848D3F30063458F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		D64D7A542941D8D80024EF91 /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D64D7A532941D8D80024EF91 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
 		};
 		D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
