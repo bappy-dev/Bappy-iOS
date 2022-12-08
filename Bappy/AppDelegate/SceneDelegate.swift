@@ -7,6 +7,8 @@
 
 import UIKit
 
+import FirebaseCrashlytics
+
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -25,6 +27,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.tintColor = .bappyGray
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
+        Crashlytics.crashlytics().log("Pass Scenedelegate")
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

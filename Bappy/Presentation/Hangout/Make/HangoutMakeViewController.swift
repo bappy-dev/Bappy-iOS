@@ -72,6 +72,7 @@ final class HangoutMakeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        UserDefaults.standard.set(Date(), forKey: "startMake")
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
