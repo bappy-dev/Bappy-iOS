@@ -85,7 +85,7 @@ extension HangoutDTO {
                        categories: [],
                        place: place,
                        postImageURL: postImageURL,
-                       openchatURL: URL(string: openchatURL)!,
+                       openchatURL: openchatURL,
                        joinedIDs: zip(joinedUserIDs, joinedUserImageName).map({ Hangout.Info(id: $0,imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")!) }),
                        likedIDs: zip(likedUserIDs, likedUserImageName).map({ Hangout.Info(id: $0, imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")!) }),
                        userHasLiked: likeStatus)

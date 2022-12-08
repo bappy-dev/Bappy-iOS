@@ -22,7 +22,7 @@ struct Hangout: Equatable, Identifiable {
     let place: Place
     
     let postImageURL: URL?
-    let openchatURL: URL
+    let openchatURL: String
     
     var joinedIDs: [Info]
     var likedIDs: [Info]

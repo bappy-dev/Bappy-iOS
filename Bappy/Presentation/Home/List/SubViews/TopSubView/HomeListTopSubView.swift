@@ -25,6 +25,7 @@ final class HomeListTopSubView: UIView {
         flowLayout.minimumLineSpacing = 11.0
         flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 20.0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionView.backgroundColor = .white
         collectionView.register(HomeListCategoryCell.self,
                                 forCellWithReuseIdentifier: HomeListCategoryCell.reuseIdentifier)
         collectionView.showsHorizontalScrollIndicator = false

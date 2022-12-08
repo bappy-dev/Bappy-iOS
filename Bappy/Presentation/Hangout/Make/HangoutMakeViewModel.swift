@@ -257,7 +257,7 @@ final class HangoutMakeViewModel: ViewModelType {
                         categories: first.0,
                                place: .init(name: first.3.name, address: first.3.address, latitude: first.3.coordinates.latitude, longitude: first.3.coordinates.longitude),
                         postImageURL: URL(string: ""),
-                        openchatURL: URL(string: second.2)!,
+                        openchatURL: second.2,
                         joinedIDs: [],
                         likedIDs: [],
                         userHasLiked: false)

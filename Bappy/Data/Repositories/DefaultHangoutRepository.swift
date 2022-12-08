@@ -282,7 +282,7 @@ extension DefaultHangoutRepository: HangoutRepository {
                                                  hangoutPlan: hangout.plan,
                                                  hangoutLanguage: hangout.language,
                                                  hangoutTotalNum: hangout.limitNumber,
-                                                 hangoutOpenChat: hangout.openchatURL.absoluteString,
+                                                 hangoutOpenChat: hangout.openchatURL,
                                                  hangoutCategory: hangout.categories.map { $0.description },
                                                  placeLatitude: "\(hangout.place.coordinates.latitude)",
                                                  placeLongitude: "\(hangout.place.coordinates.longitude)",

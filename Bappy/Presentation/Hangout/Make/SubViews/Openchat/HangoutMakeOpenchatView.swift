@@ -21,7 +21,7 @@ final class HangoutMakeOpenchatView: UIView {
     
     private let openchatCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Make Openchat\nor Zoom"
+        label.text = "Make Kakao chat\nor Google meet"
         label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = .bappyBrown
         label.numberOfLines = 2
@@ -30,12 +30,11 @@ final class HangoutMakeOpenchatView: UIView {
     
     private let openchatTextField: UITextField = {
         let textField = UITextField()
-        textField.font = .roboto(size: 14.0)
+        textField.font = .roboto(size: 13.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Enter the URL",
+            string: "Enter the URL or any message you wanna write.",
             attributes: [.foregroundColor: UIColor.bappyGray])
-        textField.keyboardType = .URL
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         return textField
@@ -50,7 +49,7 @@ final class HangoutMakeOpenchatView: UIView {
     private let guideButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBappyTitle(
-            title: "Openchat guide",
+            title: "Making guide",
             font: .roboto(size: 10.0),
             color: .black.withAlphaComponent(0.33),
             hasUnderline: true
@@ -107,7 +106,7 @@ final class HangoutMakeOpenchatView: UIView {
             $0.top.equalTo(openchatCaptionLabel.snp.bottom).offset(5.0)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
+        
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()

@@ -13,7 +13,7 @@ final class HangoutMakeLimitViewModel: ViewModelType {
     
     struct Dependency {
         var minimumNumber: Int { 4 }
-        var maximumNumber: Int { 10 }
+        var maximumNumber: Int { 30 }
     }
     
     struct Input {

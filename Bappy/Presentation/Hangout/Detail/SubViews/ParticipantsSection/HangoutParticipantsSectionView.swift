@@ -166,6 +166,7 @@ extension HangoutParticipantsSectionView {
                 guard let self = self else { return }
                 self.heartImageView.isSelected = !infos.isEmpty
                 self.likedPeopleCountLbl.text = "+\(infos.count)"
+                self.likedPeopleStackView.arrangedSubviews.map { $0.removeFromSuperview() }
                 for idx in 0..<infos.count {
                     if idx > 4 { return }
                     let info = infos[idx]
