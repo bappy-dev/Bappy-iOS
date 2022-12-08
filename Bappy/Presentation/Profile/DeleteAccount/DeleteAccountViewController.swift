@@ -164,7 +164,7 @@ extension DeleteAccountViewController {
         
         viewModel.output.page
             .map(CGFloat.init)
-            .map { CGPoint(x: UIScreen.main.bounds.width * $0, y: 0) }
+            .map { CGPoint(x: ScreenUtil.width * $0, y: 0) }
             .drive(scrollView.rx.setContentOffset)
             .disposed(by: disposeBag)
         

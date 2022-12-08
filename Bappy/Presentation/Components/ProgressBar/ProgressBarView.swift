@@ -52,7 +52,7 @@ extension ProgressBarView {
         UIView.animate(withDuration: 0.3) {
             self.yellowView.snp.updateConstraints {
                 $0.top.leading.bottom.equalToSuperview()
-                $0.width.equalTo(UIScreen.main.bounds.width * progression)
+                $0.width.equalTo(ScreenUtil.width * progression)
             }
             self.layoutIfNeeded()
         }

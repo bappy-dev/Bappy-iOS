@@ -144,7 +144,7 @@ final class HomeFilterViewController: UIViewController {
         view.appearance.headerTitleColor = .black
         view.appearance.headerDateFormat = "MMMM yyyy"
         view.appearance.caseOptions = .weekdayUsesUpperCase
-        let calendarSize = UIScreen.main.bounds.width - 58
+        let calendarSize = ScreenUtil.width - 58
         view.appearance.headerTitleOffset = CGPoint(x: -(calendarSize / 4) + calendarSize / 28 - 3, y: 0)
         view.appearance.headerTitleAlignment = .left
         view.appearance.headerMinimumDissolvedAlpha = 0
@@ -294,7 +294,7 @@ final class HomeFilterViewController: UIViewController {
         }
         
         imageView.snp.makeConstraints {
-            imageLeading = $0.leading.equalToSuperview().inset(20 + UIScreen.main.bounds.width / 3).constraint
+            imageLeading = $0.leading.equalToSuperview().inset(20 + ScreenUtil.width / 3).constraint
             $0.centerY.equalTo(calendar.calendarHeaderView.collectionView.snp.centerY)
             $0.height.equalTo(14)
             $0.width.equalTo(8)

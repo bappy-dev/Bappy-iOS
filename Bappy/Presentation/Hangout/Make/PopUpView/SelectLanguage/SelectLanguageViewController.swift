@@ -18,7 +18,7 @@ final class SelectLanguageViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     private let maxDimmedAlpha: CGFloat = 0.3
-    private let defaultHeight: CGFloat = UIScreen.main.bounds.height - 90.0
+    private let defaultHeight: CGFloat = ScreenUtil.height - 90.0
     
     private lazy var containerView: UIView = {
         let view = UIView()

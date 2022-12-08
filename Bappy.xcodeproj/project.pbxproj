@@ -327,6 +327,7 @@
 		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
 		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
 		D604C0DC292FD1D7008A4B37 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D604C0DB292FD1D7008A4B37 /* Logger.swift */; };
+		D643CF8229421B9C0065BA51 /* ScreenUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF8129421B9C0065BA51 /* ScreenUtil.swift */; };
 		D64D7A552941D8D80024EF91 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = D64D7A542941D8D80024EF91 /* Toast */; };
 		D6B724A02939F8B1004063BA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */; };
 		D6B724A22939F99C004063BA /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */; };
@@ -663,6 +664,7 @@
 		AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagViewModel.swift; sourceTree = "<group>"; };
 		AFEC36B72902E1D100687C18 /* BappyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTextField.swift; sourceTree = "<group>"; };
 		D604C0DB292FD1D7008A4B37 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		D643CF8129421B9C0065BA51 /* ScreenUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenUtil.swift; sourceTree = "<group>"; };
 		D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewController.swift; sourceTree = "<group>"; };
 		D6C03271291153440047192F /* LikedPeopleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewModel.swift; sourceTree = "<group>"; };
 		D6C0327329115B340047192F /* LikedPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleCell.swift; sourceTree = "<group>"; };
@@ -1126,6 +1128,7 @@
 				A769CD1C282A947B0086182C /* Extension.swift */,
 				A7D80C24285DA7EF00F9951A /* RxExtension.swift */,
 				D604C0DB292FD1D7008A4B37 /* Logger.swift */,
+				D643CF8129421B9C0065BA51 /* ScreenUtil.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -2914,6 +2917,7 @@
 				A7F52CE8286463B3002523D4 /* LocaleSearchViewController.swift in Sources */,
 				A71411B928985F8A002D4714 /* ProfileEditAffiliationViewModel.swift in Sources */,
 				AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */,
+				D643CF8229421B9C0065BA51 /* ScreenUtil.swift in Sources */,
 				A71411AB28985F8A002D4714 /* LanguageSettingViewModel.swift in Sources */,
 				A7202D592898B9EF00878012 /* Example.swift in Sources */,
 				A71411C328985F8A002D4714 /* ProfileDetailIntroduceViewModel.swift in Sources */,

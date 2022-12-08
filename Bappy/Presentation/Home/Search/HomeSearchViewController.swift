@@ -47,7 +47,7 @@ final class HomeSearchViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(HangoutCell.self, forCellReuseIdentifier:  HangoutCell.reuseIdentifier)
         tableView.separatorStyle = .none
-        tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
+        tableView.rowHeight = ScreenUtil.width / 390.0 * 333.0 + 11.0
         tableView.backgroundColor = .bappyLightgray
         tableView.keyboardDismissMode = .interactive
         return tableView

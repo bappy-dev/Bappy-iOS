@@ -143,7 +143,7 @@ final class ProfileReferenceCell: UITableViewCell {
         hStack.axis = .horizontal
         hStack.spacing = ProfileReferenceCell.tagsHorizontalSpacing
         
-        let maxWidth = UIScreen.main.bounds.width
+        let maxWidth = ScreenUtil.width
                     - ProfileReferenceCell.cellHorizontalInset * 2.0
                     - ProfileReferenceCell.profileImageViewWidth
                     - ProfileReferenceCell.cellHorizontalInset * 3.0
