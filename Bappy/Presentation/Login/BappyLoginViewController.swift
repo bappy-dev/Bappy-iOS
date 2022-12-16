@@ -210,6 +210,8 @@ extension BappyLoginViewController {
             .disposed(by: disposeBag)
         
         loginSkipButton.rx.tap
+            .map { EventLogger.logEvent("login", parameters: ["name" : "BappyLoginViewController",
+                                                              "with": "anonymous"])}
             .bind(to: viewModel.input.skipButtonTapped)
             .disposed(by: disposeBag)
         
@@ -252,6 +254,9 @@ extension BappyLoginViewController {
             
             UserDefaults.standard.set(LoginType.Google.rawValue, forKey: "LoginType")
             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: authentication.accessToken)
+            
+            EventLogger.logEvent("login", parameters: ["name" : "BappyLoginViewController",
+                                                       "with": "google"])
             self?.authCredential$.onNext(credential)
         }
     }
@@ -274,6 +279,8 @@ extension BappyLoginViewController {
             let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
             UserDefaults.standard.set(LoginType.Facebook.rawValue, forKey: "LoginType")
             
+            EventLogger.logEvent("login", parameters: ["name" : "BappyLoginViewController",
+                                                       "with": "facebook"])
             self?.authCredential$.onNext(credential)
         }
     }
@@ -355,6 +362,8 @@ extension BappyLoginViewController: ASAuthorizationControllerDelegate {
             
             let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
             UserDefaults.standard.set(LoginType.Apple.rawValue, forKey: "LoginType")
+            EventLogger.logEvent("login", parameters: ["name" : "BappyLoginViewController",
+                                                       "with": "apple"])
             authCredential$.onNext(credential)
         }
     }

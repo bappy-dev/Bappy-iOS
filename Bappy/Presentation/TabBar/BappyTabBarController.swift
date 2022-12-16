@@ -167,6 +167,10 @@ final class BappyTabBarController: UITabBarController {
 // MARK: - Bind
 extension BappyTabBarController {
     private func bind() {
+        self.rx.viewWillAppear
+            .bind(to: viewModel.input.viewWillAppear)
+            .disposed(by: disposeBag)
+        
         self.rx.viewWillLayoutSubviews
             .take(1)
             .map { self.view.safeAreaInsets.bottom }

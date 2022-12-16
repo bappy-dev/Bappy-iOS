@@ -93,6 +93,11 @@ extension UIFont {
 
 // MARK: - UIView
 extension UIView {
+    convenience init(color: UIColor) {
+        self.init()
+        self.backgroundColor = color
+    }
+    
     func addBappyShadow(shadowOffsetHeight: CGFloat = 2.0, shouldSetShadowPath: Bool = true) {
         self.clipsToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
