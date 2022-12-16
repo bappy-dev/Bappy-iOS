@@ -27,6 +27,7 @@ struct Hangout: Equatable, Identifiable {
     var joinedIDs: [Info]
     var likedIDs: [Info]
     var userHasLiked: Bool
+    var isUpdate: Bool
     
     static func == (lhs: Hangout, rhs: Hangout) -> Bool {
         return lhs.id == rhs.id
@@ -51,45 +52,85 @@ extension Hangout {
         }
     }
     
-    enum State: String { case available, closed, expired, preview }
+    enum State: String { case available, closed, expired, preview, edit, save }
     
-    enum Category: Int {
-        case ALL, Travel, Cafe, Hiking, Food, Bar, Cook, Shopping, Volunteer, Language, Crafting, BallGame, Running, Concerts, Museum, Vegan, Boardgame, Music
+    enum Category: Int, CaseIterable {
+        case ALL, Travel, Eat_out, Cafe, Cooking, Vegan, Bar, Language, Discussion, Dance, KPOP, Study, Read, Instruments, Draw, Movie, Exhibition, Museum, Festival, Concerts, Party, Picnic, Boardgame, Sports, Volunteer, Projcets, Career
         
         var description: String {
             switch self {
             case .ALL : return "ALL"
             case .Travel : return "Travel"
+            case .Eat_out: return "Eat out"
             case .Cafe : return "Cafe"
-            case .Hiking : return "Hiking"
-            case .Food : return "Food"
-            case .Bar : return "Bar"
-            case .Cook : return "Cook"
-            case .Shopping : return "Shopping"
-            case .Volunteer : return "Volunteer"
-            case .Language : return "Practice Language"
-            case .Crafting : return "Crafting"
-            case .BallGame: return "BallGame"
-            case .Running: return "Running"
-            case .Concerts: return "Concerts"
-            case .Museum: return "Museum"
-            case .Music: return "Music"
+            case .Cooking : return "Cooking"
             case .Vegan: return "Vegan"
+            case .Bar : return "Bar"
+            case .Language : return "Language Practice"
+            case .Discussion : return "Discussion"
+            case .Dance : return "Dance"
+            case .KPOP : return "K-POP"
+            case .Study : return "Study"
+            case .Read: return "Read"
+            case .Instruments: return "Instruments"
+            case .Draw: return "Draw"
+            case .Movie: return "Movie"
+            case .Exhibition: return "Exhibition"
+            case .Museum: return "Museum"
+            case .Festival: return "Festival"
+            case .Concerts: return "Concerts"
+            case .Party: return "Party"
+            case .Picnic: return "Picnic"
             case .Boardgame: return "Boardgame"
+            case .Sports: return "Sports"
+            case .Volunteer : return "Volunteer"
+            case .Projcets: return "Projcets"
+            case .Career: return "Career"
             }
+        }
+        
+        static func makeCategory(with string: String) -> Hangout.Category? {
+            switch string {
+            case "Travel": return .Travel
+            case "Eat out": return .Eat_out
+            case "Cafe": return .Cafe
+            case "Cooking": return .Cooking
+            case "Vegan": return .Vegan
+            case "Bar": return .Bar
+            case "Language Practice": return .Language
+            case "Discussion": return .Discussion
+            case "Dance": return .Dance
+            case "K-POP": return .KPOP
+            case "Study": return .Study
+            case "Read": return .Read
+            case "Instruments": return .Instruments
+            case "Draw": return .Draw
+            case "Movie": return .Movie
+            case "Exhibition": return .Exhibition
+            case "Museum": return .Museum
+            case "Festival": return .Festival
+            case "Concerts": return .Concerts
+            case "Party": return .Party
+            case "Picnic": return .Picnic
+            case "Boardgame": return .Boardgame
+            case "Sports": return .Sports
+            case "Volunteer": return .Volunteer
+            case "Projcets": return .Projcets
+            case "Career": return .Career
+            default: return nil }
         }
     }
     
-    enum SortingOrder: Int {
-        case Newest, Nearest, ManyViews, manyLikes, lessSeats
+    enum SortingOrder: Int, CaseIterable {
+        case Newest, Nearest, MostViews, MostHearts, Lessseats
         
         var description: String {
             switch self {
             case .Newest: return "Newest"
             case .Nearest: return "Nearest"
-            case .ManyViews: return "Many views"
-            case .manyLikes: return "Many Likes"
-            case .lessSeats: return "Less seats"
+            case .MostViews: return "Most views"
+            case .MostHearts: return "Most Likes"
+            case .Lessseats: return "Less seats"
             }
         }
     }
