@@ -311,6 +311,30 @@ extension DefaultHangoutRepository: HangoutRepository {
         //        }
     }
     
+    func saveHangout(hangout: Hangout, imageData: Data) -> Single<Result<Bool, Error>> {
+        let requestDTO = SaveHangoutRequestDTO(hangoutTitle: hangout.title,
+                                               hangoutPlan: hangout.plan,
+                                               hangoutLanguage: hangout.language,
+                                               hangoutTotalNum: hangout.limitNumber,
+                                               hangoutCategory: hangout.categories.map { $0.description },
+                                               hangoutMeetTime: hangout.meetTime.toString(dateFormat: "yyyy-MM-dd HH:mm"),
+                                               placeName: hangout.place.name,
+                                               placeLatitude: "\(hangout.place.coordinates.latitude)",
+                                               placeLongitude: "\(hangout.place.coordinates.longitude)",
+                                               hangoutOpenChat: hangout.openchatURL)
+        let endpoint = APIEndpoints.saveHangout(with: requestDTO, id: hangout.id, data: imageData)
+        
+        return provider.request(with: endpoint)
+            .map { result -> Result<Bool, Error> in
+                switch result {
+                case .success(_):
+                    return .success(true)
+                case .failure(let error):
+                    return .failure(error)
+                }
+            }
+    }
+    
     func deleteHangout(hangoutID: String) -> Single<Result<Bool, Error>> {
         let endpoint = APIEndpoints.deleteHangout(hangoutID: hangoutID)
         return provider.request(with: endpoint)

@@ -14,12 +14,15 @@ final class HangoutMakeViewModel: ViewModelType {
     struct Dependency {
         var currentUser: BappyUser
         let googleMapImageRepository: GoogleMapImageRepository
+        var hangout: Hangout?
         var numOfPage: Int { 9 }
         var key: String { Bundle.main.googleMapAPIKey }
         
         init(currentUser: BappyUser,
-             googleMapImageRepository: GoogleMapImageRepository = DefaultGoogleMapImageRepository()) {
+             googleMapImageRepository: GoogleMapImageRepository = DefaultGoogleMapImageRepository(),
+             hangout: Hangout? = nil) {
             self.currentUser = currentUser
+            self.hangout = hangout
             self.googleMapImageRepository = googleMapImageRepository
         }
     }
@@ -118,7 +121,7 @@ final class HangoutMakeViewModel: ViewModelType {
     init(dependency: Dependency) {
         self.dependency = dependency
         self.subViewModels = SubViewModels(
-            categoryViewModel: HangoutMakeCategoryViewModel(),
+            categoryViewModel: HangoutMakeCategoryViewModel(dependency: HangoutMakeCategoryViewModel.Dependency(categories: dependency.hangout?.categories ?? [])),
             titleViewModel: HangoutMakeTitleViewModel(),
             timeViewModel: HangoutMakeTimeViewModel(),
             placeViewModel: HangoutMakePlaceViewModel(),
@@ -126,7 +129,7 @@ final class HangoutMakeViewModel: ViewModelType {
             planViewModel: HangoutMakePlanViewModel(),
             languageViewModel: HangoutMakeLanguageViewModel(),
             openchatViewModel: HangoutMakeOpenchatViewModel(),
-            limitViewModel: HangoutMakeLimitViewModel(),
+            limitViewModel: HangoutMakeLimitViewModel(dependency: HangoutMakeLimitViewModel.Dependency(limitNumber: dependency.hangout?.limitNumber)),
             continueButtonViewModel: ContinueButtonViewModel()
         )
         
@@ -140,8 +143,7 @@ final class HangoutMakeViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: Void())
         let page = page$
             .asDriver(onErrorJustReturn: .zero)
-        let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 },
-                                                resultSelector: getProgression)
+        let progression = page$.withLatestFrom(numOfPage$.filter { $0 != 0 }, resultSelector: getProgression)
             .asDriver(onErrorJustReturn: .zero)
         let initProgression = viewDidAppear$
             .withLatestFrom(progression)
@@ -247,22 +249,22 @@ final class HangoutMakeViewModel: ViewModelType {
                 )
             )
             .map { first, second -> Hangout in
-                return Hangout(id: "preview",
-                        state: .preview,
-                        title: first.1,
-                        meetTime: first.2,
-                        language: second.1,
-                        plan: second.0,
-                        limitNumber: second.3,
-                        categories: first.0,
+                return Hangout(id: dependency.hangout == nil ? "preview" : dependency.hangout!.id,
+                               state: dependency.hangout == nil ? .preview : .save,
+                               title: first.1,
+                               meetTime: first.2,
+                               language: second.1,
+                               plan: second.0,
+                               limitNumber: second.3,
+                               categories: first.0,
                                place: .init(name: first.3.name, address: first.3.address, latitude: first.3.coordinates.latitude, longitude: first.3.coordinates.longitude),
-                        postImageURL: URL(string: ""),
-                        openchatURL: second.2,
-                        joinedIDs: [],
-                        likedIDs: [],
-                        userHasLiked: false)
-            }
-            .share()
+                               postImageURL: dependency.hangout?.postImageURL ?? URL(string: ""),
+                               openchatURL: second.2,
+                               joinedIDs: dependency.hangout?.joinedIDs ?? [],
+                               likedIDs: dependency.hangout?.likedIDs ?? [],
+                               userHasLiked: false,
+                               isUpdate: false)
+            }.share()
         
         // Goolge Map Image 불러오기
         let result = continueButtonTapped$
@@ -281,7 +283,7 @@ final class HangoutMakeViewModel: ViewModelType {
             .compactMap(getErrorDescription)
             .bind(to: self.rx.debugError)
             .disposed(by: disposeBag)
-
+        
         let mapImage = result
             .compactMap(getValue)
             .map(UIImage.init)
@@ -293,6 +295,8 @@ final class HangoutMakeViewModel: ViewModelType {
                 currentUser$, hangout, picture$
             )) { (mapImage: $0, user: $1.0, hangout: $1.1, postImage: $1.2) }
             .map { element -> HangoutDetailViewModel in
+                EventLogger.logEvent("category_click", parameters: ["category": element.hangout.categories.map { $0.description }, "name": "HangoutMakeViewController"])
+                print(element.postImage)
                 let realImage = element.postImage == nil ? Constant.hangoutDefaultImages.randomElement()! : element.postImage
                 let dependency = HangoutDetailViewModel.Dependency(
                     currentUser: element.user,
@@ -303,7 +307,6 @@ final class HangoutMakeViewModel: ViewModelType {
             }
             .bind(to: showHangoutPreview$)
             .disposed(by: disposeBag)
-
         
         // 다음 페이지
         continueButtonTappedWithPage
@@ -313,6 +316,11 @@ final class HangoutMakeViewModel: ViewModelType {
             .disposed(by: disposeBag)
         
         // 이전 페이지
+        backButtonTappedWithPage
+            .take(1)
+            .bind { EventLogger.logEvent("hangout_cancel_make", parameters: ["at": $0]) }
+            .disposed(by: disposeBag)
+        
         backButtonTappedWithPage
             .filter { $0 > 0 }
             .map { $0 - 1 }
@@ -456,7 +464,8 @@ private func shouldButtonEnabledWithFirst(page: Int, isCategoryValid: Bool, isTi
     case 2: return isTimeValid
     case 3: return isPlaceValid
     case 4: return isPictureValid
-    default: return false}
+    default: return false
+    }
 }
 
 private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLanguageValid: Bool, isOpenchatValid: Bool, isLimitValid: Bool) -> Bool {
@@ -465,7 +474,8 @@ private func shouldButtonEnabledWithSecond(page: Int, isPlanValid: Bool, isLangu
     case 6: return isLanguageValid
     case 7: return isOpenchatValid
     case 8: return isLimitValid
-    default: return false}
+    default: return false
+    }
 }
 
 // MARK: - SearchPlaceViewModelDelegate
