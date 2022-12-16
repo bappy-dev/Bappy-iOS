@@ -23,7 +23,7 @@ final class HomeListTopSubView: UIView {
         flowLayout.scrollDirection = .horizontal
         flowLayout.estimatedItemSize = .init(width: 60, height: 43.0)
         flowLayout.minimumLineSpacing = 11.0
-        flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 20.0)
+        flowLayout.sectionInset = .init(top: 0, left: 3.0, bottom: 0, right: 30.0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.backgroundColor = .white
         collectionView.register(HomeListCategoryCell.self,

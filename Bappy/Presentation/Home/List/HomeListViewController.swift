@@ -105,9 +105,12 @@ final class HomeListViewController: UIViewController {
 // MARK: - Bind
 extension HomeListViewController {
     private func bind() {
-//        self.rx.viewWillAppear
-//            .bind(to: viewModel.input.viewWillAppear)
-//            .disposed(by: disposeBag)
+        self.rx.viewWillAppear
+            .map { _ in UserDefaults.standard.bool(forKey: "hangout_make") }
+            .startWith(true)
+            .filter { $0 }
+            .bind(to: viewModel.input.viewWillAppear)
+            .disposed(by: disposeBag)
         
         self.rx.viewWillDisappear
             .bind(to: viewModel.input.viewWillDisappear)

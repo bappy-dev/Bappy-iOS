@@ -109,6 +109,7 @@ final class HangoutMakeViewModel: ViewModelType {
     private let isPlaceValid$ = BehaviorSubject<Bool>(value: false)
     private let isPictureValid$ = BehaviorSubject<Bool>(value: true)
     private let isPlanValid$ = BehaviorSubject<Bool>(value: false)
+
     private let isLanguageValid$ = BehaviorSubject<Bool>(value: false)
     private let isOpenchatValid$ = BehaviorSubject<Bool>(value: false)
     private let isLimitValid$ = BehaviorSubject<Bool>(value: true)
@@ -249,7 +250,7 @@ final class HangoutMakeViewModel: ViewModelType {
                 )
             )
             .map { first, second -> Hangout in
-                return Hangout(id: dependency.hangout == nil ? "preview" : dependency.hangout!.id,
+                return Hangout(id: dependency.hangout?.id ?? "preview",
                                state: dependency.hangout == nil ? .preview : .save,
                                title: first.1,
                                meetTime: first.2,
@@ -295,9 +296,9 @@ final class HangoutMakeViewModel: ViewModelType {
                 currentUser$, hangout, picture$
             )) { (mapImage: $0, user: $1.0, hangout: $1.1, postImage: $1.2) }
             .map { element -> HangoutDetailViewModel in
-                EventLogger.logEvent("category_click", parameters: ["category": element.hangout.categories.map { $0.description }, "name": "HangoutMakeViewController"])
-                print(element.postImage)
-                let realImage = element.postImage == nil ? Constant.hangoutDefaultImages.randomElement()! : element.postImage
+                EventLogger.logEvent("category_click", parameters: ["category": element.hangout.categories.map { $0.description },
+                                                                    "name": "HangoutMakeViewController"])
+                let realImage = element.postImage == nil && element.hangout.postImageURL == nil ? Constant.hangoutDefaultImages.randomElement()! : element.postImage
                 let dependency = HangoutDetailViewModel.Dependency(
                     currentUser: element.user,
                     hangout: element.hangout,

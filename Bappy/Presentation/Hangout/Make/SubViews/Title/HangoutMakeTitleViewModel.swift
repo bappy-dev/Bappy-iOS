@@ -98,8 +98,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
 }
 
 private func validation(text: String, condition: (minimumLength: Int, maximumLength: Int)) -> Bool {
-    return (text.count >= condition.minimumLength)
-            && (text.count <= condition.maximumLength)
+    return (text.count >= condition.minimumLength) && (text.count <= condition.maximumLength)
 }
 
 private func removeExcessString(text: String, maximumLength: Int) -> String {
