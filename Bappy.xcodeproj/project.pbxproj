@@ -328,6 +328,10 @@
 		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
 		D604C0DC292FD1D7008A4B37 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D604C0DB292FD1D7008A4B37 /* Logger.swift */; };
 		D643CF8229421B9C0065BA51 /* ScreenUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF8129421B9C0065BA51 /* ScreenUtil.swift */; };
+		D643CF842944A8030065BA51 /* CategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF832944A8030065BA51 /* CategoryView.swift */; };
+		D643CF862944A80C0065BA51 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF852944A80C0065BA51 /* CategoryViewModel.swift */; };
+		D643CF88294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF87294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift */; };
+		D643CF8B294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF8A294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift */; };
 		D64D7A552941D8D80024EF91 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = D64D7A542941D8D80024EF91 /* Toast */; };
 		D6B724A02939F8B1004063BA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */; };
 		D6B724A22939F99C004063BA /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */; };
@@ -665,6 +669,10 @@
 		AFEC36B72902E1D100687C18 /* BappyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTextField.swift; sourceTree = "<group>"; };
 		D604C0DB292FD1D7008A4B37 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D643CF8129421B9C0065BA51 /* ScreenUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenUtil.swift; sourceTree = "<group>"; };
+		D643CF832944A8030065BA51 /* CategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryView.swift; sourceTree = "<group>"; };
+		D643CF852944A80C0065BA51 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
+		D643CF87294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaveHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		D643CF8A294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaveHangoutRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewController.swift; sourceTree = "<group>"; };
 		D6C03271291153440047192F /* LikedPeopleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewModel.swift; sourceTree = "<group>"; };
 		D6C0327329115B340047192F /* LikedPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleCell.swift; sourceTree = "<group>"; };
@@ -1047,6 +1055,7 @@
 				A739AB91289CE87200C6CE90 /* UpdateHangoutParticipationDTO */,
 				A72964CA289AEEEB00970807 /* ReportHangoutDTO */,
 				A76AE75B28A23CBA00A8EB9B /* SearchHangoutsDTO */,
+				D643CF89294B5E800065BA51 /* SaveHangoutDTO */,
 			);
 			path = Hangout;
 			sourceTree = "<group>";
@@ -1429,6 +1438,8 @@
 				A72E6F042893D98200E06BED /* Protocol */,
 				A72E6F032893D95500E06BED /* Library */,
 				A72E6F052893D99300E06BED /* Example */,
+				D643CF832944A8030065BA51 /* CategoryView.swift */,
+				D643CF852944A80C0065BA51 /* CategoryViewModel.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -2538,6 +2549,15 @@
 			path = BappyTextField;
 			sourceTree = "<group>";
 		};
+		D643CF89294B5E800065BA51 /* SaveHangoutDTO */ = {
+			isa = PBXGroup;
+			children = (
+				D643CF87294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift */,
+				D643CF8A294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift */,
+			);
+			path = SaveHangoutDTO;
+			sourceTree = "<group>";
+		};
 		D6B7249D29388A78004063BA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2881,6 +2901,7 @@
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
 				A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */,
 				A7F52CF72865FFAA002523D4 /* HangoutMainSectionViewModel.swift in Sources */,
+				D643CF862944A80C0065BA51 /* CategoryViewModel.swift in Sources */,
 				A7850307285A1840000FA592 /* HangoutMakeOpenchatViewModel.swift in Sources */,
 				D6CCB5C929274673007A4657 /* TinyURLRepository.swift in Sources */,
 				A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */,
@@ -2901,6 +2922,7 @@
 				A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */,
 				A71411CF28985F8A002D4714 /* DeleteAccountSecondPageViewModel.swift in Sources */,
 				A76EEE862852CF5000A2CFF6 /* ProgressHUD.swift in Sources */,
+				D643CF8B294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift in Sources */,
 				A71411D528985F8A002D4714 /* ProfileSettingNotificationViewModel.swift in Sources */,
 				D6C03272291153440047192F /* LikedPeopleListViewModel.swift in Sources */,
 				A7F52CEC2864A66F002523D4 /* Location.swift in Sources */,
@@ -2963,6 +2985,7 @@
 				A7751B062886F66800F23241 /* DefaultNotificationRepository.swift in Sources */,
 				A7CE0FA2284B37D60063458F /* HomeListTopSubView.swift in Sources */,
 				A76AE72A289ED47800A8EB9B /* HomeListHolderView.swift in Sources */,
+				D643CF88294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift in Sources */,
 				A71411B428985F8A002D4714 /* ProfileEditIntroduceViewModel.swift in Sources */,
 				A739ABA4289D758300C6CE90 /* ProfileHangoutCellHolderView.swift in Sources */,
 				AFEC36B02902918D00687C18 /* WriteReviewViewController.swift in Sources */,
@@ -3061,6 +3084,7 @@
 				A71411C128985F8A002D4714 /* ProfileDetailPersonalityView.swift in Sources */,
 				A75B11BD283C993C00C49597 /* ReportImageSectionView.swift in Sources */,
 				A72E6F0B2894113E00E06BED /* DefaultNetworkCheckRepository.swift in Sources */,
+				D643CF842944A8030065BA51 /* CategoryView.swift in Sources */,
 				A75B11BB283C8A4000C49597 /* ReportWritingSectionView.swift in Sources */,
 				A7615E2D28579BE900A09B2B /* RxKeyboard.swift in Sources */,
 				A739ABA6289D7BF400C6CE90 /* ProfileHangoutHolderView.swift in Sources */,
@@ -3233,7 +3257,7 @@
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9.4;
+				CURRENT_PROJECT_VERSION = 10.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				ENABLE_BITCODE = NO;
@@ -3258,7 +3282,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3280,7 +3304,7 @@
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9.4;
+				CURRENT_PROJECT_VERSION = 10.1;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3304,7 +3328,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";

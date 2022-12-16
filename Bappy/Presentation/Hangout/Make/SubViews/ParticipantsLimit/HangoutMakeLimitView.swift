@@ -34,6 +34,7 @@ final class HangoutMakeLimitView: UIView {
     
     private let minusButton = UIButton()
     private let plusButton = UIButton()
+    private let maxButton = SelectionButton(title: "MAX")
     
     private let descriptionLabel: UILabel = {
         let label = UILabel()
@@ -67,44 +68,50 @@ final class HangoutMakeLimitView: UIView {
         let plusButtonImage = isEnabled ? UIImage(named: "make_plus_on") : UIImage(named: "make_plus_off")
         plusButton.setImage(plusButtonImage, for: .normal)
         plusButton.isEnabled = isEnabled
-        
+        maxButton.rx.isSelected.onNext(isEnabled)
     }
     
     private func configure() {
         self.backgroundColor = .white
+        
+        maxButton.layer.cornerRadius = 19.5
+        maxButton.isSelected = true
     }
     
     private func layout() {
-        self.addSubview(limitCaptionLabel)
+        self.addSubviews([limitCaptionLabel, numberLabel, minusButton, plusButton, descriptionLabel, maxButton])
         limitCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
             $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(numberLabel)
         numberLabel.snp.makeConstraints {
             $0.top.equalTo(limitCaptionLabel.snp.bottom).offset(88.0)
             $0.centerX.equalToSuperview()
         }
         
-        self.addSubview(minusButton)
         minusButton.snp.makeConstraints {
             $0.width.height.equalTo(44.0)
             $0.centerY.equalTo(numberLabel).offset(4.0)
             $0.centerX.equalToSuperview().offset(-80.0)
         }
         
-        self.addSubview(plusButton)
         plusButton.snp.makeConstraints {
             $0.width.height.equalTo(44.0)
             $0.centerY.equalTo(minusButton)
             $0.centerX.equalToSuperview().offset(80.0)
         }
         
-        self.addSubview(descriptionLabel)
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(numberLabel.snp.bottom).offset(15.0)
             $0.centerX.equalToSuperview()
+        }
+        
+        maxButton.snp.makeConstraints {
+            $0.centerY.equalTo(plusButton)
+            $0.leading.equalTo(plusButton.snp.trailing).offset(13)
+            $0.height.equalTo(39)
+            $0.width.equalTo(60)
         }
     }
 }
@@ -118,6 +125,10 @@ extension HangoutMakeLimitView {
         
         plusButton.rx.tap
             .bind(to: viewModel.input.plusButtonTapped)
+            .disposed(by: disposeBag)
+        
+        maxButton.rx.tap
+            .bind(to: viewModel.input.maxButtonTapped)
             .disposed(by: disposeBag)
         
         viewModel.output.numberText
