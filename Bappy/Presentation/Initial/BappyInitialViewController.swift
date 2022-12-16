@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import FirebaseCrashlytics
 
 final class BappyInitialViewController: UIViewController {
     
@@ -47,6 +48,7 @@ final class BappyInitialViewController: UIViewController {
     // MARK: Helpers
     private func configure() {
         view.backgroundColor = .white
+        Crashlytics.crashlytics().log("enter BappyInitialViewController")
     }
     
     private func layout() {

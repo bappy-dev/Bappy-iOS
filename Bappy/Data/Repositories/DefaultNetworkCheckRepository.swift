@@ -8,6 +8,7 @@
 import UIKit
 import Network
 import RxSwift
+import FirebaseCrashlytics
 
 final class DefaultNetworkCheckRepository {
     
@@ -34,6 +35,7 @@ extension DefaultNetworkCheckRepository: NetworkCheckRepository {
     static let shared = DefaultNetworkCheckRepository()
     
     func startMonitoring() {
+        Crashlytics.crashlytics().log("start networking monitoring")
         monitor.start(queue: queue)
         monitor.pathUpdateHandler = { [weak self] path in
             print("DEBUG: isConnected \(path.status == .satisfied) \(path.status)")
@@ -50,6 +52,7 @@ extension DefaultNetworkCheckRepository: NetworkCheckRepository {
             completion()
         } else {
             showNetworkAlert { [weak self] in
+                Crashlytics.crashlytics().log("network not connect")
                 self?.checkNetworkConnection(completion: completion)
             }
         }

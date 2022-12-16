@@ -35,6 +35,8 @@ final class HangoutDetailViewModel: ViewModelType {
             case .closed: return .closed
             case .expired: return .expired
             case .available: return isUserParticipating ? .cancel : .join
+            case .save: return .save
+            case .edit: return .edit
             }
         }
         
@@ -70,6 +72,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var reviewButtonTapped: AnyObserver<Void> // <-> View
         var reportButtonTapped: AnyObserver<Void> // <-> View
         var shareButtonTapped: AnyObserver<Void> // <-> View
+        var editButtonTapped: AnyObserver<Void> // <-> View
         var showLikedPeopleListButtonTapped: AnyObserver<Void> // <-> View
         var imageHeight: AnyObserver<CGFloat> // <-> View
         var cancelAlertButtonTapped: AnyObserver<Void> // <-> View
@@ -84,6 +87,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showOpenMapView: Signal<OpenMapPopupViewModel?> // <-> View
         var hangoutButtonState: Signal<HangoutButton.State> // <-> View
         var showReviewButton: Signal<Bool> // <-> View
+        var showEditButton: Signal<Bool>
         var showSignInAlert: Signal<String?> // <-> View
         var showCancelAlert: Signal<Alert?> // <-> View
         var acitivityView: Signal<UIActivityViewController?> // <-> View
@@ -95,6 +99,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showYellowLoader: Signal<Bool> // <-> View
         var showTranslucentLoader: Signal<Bool> // <-> View
         var hangout: Signal<Hangout?> // <-> Child(Image), CellViewModel
+        var showMakeViewModel: Signal<HangoutMakeViewModel?>
     }
     
     let dependency: Dependency
@@ -116,6 +121,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let reviewButtonTapped$ = PublishSubject<Void>()
     private let reportButtonTapped$ = PublishSubject<Void>()
     private let shareButtonTapped$ = PublishSubject<Void>()
+    private let editButtonTapped$ = PublishSubject<Void>()
     private let showLikedPeopleListButtonTapped$ = PublishSubject<Void>()
     private let imageHeight$ = PublishSubject<CGFloat>()
     private let cancelAlertButtonTapped$ = PublishSubject<Void>()
@@ -123,7 +129,9 @@ final class HangoutDetailViewModel: ViewModelType {
     private let mapButtonTapped$ = PublishSubject<Void>()
     private let selectedUserID$ = PublishSubject<String>()
     
+    private let showMakeViewModel$ = PublishSubject<HangoutMakeViewModel?>()
     private let showReviewButton$ = PublishSubject<Bool>()
+    private let showEditButton$ = PublishSubject<Bool>()
     private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     private let showLikedPeopleList$ = PublishSubject<LikedPeopleListViewModel?>()
@@ -168,11 +176,14 @@ final class HangoutDetailViewModel: ViewModelType {
         }
         let showReviewButton$ = BehaviorSubject<Bool>(value: isNeedToShowReviewButton)
         
+        let showEditButton$ = BehaviorSubject<Bool>(value: dependency.hangout.isUpdate)
         let isUserParticipating$ = BehaviorSubject<Bool>(value: dependency.isUserParticipating)
         let currentUser$ = BehaviorSubject<BappyUser>(value: dependency.currentUser)
         let hangout$ = BehaviorSubject<Hangout>(value: dependency.hangout)
         let postImage$ = BehaviorSubject<UIImage?>(value: dependency.postImage)
         
+        let showMakeViewModel = showMakeViewModel$
+            .asSignal(onErrorJustReturn: nil)
         let popView = backButtonTapped$
             .asSignal(onErrorJustReturn: Void())
         let imageHeight = imageHeight$
@@ -184,9 +195,12 @@ final class HangoutDetailViewModel: ViewModelType {
                 return OpenMapPopupViewModel(dependency: dependency)
             }
             .asSignal(onErrorJustReturn: nil)
+        
         let hangoutButtonState = hangoutButtonState$
             .asSignal(onErrorJustReturn: .expired)
         let showReviewButton = showReviewButton$
+            .asSignal(onErrorJustReturn: false)
+        let showEditButton = showEditButton$
             .asSignal(onErrorJustReturn: false)
         let showSignInAlert = Observable
             .merge(
@@ -236,6 +250,22 @@ final class HangoutDetailViewModel: ViewModelType {
             .map { ("[BAPPY]\nJoin gatherings and be happy bappy!\n\n" + $0) }
             .share()
         
+        shareButtonTapped$
+            .withLatestFrom(hangout$)
+            .take(1)
+            .bind { hangout in
+                EventLogger.logEvent("hangout_share", parameters: ["description": hangout.id, "share_at": Date().description])
+            }.disposed(by: disposeBag)
+        
+        editButtonTapped$
+            .withLatestFrom(hangout$)
+            .throttle(.seconds(1), latest: false, scheduler: MainScheduler.instance)
+            .map { hangout -> HangoutMakeViewModel in
+                EventLogger.logEvent("edit", parameters: ["hangout_id": hangout.id])
+                return HangoutMakeViewModel(dependency: HangoutMakeViewModel.Dependency(currentUser: dependency.currentUser, hangout: hangout))
+            }.bind(to: showMakeViewModel$)
+            .disposed(by: disposeBag)
+        
         let activityView = shareButtonTapped$
             .withLatestFrom(getUrl)
             .withLatestFrom(hangout$) { (hangout: $1, url: $0)}
@@ -245,7 +275,7 @@ final class HangoutDetailViewModel: ViewModelType {
                 var urlStrToUse: String = ""
                 var customActivities: [UIActivity] = []
                 if element.url == "" {
-                    urlStrToUse = "[BAPPY]\nJoin gatherings and be happy bappy!\n\n" + "itms-apps://itunes.apple.com/app/apple-store/ASDASD"
+                    urlStrToUse = "[BAPPY]\nJoin gatherings and be happy bappy!\n\n" + "https://apps.apple.com/us/app/bappy/id1640022708"
                 } else {
                     urlStrToUse = element.url
                 }
@@ -295,6 +325,7 @@ final class HangoutDetailViewModel: ViewModelType {
             reviewButtonTapped: reviewButtonTapped$.asObserver(),
             reportButtonTapped: reportButtonTapped$.asObserver(),
             shareButtonTapped: shareButtonTapped$.asObserver(),
+            editButtonTapped: editButtonTapped$.asObserver(),
             showLikedPeopleListButtonTapped: showLikedPeopleListButtonTapped$.asObserver(),
             imageHeight: imageHeight$.asObserver(),
             cancelAlertButtonTapped: cancelAlertButtonTapped$.asObserver(),
@@ -309,6 +340,7 @@ final class HangoutDetailViewModel: ViewModelType {
             showOpenMapView: showOpenMapView,
             hangoutButtonState: hangoutButtonState,
             showReviewButton: showReviewButton,
+            showEditButton: showEditButton,
             showSignInAlert: showSignInAlert,
             showCancelAlert: showCancelAlert,
             acitivityView: activityView,
@@ -319,7 +351,8 @@ final class HangoutDetailViewModel: ViewModelType {
             showCreateSuccessView: showCreateSuccessView,
             showYellowLoader: showYellowLoader,
             showTranslucentLoader: showTranslucentLoader,
-            hangout: hangout
+            hangout: hangout,
+            showMakeViewModel: showMakeViewModel
         )
         
         // MARK: Bindind
@@ -328,6 +361,35 @@ final class HangoutDetailViewModel: ViewModelType {
         self.currentUser$ = currentUser$
         self.hangout$ = hangout$
         self.postImage$ = postImage$
+        
+        // Save 버튼이 눌러졌을 때..
+        let saveResult = hangoutButtonTapped$
+            .withLatestFrom(hangoutButtonState$)
+            .filter { $0 == .save }
+            .withLatestFrom(Observable.combineLatest(
+                hangout$, postImage$.compactMap { $0?.pngData() ?? Data() }
+            ))
+            .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
+            .flatMap(dependency.hangoutRepository.saveHangout)
+            .do { [weak self] _ in
+                self?.showYellowLoader$.onNext(false)
+                let date = UserDefaults.standard.object(forKey: "startMake") as? Date ?? Date()
+                EventLogger.logEvent("make_hangout", parameters: ["time" : Date().timeIntervalSince1970 - date.timeIntervalSince1970])
+                UserDefaults.standard.set(true, forKey: "hangout_make")
+            }
+            .observe(on: MainScheduler.asyncInstance)
+            .share()
+        
+        saveResult
+            .compactMap(getErrorDescription)
+            .bind(to: self.rx.debugError)
+            .disposed(by: disposeBag)
+        
+        saveResult
+            .compactMap(getValue)
+            .map { _ in }
+            .bind(to: showCreateSuccessView$)
+            .disposed(by: disposeBag)
         
         // Create 버튼이 눌러졌을 때..
         let createResult = hangoutButtonTapped$
@@ -338,7 +400,12 @@ final class HangoutDetailViewModel: ViewModelType {
             ))
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap(dependency.hangoutRepository.createHangout)
-            .do { [weak self] _ in self?.showYellowLoader$.onNext(false) }
+            .do { [weak self] _ in
+                self?.showYellowLoader$.onNext(false)
+                let date = UserDefaults.standard.object(forKey: "startMake") as? Date ?? Date()
+                EventLogger.logEvent("make_hangout", parameters: ["time" : Date().timeIntervalSince1970 - date.timeIntervalSince1970])
+                UserDefaults.standard.set(true, forKey: "hangout_make")
+            }
             .observe(on: MainScheduler.asyncInstance)
             .share()
         
@@ -360,7 +427,10 @@ final class HangoutDetailViewModel: ViewModelType {
             .filter({ (info, user) in
                 user.state == .normal
             })
-            .map { $0.0 }
+            .map {
+                let date = UserDefaults.standard.value(forKey: "detail_start") as? Date ?? Date()
+                EventLogger.logEvent("join_time", parameters: ["time": Date().timeIntervalSince1970 - date.timeIntervalSince1970])
+                return $0.0 }
             .withLatestFrom(hangout$)
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap { dependency.hangoutRepository.joinHangout(hangoutID: $0.id) }
@@ -411,23 +481,35 @@ final class HangoutDetailViewModel: ViewModelType {
         cancelResult
             .compactMap(getValue)
             .filter { $0 }
-            .bind(onNext: { _ in hangoutButtonState$.onNext(.join) })
+            .withLatestFrom(hangout$)
+            .bind(onNext: { hangout in
+                hangoutButtonState$.onNext(.join)
+                EventLogger.logEvent("cancel_hangout", parameters: ["hangout_id" : hangout.id,
+                                                                    "date": Date().description])
+            })
             .disposed(by: disposeBag)
         
         hangoutButtonState$
             .skip(1)
             .filter { $0 == .join || $0 == .cancel }
-            .map { state -> [Hangout.Info] in
+            .map { [weak self] state -> Hangout in
                 var newHangout = dependency.hangout
                 if let idx = newHangout.joinedIDs.firstIndex(where: { $0.id == dependency.currentUser.id }) {
                     newHangout.joinedIDs.remove(at: idx)
-                    if state == .cancel {
-                        newHangout.joinedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
-                    }
                 }
-                return newHangout.joinedIDs
-            }.bind(to: subViewModels.participantsSectionViewModel.input.joinedIDs)
-            .disposed(by: disposeBag)
+                
+                if state == .cancel {
+                    self?.subViewModels.mainSectionViewModel.input.userParticipating.onNext(true)
+                    newHangout.joinedIDs.append(Hangout.Info(id: dependency.currentUser.id, imageURL: dependency.currentUser.profileImageURL))
+                } else {
+                    self?.subViewModels.mainSectionViewModel.input.userParticipating.onNext(false)
+                }
+                
+                return newHangout
+            }.bind { [weak self] hangout in
+                self?.subViewModels.participantsSectionViewModel.input.joinedIDs.onNext(hangout.joinedIDs)
+                hangout$.onNext(hangout)
+            }.disposed(by: disposeBag)
         
         // FirebaseRemoteConfig로 행아웃 신고사유 리스트 불러오기
         let remoteConfigValuesResult = dependency.firebaseRepository.getRemoteConfigValues()

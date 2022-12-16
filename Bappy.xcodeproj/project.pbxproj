@@ -326,6 +326,16 @@
 		AFEC36B32902B63700687C18 /* ReviewSelectTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */; };
 		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
 		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
+		D604C0DC292FD1D7008A4B37 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D604C0DB292FD1D7008A4B37 /* Logger.swift */; };
+		D643CF8229421B9C0065BA51 /* ScreenUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF8129421B9C0065BA51 /* ScreenUtil.swift */; };
+		D643CF842944A8030065BA51 /* CategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF832944A8030065BA51 /* CategoryView.swift */; };
+		D643CF862944A80C0065BA51 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF852944A80C0065BA51 /* CategoryViewModel.swift */; };
+		D643CF88294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF87294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift */; };
+		D643CF8B294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF8A294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift */; };
+		D64D7A552941D8D80024EF91 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = D64D7A542941D8D80024EF91 /* Toast */; };
+		D6B724A02939F8B1004063BA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */; };
+		D6B724A22939F99C004063BA /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */; };
+		D6B724A42939F9B7004063BA /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6B724A32939F9B7004063BA /* GoogleSignInSwift */; };
 		D6C0326D290F3B150047192F /* KakaoPartnerSDKShare in Frameworks */ = {isa = PBXBuildFile; productRef = D6C0326C290F3B150047192F /* KakaoPartnerSDKShare */; };
 		D6C03270291152F90047192F /* LikedPeopleListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */; };
 		D6C03272291153440047192F /* LikedPeopleListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C03271291153440047192F /* LikedPeopleListViewModel.swift */; };
@@ -657,6 +667,12 @@
 		AFEC36B22902B63700687C18 /* ReviewSelectTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagView.swift; sourceTree = "<group>"; };
 		AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagViewModel.swift; sourceTree = "<group>"; };
 		AFEC36B72902E1D100687C18 /* BappyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTextField.swift; sourceTree = "<group>"; };
+		D604C0DB292FD1D7008A4B37 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		D643CF8129421B9C0065BA51 /* ScreenUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenUtil.swift; sourceTree = "<group>"; };
+		D643CF832944A8030065BA51 /* CategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryView.swift; sourceTree = "<group>"; };
+		D643CF852944A80C0065BA51 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
+		D643CF87294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaveHangoutResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		D643CF8A294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaveHangoutRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
 		D6C0326F291152F90047192F /* LikedPeopleListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewController.swift; sourceTree = "<group>"; };
 		D6C03271291153440047192F /* LikedPeopleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleListViewModel.swift; sourceTree = "<group>"; };
 		D6C0327329115B340047192F /* LikedPeopleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedPeopleCell.swift; sourceTree = "<group>"; };
@@ -697,9 +713,13 @@
 				A7CE0F9D2848D3F30063458F /* FacebookCore in Frameworks */,
 				D6C0326D290F3B150047192F /* KakaoPartnerSDKShare in Frameworks */,
 				A769CCFC282A8EF30086182C /* SnapKit in Frameworks */,
+				D64D7A552941D8D80024EF91 /* Toast in Frameworks */,
+				D6B724A22939F99C004063BA /* FirebaseAnalyticsSwift in Frameworks */,
 				A75B11C8283CF70400C49597 /* Lottie in Frameworks */,
 				A76EEE8E2853227D00A2CFF6 /* YPImagePicker in Frameworks */,
+				D6B724A42939F9B7004063BA /* GoogleSignInSwift in Frameworks */,
 				D6CC5B6B28F1F47E004C5E9C /* FSCalendar in Frameworks */,
+				D6B724A02939F8B1004063BA /* FirebaseCrashlytics in Frameworks */,
 				A76C212528439B5300044A34 /* FirebaseAuth in Frameworks */,
 				A76C212928439B5300044A34 /* FirebaseRemoteConfig in Frameworks */,
 			);
@@ -1035,6 +1055,7 @@
 				A739AB91289CE87200C6CE90 /* UpdateHangoutParticipationDTO */,
 				A72964CA289AEEEB00970807 /* ReportHangoutDTO */,
 				A76AE75B28A23CBA00A8EB9B /* SearchHangoutsDTO */,
+				D643CF89294B5E800065BA51 /* SaveHangoutDTO */,
 			);
 			path = Hangout;
 			sourceTree = "<group>";
@@ -1115,6 +1136,8 @@
 			children = (
 				A769CD1C282A947B0086182C /* Extension.swift */,
 				A7D80C24285DA7EF00F9951A /* RxExtension.swift */,
+				D604C0DB292FD1D7008A4B37 /* Logger.swift */,
+				D643CF8129421B9C0065BA51 /* ScreenUtil.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1326,6 +1349,7 @@
 			children = (
 				A769CCDC282A8C300086182C /* Bappy */,
 				A769CCDB282A8C300086182C /* Products */,
+				D6B7249D29388A78004063BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1414,6 +1438,8 @@
 				A72E6F042893D98200E06BED /* Protocol */,
 				A72E6F032893D95500E06BED /* Library */,
 				A72E6F052893D99300E06BED /* Example */,
+				D643CF832944A8030065BA51 /* CategoryView.swift */,
+				D643CF852944A80C0065BA51 /* CategoryViewModel.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -2523,6 +2549,22 @@
 			path = BappyTextField;
 			sourceTree = "<group>";
 		};
+		D643CF89294B5E800065BA51 /* SaveHangoutDTO */ = {
+			isa = PBXGroup;
+			children = (
+				D643CF87294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift */,
+				D643CF8A294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift */,
+			);
+			path = SaveHangoutDTO;
+			sourceTree = "<group>";
+		};
+		D6B7249D29388A78004063BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D6C0326E291152C10047192F /* ShowLikedPeopleList */ = {
 			isa = PBXGroup;
 			children = (
@@ -2627,6 +2669,7 @@
 				A769CCD6282A8C300086182C /* Sources */,
 				A769CCD7282A8C300086182C /* Frameworks */,
 				A769CCD8282A8C300086182C /* Resources */,
+				D6B7249E2939CBA9004063BA /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -2651,6 +2694,10 @@
 				A73BC9CB287D9F0B00FB9FA9 /* RxDataSources */,
 				D6CC5B6A28F1F47E004C5E9C /* FSCalendar */,
 				D6C0326C290F3B150047192F /* KakaoPartnerSDKShare */,
+				D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */,
+				D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */,
+				D6B724A32939F9B7004063BA /* GoogleSignInSwift */,
+				D64D7A542941D8D80024EF91 /* Toast */,
 			);
 			productName = Bappy;
 			productReference = A769CCDA282A8C300086182C /* Bappy.app */;
@@ -2692,6 +2739,7 @@
 				A73BC9CA287D9F0B00FB9FA9 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				D6CC5B6928F1F47E004C5E9C /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */,
+				D64D7A532941D8D80024EF91 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 			);
 			productRefGroup = A769CCDB282A8C300086182C /* Products */;
 			projectDirPath = "";
@@ -2726,6 +2774,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D6B7249E2939CBA9004063BA /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A769CCD6282A8C300086182C /* Sources */ = {
@@ -2830,6 +2901,7 @@
 				A77F4BCC282BC4F10046921B /* RegisterNameViewModel.swift in Sources */,
 				A75B11C0283C9BF700C49597 /* ReportPhotoCell.swift in Sources */,
 				A7F52CF72865FFAA002523D4 /* HangoutMainSectionViewModel.swift in Sources */,
+				D643CF862944A80C0065BA51 /* CategoryViewModel.swift in Sources */,
 				A7850307285A1840000FA592 /* HangoutMakeOpenchatViewModel.swift in Sources */,
 				D6CCB5C929274673007A4657 /* TinyURLRepository.swift in Sources */,
 				A78C5368283BB3F100CC41F5 /* HangoutPlanSectionView.swift in Sources */,
@@ -2850,6 +2922,7 @@
 				A75B11B8283C75C100C49597 /* ReportViewController.swift in Sources */,
 				A71411CF28985F8A002D4714 /* DeleteAccountSecondPageViewModel.swift in Sources */,
 				A76EEE862852CF5000A2CFF6 /* ProgressHUD.swift in Sources */,
+				D643CF8B294B5EA00065BA51 /* SaveHangoutRequestDTO+Mapping.swift in Sources */,
 				A71411D528985F8A002D4714 /* ProfileSettingNotificationViewModel.swift in Sources */,
 				D6C03272291153440047192F /* LikedPeopleListViewModel.swift in Sources */,
 				A7F52CEC2864A66F002523D4 /* Location.swift in Sources */,
@@ -2866,6 +2939,7 @@
 				A7F52CE8286463B3002523D4 /* LocaleSearchViewController.swift in Sources */,
 				A71411B928985F8A002D4714 /* ProfileEditAffiliationViewModel.swift in Sources */,
 				AFEC369C2900350400687C18 /* ProfileReferenceCell.swift in Sources */,
+				D643CF8229421B9C0065BA51 /* ScreenUtil.swift in Sources */,
 				A71411AB28985F8A002D4714 /* LanguageSettingViewModel.swift in Sources */,
 				A7202D592898B9EF00878012 /* Example.swift in Sources */,
 				A71411C328985F8A002D4714 /* ProfileDetailIntroduceViewModel.swift in Sources */,
@@ -2887,6 +2961,7 @@
 				A70C3CC1286AEB1300BB7219 /* DefaultFirebaseRepository.swift in Sources */,
 				A71411D228985F8A002D4714 /* DeleteAccountViewController.swift in Sources */,
 				A77F4BD6282BC5B30046921B /* RegisterNationalityView.swift in Sources */,
+				D604C0DC292FD1D7008A4B37 /* Logger.swift in Sources */,
 				A70C3CC9286B4CBD00BB7219 /* UserProfileRepository.swift in Sources */,
 				A72964C3289A653300970807 /* CreateHangoutRequestDTO+Mapping.swift in Sources */,
 				A72964D1289AF1C200970807 /* UpdateFCMTokenRequestDTO+Mapping.swift in Sources */,
@@ -2910,6 +2985,7 @@
 				A7751B062886F66800F23241 /* DefaultNotificationRepository.swift in Sources */,
 				A7CE0FA2284B37D60063458F /* HomeListTopSubView.swift in Sources */,
 				A76AE72A289ED47800A8EB9B /* HomeListHolderView.swift in Sources */,
+				D643CF88294B5D600065BA51 /* SaveHangoutResponseDTO+Mapping.swift in Sources */,
 				A71411B428985F8A002D4714 /* ProfileEditIntroduceViewModel.swift in Sources */,
 				A739ABA4289D758300C6CE90 /* ProfileHangoutCellHolderView.swift in Sources */,
 				AFEC36B02902918D00687C18 /* WriteReviewViewController.swift in Sources */,
@@ -3008,6 +3084,7 @@
 				A71411C128985F8A002D4714 /* ProfileDetailPersonalityView.swift in Sources */,
 				A75B11BD283C993C00C49597 /* ReportImageSectionView.swift in Sources */,
 				A72E6F0B2894113E00E06BED /* DefaultNetworkCheckRepository.swift in Sources */,
+				D643CF842944A8030065BA51 /* CategoryView.swift in Sources */,
 				A75B11BB283C8A4000C49597 /* ReportWritingSectionView.swift in Sources */,
 				A7615E2D28579BE900A09B2B /* RxKeyboard.swift in Sources */,
 				A739ABA6289D7BF400C6CE90 /* ProfileHangoutHolderView.swift in Sources */,
@@ -3180,9 +3257,14 @@
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10.1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bappy/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow \"Bappy\" to access your camera to take a picture.";
@@ -3200,10 +3282,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.4;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -3218,9 +3304,13 @@
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10.1;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Bappy/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow \"Bappy\" to access your camera to take a picture.";
@@ -3238,10 +3328,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.4;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.newrience.Bappy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -3344,6 +3438,14 @@
 				version = 13.2.0;
 			};
 		};
+		D64D7A532941D8D80024EF91 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		D6C0326B290F3B140047192F /* XCRemoteSwiftPackageReference "kakao-partner-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-partner-ios-sdk.git";
@@ -3437,6 +3539,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A7CE0F9B2848D3F30063458F /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		D64D7A542941D8D80024EF91 /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D64D7A532941D8D80024EF91 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
+		D6B7249F2939F8B1004063BA /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A76C212128439B5300044A34 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		D6B724A12939F99C004063BA /* FirebaseAnalyticsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A76C212128439B5300044A34 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsSwift;
+		};
+		D6B724A32939F9B7004063BA /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A7CE0F96284898B40063458F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 		D6C0326C290F3B150047192F /* KakaoPartnerSDKShare */ = {
 			isa = XCSwiftPackageProductDependency;

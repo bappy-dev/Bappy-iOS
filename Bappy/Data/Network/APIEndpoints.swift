@@ -164,6 +164,15 @@ extension APIEndpoints {
             contentType: .multipart)
     }
     
+    static func saveHangout(with hangoutDTO: SaveHangoutRequestDTO, id: String, data: Data) -> Endpoint<SaveHangoutResponseDTO> {
+        return Endpoint(baseURL: BAPPY_API_BASEURL,
+                        path: "hangout/\(id)",
+                        method: .patch,
+                        bodyParameters: hangoutDTO,
+                        imageDatas: [data],
+                        contentType: .multipart)
+    }
+    
     static func deleteHangout(hangoutID: String) -> Endpoint<DeleteHangoutResponseDTO> {
         return Endpoint(
             baseURL: BAPPY_API_BASEURL,

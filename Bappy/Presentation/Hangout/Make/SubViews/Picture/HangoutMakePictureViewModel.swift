@@ -16,6 +16,7 @@ final class HangoutMakePictureViewModel: ViewModelType {
     struct Input {
         var pictureButtonTapped: AnyObserver<Void> // <-> View
         var picture: AnyObserver<UIImage?> // <-> Parent
+        var pictureURL: AnyObserver<URL?>
     }
     
     struct Output {
@@ -23,6 +24,7 @@ final class HangoutMakePictureViewModel: ViewModelType {
         var hideDefaultImage: Signal<Bool> // <-> View
         var pictureButtonTapped: Signal<Void> // <-> Parent
         var isValid: Signal<Bool> // <-> Parent
+        var pictureURL: Signal<URL?>
     }
     
     let dependency: Dependency
@@ -32,6 +34,7 @@ final class HangoutMakePictureViewModel: ViewModelType {
     
     private let pictureButtonTapped$ = PublishSubject<Void>()
     private let picture$ = PublishSubject<UIImage?>()
+    private let pictureURL$ = BehaviorSubject<URL?>(value: nil)
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
@@ -44,19 +47,23 @@ final class HangoutMakePictureViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: false)
         let pictureButtonTapped = pictureButtonTapped$
             .asSignal(onErrorJustReturn: Void())
+        let pictureURL = pictureURL$
+            .asSignal(onErrorJustReturn: nil)
         let isValid = hideDefaultImage
         
         // MARK: Input & Output
         self.input = Input(
             pictureButtonTapped: pictureButtonTapped$.asObserver(),
-            picture: picture$.asObserver()
+            picture: picture$.asObserver(),
+            pictureURL: pictureURL$.asObserver()
         )
         
         self.output = Output(
             picture: picture,
             hideDefaultImage: hideDefaultImage,
             pictureButtonTapped: pictureButtonTapped,
-            isValid: isValid
+            isValid: isValid,
+            pictureURL: pictureURL
         )
     }
 }

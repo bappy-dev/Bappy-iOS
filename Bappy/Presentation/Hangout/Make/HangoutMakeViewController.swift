@@ -63,15 +63,21 @@ final class HangoutMakeViewController: UIViewController {
         layout()
         bind()
         addTapGestureOnScrollView()
+        settingForEdit()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("deinit HangoutMakeViewController")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        UserDefaults.standard.set(Date(), forKey: "startMake")
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
@@ -135,23 +141,43 @@ final class HangoutMakeViewController: UIViewController {
         backButton.imageEdgeInsets = .init(top: 13.0, left: 16.5, bottom: 13.0, right: 16.5)
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = false
+        
+    }
+    
+    private func settingForEdit() {
+        let hangout = viewModel.dependency.hangout
+        if hangout != nil {
+            viewModel.subViewModels.titleViewModel.input.text.onNext(hangout?.title ?? "")
+            viewModel.subViewModels.languageViewModel.input.language.onNext(hangout?.language ?? "")
+            viewModel.input.language.onNext(hangout?.language ?? "")
+            viewModel.subViewModels.openchatViewModel.input.text.onNext(hangout?.openchatURL ?? "")
+            viewModel.subViewModels.pictureViewModel.input.pictureURL.onNext(hangout?.postImageURL)
+            viewModel.subViewModels.planViewModel.input.text.onNext(hangout?.plan ?? "")
+            viewModel.subViewModels.timeViewModel.input.dateDoneButtonTapped.onNext(())
+            viewModel.subViewModels.timeViewModel.input.calendarDate.onNext(hangout?.meetTime)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+                self.viewModel.subViewModels.timeViewModel.input.timeDoneButtonTapped.onNext(())
+                self.viewModel.subViewModels.timeViewModel.input.timeDate.onNext(hangout?.meetTime)
+            }
+            let map = Map(name: hangout!.place.name, address: hangout!.place.address, coordinates: hangout!.place.coordinates, iconURL: nil)
+            viewModel.subViewModels.placeViewModel.input.map.onNext(map)
+            viewModel.input.place.onNext(map)
+        }
     }
     
     private func layout() {
-        view.addSubview(progressBarView)
+        view.addSubviews([progressBarView, backButton, scrollView, categoryView, titleView, timeView, placeView, pictureView, planView, languageView, openchatView, limitView, continueButtonView])
         progressBarView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
         }
         
-        view.addSubview(backButton)
         backButton.snp.makeConstraints {
             $0.top.equalTo(progressBarView.snp.bottom).offset(15.0)
             $0.leading.equalToSuperview().inset(5.5)
             $0.width.height.equalTo(44.0)
         }
 
-        view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom)
             $0.leading.trailing.equalToSuperview()
@@ -164,69 +190,59 @@ final class HangoutMakeViewController: UIViewController {
             $0.height.equalToSuperview()
         }
         
-        view.addSubview(categoryView)
         categoryView.snp.makeConstraints {
             $0.top.leading.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
         }
         
-        view.addSubview(titleView)
         titleView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(categoryView.snp.trailing)
         }
 
-        view.addSubview(timeView)
         timeView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(titleView.snp.trailing)
         }
         
-        view.addSubview(placeView)
         placeView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(timeView.snp.trailing)
         }
         
-        view.addSubview(pictureView)
         pictureView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(placeView.snp.trailing)
         }
         
-        view.addSubview(planView)
         planView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(pictureView.snp.trailing)
         }
         
-        view.addSubview(languageView)
         languageView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(planView.snp.trailing)
         }
         
-        view.addSubview(openchatView)
         openchatView.snp.makeConstraints {
             $0.top.bottom.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(languageView.snp.trailing)
         }
         
-        view.addSubview(limitView)
         limitView.snp.makeConstraints {
             $0.top.bottom.trailing.equalTo(contentView)
             $0.width.equalTo(view.frame.width)
             $0.leading.equalTo(openchatView.snp.trailing)
         }
         
-        view.addSubview(continueButtonView)
         continueButtonView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(bottomPadding * 2.0 / 3.0)
@@ -251,7 +267,7 @@ extension HangoutMakeViewController {
         
         viewModel.output.page
             .map(CGFloat.init)
-            .map { CGPoint(x: UIScreen.main.bounds.width * $0, y: 0) }
+            .map { CGPoint(x: ScreenUtil.width * $0, y: 0) }
             .drive(scrollView.rx.setContentOffset)
             .disposed(by: disposeBag)
 

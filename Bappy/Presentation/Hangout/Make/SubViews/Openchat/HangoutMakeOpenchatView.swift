@@ -21,7 +21,7 @@ final class HangoutMakeOpenchatView: UIView {
     
     private let openchatCaptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Make Openchat\nor Zoom"
+        label.text = "Make Kakao chat\nor Google meet"
         label.font = .roboto(size: 36.0, family: .Bold)
         label.textColor = .bappyBrown
         label.numberOfLines = 2
@@ -30,12 +30,11 @@ final class HangoutMakeOpenchatView: UIView {
     
     private let openchatTextField: UITextField = {
         let textField = UITextField()
-        textField.font = .roboto(size: 14.0)
+        textField.font = .roboto(size: 13.0)
         textField.textColor = .bappyBrown
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Enter the URL or Leave your Kakao ID",
+            string: "Enter the URL or any message you wanna write.",
             attributes: [.foregroundColor: UIColor.bappyGray])
-        textField.keyboardType = .URL
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         return textField
@@ -50,7 +49,18 @@ final class HangoutMakeOpenchatView: UIView {
     private let guideButton: UIButton = {
         let button = UIButton(type: .system)
         button.setBappyTitle(
-            title: "Openchat guide",
+            title: "Making guide",
+            font: .roboto(size: 10.0),
+            color: .black.withAlphaComponent(0.33),
+            hasUnderline: true
+        )
+        return button
+    }()
+    
+    private let copyButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setBappyTitle(
+            title: "Copy Bappy Openchat",
             font: .roboto(size: 10.0),
             color: .black.withAlphaComponent(0.33),
             hasUnderline: true
@@ -96,48 +106,50 @@ final class HangoutMakeOpenchatView: UIView {
     }
     
     private func layout() {
-        self.addSubview(openchatCaptionLabel)
+        self.addSubviews([openchatCaptionLabel, scrollView])
+        scrollView.addSubview(contentView)
+        contentView.addSubviews([openchatTextField, underlinedView, ruleDescriptionLabel, guideButton, copyButton])
+        
         openchatCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(24.0)
             $0.leading.equalToSuperview().inset(43.0)
         }
         
-        self.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(openchatCaptionLabel.snp.bottom).offset(5.0)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
-        scrollView.addSubview(contentView)
+        
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(1000.0)
         }
         
-        contentView.addSubview(openchatTextField)
         openchatTextField.snp.makeConstraints {
             $0.top.equalToSuperview().inset(92.0)
             $0.leading.trailing.equalToSuperview().inset(47.0)
         }
         
-        contentView.addSubview(underlinedView)
         underlinedView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(44.0)
             $0.height.equalTo(2.0)
             $0.top.equalTo(openchatTextField.snp.bottom).offset(7.0)
         }
         
-        contentView.addSubview(guideButton)
         guideButton.snp.makeConstraints {
             $0.top.equalTo(underlinedView.snp.bottom).offset(4.0)
             $0.trailing.equalTo(underlinedView).offset(-3.0)
         }
         
-        contentView.addSubview(ruleDescriptionLabel)
         ruleDescriptionLabel.snp.makeConstraints {
             $0.top.equalTo(underlinedView.snp.bottom).offset(10.0)
             $0.leading.equalTo(underlinedView).offset(5.0)
+        }
+        
+        copyButton.snp.makeConstraints {
+            $0.trailing.equalTo(guideButton.snp.trailing)
+            $0.top.equalTo(guideButton.snp.bottom).offset(5)
         }
     }
 }
@@ -149,8 +161,18 @@ extension HangoutMakeOpenchatView {
             .debounce(RxTimeInterval.nanoseconds(1000), scheduler: MainScheduler.instance)
             .map { URL(string: Constant.instaURL) }
             .bind {
+                EventLogger.logEvent("click", parameters: ["name": "HangoutMakeOpenchatView",
+                                                           "component" : "Button",
+                                                           "button": "guide_button"])
                 guard let url = $0 else { return }
                 UIApplication.shared.open(url)
+            }.disposed(by: disposeBag)
+
+        copyButton.rx.tap
+            .bind { [weak self] _ in
+                let url = "https://open.kakao.com/o/goFgooSe"
+                self?.viewModel.input.text.onNext(url)
+                self?.openchatTextField.text = url
             }.disposed(by: disposeBag)
         
         openchatTextField.rx.text.orEmpty
@@ -169,6 +191,10 @@ extension HangoutMakeOpenchatView {
             .emit(onNext: { [weak self] height in
                 self?.updateTextFieldPosition(bottomButtonHeight: height)
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.output.openchatText
+            .emit(to: openchatTextField.rx.text)
             .disposed(by: disposeBag)
     }
 }

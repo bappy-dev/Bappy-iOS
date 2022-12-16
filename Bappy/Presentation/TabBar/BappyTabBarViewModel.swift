@@ -31,6 +31,7 @@ final class BappyTabBarViewModel: ViewModelType {
     }
     
     struct Input {
+        var viewWillAppear: AnyObserver<Bool>
         var homeButtonTapped: AnyObserver<Void> // <-> View
         var profileButtonTapped: AnyObserver<Void> // <-> View
         var writeButtonTapped: AnyObserver<Void> // <-> View
@@ -56,6 +57,7 @@ final class BappyTabBarViewModel: ViewModelType {
     private let selectedIndex$: BehaviorSubject<Int>
     private let popToSelectedRootView$ = PublishSubject<Void>()
     
+    private let viewWillAppear$ = PublishSubject<Bool>()
     private let homeButtonTapped$ = PublishSubject<Void>()
     private let profileButtonTapped$ = PublishSubject<Void>()
     private let writeButtonTapped$ = PublishSubject<Void>()
@@ -101,6 +103,7 @@ final class BappyTabBarViewModel: ViewModelType {
 
         // MARK: Input & Output
         self.input = Input(
+            viewWillAppear: viewWillAppear$.asObserver(),
             homeButtonTapped: homeButtonTapped$.asObserver(),
             profileButtonTapped: profileButtonTapped$.asObserver(),
             writeButtonTapped: writeButtonTapped$.asObserver()
@@ -119,6 +122,12 @@ final class BappyTabBarViewModel: ViewModelType {
         // MARK: Binding
         self.currentUser$ = currentUser$
         self.selectedIndex$ = selectedIndex$
+        
+        viewWillAppear$
+            .take(1)
+            .bind { _ in
+                EventLogger.logEvent("app_start", parameters: ["description": dependency.user.id])
+            }.disposed(by: disposeBag)
         
         homeButtonTapped$
             .withLatestFrom(selectedIndex)

@@ -11,6 +11,7 @@ import FirebaseCore
 import GoogleSignIn
 import FacebookCore
 import KakaoSDKCommon
+import FirebaseCrashlytics
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -35,7 +36,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         DefaultNotificationRepository.shared.requestAuthorization(completion: nil)
         
+        // Google Ananytics Setting
+        EventLogger.setProvider(FBAnalytics())
+        
         application.registerForRemoteNotifications()
+        Crashlytics.crashlytics().log("pass appdelegate")
         return true
     }
     
@@ -43,7 +48,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
         print("DEBUG: deviceToken -> ", deviceTokenString)
-        
+        UserDefaults.standard.set(deviceTokenString, forKey: "deviceToken")
         Messaging.messaging().apnsToken = deviceToken
     }
     

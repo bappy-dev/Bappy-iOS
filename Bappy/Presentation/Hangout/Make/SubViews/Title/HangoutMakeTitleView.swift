@@ -76,7 +76,7 @@ final class HangoutMakeTitleView: UIView {
     
     private func configure() {
         self.backgroundColor = .white
-        ruleDescriptionLabel.text = "Enter 10-20 characters long"
+        ruleDescriptionLabel.text = "Enter 10-35 characters long"
         scrollView.isScrollEnabled = false
     }
     
@@ -92,7 +92,7 @@ final class HangoutMakeTitleView: UIView {
             $0.top.equalTo(titleCaptionLabel.snp.bottom).offset(5.0)
             $0.leading.trailing.bottom.equalToSuperview()
         }
-
+        
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()

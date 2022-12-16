@@ -33,14 +33,6 @@ final class HangoutParticipantsSectionView: UIView {
         return lbl
     }()
     
-    private let likedPeopleStackView: UIStackView = {
-        let view = UIStackView()
-        view.spacing = 6
-        view.axis = .horizontal
-        view.distribution = .fillEqually
-        return view
-    }()
-    
     private let joinCaptionLabel: UILabel = {
         let label = UILabel()
         label.font = .roboto(size: 20.0, family: .Medium)
@@ -97,7 +89,7 @@ final class HangoutParticipantsSectionView: UIView {
     }
     
     private func layout() {
-        self.addSubviews([joinCaptionLabel, numOfParticipantsLabel, collectionView, emptyJoinedLbl, heartImageView, likedPeopleCountLbl, likedPeopleStackView])
+        self.addSubviews([joinCaptionLabel, numOfParticipantsLabel, collectionView, emptyJoinedLbl, heartImageView, likedPeopleCountLbl])
         
         joinCaptionLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(8.0)
@@ -113,6 +105,7 @@ final class HangoutParticipantsSectionView: UIView {
             $0.top.equalTo(joinCaptionLabel.snp.bottom).offset(15.0)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(48.0)
+            $0.bottom.equalToSuperview()
         }
         
         emptyJoinedLbl.snp.makeConstraints {
@@ -120,23 +113,17 @@ final class HangoutParticipantsSectionView: UIView {
             $0.centerX.equalToSuperview()
         }
         
-        heartImageView.snp.makeConstraints {
-            $0.width.height.equalTo(32)
-            $0.top.equalTo(collectionView.snp.bottom).offset(16)
-            $0.bottom.equalToSuperview()
-        }
-        
         likedPeopleCountLbl.snp.makeConstraints {
-            $0.leading.equalTo(heartImageView.snp.trailing).offset(4)
+            $0.trailing.equalTo(numOfParticipantsLabel.snp.leading).offset(-16)
+            
             $0.bottom.equalToSuperview()
-            $0.centerY.equalTo(heartImageView)
+            $0.centerY.equalTo(numOfParticipantsLabel)
         }
         
-        likedPeopleStackView.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(33)
-            $0.height.equalTo(32)
-            $0.centerY.equalTo(heartImageView)
-            $0.leading.equalTo(likedPeopleCountLbl.snp.trailing).offset(14)
+        heartImageView.snp.makeConstraints {
+            $0.trailing.equalTo(likedPeopleCountLbl.snp.leading).offset(-4)
+            $0.width.height.equalTo(32)
+            $0.centerY.equalTo(likedPeopleCountLbl)
         }
     }
 }
@@ -146,6 +133,12 @@ extension HangoutParticipantsSectionView {
     private func bind() {
         collectionView.rx.modelSelected(Hangout.Info.self)
             .map(\.id)
+            .map { EventLogger.logEvent("profile tapped", parameters: ["id": $0]); return $0 }
+            .bind(to: viewModel.input.selectedUserID)
+            .disposed(by: disposeBag)
+        
+        heartImageView.rx.tap
+            .map { EventLogger.logEvent("like list tapped"); return "" }
             .bind(to: viewModel.input.selectedUserID)
             .disposed(by: disposeBag)
         
@@ -154,9 +147,9 @@ extension HangoutParticipantsSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.joinedIDs
-            .map { [weak self] IDS -> [Hangout.Info] in
-                self?.emptyJoinedLbl.isHidden = !IDS.isEmpty
-                return IDS
+            .map { [weak self] ids -> [Hangout.Info] in
+                self?.emptyJoinedLbl.isHidden = !ids.isEmpty
+                return ids
             }.drive(collectionView.rx.items(cellIdentifier: ParticipantImageCell.reuseIdentifier, cellType: ParticipantImageCell.self)) { _, element, cell in
                 cell.bind(with: element.imageURL)
             }.disposed(by: disposeBag)
@@ -166,22 +159,6 @@ extension HangoutParticipantsSectionView {
                 guard let self = self else { return }
                 self.heartImageView.isSelected = !infos.isEmpty
                 self.likedPeopleCountLbl.text = "+\(infos.count)"
-                for idx in 0..<infos.count {
-                    if idx > 4 { return }
-                    let info = infos[idx]
-                    
-                    let button = CircleProfileView(info: info)
-                    
-                    if idx == 4 { button.isLastView = true; button.info = Hangout.Info(id: "", imageURL: info.imageURL) }
-                    
-                    button.rx.tap
-                        .map { button.info.id }
-                        .bind(to: self.viewModel.input.selectedUserID)
-                        .disposed(by: self.disposeBag)
-                    
-                    
-                    self.likedPeopleStackView.addArrangedSubview(button)
-                }
             }.disposed(by: disposeBag)
     }
 }

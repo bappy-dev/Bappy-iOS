@@ -38,6 +38,15 @@ extension UIWindow {
     }
 }
 
+// MARK: - UIApplication
+extension UIApplication {
+    static var statusBarHeight: CGFloat {
+        let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        return window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 20
+    }
+}
+
+
 // MARK: - UINavigationController
 extension UINavigationController {
     func pushViewController(_ viewController: UIViewController, transitionType: CATransitionType) {
@@ -84,6 +93,11 @@ extension UIFont {
 
 // MARK: - UIView
 extension UIView {
+    convenience init(color: UIColor) {
+        self.init()
+        self.backgroundColor = color
+    }
+    
     func addBappyShadow(shadowOffsetHeight: CGFloat = 2.0, shouldSetShadowPath: Bool = true) {
         self.clipsToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
@@ -249,7 +263,8 @@ extension UIButton {
     func setBappyTitle(title: String,
                        font: UIFont = .roboto(size: 16.0, family: .Regular),
                        color: UIColor = .bappyBrown,
-                       hasUnderline: Bool = false) {
+                       hasUnderline: Bool = false,
+                       isSelected: Bool = false) {
         var attributes: [NSAttributedString.Key: Any] = [
             .font: font,
             .foregroundColor: color
@@ -261,7 +276,11 @@ extension UIButton {
         }
         
         let attributedString = NSAttributedString(string: title, attributes: attributes)
-        self.setAttributedTitle(attributedString, for: .normal)
+        if isSelected {
+            self.setAttributedTitle(attributedString, for: .selected)
+        } else {
+            self.setAttributedTitle(attributedString, for: .normal)
+        }
     }
 }
 

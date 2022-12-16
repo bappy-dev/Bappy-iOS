@@ -20,10 +20,11 @@ final class HangoutMainSectionViewModel: ViewModelType {
         }
         var language: Language { hangout.language }
         var placeName: String { hangout.place.name }
-        var openchatURL: URL? { hangout.openchatURL }
+        var openchatURL: String { hangout.openchatURL }
     }
     
     struct Input {
+        var userParticipating: AnyObserver<Bool>
         var openchatButtonTapped: AnyObserver<Void> // <-> View
     }
     
@@ -33,7 +34,8 @@ final class HangoutMainSectionViewModel: ViewModelType {
         var language: Signal<Language> // <-> View
         var placeName: Signal<String> // <-> View
         var shouldHideOpenchat: Driver<Bool> // <-> View
-        var goOpenchat: Signal<URL?> // <-> View
+        var isSelected: Signal<Bool>
+        var goOpenchat: Signal<String> // <-> View
     }
     
     let dependency: Dependency
@@ -46,9 +48,11 @@ final class HangoutMainSectionViewModel: ViewModelType {
     private let meetTime$: BehaviorSubject<String>
     private let language$: BehaviorSubject<Language>
     private let placeName$: BehaviorSubject<String>
-    private let openchatURL$: BehaviorSubject<URL?>
+    private let isSelected$: BehaviorSubject<Bool>
+    private let openchatURL$: BehaviorSubject<String>
     
     private let openchatButtonTapped$ = PublishSubject<Void>()
+    private let userParticipating$ = PublishSubject<Bool>()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -59,7 +63,8 @@ final class HangoutMainSectionViewModel: ViewModelType {
         let meetTime$ = BehaviorSubject<String>(value: dependency.meetTime)
         let language$ = BehaviorSubject<Language>(value: dependency.language)
         let placeName$ = BehaviorSubject<String>(value: dependency.placeName)
-        let openchatURL$ = BehaviorSubject<URL?>(value: dependency.openchatURL)
+        let openchatURL$ = BehaviorSubject<String>(value: dependency.openchatURL)
+        let isSelected$ = BehaviorSubject<Bool>(value: false)
         
         let title = title$
             .asSignal(onErrorJustReturn: dependency.title)
@@ -69,15 +74,29 @@ final class HangoutMainSectionViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: dependency.language)
         let placeName = placeName$
             .asSignal(onErrorJustReturn: dependency.placeName)
-        let shouldHideOpenchat = isUserParticipating$
+        let isSelected = openchatURL$
+            .map { urlStr -> Bool in
+                if urlStr.contains("https://open.kakao.com/o/") ||
+                    urlStr.contains("https://zoom.us/") ||
+                    urlStr.contains("https://meet.google.com/") ||
+                    urlStr.contains("www.bappy.kr"),
+                    let _ = URL(string: urlStr) {
+                    return false
+                } else {
+                    return true
+                }
+            }.asSignal(onErrorJustReturn: true)
+        let shouldHideOpenchat = userParticipating$
             .map { !$0 }
             .asDriver(onErrorJustReturn: !dependency.isUserParticipating)
+            .startWith(!dependency.isUserParticipating)
         let goOpenchat = openchatButtonTapped$
             .withLatestFrom(openchatURL$)
-            .asSignal(onErrorJustReturn: dependency.openchatURL)
+            .asSignal(onErrorJustReturn: "")
         
         // MARK: Input & Output
         self.input = Input(
+            userParticipating: userParticipating$.asObserver(),
             openchatButtonTapped: openchatButtonTapped$.asObserver()
         )
         
@@ -87,6 +106,7 @@ final class HangoutMainSectionViewModel: ViewModelType {
             language: language,
             placeName: placeName,
             shouldHideOpenchat: shouldHideOpenchat,
+            isSelected: isSelected,
             goOpenchat: goOpenchat
         )
         
@@ -97,5 +117,6 @@ final class HangoutMainSectionViewModel: ViewModelType {
         self.language$ = language$
         self.placeName$ = placeName$
         self.openchatURL$ = openchatURL$
+        self.isSelected$ = isSelected$
     }
 }

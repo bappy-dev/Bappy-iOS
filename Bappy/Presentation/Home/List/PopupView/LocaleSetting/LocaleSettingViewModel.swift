@@ -194,13 +194,13 @@ final class LocaleSettingViewModel: ViewModelType {
             .bind(to: locationss$)
             .disposed(by: disposeBag)
         
-        let asdas = editingDidBegin$
+        let checkBeforeSearch = editingDidBegin$
             .withLatestFrom(userGPSWithAuthorization$)
-            .filter { !$0.gps }
+            .filter { $0.authorization != .authorizedWhenInUse || !$0.gps }
             .map { _ in }
         
         // 4가지 상태(GPS, Authorization): Off/Off, On/Off, Off/On, On/On
-        let startFlow = Observable.merge(localeButtonTapped$, asdas)
+        let startFlow = Observable.merge(localeButtonTapped$, checkBeforeSearch)
             .withLatestFrom(userGPSWithAuthorization$)
             .share()
         
@@ -213,7 +213,7 @@ final class LocaleSettingViewModel: ViewModelType {
         
         let startNormalFlow = startFlow
             .filter { $0.authorization != .denied }
-            .map { print("들어옴"); return (gps: $0, authorization: $1 == .authorizedWhenInUse) }
+            .map { (gps: $0, authorization: $1 == .authorizedWhenInUse) }
             .share()
         
         // 1. Off/Off - 권한 요청 후 승인시 서버에 On 상태 저장

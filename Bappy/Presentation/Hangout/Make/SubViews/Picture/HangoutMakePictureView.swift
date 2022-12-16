@@ -90,6 +90,14 @@ extension HangoutMakePictureView {
             .bind(to: viewModel.input.pictureButtonTapped)
             .disposed(by: disposeBag)
         
+        viewModel.output.pictureURL
+            .emit { [weak self] in
+                if $0 != nil {
+                    self?.addPictureImageView.isHidden = true
+                    self?.pictureButton.kf.setImage(with: $0, for: .normal)
+                }
+            }.disposed(by: disposeBag)
+        
         viewModel.output.picture
             .compactMap { $0 }
             .emit(to: pictureButton.rx.image(for: .normal))

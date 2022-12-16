@@ -25,7 +25,7 @@ final class HomeListViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(HangoutCell.self, forCellReuseIdentifier: HangoutCell.reuseIdentifier)
         tableView.separatorStyle = .none
-        tableView.rowHeight = UIScreen.main.bounds.width / 390.0 * 333.0 + 11.0
+        tableView.rowHeight = ScreenUtil.width / 390.0 * 333.0 + 11.0
         return tableView
     }()
     
@@ -105,9 +105,12 @@ final class HomeListViewController: UIViewController {
 // MARK: - Bind
 extension HomeListViewController {
     private func bind() {
-//        self.rx.viewWillAppear
-//            .bind(to: viewModel.input.viewWillAppear)
-//            .disposed(by: disposeBag)
+        self.rx.viewWillAppear
+            .map { _ in UserDefaults.standard.bool(forKey: "hangout_make") }
+            .startWith(true)
+            .filter { $0 }
+            .bind(to: viewModel.input.viewWillAppear)
+            .disposed(by: disposeBag)
         
         self.rx.viewWillDisappear
             .bind(to: viewModel.input.viewWillDisappear)

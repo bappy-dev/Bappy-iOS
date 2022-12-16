@@ -31,6 +31,7 @@ final class HangoutDetailViewController: UIViewController {
     private var participantsSectionView: HangoutParticipantsSectionView
     
     private let hangoutButton = HangoutButton()
+    private let editButton = HangoutButton(state: .edit)
     private let reviewButton: UIButton = {
         let btn = UIButton()
         btn.backgroundColor = .bappyYellow
@@ -54,7 +55,12 @@ final class HangoutDetailViewController: UIViewController {
         view.axis = .vertical
         view.spacing =  18
         view.alignment = .center
-        view.addArrangedSubviews([hangoutButton, reviewButton, reportButton])
+        let horizonStackView = UIStackView()
+        horizonStackView.axis = .horizontal
+        horizonStackView.spacing = 20
+        horizonStackView.distribution = .fillEqually
+        horizonStackView.addArrangedSubviews([hangoutButton, editButton])
+        view.addArrangedSubviews([horizonStackView, reviewButton, reportButton])
         return view
     }()
     
@@ -184,6 +190,8 @@ final class HangoutDetailViewController: UIViewController {
             $0.bottom.equalToSuperview().inset(90.0)
             $0.height.greaterThanOrEqualTo(59).priority(.required)
             $0.height.lessThanOrEqualTo(121).priority(.high)
+            $0.leading.equalToSuperview().inset(18)
+            $0.centerX.equalToSuperview()
         }
         
         titleTopView.snp.makeConstraints {
@@ -203,11 +211,20 @@ final class HangoutDetailViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(7.3)
             $0.width.height.equalTo(50.0)
         }
+        
+        editButton.snp.updateConstraints {
+            $0.width.equalTo(ScreenUtil.width / 2 - 30)
+        }
     }
 }
 // MARK: - Bind
 extension HangoutDetailViewController {
     private func bind() {
+        self.rx.viewDidAppear
+            .bind { _ in
+                UserDefaults.standard.setValue(Date(), forKey: "detail_start")
+            }.disposed(by: disposeBag)
+        
         self.rx.viewWillAppear
             .map { _ in }
             .bind(to: viewModel.input.viewWillAppear)
@@ -231,6 +248,10 @@ extension HangoutDetailViewController {
         
         shareButton.rx.tap
             .bind(to: viewModel.input.shareButtonTapped)
+            .disposed(by: disposeBag)
+        
+        editButton.rx.tap
+            .bind(to: viewModel.input.editButtonTapped)
             .disposed(by: disposeBag)
         
         scrollView.rx.didScroll
@@ -278,6 +299,22 @@ extension HangoutDetailViewController {
                 self?.present(popupView, animated: false)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.output.showMakeViewModel
+            .compactMap { $0 }
+            .emit { [weak self] vm in
+                let vc = HangoutMakeViewController(viewModel: vm)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }.disposed(by: disposeBag)
+        
+        viewModel.output.showEditButton
+            .emit { [weak self] bool in
+                self?.editButton.isHidden = !bool
+                
+                self?.hangoutButton.snp.updateConstraints {
+                    $0.width.equalTo(!bool ? 250 : ScreenUtil.width / 2 - 30)
+                }
+            }.disposed(by: disposeBag)
         
         viewModel.output.hangoutButtonState
             .emit(onNext: { [weak self] state in

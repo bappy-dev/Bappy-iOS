@@ -12,11 +12,13 @@ import RxCocoa
 final class HangoutMakeLimitViewModel: ViewModelType {
     
     struct Dependency {
+        var limitNumber: Int?
         var minimumNumber: Int { 4 }
-        var maximumNumber: Int { 10 }
+        var maximumNumber: Int { 30 }
     }
     
     struct Input {
+        var maxButtonTapped: AnyObserver<Void> // <-> View
         var minusButtonTapped: AnyObserver<Void> // <-> View
         var plusButtonTapped: AnyObserver<Void> // <-> View
     }
@@ -40,12 +42,13 @@ final class HangoutMakeLimitViewModel: ViewModelType {
     
     private let minusButtonTapped$ = PublishSubject<Void>()
     private let plusButtonTapped$ = PublishSubject<Void>()
+    private let maxButtonTapped$ = PublishSubject<Void>()
     
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
         // MARK: Streams
-        let number$ = BehaviorSubject<Int>(value: dependency.minimumNumber)
+        let number$ = BehaviorSubject<Int>(value: dependency.limitNumber ?? dependency.minimumNumber)
         let minimumNumber$ = BehaviorSubject<Int>(value: dependency.minimumNumber)
         let maximumNumber$ = BehaviorSubject<Int>(value: dependency.maximumNumber)
         
@@ -67,6 +70,7 @@ final class HangoutMakeLimitViewModel: ViewModelType {
         
         // MARK: Input & Output
         self.input = Input(
+            maxButtonTapped: maxButtonTapped$.asObserver(),
             minusButtonTapped: minusButtonTapped$.asObserver(),
             plusButtonTapped: plusButtonTapped$.asObserver()
         )
@@ -83,6 +87,11 @@ final class HangoutMakeLimitViewModel: ViewModelType {
         self.number$ = number$
         self.minimumNumber$ = minimumNumber$
         self.maximumNumber$ = maximumNumber$
+        
+        maxButtonTapped$
+            .withLatestFrom(maximumNumber$)
+            .bind(to: number$)
+            .disposed(by: disposeBag)
         
         minusButtonTapped$
             .withLatestFrom(number$)

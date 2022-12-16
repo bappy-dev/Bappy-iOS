@@ -13,11 +13,23 @@ final class SelectionButton: UIButton {
     
     // MARK: Properties
     let title: String
-    var font: UIFont = .roboto(size: 16.0, family: .Medium)
+    var font: UIFont = .roboto(size: 16.0, family: .Regular)
+    var fontColor: UIColor = .bappyGray
+    private var isSmall: Bool
+    var smalling: Bool {
+        get {
+            return isSmall
+        }
+        set {
+            self.isSmall = newValue
+            configure(self.isSmall)
+        }
+    }
     
     // MARK: Lifecycle
     init(title: String, isSmall: Bool = false) {
         self.title = title
+        self.isSmall = isSmall
         
         super.init(frame: .zero)
         configure(isSmall)
@@ -34,6 +46,10 @@ final class SelectionButton: UIButton {
         self.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 1.0
+        
+        self.font = isSmall ? .roboto(size: 14.0, family: .Regular) : .roboto(size: 16.0, family: .Regular)
+        self.fontColor = isSmall && !isEnabled ? .bappyBrown : .bappyGray
+        
         // 임시
         self.setBappyTitle(
             title: title,
@@ -60,7 +76,7 @@ extension Reactive where Base: SelectionButton {
                 button.setBappyTitle(
                     title: base.title,
                     font: base.font,
-                    color: .bappyGray
+                    color: base.fontColor
                 )
                 button.backgroundColor = .bappyLightgray
                 button.clipsToBounds = true

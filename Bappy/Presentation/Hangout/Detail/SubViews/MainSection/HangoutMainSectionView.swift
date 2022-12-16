@@ -9,7 +9,8 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
- 
+import Toast
+
 final class HangoutMainSectionView: UIView {
     
     // MARK: Properties
@@ -76,17 +77,27 @@ final class HangoutMainSectionView: UIView {
     }()
     
     private let openchatButton: UIButton = {
-        let button = UIButton(type: .system)
+        let button = UIButton()
         let image = UIImage(named: "detail_arrow")
+        let seletedImage = UIImage(systemName: "list.clipboard")
+        
         button.setImage(image, for: .normal)
+        button.setImage(seletedImage, for: .selected)
         button.semanticContentAttribute = .forceRightToLeft
         button.setBappyTitle(
-            title: "Go Openchat   ",
+            title: "Go To URL   ",
             font: .roboto(size: 20.0, family: .Medium),
             hasUnderline: true
         )
-        button.adjustsImageWhenHighlighted = false
+        
+        button.setBappyTitle(
+            title: "Copy The Message   ",
+            font: .roboto(size: 20.0, family: .Medium),
+            hasUnderline: true,
+            isSelected: true
+        )
         button.isHidden = true
+        button.adjustsImageWhenHighlighted = false
         return button
     }()
     
@@ -118,14 +129,14 @@ final class HangoutMainSectionView: UIView {
         vStackView.distribution = .fillEqually
         vStackView.contentMode = .scaleAspectFit
         vStackView.spacing = 23.0
-
+        
         self.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(17.0)
             $0.leading.equalToSuperview().inset(25.0)
             $0.trailing.lessThanOrEqualToSuperview().inset(17.0)
         }
-
+        
         self.addSubview(vStackView)
         vStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(21.0)
@@ -133,26 +144,26 @@ final class HangoutMainSectionView: UIView {
             $0.width.equalTo(20.0)
             $0.bottom.equalToSuperview().inset(10.0)
         }
-
+        
         self.addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
             $0.centerY.equalTo(timeImageView)
             $0.leading.equalTo(vStackView.snp.trailing).offset(14.0)
         }
-
+        
         self.addSubview(languageLabel)
         languageLabel.snp.makeConstraints {
             $0.centerY.equalTo(languageImageView)
             $0.leading.equalTo(timeLabel)
         }
-
+        
         self.addSubview(placeLabel)
         placeLabel.snp.makeConstraints {
             $0.centerY.equalTo(placeImageView)
             $0.leading.equalTo(languageLabel)
             $0.trailing.lessThanOrEqualToSuperview().inset(20.0)
         }
-
+        
         self.addSubview(openchatButton)
         openchatButton.snp.makeConstraints {
             $0.centerY.equalTo(openchatImageView)
@@ -185,17 +196,31 @@ extension HangoutMainSectionView {
             .disposed(by: disposeBag)
         
         viewModel.output.shouldHideOpenchat
-            .drive(openchatImageView.rx.isHidden)
-            .disposed(by: disposeBag)
+            .drive { [weak self] in
+                self?.openchatImageView.isHidden = $0
+                self?.openchatButton.isHidden = $0
+            }.disposed(by: disposeBag)
         
-        viewModel.output.shouldHideOpenchat
-            .drive(openchatButton.rx.isHidden)
+        viewModel.output.isSelected
+            .emit(to: openchatButton.rx.isSelected)
             .disposed(by: disposeBag)
         
         viewModel.output.goOpenchat
-            .emit(onNext: { url in
-                if let url = url { UIApplication.shared.open(url) }
-            })
-            .disposed(by: disposeBag)
+            .emit { [weak self] urlStr in
+                EventLogger.logEvent("click", parameters: ["type": self?.openchatButton.isSelected ?? true ? "copy" : "openURL",
+                                                           "component": "button",
+                                                           "button": "openchat",
+                                                           "name": "HangoutMainSectionView"])
+                if self?.openchatButton.isSelected ?? true {
+                    self?.superview?.superview?.superview?.makeToast("The Message is Copied", position: .bottom, title: nil, image: nil, completion: nil)
+                    UIPasteboard.general.string = urlStr
+                } else {
+                    if let url = URL(string: urlStr) {
+                        UIApplication.shared.open(url)
+                    } else {
+                        self?.superview?.superview?.superview?.makeToast("Fail to Open URL")
+                    }
+                }
+            }.disposed(by: disposeBag)
     }
 }

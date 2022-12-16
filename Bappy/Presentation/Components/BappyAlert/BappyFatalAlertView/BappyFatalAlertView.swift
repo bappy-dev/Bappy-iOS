@@ -71,7 +71,7 @@ final class BappyFatalAlertView: UIView {
         self.alertTitle = title
         self.alertMessage = message
         self.actionTitle = actionTitle
-        super.init(frame: UIScreen.main.bounds)
+        super.init(frame: ScreenUtil.bounds)
         
         configure()
         layout()

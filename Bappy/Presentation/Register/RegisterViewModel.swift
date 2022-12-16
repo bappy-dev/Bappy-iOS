@@ -277,7 +277,7 @@ final class RegisterViewModel: ViewModelType {
 }
 
 private func getContentOffset(page: Int) -> CGPoint {
-    let x = UIScreen.main.bounds.width * CGFloat(page)
+    let x = ScreenUtil.width * CGFloat(page)
     return CGPoint(x: x, y: 0)
 }
 

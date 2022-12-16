@@ -19,7 +19,7 @@ final class DefaultGoogleMapImageRepository {
 
 extension DefaultGoogleMapImageRepository: GoogleMapImageRepository {
     func fetchMapImageData(key: String, coordinates: Coordinates) -> Single<Result<Data, Error>> {
-        let width = Int(UIScreen.main.bounds.width)
+        let width = Int(ScreenUtil.width)
         let height = Int(Double(width) * 0.42)
         
         let requestDTO = FetchMapImageRequestDTO(

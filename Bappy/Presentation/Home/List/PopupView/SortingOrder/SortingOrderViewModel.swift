@@ -19,7 +19,7 @@ final class SortingOrderViewModel: ViewModelType {
     
     struct Dependency {
         var sortingList: [Hangout.SortingOrder] {
-            [.Newest, .Nearest, .ManyViews, .manyLikes, .lessSeats]
+            return Hangout.SortingOrder.allCases
         }
     }
     

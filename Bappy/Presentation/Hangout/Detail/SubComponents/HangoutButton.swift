@@ -11,7 +11,7 @@ import RxSwift
 
 final class HangoutButton: UIButton {
     enum State: String {
-        case create, join, cancel, expired, closed
+        case create, join, cancel, expired, closed, edit, save
     }
     
     // MARK: Properties
@@ -26,6 +26,12 @@ final class HangoutButton: UIButton {
         layout()
     }
     
+    convenience init(state: State) {
+        self.init(frame: .zero)
+        hangoutState = state
+        updateButtonState(state)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -34,7 +40,7 @@ final class HangoutButton: UIButton {
     private func updateButtonState(_ state: State) {
         DispatchQueue.main.async {
             switch state {
-            case .create, .join:
+            case .create, .join, .edit, .save:
                 self.backgroundColor = .bappyYellow
                 self.setBappyTitle(
                     title: state.rawValue.uppercased(),

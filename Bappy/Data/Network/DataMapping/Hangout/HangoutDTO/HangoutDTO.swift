@@ -18,6 +18,7 @@ struct HangoutDTO: Decodable {
     let limitNumber: Int
     let currentNum: Int
     let likeCount: Int
+    let category: [String]
     let place: PlaceDTO
     let joinedUserIDs: [String]
     let joinedUserImageName: [String]
@@ -26,6 +27,7 @@ struct HangoutDTO: Decodable {
     let status: String
     let likeStatus: Bool
     let joinedStatus: Bool
+    let isUpdate: Bool
     
     private enum CodingKeys: String, CodingKey {
         case id = "hangoutInfoId"
@@ -34,6 +36,7 @@ struct HangoutDTO: Decodable {
         case plan = "hangoutPlan"
         case postImageFilename = "hangoutImageUrl"
         case language = "hangoutLanguage"
+        case category = "hangoutCategory"
         case openchatURL = "hangoutOpenChat"
         case limitNumber = "hangoutTotalNum"
         case currentNum = "hangoutCurrentNum"
@@ -46,6 +49,7 @@ struct HangoutDTO: Decodable {
         case status = "hangoutStatus"
         case likeStatus = "hangoutLikeStatus"
         case joinedStatus = "hangoutJoinStatus"
+        case isUpdate = "isUpdate"
     }
 }
 
@@ -82,12 +86,13 @@ extension HangoutDTO {
                        language: language,
                        plan: plan,
                        limitNumber: limitNumber,
-                       categories: [],
+                       categories: category.map { Hangout.Category.makeCategory(with: $0) }.compactMap { $0 },
                        place: place,
                        postImageURL: postImageURL,
-                       openchatURL: URL(string: openchatURL)!,
+                       openchatURL: openchatURL,
                        joinedIDs: zip(joinedUserIDs, joinedUserImageName).map({ Hangout.Info(id: $0,imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")!) }),
                        likedIDs: zip(likedUserIDs, likedUserImageName).map({ Hangout.Info(id: $0, imageURL: URL(string: "\(BAPPY_API_BASEURL)static-file/\($1)")!) }),
-                       userHasLiked: likeStatus)
+                       userHasLiked: likeStatus,
+                       isUpdate: isUpdate)
     }
 }

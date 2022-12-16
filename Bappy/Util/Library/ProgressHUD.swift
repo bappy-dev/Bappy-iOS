@@ -276,7 +276,7 @@ public class ProgressHUD: UIView {
 	//-------------------------------------------------------------------------------------------------------------------------------------------
 	convenience private init() {
 
-		self.init(frame: UIScreen.main.bounds)
+		self.init(frame: ScreenUtil.bounds)
         self.alpha = 0
 	}
 

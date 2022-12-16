@@ -74,7 +74,7 @@ final class CustomerServiceViewController: UIViewController {
             let osVersion = UIDevice.current.systemVersion
             let device = getModel()
             
-            let numOfDot = Int((UIScreen.main.bounds.width - 20.0) / 8.8)
+            let numOfDot = Int((ScreenUtil.width - 20.0) / 8.8)
             let dottedLine = String.init(repeating: "-", count: numOfDot)
             
             let message = """

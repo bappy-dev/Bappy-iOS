@@ -204,23 +204,27 @@ final class HomeListViewModel: ViewModelType {
             .merge(
                 sorting$.map { _ in },
                 category$.map { _ in },
-                refresh$
-                //                viewWillAppear$.map { _ in}
+                refresh$,
+                viewWillAppear$.map { _ in UserDefaults.standard.set(false, forKey: "hangout_make") }
             )
-            .skip(3)
+            .skip(4)
             .map { _ in 1 }
             .bind(to: page$)
             .disposed(by: disposeBag)
         
         // 행아웃 불러오기 Flow
+        category$.skip(2).bind {
+            EventLogger.logEvent("category_click", parameters: ["category": $0.description,
+                                                                "name": "HomeListViewController"])
+        }.disposed(by: disposeBag)
+        
         let hangoutFlow = page$
             .observe(on: MainScheduler.asyncInstance)
             .withLatestFrom(Observable.combineLatest(
                 sorting$,
-                category$
-                //                viewWillAppear$
+                category$,
+                viewWillAppear$
             )) { ($0, $1.0, $1.1) }
-        //            .withLatestFrom(coordinates$) { (page: $0.0, sorting: $0.1, category: $0.2, coordinates: $1) }
             .share()
         
         // Page 1일 때 dataSource 새로 만들기

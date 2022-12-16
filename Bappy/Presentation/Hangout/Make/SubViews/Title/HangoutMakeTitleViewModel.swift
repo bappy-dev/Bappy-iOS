@@ -13,7 +13,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
     
     struct Dependency {
         var minimumLength: Int { 10 }
-        var maximumLength: Int { 20 }
+        var maximumLength: Int { 35 }
     }
     
     struct Input {
@@ -98,8 +98,7 @@ final class HangoutMakeTitleViewModel: ViewModelType {
 }
 
 private func validation(text: String, condition: (minimumLength: Int, maximumLength: Int)) -> Bool {
-    return (text.count >= condition.minimumLength)
-            && (text.count <= condition.maximumLength)
+    return (text.count >= condition.minimumLength) && (text.count <= condition.maximumLength)
 }
 
 private func removeExcessString(text: String, maximumLength: Int) -> String {

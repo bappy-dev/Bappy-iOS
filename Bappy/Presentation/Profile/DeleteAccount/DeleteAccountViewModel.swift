@@ -103,6 +103,8 @@ final class DeleteAccountViewModel: ViewModelType {
             .bind(to: page$)
             .disposed(by: disposeBag)
         
+        
+        
         // 회원 탈퇴
         let deleteDataResult = confirmButtonTapped$
             .withLatestFrom(isReasonSelected$)
@@ -133,6 +135,14 @@ final class DeleteAccountViewModel: ViewModelType {
             .map { _ in BappyLoginViewModel() }
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)
+        
+        deleteResult
+            .withLatestFrom(subViewModels.secondPageViewModel.output.text).compactMap { $0 }
+            .withLatestFrom(dependency.bappyAuthRepository.currentUser.map { $0?.id }.compactMap { $0 }) { (text: $0, id: $1) }
+            .bind { EventLogger.logEvent("withdrawel", parameters: ["deleted_at": Date().description,
+                                                                    "delete_reason": $0.text,
+                                                                    "delete_id": $0.id])
+            }.disposed(by: disposeBag)
         
         subViewModels.secondPageViewModel.output.isReasonSelected
             .emit(to: isReasonSelected$)

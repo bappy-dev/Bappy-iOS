@@ -24,7 +24,7 @@ final class HomeFilterViewModel: ViewModelType {
     struct Dependency {}
     
     struct SubViewModels {
-        let hangoutMakeCategoryViewModel: HangoutMakeCategoryViewModel
+        let categoryViewModel: CategoryViewModel
         let languageViewModel: HangoutMakeLanguageViewModel
     }
     
@@ -102,8 +102,7 @@ final class HomeFilterViewModel: ViewModelType {
     init(dependency: Dependency = Dependency()) {
         self.dependency = dependency
         
-        let categoryDependency = HangoutMakeCategoryViewModel.Dependency(isStartWith: true)
-        self.subViewModels = SubViewModels(hangoutMakeCategoryViewModel: HangoutMakeCategoryViewModel(dependency: categoryDependency),
+        self.subViewModels = SubViewModels(categoryViewModel: CategoryViewModel(dependency: CategoryViewModel.Dependency(categories: [], isStartWith: true)),
                                            languageViewModel: HangoutMakeLanguageViewModel())
         
         
@@ -172,7 +171,10 @@ final class HomeFilterViewModel: ViewModelType {
         
         let isWeekdaysValid = weekdays.map { !$0.isEmpty }.asObservable().startWith(true)
         let isLanguageValid = language$.map { !$0.isEmpty }.startWith(true)
-        let isCateValid = subViewModels.hangoutMakeCategoryViewModel.output.isValid.asObservable().startWith(true)
+        let isCateValid = subViewModels.categoryViewModel.output.categories
+            .map { !$0.isEmpty }
+            .asObservable()
+            .startWith(true)
         let isSelectedDateValid = dateSelected$.map { $0.0 != nil }.startWith(true)
 
         let isValid = Observable.combineLatest(isWeekdaysValid, isLanguageValid, isCateValid, isSelectedDateValid)
@@ -312,7 +314,7 @@ final class HomeFilterViewModel: ViewModelType {
             .withLatestFrom(
                 Observable.combineLatest(weekdays.asObservable(),
                                          language$,
-                                         subViewModels.hangoutMakeCategoryViewModel.output.categories.asObservable(),
+                                         subViewModels.categoryViewModel.output.categories.asObservable(),
                                          dateSelected$))
             .map { ($0, $1, $2, $3) }
             .bind(to: filterForm)
