@@ -86,7 +86,7 @@ final class BappyInitialViewModel: ViewModelType {
         remoteConfigValues
             .filter { !checkCurrentVersion(with: $0.minimumVersion) }
             .map { _ -> Alert in
-                let appleID = "" // 나중에 AppStore Connect에서 확인
+                let appleID = "1640022708" // 나중에 AppStore Connect에서 확인
                 let urlStr = "itms-apps://itunes.apple.com/app/apple-store/\(appleID)"
                 let url = URL(string: urlStr)
                 let title = "This version is not supported"

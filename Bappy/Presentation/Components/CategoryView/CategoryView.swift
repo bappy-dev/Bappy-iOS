@@ -72,8 +72,8 @@ class CategoryView: UIView {
             picnicButton, boardgameButton, sportsButton,
             volunteerButton, projcetsButton, careerButton
         ] {
-            button.smalling = viewModel.dependency.isSmall
             button.isEnabled = viewModel.dependency.isEnabled
+            button.smalling = viewModel.dependency.isSmall
             button.layer.cornerRadius = 19.5
         }
     }

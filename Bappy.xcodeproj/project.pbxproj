@@ -327,6 +327,7 @@
 		AFEC36B52902B66600687C18 /* ReviewSelectTagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */; };
 		AFEC36B82902E1D100687C18 /* BappyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEC36B72902E1D100687C18 /* BappyTextField.swift */; };
 		D604C0DC292FD1D7008A4B37 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D604C0DB292FD1D7008A4B37 /* Logger.swift */; };
+		D6228074296D51B600B3E2D8 /* BlockJoinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6228073296D51B600B3E2D8 /* BlockJoinViewController.swift */; };
 		D643CF8229421B9C0065BA51 /* ScreenUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF8129421B9C0065BA51 /* ScreenUtil.swift */; };
 		D643CF842944A8030065BA51 /* CategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF832944A8030065BA51 /* CategoryView.swift */; };
 		D643CF862944A80C0065BA51 /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643CF852944A80C0065BA51 /* CategoryViewModel.swift */; };
@@ -668,6 +669,7 @@
 		AFEC36B42902B66600687C18 /* ReviewSelectTagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSelectTagViewModel.swift; sourceTree = "<group>"; };
 		AFEC36B72902E1D100687C18 /* BappyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BappyTextField.swift; sourceTree = "<group>"; };
 		D604C0DB292FD1D7008A4B37 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		D6228073296D51B600B3E2D8 /* BlockJoinViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockJoinViewController.swift; sourceTree = "<group>"; };
 		D643CF8129421B9C0065BA51 /* ScreenUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenUtil.swift; sourceTree = "<group>"; };
 		D643CF832944A8030065BA51 /* CategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryView.swift; sourceTree = "<group>"; };
 		D643CF852944A80C0065BA51 /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
@@ -859,6 +861,7 @@
 		A717323D28361F5F0073E702 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				D6228071296C55DE00B3E2D8 /* CategoryView */,
 				D6F7EFE82912C95D00A99FC2 /* CustomActivity */,
 				D6F7EFE52912BCBA00A99FC2 /* BappyPresentViewController */,
 				AFEC36B62902E1BD00687C18 /* BappyTextField */,
@@ -1438,8 +1441,6 @@
 				A72E6F042893D98200E06BED /* Protocol */,
 				A72E6F032893D95500E06BED /* Library */,
 				A72E6F052893D99300E06BED /* Example */,
-				D643CF832944A8030065BA51 /* CategoryView.swift */,
-				D643CF852944A80C0065BA51 /* CategoryViewModel.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -1907,6 +1908,7 @@
 		A7B6448A28464BDB00A509AB /* PopupView */ = {
 			isa = PBXGroup;
 			children = (
+				D6228072296D517D00B3E2D8 /* BlockJoinViewController */,
 				A7F52D052866CFE4002523D4 /* OpenMap */,
 			);
 			path = PopupView;
@@ -2549,6 +2551,23 @@
 			path = BappyTextField;
 			sourceTree = "<group>";
 		};
+		D6228071296C55DE00B3E2D8 /* CategoryView */ = {
+			isa = PBXGroup;
+			children = (
+				D643CF832944A8030065BA51 /* CategoryView.swift */,
+				D643CF852944A80C0065BA51 /* CategoryViewModel.swift */,
+			);
+			path = CategoryView;
+			sourceTree = "<group>";
+		};
+		D6228072296D517D00B3E2D8 /* BlockJoinViewController */ = {
+			isa = PBXGroup;
+			children = (
+				D6228073296D51B600B3E2D8 /* BlockJoinViewController.swift */,
+			);
+			path = BlockJoinViewController;
+			sourceTree = "<group>";
+		};
 		D643CF89294B5E800065BA51 /* SaveHangoutDTO */ = {
 			isa = PBXGroup;
 			children = (
@@ -3013,6 +3032,7 @@
 				A71411C428985F8A002D4714 /* ProfileDetailLanguageView.swift in Sources */,
 				A7A6B0062845010200911861 /* SearchPlaceCell.swift in Sources */,
 				A7A6B00A2845A5D900911861 /* HangoutMakePictureView.swift in Sources */,
+				D6228074296D51B600B3E2D8 /* BlockJoinViewController.swift in Sources */,
 				A71411DF28985F8A002D4714 /* ProfileViewModel.swift in Sources */,
 				A7F52CF92865FFB5002523D4 /* HangoutMapSectionViewModel.swift in Sources */,
 				A73BC9A62875984300FB9FA9 /* FetchHangoutsRequestDTO+Mapping.swift in Sources */,
@@ -3257,7 +3277,7 @@
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10.1;
+				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				ENABLE_BITCODE = NO;
@@ -3304,7 +3324,7 @@
 				CODE_SIGN_ENTITLEMENTS = Bappy/Bappy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10.1;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = MLH7J54RP8;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (

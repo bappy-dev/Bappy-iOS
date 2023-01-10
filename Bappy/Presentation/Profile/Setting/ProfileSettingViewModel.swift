@@ -131,7 +131,7 @@ final class ProfileSettingViewModel: ViewModelType {
         signOutResult
             .compactMap(getValue)
             .map { _ in
-                EventLogger.logEvent("Logout", parameters: ["logout_at": Date().description])
+                EventLogger.logEvent("logout", parameters: ["logout_at": Date().description])
                 return BappyLoginViewModel() }
             .bind(to: switchToSignInView$)
             .disposed(by: disposeBag)

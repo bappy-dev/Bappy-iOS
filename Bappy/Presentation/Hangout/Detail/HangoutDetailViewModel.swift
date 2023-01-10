@@ -100,6 +100,7 @@ final class HangoutDetailViewModel: ViewModelType {
         var showTranslucentLoader: Signal<Bool> // <-> View
         var hangout: Signal<Hangout?> // <-> Child(Image), CellViewModel
         var showMakeViewModel: Signal<HangoutMakeViewModel?>
+        var showBlockViewController: Signal<BlockJoinViewController?>
     }
     
     let dependency: Dependency
@@ -135,6 +136,7 @@ final class HangoutDetailViewModel: ViewModelType {
     private let showCancelAlert$ = PublishSubject<Alert?>()
     private let showUserProfile$ = PublishSubject<ProfileViewModel?>()
     private let showLikedPeopleList$ = PublishSubject<LikedPeopleListViewModel?>()
+    private let showBlockViewController$ = PublishSubject<BlockJoinViewController?>()
     private let newParticipantsSectionView$ = PublishSubject<HangoutParticipantsSectionViewModel?>()
     private let showCreateSuccessView$ = PublishSubject<Void>()
     private let showYellowLoader$ = PublishSubject<Bool>()
@@ -222,6 +224,8 @@ final class HangoutDetailViewModel: ViewModelType {
             .asSignal(onErrorJustReturn: nil)
         let showCancelAlert = showCancelAlert$
             .asSignal(onErrorJustReturn: nil)
+        let showBlockJoinViewController = showBlockViewController$
+            .asSignal(onErrorJustReturn: nil)
         let showReviewView = reviewButtonTapped$
             .withLatestFrom(showReviewButton$)
             .filter { $0 }
@@ -271,7 +275,7 @@ final class HangoutDetailViewModel: ViewModelType {
             .withLatestFrom(hangout$) { (hangout: $1, url: $0)}
             .map { element -> UIActivityViewController? in
                 // URL이 되면 본문에 추가, 안되면 앱 설치 URL
-
+                
                 var urlStrToUse: String = ""
                 var customActivities: [UIActivity] = []
                 if element.url == "" {
@@ -352,7 +356,8 @@ final class HangoutDetailViewModel: ViewModelType {
             showYellowLoader: showYellowLoader,
             showTranslucentLoader: showTranslucentLoader,
             hangout: hangout,
-            showMakeViewModel: showMakeViewModel
+            showMakeViewModel: showMakeViewModel,
+            showBlockViewController: showBlockJoinViewController
         )
         
         // MARK: Bindind
@@ -374,7 +379,7 @@ final class HangoutDetailViewModel: ViewModelType {
             .do { [weak self] _ in
                 self?.showYellowLoader$.onNext(false)
                 let date = UserDefaults.standard.object(forKey: "startMake") as? Date ?? Date()
-                EventLogger.logEvent("make_hangout", parameters: ["time" : Date().timeIntervalSince1970 - date.timeIntervalSince1970])
+                EventLogger.logEvent("edit_hangout", parameters: ["time" : Date().timeIntervalSince1970 - date.timeIntervalSince1970])
                 UserDefaults.standard.set(true, forKey: "hangout_make")
             }
             .observe(on: MainScheduler.asyncInstance)
@@ -427,22 +432,26 @@ final class HangoutDetailViewModel: ViewModelType {
             .filter({ (info, user) in
                 user.state == .normal
             })
-            .map {
-                let date = UserDefaults.standard.value(forKey: "detail_start") as? Date ?? Date()
-                EventLogger.logEvent("join_time", parameters: ["time": Date().timeIntervalSince1970 - date.timeIntervalSince1970])
-                return $0.0 }
             .withLatestFrom(hangout$)
             .do { [weak self] _ in self?.showYellowLoader$.onNext(true) }
             .flatMap { dependency.hangoutRepository.joinHangout(hangoutID: $0.id) }
             .do(onNext: { [weak self] _ in self?.showYellowLoader$.onNext(false)
-            }, onError: { [weak self] _ in self?.showYellowLoader$.onNext(false)})
-            .observe(on: MainScheduler.asyncInstance)
+            }, onError: { [weak self] _ in
+                self?.showYellowLoader$.onNext(false)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self?.showBlockViewController$.onNext(BlockJoinViewController())
+                }
+            }).observe(on: MainScheduler.asyncInstance)
             .share()
         
         joinResult
             .compactMap(getValue)
             .filter { $0 }
-            .bind(onNext: { _ in hangoutButtonState$.onNext(.cancel) })
+            .withLatestFrom(hangout$)
+            .map { hangout in
+                let date = UserDefaults.standard.value(forKey: "detail_start") as? Date ?? Date()
+                EventLogger.logEvent("join_time", parameters: ["time": Date().timeIntervalSince1970 - date.timeIntervalSince1970])
+            }.bind(onNext: { _ in hangoutButtonState$.onNext(.cancel) })
             .disposed(by: disposeBag)
         
         // Cancel 버튼이 눌러졌을 때..

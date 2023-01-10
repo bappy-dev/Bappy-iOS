@@ -35,6 +35,7 @@ final class HomeFilteredViewModel: ViewModelType {
         var cellViewModels: Driver<[HangoutCellViewModel]> // <-> View
         var spinnerAnimating: Signal<Bool> // <-> View
         var showFilteringView: Signal<HomeFilterViewModel?>
+        var showDetailView: Signal<HangoutDetailViewModel?>
     }
     
     struct SubViewModels {
@@ -47,6 +48,7 @@ final class HomeFilteredViewModel: ViewModelType {
     let output: Output
     let subViewModels: SubViewModels
     
+    private let showDetailView$ = PublishSubject<HangoutDetailViewModel>()
     private let currentUser$: BehaviorSubject<BappyUser?>
     private let cellViewModels$ = BehaviorSubject<[HangoutCellViewModel]>(value: [])
     private let scrollToTop$ = PublishSubject<Void>()
@@ -57,7 +59,6 @@ final class HomeFilteredViewModel: ViewModelType {
     private let viewDidAppear$ = PublishSubject<Void>()
     private let filteringView$ = PublishSubject<Void>()
     private let showFilteringView = PublishSubject<HomeFilterViewModel?>()
-    
     
     init(dependency: Dependency = Dependency()) {
        let filterSubViewModel = HomeFilterViewModel()
@@ -77,6 +78,9 @@ final class HomeFilteredViewModel: ViewModelType {
             .asDriver(onErrorJustReturn: [])
         let filterView = showFilteringView
             .asSignal(onErrorJustReturn: nil)
+        let showDetailView = showDetailView$
+            .map(HangoutDetailViewModel?.init)
+            .asSignal(onErrorJustReturn: nil)
         
         self.input = Input(filteringView: filteringView$.asObserver(),
                            scrollToTop: scrollToTop$.asObserver(),
@@ -87,7 +91,8 @@ final class HomeFilteredViewModel: ViewModelType {
                              hideHolderView: hideHolderView,
                              cellViewModels: cellViewModels,
                              spinnerAnimating: spinnerAnimating,
-                             showFilteringView: filterView)
+                             showFilteringView: filterView,
+                             showDetailView: showDetailView)
         
         self.currentUser$ = currentUser$
         
@@ -121,7 +126,6 @@ final class HomeFilteredViewModel: ViewModelType {
         filteredHangouts
             .withLatestFrom(currentUser$.compactMap { $0 }) { (hangouts: $0, user: $1) }
             .map { element -> [HangoutCellViewModel] in
-                
                 if element.hangouts.isEmpty {
                     return []
                 } else {
@@ -129,6 +133,10 @@ final class HomeFilteredViewModel: ViewModelType {
                         let dependency = HangoutCellViewModel.Dependency(
                             user: element.user, hangout: hangout)
                         let viewModel = HangoutCellViewModel(dependency: dependency)
+                        viewModel.output.showDetailView
+                            .compactMap { $0 }
+                            .emit(to: self.showDetailView$)
+                            .disposed(by: viewModel.disposeBag)
                         return viewModel
                     }
                 }

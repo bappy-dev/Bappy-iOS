@@ -133,12 +133,12 @@ extension HangoutParticipantsSectionView {
     private func bind() {
         collectionView.rx.modelSelected(Hangout.Info.self)
             .map(\.id)
-            .map { EventLogger.logEvent("profile tapped", parameters: ["id": $0]); return $0 }
+            .map { EventLogger.logEvent("participate_profile", parameters: ["id": $0, "name": "HangoutParticipantsSectionView"]); return $0 }
             .bind(to: viewModel.input.selectedUserID)
             .disposed(by: disposeBag)
         
         heartImageView.rx.tap
-            .map { EventLogger.logEvent("like list tapped"); return "" }
+            .map { EventLogger.logEvent("like_list"); return "" }
             .bind(to: viewModel.input.selectedUserID)
             .disposed(by: disposeBag)
         

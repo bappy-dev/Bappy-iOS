@@ -258,6 +258,13 @@ extension UILabel {
     }
 }
 
+// MARK: - UIResponder
+extension UIResponder {
+    public var parentViewController: UIViewController? {
+        return next as? UIViewController ?? next?.parentViewController
+    }
+}
+
 // MARK: - UIButton
 extension UIButton {
     func setBappyTitle(title: String,
