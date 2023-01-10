@@ -17,7 +17,7 @@ final class HangoutDetailViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: HangoutDetailViewModel
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     
     private let titleTopView = TitleTopView(title: "Hangout", subTitle: "Detail page")
     
@@ -125,6 +125,11 @@ final class HangoutDetailViewController: UIViewController {
         super.viewWillDisappear(animated)
         
         setStatusBarStyle(statusBarStyle: .darkContent)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        disposeBag = DisposeBag()
     }
     
     // MARK: Helpers
@@ -284,6 +289,25 @@ extension HangoutDetailViewController {
                 self?.present(presentVC, animated: true)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.output.showBlockViewController
+            .compactMap { $0 }
+            .emit { [weak self] vc in
+                guard let self = self else { return }
+              
+                vc.okButton.rx.tap
+                    .bind {
+                        EventLogger.logEvent("block_join_hangout")
+                        self.navigationController?.popViewController(animated: true)
+                    }.disposed(by: self.disposeBag)
+
+                UIView.animate(withDuration: 0.4, delay: 0.0) { [unowned self] in
+                    self.view.backgroundColor = .clear
+                } completion: { _ in
+                    self.addChild(vc)
+                    self.view.addSubview(vc.view)
+                }
+            }.disposed(by: disposeBag)
         
         viewModel.output.popView
             .emit(onNext: { [weak self] _ in

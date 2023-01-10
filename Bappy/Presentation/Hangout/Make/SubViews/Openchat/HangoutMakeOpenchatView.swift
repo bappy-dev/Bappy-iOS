@@ -161,9 +161,7 @@ extension HangoutMakeOpenchatView {
             .debounce(RxTimeInterval.nanoseconds(1000), scheduler: MainScheduler.instance)
             .map { URL(string: Constant.instaURL) }
             .bind {
-                EventLogger.logEvent("click", parameters: ["name": "HangoutMakeOpenchatView",
-                                                           "component" : "Button",
-                                                           "button": "guide_button"])
+                EventLogger.logEvent("chat_guide", parameters: ["name": "HangoutMakeOpenchatView"])
                 guard let url = $0 else { return }
                 UIApplication.shared.open(url)
             }.disposed(by: disposeBag)

@@ -13,7 +13,6 @@ import RxSwift
 
 extension ProfileReferenceCell {
     static let cellHorizontalInset: CGFloat = 10.0
-    
     static let profileImageViewWidth: CGFloat = 50.0
     static let tagsVerticalSpacing: CGFloat = 6.0
     static let tagsHorizontalSpacing: CGFloat = 10.0
@@ -24,8 +23,6 @@ final class ProfileReferenceCell: UITableViewCell {
     let disposeBag = DisposeBag()
     
     // MARK: Properties
-    var blurEffectView: UIVisualEffectView?
-    
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -130,7 +127,6 @@ final class ProfileReferenceCell: UITableViewCell {
             $0.centerY.equalTo(nameLabel)
             $0.trailing.equalToSuperview().inset(21.0)
         }
-        
     }
     
     private func addTags(_ tags: [String]) {
@@ -138,8 +134,6 @@ final class ProfileReferenceCell: UITableViewCell {
             subview.removeFromSuperview()
         }
         var hStack = UIStackView()
-        
-        tagsView.addArrangedSubview(hStack)
         hStack.axis = .horizontal
         hStack.spacing = ProfileReferenceCell.tagsHorizontalSpacing
         
@@ -166,6 +160,7 @@ final class ProfileReferenceCell: UITableViewCell {
                 hStack.addArrangedSubview(tagView)
             }
         hStack.addArrangedSubview(UIView())
+        tagsView.addArrangedSubview(hStack)
     }
 }
 
@@ -180,15 +175,7 @@ extension ProfileReferenceCell {
         dateLabel.text = referenceCellState.reference.date
         contentLabel.text = referenceCellState.reference.contents
         
-        blurEffectView?.removeFromSuperview()
-        blurEffectView = nil
-        if !referenceCellState.reference.isCanRead && blurEffectView == nil {
-            blurEffectView = CustomIntensityVisualEffectView(effect: UIBlurEffect(style: .regular), intensity: 0.2)
-            frameView.addSubview(blurEffectView!)
-            blurEffectView!.snp.makeConstraints { make in
-                make.leading.top.equalTo(tagsView).inset(-10.0)
-                make.trailing.bottom.equalToSuperview()
-            }
+        if !referenceCellState.reference.isCanRead {
             frameView.bringSubviewToFront(nameLabel)
         }
         
@@ -217,26 +204,5 @@ extension ProfileReferenceCell {
                 self?.parentViewController?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-class CustomIntensityVisualEffectView: UIVisualEffectView {
-    // MARK: Properties
-    private var animator: UIViewPropertyAnimator!
-    
-    init(effect: UIVisualEffect, intensity: CGFloat) {
-        super.init(effect: nil)
-        animator = UIViewPropertyAnimator(duration: 1, curve: .linear) { [unowned self] in self.effect = effect }
-        animator.fractionComplete = intensity
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError()
-    }
-}
-
-extension UIResponder {
-    public var parentViewController: UIViewController? {
-        return next as? UIViewController ?? next?.parentViewController
     }
 }

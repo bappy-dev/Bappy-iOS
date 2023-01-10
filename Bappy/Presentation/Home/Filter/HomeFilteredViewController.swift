@@ -165,6 +165,7 @@ extension HomeFilteredViewController {
         
         self.rx.viewWillAppear
             .map { _ in }
+            .take(1)
             .bind(to: viewModel.input.viewDidAppear)
             .disposed(by: disposeBag)
         
@@ -193,6 +194,13 @@ extension HomeFilteredViewController {
             .map { _ in false }
             .emit(to: refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
+        
+        viewModel.output.showDetailView
+            .compactMap { $0 }
+            .emit { [weak self] viewModel in
+                let vc = HangoutDetailViewController(viewModel: viewModel)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }.disposed(by: disposeBag)
         
         viewModel.output.hideHolderView
             .distinctUntilChanged()
